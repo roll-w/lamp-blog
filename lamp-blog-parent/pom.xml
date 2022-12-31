@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.7.7</version>
+        <relativePath/>
+    </parent>
+    <groupId>space.lingu.lamp-blog</groupId>
+    <artifactId>lamp-blog-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <modules>
+        <module>../lamp-blog-web</module>
+        <module>../lamp-blog-common</module>
+    </modules>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <project.version>0.0.1-SNAPSHOT</project.version>
+        <light.version>0.4.1</light.version>
+        <fiesta.version>0.2.1</fiesta.version>
+        <guava.version>31.1-jre</guava.version>
+        <hikari.version>5.0.1</hikari.version>
+        <jjwt.version>0.11.5</jjwt.version>
+        <spring-shell.version>2.1.2</spring-shell.version>
+        <tomcat-api.version>6.0.53</tomcat-api.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>space.lingu.lamp-blog</groupId>
+                <artifactId>lamp-blog-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.shell</groupId>
+                <artifactId>spring-shell-starter</artifactId>
+                <version>${spring-shell.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.tomcat</groupId>
+                <artifactId>annotations-api</artifactId>
+                <version>${tomcat-api.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.google.guava</groupId>
+                <artifactId>guava</artifactId>
+                <version>${guava.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-api</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-impl</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt-jackson</artifactId>
+                <version>${jjwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>${hikari.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>space.lingu.light</groupId>
+                <artifactId>light-compiler</artifactId>
+                <version>${light.version}</version>
+                <scope>provided</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>space.lingu.light</groupId>
+                <artifactId>light-core</artifactId>
+                <version>${light.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>space.lingu.light</groupId>
+                <artifactId>light-core-logging-slf4j</artifactId>
+                <version>${light.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>space.lingu.light</groupId>
+                <artifactId>light-core-connection-hikari</artifactId>
+                <version>${light.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>space.lingu.fiesta</groupId>
+                <artifactId>fiesta-annotations</artifactId>
+                <version>${fiesta.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>space.lingu.fiesta</groupId>
+                <artifactId>fiesta-checker</artifactId>
+                <version>${fiesta.version}</version>
+                <scope>provided</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <dependencies>
+        <dependency>
+            <groupId>space.lingu.fiesta</groupId>
+            <artifactId>fiesta-annotations</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>space.lingu.fiesta</groupId>
+            <artifactId>fiesta-checker</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
+    </dependencies>
+
+</project>
