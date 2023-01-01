@@ -37,10 +37,25 @@ public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        if (this == SUCCESS) {
+            return "SUCCESS";
+        }
+
+        return "CommonError: %s, code: %s".formatted(name(), getCode());
+    }
+
     @NonNull
     @Override
     public String getCode() {
         return value;
+    }
+
+    @NonNull
+    @Override
+    public String getName() {
+        return name();
     }
 
     @Override
@@ -64,7 +79,7 @@ public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
 
     @Override
     public ErrorCode findErrorCode(String codeValue) {
-        return nullableFrom(codeValue);
+        return ErrorCodeFinder.from(values(), codeValue);
     }
 
     @Nullable

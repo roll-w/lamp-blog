@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp;
+package space.lingu.lamp.web.controller;
 
-import space.lingu.NonNull;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+import space.lingu.lamp.ErrorCodeFinderChain;
 
 /**
  * @author RollW
  */
-public interface ErrorCode extends ErrorCodeFinder {
-    String SUCCESS_CODE = "00000";
+@RestController
+@CommonApi
+public class ErrorCodeController {
+    private final ErrorCodeFinderChain codeFinderChain;
 
-    @NonNull
-    String getCode();
+    public ErrorCodeController(ErrorCodeFinderChain codeFinderChain) {
+        this.codeFinderChain = codeFinderChain;
+    }
 
-    @NonNull
-    String getName();
-
-    boolean getState();
-
-    int getStatus();
-
-    String toString();
+    @GetMapping("/code")
+    public String getErrorCodeName(String code) {
+        return codeFinderChain.findErrorCode(code).getName();
+    }
 }

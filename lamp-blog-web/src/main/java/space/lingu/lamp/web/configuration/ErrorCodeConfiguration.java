@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp;
+package space.lingu.lamp.web.configuration;
 
-import space.lingu.NonNull;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import space.lingu.lamp.ErrorCodeFinderChain;
+import space.lingu.lamp.web.service.auth.AuthErrorCode;
 
 /**
  * @author RollW
  */
-public interface ErrorCode extends ErrorCodeFinder {
-    String SUCCESS_CODE = "00000";
+@Configuration
+public class ErrorCodeConfiguration {
 
-    @NonNull
-    String getCode();
+    @Bean
+    public ErrorCodeFinderChain errorCodeFinderChain() {
+        return ErrorCodeFinderChain.start(
+                AuthErrorCode.SUCCESS
+        );
+    }
 
-    @NonNull
-    String getName();
-
-    boolean getState();
-
-    int getStatus();
-
-    String toString();
 }

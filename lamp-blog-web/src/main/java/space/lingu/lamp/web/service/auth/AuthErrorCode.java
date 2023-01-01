@@ -18,6 +18,7 @@ package space.lingu.lamp.web.service.auth;
 
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
+import space.lingu.lamp.ErrorCodeFinder;
 
 /**
  * Auth Error Code.
@@ -29,8 +30,17 @@ import space.lingu.lamp.ErrorCode;
 public enum AuthErrorCode implements ErrorCode {
     SUCCESS(SUCCESS_CODE, 200),
 
+    /**
+     * 认证错误
+     */
     ERROR_AUTH("A1000", 401),
+    /**
+     * 无效令牌
+     */
     ERROR_INVALID_TOKEN("A1001", 401),
+    /**
+     * 令牌过期
+     */
     ERROR_TOKEN_EXPIRED("A1002", 401),
     ERROR_TOKEN_NOT_EXIST("A1003", 401),
     ERROR_TOKEN_NOT_MATCH("A1004", 401),
@@ -47,9 +57,24 @@ public enum AuthErrorCode implements ErrorCode {
     }
 
     @Override
+    public String toString() {
+        if (this == SUCCESS) {
+            return "SUCCESS";
+        }
+
+        return "AuthError: %s, code: %s".formatted(name(), getCode());
+    }
+
+    @Override
     @NonNull
     public String getCode() {
         return value;
+    }
+
+    @NonNull
+    @Override
+    public String getName() {
+        return name();
     }
 
     @Override
@@ -69,6 +94,8 @@ public enum AuthErrorCode implements ErrorCode {
 
     @Override
     public ErrorCode findErrorCode(String codeValue) {
-        return null;
+        return ErrorCodeFinder.from(values(), codeValue);
     }
+
+
 }

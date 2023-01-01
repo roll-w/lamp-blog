@@ -14,25 +14,26 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp;
+package space.lingu.lamp.web.configuration.json;
 
-import space.lingu.NonNull;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+import space.lingu.lamp.ErrorCode;
+
+import java.io.IOException;
 
 /**
  * @author RollW
  */
-public interface ErrorCode extends ErrorCodeFinder {
-    String SUCCESS_CODE = "00000";
+public class ErrorCodeSerializer extends StdSerializer<ErrorCode> {
+    public ErrorCodeSerializer() {
+        super(ErrorCode.class);
+    }
 
-    @NonNull
-    String getCode();
-
-    @NonNull
-    String getName();
-
-    boolean getState();
-
-    int getStatus();
-
-    String toString();
+    @Override
+    public void serialize(ErrorCode value, JsonGenerator gen,
+                          SerializerProvider provider) throws IOException {
+        gen.writeString(value.getCode());
+    }
 }

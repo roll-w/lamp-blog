@@ -14,25 +14,24 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp;
+package space.lingu.lamp.web.controller;
 
-import space.lingu.NonNull;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author RollW
  */
-public interface ErrorCode extends ErrorCodeFinder {
-    String SUCCESS_CODE = "00000";
-
-    @NonNull
-    String getCode();
-
-    @NonNull
-    String getName();
-
-    boolean getState();
-
-    int getStatus();
-
-    String toString();
+@Documented
+@Target({ElementType.TYPE,ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@RequestMapping("/api/common/")
+@RestController
+public @interface CommonApi {
 }

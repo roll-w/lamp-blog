@@ -16,6 +16,8 @@
 
 package space.lingu.lamp;
 
+import space.lingu.Nullable;
+
 /**
  * @author RollW
  */
@@ -33,4 +35,17 @@ public interface ErrorCodeFinder {
     ErrorCode fromThrowable(Throwable e, ErrorCode defaultErrorCode);
 
     ErrorCode findErrorCode(String codeValue);
+
+    @Nullable
+    static <T extends ErrorCode> T from(T[] codes, String codeValue) {
+        if (codes == null || codeValue == null) {
+            return null;
+        }
+        for (T errorCode : codes) {
+            if (errorCode.getCode().equals(codeValue)) {
+                return errorCode;
+            }
+        }
+        return null;
+    }
 }
