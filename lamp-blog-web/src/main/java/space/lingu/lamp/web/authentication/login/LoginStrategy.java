@@ -29,5 +29,7 @@ public interface LoginStrategy {
 
     ErrorCode verify(LoginVerifiableToken token);
 
+    void sendToken(LoginVerifiableToken token);
+
     LoginStrategyType getStrategyType();
 }

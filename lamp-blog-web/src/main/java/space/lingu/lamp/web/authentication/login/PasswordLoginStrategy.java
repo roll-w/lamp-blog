@@ -16,17 +16,22 @@
 
 package space.lingu.lamp.web.authentication.login;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.web.data.dto.LoginPasswordToken;
 import space.lingu.lamp.web.data.entity.user.User;
 import space.lingu.lamp.web.data.entity.LoginVerifiableToken;
+import space.lingu.lamp.web.service.auth.AuthErrorCode;
 
 /**
  * @author RollW
  */
 @Component
 public class PasswordLoginStrategy implements LoginStrategy {
+    private static final Logger logger = LoggerFactory.getLogger(PasswordLoginStrategy.class);
+
     @Override
     public LoginVerifiableToken createToken(User user) {
         return new LoginPasswordToken(null, user.getId());
@@ -34,7 +39,17 @@ public class PasswordLoginStrategy implements LoginStrategy {
 
     @Override
     public ErrorCode verify(LoginVerifiableToken token) {
+        if (!(token instanceof LoginPasswordToken)) {
+            logger.error("Passed token type error: {}.", token.getClass().getName());
+            return AuthErrorCode.ERROR_INVALID_TOKEN;
+        }
+
         return null;
+    }
+
+    @Override
+    public void sendToken(LoginVerifiableToken token) {
+        // no need to send token
     }
 
     @Override

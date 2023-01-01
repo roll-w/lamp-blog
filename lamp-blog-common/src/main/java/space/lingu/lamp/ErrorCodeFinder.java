@@ -16,18 +16,21 @@
 
 package space.lingu.lamp;
 
-import space.lingu.NonNull;
-
 /**
  * @author RollW
  */
-public interface ErrorCode extends ErrorCodeFinder {
-    String SUCCESS_CODE = "00000";
+public interface ErrorCodeFinder {
+    /**
+     * Find the error code of the exception.
+     *
+     * @param e the exception
+     * @return the error code
+     */
+    default ErrorCode fromThrowable(Throwable e) {
+        return fromThrowable(e, CommonErrorCode.ERROR_UNKNOWN);
+    }
 
-    @NonNull
-    String getCode();
+    ErrorCode fromThrowable(Throwable e, ErrorCode defaultErrorCode);
 
-    boolean getState();
-
-    int getStatus();
+    ErrorCode findErrorCode(String codeValue);
 }

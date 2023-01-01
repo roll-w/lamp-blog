@@ -17,16 +17,17 @@
 package space.lingu.lamp;
 
 import space.lingu.NonNull;
+import space.lingu.Nullable;
 
 /**
  * @author RollW
  */
-public enum CommonErrorCode implements ErrorCode {
+public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
     SUCCESS(SUCCESS_CODE, 200),
-
-    ERROR_UNKNOWN("A0000", 500),
     ERROR_NOT_FOUND("B0100", 404),
-    ERROR_EXCEPTION("D0000", 500);
+    ERROR_EXCEPTION("D0000", 500),
+    ERROR_UNKNOWN("F0000", 500),
+    ;
 
     private final String value;
     private final int status;
@@ -50,5 +51,38 @@ public enum CommonErrorCode implements ErrorCode {
     @Override
     public int getStatus() {
         return status;
+    }
+
+    @Override
+    public ErrorCode fromThrowable(Throwable e, ErrorCode defaultErrorCode) {
+        if (e instanceof SystemRuntimeException sys) {
+            return sys.getErrorCode();
+        }
+
+        return null;
+    }
+
+    @Override
+    public ErrorCode findErrorCode(String codeValue) {
+        return nullableFrom(codeValue);
+    }
+
+    @Nullable
+    private static CommonErrorCode nullableFrom(String value) {
+        for (CommonErrorCode errorCode : values()) {
+            if (errorCode.value.equals(value)) {
+                return errorCode;
+            }
+        }
+        return null;
+    }
+
+    @NonNull
+    public static CommonErrorCode from(String value) {
+        CommonErrorCode errorCode = nullableFrom(value);
+        if (errorCode == null) {
+            return ERROR_UNKNOWN;
+        }
+        return errorCode;
     }
 }

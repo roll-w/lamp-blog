@@ -20,12 +20,21 @@ import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 
 /**
+ * Auth Error Code.
+ * <p>
+ * From A1000 to A1049.
+ *
  * @author RollW
  */
 public enum AuthErrorCode implements ErrorCode {
     SUCCESS(SUCCESS_CODE, 200),
 
-    INVALID_TOKEN("A1001", 401),
+    ERROR_AUTH("A1000", 401),
+    ERROR_INVALID_TOKEN("A1001", 401),
+    ERROR_TOKEN_EXPIRED("A1002", 401),
+    ERROR_TOKEN_NOT_EXIST("A1003", 401),
+    ERROR_TOKEN_NOT_MATCH("A1004", 401),
+    ERROR_TOKEN_USED("A1005", 401),
     ;
 
 
@@ -51,5 +60,15 @@ public enum AuthErrorCode implements ErrorCode {
     @Override
     public int getStatus() {
         return status;
+    }
+
+    @Override
+    public ErrorCode fromThrowable(Throwable e, ErrorCode defaultErrorCode) {
+        return null;
+    }
+
+    @Override
+    public ErrorCode findErrorCode(String codeValue) {
+        return null;
     }
 }

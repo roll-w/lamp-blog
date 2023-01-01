@@ -44,6 +44,7 @@ public class LoginService {
     }
 
     public void sendToken(LoginVerifiableToken token) {
-
+        LoginStrategy strategy = getLoginStrategy(token.strategyType());
+        strategy.sendToken(token);
     }
 }

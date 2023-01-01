@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp;
+package space.lingu.lamp.web;
 
-import space.lingu.NonNull;
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-/**
- * @author RollW
- */
-public interface ErrorCode extends ErrorCodeFinder {
-    String SUCCESS_CODE = "00000";
+@SpringBootTest
+class LampBlogSystemApplicationTests {
 
-    @NonNull
-    String getCode();
+    @Test
+    void contextLoads() {
+    }
 
-    boolean getState();
-
-    int getStatus();
 }
