@@ -18,7 +18,6 @@ package space.lingu.lamp.web.controller.user;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
 import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.web.data.dto.LoginResponse;
 import space.lingu.lamp.web.data.dto.UserLoginRequest;
@@ -28,7 +27,6 @@ import javax.servlet.http.HttpServletRequest;
 /**
  * @author RollW
  */
-@RestController
 @UserApi
 public class LoginController {
 

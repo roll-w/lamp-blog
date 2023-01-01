@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.data.entity.user;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -24,6 +26,7 @@ import space.lingu.light.LightConfiguration;
 import space.lingu.light.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.Collection;
 
 /**
  * @author RollW
@@ -32,7 +35,8 @@ import java.io.Serializable;
         @Index(value = "username", unique = true)
 })
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
-public class User implements Serializable {
+@SuppressWarnings({"ClassCanBeRecord"})
+public class User implements Serializable, UserDetails {
     @PrimaryKey(autoGenerate = true)
     @DataColumn(name = "id")
     private final Long id;
@@ -53,30 +57,46 @@ public class User implements Serializable {
     @DataColumn(name = "email")
     private final String email;
 
-    // private String phone;
+    @DataColumn(name = "phone")
+    private final String phone;
 
     @DataColumn(name = "enabled")
     private final boolean enabled;
 
+    /**
+     */
     @DataColumn(name = "locked")
     private final boolean locked;
 
+    /**
+     *
+     */
     @DataColumn(name = "account_expired")
     private final boolean accountExpired;
 
+    /**
+     * 账号注销
+     */
+    @DataColumn(name = "account_canceled")
+    private final boolean canceled;
+
     @Constructor
     public User(Long id, String username, String password,
-                Role role, long registerTime, String email,
-                boolean enabled, boolean locked, boolean accountExpired) {
+                Role role, long registerTime,
+                String email, String phone,
+                boolean enabled, boolean locked, boolean accountExpired,
+                boolean canceled) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
         this.registerTime = registerTime;
         this.email = email;
+        this.phone = phone;
         this.enabled = enabled;
         this.locked = locked;
         this.accountExpired = accountExpired;
+        this.canceled = canceled;
     }
 
     public Long getId() {
@@ -103,6 +123,11 @@ public class User implements Serializable {
         return email;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
@@ -113,6 +138,30 @@ public class User implements Serializable {
 
     public boolean isAccountExpired() {
         return accountExpired;
+    }
+
+    public boolean isCanceled() {
+        return canceled;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return !accountExpired || !canceled;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return !locked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return role.toAuthority();
     }
 
     public static Builder builder() {
@@ -127,9 +176,18 @@ public class User implements Serializable {
                 .setRole(role)
                 .setRegisterTime(registerTime)
                 .setEmail(email)
+                .setPhone(phone)
                 .setEnabled(enabled)
                 .setLocked(locked)
-                .setAccountExpired(accountExpired);
+                .setAccountExpired(accountExpired)
+                .setCanceled(canceled);
+    }
+
+    public static boolean isInvalidId(Long userId) {
+        if (userId == null) {
+            return true;
+        }
+        return userId <= 0;
     }
 
     public static final class Builder {
@@ -139,9 +197,11 @@ public class User implements Serializable {
         private Role role;
         private long registerTime;
         private String email;
+        private String phone;
         private boolean enabled;
         private boolean locked;
         private boolean accountExpired;
+        private boolean canceled;
 
         public Builder setId(Long id) {
             this.id = id;
@@ -173,6 +233,11 @@ public class User implements Serializable {
             return this;
         }
 
+        public Builder setPhone(String phone) {
+            this.phone = phone;
+            return this;
+        }
+
         public Builder setEnabled(boolean enabled) {
             this.enabled = enabled;
             return this;
@@ -188,11 +253,16 @@ public class User implements Serializable {
             return this;
         }
 
+        public Builder setCanceled(boolean canceled) {
+            this.canceled = canceled;
+            return this;
+        }
+
         public User build() {
             return new User(
                     id, username, password,
                     role, registerTime,
-                    email, enabled, locked, accountExpired);
+                    email, phone, enabled, locked, accountExpired, canceled);
         }
     }
 }

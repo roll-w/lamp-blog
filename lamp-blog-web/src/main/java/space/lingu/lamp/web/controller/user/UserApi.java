@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.controller.user;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
@@ -31,5 +32,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @RequestMapping("/api/user/")
+@RestController
 public @interface UserApi {
 }
