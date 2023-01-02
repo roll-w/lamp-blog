@@ -31,7 +31,7 @@ import java.util.Collection;
 /**
  * @author RollW
  */
-@DataTable(tableName = "user_table", indices = {
+@DataTable(tableName = "user", indices = {
         @Index(value = "username", unique = true)
 })
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
@@ -191,17 +191,17 @@ public class User implements Serializable, UserDetails {
     }
 
     public static final class Builder {
-        private Long id;
+        private Long id = null;
         private String username;
         private String password;
-        private Role role;
+        private Role role = Role.USER;
         private long registerTime;
         private String email;
         private String phone;
         private boolean enabled;
-        private boolean locked;
-        private boolean accountExpired;
-        private boolean canceled;
+        private boolean locked = false;
+        private boolean accountExpired = false;
+        private boolean canceled = false;
 
         public Builder setId(Long id) {
             this.id = id;

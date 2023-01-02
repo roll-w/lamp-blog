@@ -18,12 +18,15 @@ package space.lingu.lamp.web.authentication.login;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.web.data.dto.LoginPasswordToken;
+import space.lingu.lamp.web.data.dto.user.LoginPasswordToken;
 import space.lingu.lamp.web.data.entity.user.User;
 import space.lingu.lamp.web.data.entity.LoginVerifiableToken;
 import space.lingu.lamp.web.service.auth.AuthErrorCode;
+import space.lingu.lamp.web.service.user.UserErrorCode;
 
 /**
  * @author RollW
@@ -31,6 +34,12 @@ import space.lingu.lamp.web.service.auth.AuthErrorCode;
 @Component
 public class PasswordLoginStrategy implements LoginStrategy {
     private static final Logger logger = LoggerFactory.getLogger(PasswordLoginStrategy.class);
+
+    private final PasswordEncoder passwordEncoder;
+
+    public PasswordLoginStrategy(PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
     public LoginVerifiableToken createToken(User user) {
@@ -43,8 +52,17 @@ public class PasswordLoginStrategy implements LoginStrategy {
             logger.error("Passed token type error: {}.", token.getClass().getName());
             return AuthErrorCode.ERROR_INVALID_TOKEN;
         }
-
         return null;
+    }
+
+    @NonNull
+    @Override
+    public ErrorCode verify(String token, @NonNull User user) {
+        if (!passwordEncoder.matches(token, user.getPassword())) {
+            return UserErrorCode.ERROR_PASSWORD_NOT_CORRECT;
+        }
+
+        return AuthErrorCode.SUCCESS;
     }
 
     @Override

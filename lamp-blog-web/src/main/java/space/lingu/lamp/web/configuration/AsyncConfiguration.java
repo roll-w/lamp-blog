@@ -14,35 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.data.dto;
+package space.lingu.lamp.web.configuration;
 
-import space.lingu.NonNull;
-import space.lingu.Nullable;
-import space.lingu.lamp.web.authentication.login.LoginStrategyType;
-import space.lingu.lamp.web.data.entity.LoginVerifiableToken;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.annotation.EnableAsync;
 
 /**
  * @author RollW
  */
-public record LoginPasswordToken(
-        String password,
-        long userId
-) implements LoginVerifiableToken {
-
-    @NonNull
-    @Override
-    public String token() {
-        return password;
-    }
-
-    @Nullable
-    @Override
-    public Long expireTime() {
-        return null;
-    }
-
-    @Override
-    public LoginStrategyType strategyType() {
-        return LoginStrategyType.PASSWORD;
-    }
+@EnableAsync(proxyTargetClass = true)
+@Configuration
+public class AsyncConfiguration {
 }

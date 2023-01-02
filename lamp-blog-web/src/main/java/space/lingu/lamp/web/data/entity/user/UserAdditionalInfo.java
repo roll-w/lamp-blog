@@ -27,7 +27,7 @@ import java.io.Serializable;
  *
  * @author RollW
  */
-@DataTable(tableName = "user_additional_table")
+@DataTable(tableName = "user_additional_info")
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
 public final class UserAdditionalInfo implements Serializable {
     @PrimaryKey

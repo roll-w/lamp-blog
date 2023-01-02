@@ -16,11 +16,61 @@
 
 package space.lingu.lamp.web.data.database.repository;
 
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
+import space.lingu.lamp.web.data.database.LampDatabase;
+import space.lingu.lamp.web.data.database.dao.UserDao;
+import space.lingu.lamp.web.data.entity.user.User;
+
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author RollW
  */
 @Repository
 public class UserRepository {
+    private final UserDao userDao;
+
+    public UserRepository(LampDatabase database) {
+        this.userDao = database.getUserDao();
+    }
+
+    public long insertUser(User user) {
+        return userDao.insert(user);
+    }
+
+    @Async
+    public CompletableFuture<Long> asyncInsertUser(User user) {
+        return CompletableFuture.completedFuture(
+                user.getId()
+        );
+    }
+
+    public User getUserById(long id) {
+        return userDao.getUserById(id);
+    }
+
+    public User getUserByName(String name) {
+        return userDao.getUserByName(name);
+    }
+
+    public Long getUserIdByName(String name) {
+        return userDao.getUserIdByName(name);
+    }
+
+    public User getUserByEmail(String email) {
+        return userDao.getUserByEmail(email);
+    }
+
+    public Long getUserIdByEmail(String email) {
+        return userDao.getUserIdByEmail(email);
+    }
+
+    public boolean isExistByEmail(String email) {
+        return !User.isInvalidId(getUserIdByEmail(email));
+    }
+
+    public boolean hasUsers() {
+        return userDao.hasUsers() != null;
+    }
 }

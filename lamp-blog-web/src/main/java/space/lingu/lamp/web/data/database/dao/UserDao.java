@@ -30,6 +30,7 @@ import java.util.List;
  * @author RollW
  */
 @Dao
+@SuppressWarnings("SqlNoDataSourceInspection")
 public abstract class UserDao {
     @Insert
     public abstract long insert(User user);
@@ -49,4 +50,22 @@ public abstract class UserDao {
 
     @Query("SELECT * FROM user")
     public abstract List<User> get();
+
+    @Query("SELECT * FROM user WHERE id = {id}")
+    public abstract User getUserById(long id);
+
+    @Query("SELECT * FROM user WHERE email = {email}")
+    public abstract User getUserByEmail(String email);
+
+    @Query("SELECT id FROM user WHERE email = {email}")
+    public abstract Long getUserIdByEmail(String email);
+
+    @Query("SELECT * FROM user WHERE username = {name}")
+    public abstract User getUserByName(String name);
+
+    @Query("SELECT id FROM user WHERE username = {name}")
+    public abstract Long getUserIdByName(String name);
+
+    @Query("SELECT 1 FROM user")
+    public abstract Integer hasUsers();
 }

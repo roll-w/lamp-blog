@@ -16,6 +16,9 @@
 
 package space.lingu.lamp;
 
+import java.util.function.Function;
+import java.util.function.Supplier;
+
 /**
  * @author RollW
  */
@@ -28,10 +31,36 @@ public record MessagePackage<D>(
         this(code, code.toString(), data);
     }
 
+    public static <D> MessagePackage<D> success(D data) {
+        return new MessagePackage<>(CommonErrorCode.SUCCESS, data);
+    }
+
+    public static <D> MessagePackage<D> create(ErrorCode code, String message, D data) {
+        return new MessagePackage<>(code, message, data);
+    }
+
+    public static <D> MessagePackage<D> create(ErrorCode code, D data) {
+        return new MessagePackage<>(code, data);
+    }
+
     public HttpResponseBody<D> toResponseBody() {
         if (errorCode.getState()) {
             return HttpResponseBody.success(message(), data());
         }
         return HttpResponseBody.failure(errorCode(), message(), data());
+    }
+
+    public <T> HttpResponseBody<T> toResponseBody(Function<D, T> typeTrans) {
+        if (errorCode.getState()) {
+            return HttpResponseBody.success(message(), typeTrans.apply(data()));
+        }
+        return HttpResponseBody.failure(errorCode(), message(), typeTrans.apply(data()));
+    }
+
+    public <T> HttpResponseBody<T> toResponseBody(Supplier<T> typeTrans) {
+        if (errorCode.getState()) {
+            return HttpResponseBody.success(message(), typeTrans.get());
+        }
+        return HttpResponseBody.failure(errorCode(), message(), typeTrans.get());
     }
 }

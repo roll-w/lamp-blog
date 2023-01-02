@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.service.auth;
+package space.lingu.lamp.web.data.dto.user;
 
 /**
  * @author RollW
  */
-public interface AuthenticationService {
-    String generateToken(long userId);
-
-    AuthErrorCode verifyToken(String token);
+public record LoginResponse(
+        String token,
+        UserInfo user
+) {
+    public static final LoginResponse NULL = new LoginResponse(null, null);
 }

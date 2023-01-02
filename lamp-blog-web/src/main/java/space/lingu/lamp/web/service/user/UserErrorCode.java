@@ -14,30 +14,80 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp;
+package space.lingu.lamp.web.service.user;
 
 import space.lingu.NonNull;
-import space.lingu.Nullable;
+import space.lingu.lamp.ErrorCode;
+import space.lingu.lamp.ErrorCodeFinder;
 
 /**
+ * User Error Code.
+ * <p>
+ * From A0000 to A0999.
+ *
  * @author RollW
  */
-public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
+public enum UserErrorCode implements ErrorCode {
     SUCCESS(SUCCESS_CODE, 200),
-    ERROR_NOT_FOUND("B0100", 404),
-    ERROR_EXCEPTION("D0000", 500),
-    ERROR_NULL("D0001", 500),
-    ERROR_UNKNOWN("F0000", 500),
+    /**
+     * 注册错误
+     */
+    ERROR_REGISTER("A0000"),
+    /**
+     * 用户已存在
+     */
+    ERROR_USER_EXISTED("A0001"),
+    /**
+     * 用户已登录
+     */
+    ERROR_USER_ALREADY_LOGIN("A0002"),
+    /**
+     * 用户已激活
+     */
+    ERROR_USER_ALREADY_ACTIVATED("A0003"),
+    /**
+     * 用户不存在
+     */
+    ERROR_USER_NOT_EXIST("A0004"),
+    /**
+     * 用户未登录
+     */
+    ERROR_USER_NOT_LOGIN("A0005", 401),
+    /**
+     * 登陆状态过期
+     */
+    ERROR_LOGIN_EXPIRED("A0006"),
+    /**
+     * 密码错误
+     */
+    ERROR_PASSWORD_NOT_CORRECT("A0010"),
+    /**
+     * 密码不合规，校验错误
+     */
+    ERROR_PASSWORD_NON_COMPLIANCE("A0011"),
+    /**
+     * 用户名不合规
+     */
+    ERROR_USERNAME_NON_COMPLIANCE("A0012"),
+    /**
+     * 邮件名不合规
+     */
+    ERROR_EMAIL_NON_COMPLIANCE("A0013"),
 
-    ;
+    ERROR_EMAIL_EXISTED("A0014");
 
 
     private final String value;
     private final int status;
 
-    CommonErrorCode(String value, int status) {
+    UserErrorCode(String value, int status) {
         this.value = value;
         this.status = status;
+    }
+
+    UserErrorCode(String value) {
+        this.value = value;
+        this.status = 403;
     }
 
     @Override
@@ -46,11 +96,11 @@ public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
             return "SUCCESS";
         }
 
-        return "CommonError: %s, code: %s".formatted(name(), getCode());
+        return "UserError: %s, code: %s".formatted(name(), getCode());
     }
 
-    @NonNull
     @Override
+    @NonNull
     public String getCode() {
         return value;
     }
@@ -73,34 +123,11 @@ public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
 
     @Override
     public ErrorCode fromThrowable(Throwable e, ErrorCode defaultErrorCode) {
-        if (e instanceof SystemRuntimeException sys) {
-            return sys.getErrorCode();
-        }
-
         return null;
     }
 
     @Override
     public ErrorCode findErrorCode(String codeValue) {
         return ErrorCodeFinder.from(values(), codeValue);
-    }
-
-    @Nullable
-    private static CommonErrorCode nullableFrom(String value) {
-        for (CommonErrorCode errorCode : values()) {
-            if (errorCode.value.equals(value)) {
-                return errorCode;
-            }
-        }
-        return null;
-    }
-
-    @NonNull
-    public static CommonErrorCode from(String value) {
-        CommonErrorCode errorCode = nullableFrom(value);
-        if (errorCode == null) {
-            return ERROR_UNKNOWN;
-        }
-        return errorCode;
     }
 }

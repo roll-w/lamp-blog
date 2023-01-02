@@ -14,27 +14,29 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.controller.user;
+package space.lingu.lamp.web.data.dto.user;
 
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import space.lingu.lamp.HttpResponseEntity;
-import space.lingu.lamp.web.data.dto.LoginResponse;
-import space.lingu.lamp.web.data.dto.UserLoginRequest;
-
-import javax.servlet.http.HttpServletRequest;
+import space.lingu.lamp.web.data.entity.user.Role;
+import space.lingu.lamp.web.data.entity.user.User;
 
 /**
  * @author RollW
  */
-@UserApi
-public class LoginController {
-
-    @PostMapping("/login/password")
-    public HttpResponseEntity<LoginResponse> loginByPassword(
-            HttpServletRequest request,
-            @RequestBody UserLoginRequest loginRequest) {
-        return null;
+public record UserInfo(
+        long userId,
+        String username,
+        String email,
+        Role role
+) {
+    public static UserInfo from(User user) {
+        if (user == null) {
+            return null;
+        }
+        return new UserInfo(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole()
+        );
     }
-
 }

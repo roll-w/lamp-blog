@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.authentication.login;
 
 
+import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.web.data.entity.user.User;
 import space.lingu.lamp.web.data.entity.LoginVerifiableToken;
@@ -27,7 +28,11 @@ import space.lingu.lamp.web.data.entity.LoginVerifiableToken;
 public interface LoginStrategy {
     LoginVerifiableToken createToken(User user);
 
+    // TODO: may no longer be used.
     ErrorCode verify(LoginVerifiableToken token);
+
+    @NonNull
+    ErrorCode verify(String token, @NonNull User user);
 
     void sendToken(LoginVerifiableToken token);
 

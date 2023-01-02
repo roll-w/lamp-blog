@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.configuration;
 
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import space.lingu.lamp.web.data.database.LampDatabase;
 import space.lingu.light.Light;
 import space.lingu.light.connect.HikariConnectionPool;
@@ -25,8 +27,10 @@ import space.lingu.light.sql.MySQLDialectProvider;
 /**
  * @author RollW
  */
+@Configuration
 public class DatabaseConfiguration {
 
+    @Bean
     public LampDatabase lampDatabase() {
         return Light.databaseBuilder(LampDatabase.class, MySQLDialectProvider.class)
                 .setLogger(LightSlf4jLogger.createLogger(LampDatabase.class))

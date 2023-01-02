@@ -14,15 +14,12 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.data.dto;
+package space.lingu.lamp.web.data.dto.user;
 
 /**
- * @param identity Identity, could be a username or email, etc.
- * @param token    login token, could be the password or a code.
  * @author RollW
  */
-public record UserLoginRequest(
-        String identity,
-        String token
+public record LoginTokenSendRequest(
+        String identity
 ) {
 }
