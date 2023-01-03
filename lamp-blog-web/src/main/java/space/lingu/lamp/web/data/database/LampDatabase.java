@@ -16,7 +16,11 @@
 
 package space.lingu.lamp.web.data.database;
 
+import space.lingu.lamp.web.data.database.dao.SystemSettingDao;
 import space.lingu.lamp.web.data.database.dao.UserDao;
+import space.lingu.lamp.web.data.database.dao.RegisterVerificationTokenDao;
+import space.lingu.lamp.web.data.entity.SystemSetting;
+import space.lingu.lamp.web.data.entity.user.RegisterVerificationToken;
 import space.lingu.lamp.web.data.entity.user.User;
 import space.lingu.light.Database;
 import space.lingu.light.LightConfiguration;
@@ -26,9 +30,13 @@ import space.lingu.light.LightDatabase;
  * @author RollW
  */
 @Database(name = "lamp_blog_database", version = 1, tables = {
-        User.class,
+        User.class, RegisterVerificationToken.class, SystemSetting.class
 })
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "255")
 public abstract class LampDatabase extends LightDatabase {
     public abstract UserDao getUserDao();
+
+    public abstract RegisterVerificationTokenDao getRegisterVerificationTokenDao();
+
+    public abstract SystemSettingDao getSystemSettingDao();
 }

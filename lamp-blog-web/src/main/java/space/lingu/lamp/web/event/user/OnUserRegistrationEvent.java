@@ -26,7 +26,7 @@ import java.util.Locale;
  */
 public class OnUserRegistrationEvent extends ApplicationEvent {
     /**
-     * 应用Url
+     * Confirm url prefix.
      */
     private final String url;
     private final Locale locale;

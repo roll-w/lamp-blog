@@ -26,12 +26,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import space.lingu.lamp.web.configuration.filter.CorsConfigFilter;
+import space.lingu.lamp.web.configuration.filter.TokenAuthenticationFilter;
+import space.lingu.lamp.web.service.auth.AuthenticationTokenService;
+import space.lingu.lamp.web.service.user.UserDetailsService;
 
 /**
  * @author RollW
@@ -48,7 +50,8 @@ public class WebSecurityConfiguration {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security,
-                                                   CorsConfigFilter corsConfigFilter) throws Exception {
+                                                   CorsConfigFilter corsConfigFilter,
+                                                   TokenAuthenticationFilter tokenAuthenticationFilter) throws Exception {
         security.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
@@ -58,8 +61,10 @@ public class WebSecurityConfiguration {
 
         security.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.NEVER);
-        security.addFilterBefore(corsConfigFilter,
+        security.addFilterBefore(tokenAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class);
+        security.addFilterBefore(corsConfigFilter,
+                TokenAuthenticationFilter.class);
         return security.build();
     }
 
@@ -83,4 +88,19 @@ public class WebSecurityConfiguration {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    public CorsConfigFilter corsConfigFilter() {
+        return new CorsConfigFilter();
+    }
+
+    @Bean
+    public TokenAuthenticationFilter tokenAuthenticationFilter(
+            AuthenticationTokenService authenticationTokenService) {
+        return new TokenAuthenticationFilter(
+                authenticationTokenService,
+                userDetailsService
+        );
+    }
+
 }

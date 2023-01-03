@@ -14,26 +14,11 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.event.user;
-
-import org.springframework.context.ApplicationListener;
-import org.springframework.scheduling.annotation.Async;
-import org.springframework.stereotype.Component;
-import space.lingu.NonNull;
+package space.lingu.lamp.event;
 
 /**
  * @author RollW
  */
-@Component
-public class RegistrationListener implements ApplicationListener<OnUserRegistrationEvent> {
-
-    @Override
-    public void onApplicationEvent(@NonNull OnUserRegistrationEvent event) {
-        handleRegistration(event);
-    }
-
-    @Async
-    void handleRegistration(OnUserRegistrationEvent event) {
-        // TODO: handle registration
-    }
+public interface EventRegistry<R, M> {
+    void register(EventCallback<R> eventCallback, M messagePattern);
 }

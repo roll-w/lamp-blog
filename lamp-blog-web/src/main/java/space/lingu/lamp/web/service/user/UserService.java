@@ -17,7 +17,6 @@
 package space.lingu.lamp.web.service.user;
 
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.web.data.database.repository.UserRepository;
@@ -39,6 +38,15 @@ public class UserService implements UserDetailsService {
         User user = userRepository.getUserByName(username);
         if (user == null) {
             throw new UsernameNotFoundException("Username " + username + " not exist");
+        }
+        return user;
+    }
+
+    @Override
+    public UserDetails loadUserByUserId(long userId) throws UsernameNotFoundException {
+        User user = userRepository.getUserById(userId);
+        if (user == null) {
+            throw new UsernameNotFoundException("UserID " + userId + " not exist");
         }
         return user;
     }

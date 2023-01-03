@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.data.dto.user;
+package space.lingu.lamp.web.data.entity;
 
-import space.lingu.lamp.web.data.entity.user.Role;
-import space.lingu.lamp.web.data.entity.user.User;
+import space.lingu.light.DataTable;
 
 /**
  * @author RollW
  */
-public record UserInfo(
-        long id,
-        String username,
-        String email,
-        Role role
-) {
-    public static UserInfo from(User user) {
-        if (user == null) {
-            return null;
-        }
-        return new UserInfo(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole()
-        );
+@DataTable(tableName = "system_setting")
+@SuppressWarnings("all")
+public class SystemSetting {
+    private final String key;
+    private final String value;
+
+    public SystemSetting(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
     }
 }

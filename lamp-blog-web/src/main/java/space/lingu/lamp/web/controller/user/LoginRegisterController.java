@@ -62,7 +62,7 @@ public class LoginRegisterController {
             );
         }
         String token = authenticationTokenService.generateAuthToken(
-                res.data().userId()
+                res.data().id()
         );
         LoginResponse response = new LoginResponse(token, res.data());
         return HttpResponseEntity.success(response);
@@ -91,5 +91,11 @@ public class LoginRegisterController {
                 request.email(), Role.USER
         );
         return HttpResponseEntity.create(res.toResponseBody(() -> null));
+    }
+
+    @PostMapping("/logout")
+    public HttpResponseEntity<Void> logout() {
+
+        return HttpResponseEntity.success();
     }
 }

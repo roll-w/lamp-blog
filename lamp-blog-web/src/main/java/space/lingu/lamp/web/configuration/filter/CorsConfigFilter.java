@@ -16,7 +16,6 @@
 
 package space.lingu.lamp.web.configuration.filter;
 
-import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 
 import javax.servlet.Filter;
@@ -34,7 +33,6 @@ import java.util.StringJoiner;
 /**
  * @author RollW
  */
-@Configuration
 public class CorsConfigFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {

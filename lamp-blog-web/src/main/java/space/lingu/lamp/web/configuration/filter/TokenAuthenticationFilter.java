@@ -16,30 +16,63 @@
 
 package space.lingu.lamp.web.configuration.filter;
 
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.filter.OncePerRequestFilter;
+import space.lingu.lamp.web.data.dto.TokenAuthResult;
 import space.lingu.lamp.web.service.auth.AuthenticationTokenService;
+import space.lingu.lamp.web.service.user.UserDetailsService;
 
-import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
  * @author RollW
  */
-
-public class TokenAuthenticationFilter implements Filter {
+public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationTokenService authenticationTokenService;
+    private final UserDetailsService userDetailsService;
 
-    public TokenAuthenticationFilter(AuthenticationTokenService authenticationTokenService) {
+    public TokenAuthenticationFilter(AuthenticationTokenService authenticationTokenService,
+                                     UserDetailsService userDetailsService) {
         this.authenticationTokenService = authenticationTokenService;
+        this.userDetailsService = userDetailsService;
     }
 
     @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-        authenticationTokenService.verifyToken(null);
+    protected void doFilterInternal(HttpServletRequest request,
+                                    HttpServletResponse response,
+                                    FilterChain filterChain) throws ServletException, IOException {
+        if (SecurityContextHolder.getContext().getAuthentication() != null) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        String token = request.getHeader("Authorization");
+        if (token == null || token.isEmpty()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
+        TokenAuthResult result = authenticationTokenService.verifyToken(token);
+        if (!result.state()) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        UserDetails userDetails =
+                userDetailsService.loadUserByUserId(result.userId());
+        if (userDetails != null) {
+            Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(
+                    userDetails,
+                    userDetails.getPassword(),
+                    userDetails.getAuthorities()
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }
+        filterChain.doFilter(request, response);
     }
-
-
 }

@@ -14,29 +14,17 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.data.dto.user;
+package space.lingu.lamp.web.service.user;
 
-import space.lingu.lamp.web.data.entity.user.Role;
-import space.lingu.lamp.web.data.entity.user.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * @author RollW
  */
-public record UserInfo(
-        long id,
-        String username,
-        String email,
-        Role role
-) {
-    public static UserInfo from(User user) {
-        if (user == null) {
-            return null;
-        }
-        return new UserInfo(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole()
-        );
-    }
+public interface UserDetailsService extends org.springframework.security.core.userdetails.UserDetailsService {
+    @Override
+    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+
+    UserDetails loadUserByUserId(long userId) throws UsernameNotFoundException;
 }

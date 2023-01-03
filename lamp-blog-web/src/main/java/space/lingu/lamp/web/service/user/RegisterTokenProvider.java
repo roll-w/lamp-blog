@@ -14,29 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.data.dto.user;
+package space.lingu.lamp.web.service.user;
 
-import space.lingu.lamp.web.data.entity.user.Role;
-import space.lingu.lamp.web.data.entity.user.User;
+import space.lingu.lamp.web.data.dto.user.UserInfo;
 
 /**
  * @author RollW
  */
-public record UserInfo(
-        long id,
-        String username,
-        String email,
-        Role role
-) {
-    public static UserInfo from(User user) {
-        if (user == null) {
-            return null;
-        }
-        return new UserInfo(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole()
-        );
-    }
+public interface RegisterTokenProvider {
+    String createRegisterToken(UserInfo userInfo);
+
+    UserInfo verifyRegisterToken(String token);
 }

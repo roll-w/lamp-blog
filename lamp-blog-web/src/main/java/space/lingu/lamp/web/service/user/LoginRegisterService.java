@@ -33,6 +33,7 @@ import space.lingu.lamp.web.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.data.database.repository.UserRepository;
 import space.lingu.lamp.web.data.dto.user.UserInfo;
 import space.lingu.lamp.web.data.entity.LoginVerifiableToken;
+import space.lingu.lamp.web.data.entity.user.RegisterVerificationToken;
 import space.lingu.lamp.web.data.entity.user.Role;
 import space.lingu.lamp.web.data.entity.user.User;
 import space.lingu.lamp.web.event.user.OnUserRegistrationEvent;
@@ -41,12 +42,13 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author RollW
  */
 @Service
-public class LoginRegisterService {
+public class LoginRegisterService implements RegisterTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(LoginRegisterService.class);
 
     private final UserRepository userRepository;
@@ -161,4 +163,23 @@ public class LoginRegisterService {
         return MessagePackage.success(UserInfo.from(user));
     }
 
+    public void logout() {
+        SecurityContextHolder.clearContext();
+    }
+
+    @Override
+    public String createRegisterToken(UserInfo userInfo) {
+        UUID uuid = UUID.randomUUID();
+        String token = uuid.toString();
+        RegisterVerificationToken registerVerificationToken = new RegisterVerificationToken(
+                token, userInfo.id(), System.currentTimeMillis(), false
+        );
+
+        return uuid.toString();
+    }
+
+    @Override
+    public UserInfo verifyRegisterToken(String token) {
+        return null;
+    }
 }
