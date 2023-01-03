@@ -16,7 +16,9 @@
 
 package space.lingu.lamp.web.data.entity;
 
+import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
+import space.lingu.light.PrimaryKey;
 
 /**
  * @author RollW
@@ -24,7 +26,11 @@ import space.lingu.light.DataTable;
 @DataTable(tableName = "system_setting")
 @SuppressWarnings("all")
 public class SystemSetting {
+    @DataColumn(name = "key")
+    @PrimaryKey
     private final String key;
+
+    @DataColumn(name = "value")
     private final String value;
 
     public SystemSetting(String key, String value) {

@@ -31,7 +31,7 @@ import java.util.Date;
  * @author RollW
  */
 @DataTable(tableName = "verification_token",
-        indices = @Index(value = "verification_user_id"))
+        indices = @Index(value = "user_id"))
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
 public record RegisterVerificationToken(
         @DataColumn(name = "token")

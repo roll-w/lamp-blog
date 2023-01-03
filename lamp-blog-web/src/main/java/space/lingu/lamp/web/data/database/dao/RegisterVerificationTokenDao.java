@@ -48,9 +48,6 @@ public abstract class RegisterVerificationTokenDao {
     @Delete("UPDATE verification_token SET used = {used} WHERE token = {token}")
     public abstract void updateUsedByToken(String token, boolean used);
 
-    @Update(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void update(List<RegisterVerificationToken> tokens);
-
     @Delete
     public abstract void delete(RegisterVerificationToken... tokens);
 

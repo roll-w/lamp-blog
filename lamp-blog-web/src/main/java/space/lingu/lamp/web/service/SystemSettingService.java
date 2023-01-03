@@ -19,6 +19,7 @@ package space.lingu.lamp.web.service;
 import com.google.common.base.Strings;
 import org.springframework.stereotype.Service;
 import space.lingu.Nullable;
+import space.lingu.Todo;
 import space.lingu.lamp.event.EventCallback;
 import space.lingu.lamp.event.EventRegistry;
 import space.lingu.lamp.web.data.SettingLoader;
@@ -83,6 +84,7 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
     }
 
     @Override
+    @Todo(todo = "callback register")
     public void register(EventCallback<SystemSetting> eventCallback,
                          String messagePattern) {
         // TODO: callback register
