@@ -70,14 +70,14 @@ public class HttpResponseEntity<D> extends ResponseEntity<HttpResponseBody<D>> {
                                                     String message,
                                                     D data) {
         return HttpResponseEntity.create(
-                HttpResponseBody.failure(errorCode, status, message, data)
+                HttpResponseBody.create(errorCode, status, message, data)
         );
     }
 
     public static <D> HttpResponseEntity<D> failure(ErrorCode errorCode,
                                                     String message) {
         return HttpResponseEntity.create(
-                HttpResponseBody.failure(errorCode, message)
+                HttpResponseBody.create(errorCode, message)
         );
     }
 
@@ -85,7 +85,7 @@ public class HttpResponseEntity<D> extends ResponseEntity<HttpResponseBody<D>> {
                                                     String message,
                                                     D data) {
         return HttpResponseEntity.create(
-                HttpResponseBody.failure(errorCode, message, data)
+                HttpResponseBody.create(errorCode, message, data)
         );
     }
 }

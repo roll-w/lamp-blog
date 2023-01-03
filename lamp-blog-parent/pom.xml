@@ -40,7 +40,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <project.version>0.0.1-SNAPSHOT</project.version>
-        <light.version>0.4.1</light.version>
+        <light.version>0.4.2</light.version>
         <fiesta.version>0.2.1</fiesta.version>
         <guava.version>31.1-jre</guava.version>
         <hikari.version>5.0.1</hikari.version>

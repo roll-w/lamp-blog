@@ -28,6 +28,10 @@ public record TokenAuthResult(
 
         @NonNull
         AuthErrorCode errorCode) {
+    public boolean state() {
+        return errorCode.getState();
+    }
+
     public static TokenAuthResult success(long userId, String token) {
         return new TokenAuthResult(userId, token, AuthErrorCode.SUCCESS);
     }

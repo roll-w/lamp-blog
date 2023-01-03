@@ -109,28 +109,28 @@ public class HttpResponseBody<D> {
 
     // for semantic control
 
-    public static <D> HttpResponseBody<D> failure(ErrorCode errorCode,
-                                                  int status,
-                                                  String message,
-                                                  D data) {
+    public static <D> HttpResponseBody<D> create(ErrorCode errorCode,
+                                                 int status,
+                                                 String message,
+                                                 D data) {
         return new HttpResponseBody<>(errorCode, status, message, data);
     }
 
-    public static <D> HttpResponseBody<D> failure(ErrorCode errorCode,
-                                                  int status,
-                                                  String message) {
+    public static <D> HttpResponseBody<D> create(ErrorCode errorCode,
+                                                 int status,
+                                                 String message) {
 
         return new HttpResponseBody<>(errorCode, status, message);
     }
 
-    public static <D> HttpResponseBody<D> failure(ErrorCode errorCode,
-                                                  String message) {
+    public static <D> HttpResponseBody<D> create(ErrorCode errorCode,
+                                                 String message) {
         return new HttpResponseBody<>(errorCode, errorCode.getStatus(), message);
     }
 
-    public static <D> HttpResponseBody<D> failure(ErrorCode errorCode,
-                                                  String message,
-                                                  D data) {
+    public static <D> HttpResponseBody<D> create(ErrorCode errorCode,
+                                                 String message,
+                                                 D data) {
         return new HttpResponseBody<>(errorCode, errorCode.getStatus(), message, data);
     }
 }

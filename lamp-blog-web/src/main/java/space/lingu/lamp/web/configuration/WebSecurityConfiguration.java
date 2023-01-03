@@ -25,6 +25,8 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -38,13 +40,24 @@ import space.lingu.lamp.web.configuration.filter.CorsConfigFilter;
 @EnableWebSecurity
 @EnableGlobalAuthentication
 public class WebSecurityConfiguration {
+    private final UserDetailsService userDetailsService;
+
+    public WebSecurityConfiguration(UserDetailsService userDetailsService) {
+        this.userDetailsService = userDetailsService;
+    }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity security, CorsConfigFilter corsConfigFilter) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity security,
+                                                   CorsConfigFilter corsConfigFilter) throws Exception {
         security.csrf().disable()
                 .authorizeRequests()
                 .antMatchers("/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().permitAll();
+        security.userDetailsService(userDetailsService);
+
+        security.sessionManagement()
+                .sessionCreationPolicy(SessionCreationPolicy.NEVER);
         security.addFilterBefore(corsConfigFilter,
                 UsernamePasswordAuthenticationFilter.class);
         return security.build();
@@ -58,7 +71,7 @@ public class WebSecurityConfiguration {
                 .antMatchers("/error.html")
                 .antMatchers("/html/**")
                 .antMatchers("/js/**")
-                .antMatchers("/api/user/login");
+                .antMatchers("/api/user/login/**");
     }
 
     @Bean

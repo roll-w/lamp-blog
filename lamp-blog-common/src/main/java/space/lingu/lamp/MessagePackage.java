@@ -47,20 +47,20 @@ public record MessagePackage<D>(
         if (errorCode.getState()) {
             return HttpResponseBody.success(message(), data());
         }
-        return HttpResponseBody.failure(errorCode(), message(), data());
+        return HttpResponseBody.create(errorCode(), message(), data());
     }
 
     public <T> HttpResponseBody<T> toResponseBody(Function<D, T> typeTrans) {
         if (errorCode.getState()) {
             return HttpResponseBody.success(message(), typeTrans.apply(data()));
         }
-        return HttpResponseBody.failure(errorCode(), message(), typeTrans.apply(data()));
+        return HttpResponseBody.create(errorCode(), message(), typeTrans.apply(data()));
     }
 
     public <T> HttpResponseBody<T> toResponseBody(Supplier<T> typeTrans) {
         if (errorCode.getState()) {
             return HttpResponseBody.success(message(), typeTrans.get());
         }
-        return HttpResponseBody.failure(errorCode(), message(), typeTrans.get());
+        return HttpResponseBody.create(errorCode(), message(), typeTrans.get());
     }
 }

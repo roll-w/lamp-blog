@@ -16,10 +16,14 @@
 
 package space.lingu.lamp.web.service.user;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
@@ -29,25 +33,37 @@ import space.lingu.lamp.web.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.data.database.repository.UserRepository;
 import space.lingu.lamp.web.data.dto.user.UserInfo;
 import space.lingu.lamp.web.data.entity.LoginVerifiableToken;
+import space.lingu.lamp.web.data.entity.user.Role;
 import space.lingu.lamp.web.data.entity.user.User;
+import space.lingu.lamp.web.event.user.OnUserRegistrationEvent;
 
 import java.util.EnumMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 /**
  * @author RollW
  */
 @Service
-public class LoginService {
+public class LoginRegisterService {
+    private static final Logger logger = LoggerFactory.getLogger(LoginRegisterService.class);
+
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final Map<LoginStrategyType, LoginStrategy> loginStrategyMap =
             new EnumMap<>(LoginStrategyType.class);
 
-    public LoginService(@NonNull List<LoginStrategy> strategies,
-                        UserRepository userRepository, AuthenticationManager authenticationManager) {
+    public LoginRegisterService(@NonNull List<LoginStrategy> strategies,
+                                UserRepository userRepository,
+                                ApplicationEventPublisher eventPublisher,
+                                PasswordEncoder passwordEncoder,
+                                AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.eventPublisher = eventPublisher;
+        this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         strategies.forEach(strategy ->
                 loginStrategyMap.put(strategy.getStrategyType(), strategy));
@@ -102,6 +118,47 @@ public class LoginService {
         return MessagePackage.success(
                 UserInfo.from(user)
         );
+    }
+
+    public MessagePackage<UserInfo> registerUser(String username, String password,
+                                                 String email, Role role) {
+        Long userId = userRepository.getUserIdByName(username);
+        if (!User.isInvalidId(userId)) {
+            return MessagePackage.create(UserErrorCode.ERROR_USER_EXISTED,
+                    "A user with same name is existed.", null
+            );
+        }
+        if (userRepository.getUserByEmail(email) != null) {
+            return MessagePackage.create(UserErrorCode.ERROR_EMAIL_EXISTED,
+                    "A user with same email is existed.", null
+            );
+        }
+        long registerTime = System.currentTimeMillis();
+        String encodedPassword = passwordEncoder.encode(password);
+        // TODO: check params
+        User.Builder builder = User.builder()
+                .setUsername(username)
+                .setEmail(email)
+                .setRole(role)
+                .setPassword(encodedPassword)
+                .setRegisterTime(registerTime)
+                .setLocked(false)
+                .setEnabled(false)
+                .setAccountExpired(false);
+        if (!userRepository.hasUsers()) {
+            builder.setEnabled(true)
+                    .setRole(Role.ADMIN);
+        }
+        User user = builder.build();
+        if (!user.isEnabled()) {
+            OnUserRegistrationEvent event = new OnUserRegistrationEvent(
+                    UserInfo.from(user), Locale.getDefault(), "");
+            eventPublisher.publishEvent(event);
+        }
+        long id = userRepository.insertUser(user);
+        logger.info("Register username: {}, email: {}, role: {}, id: {}",
+                username, email, role, id);
+        return MessagePackage.success(UserInfo.from(user));
     }
 
 }

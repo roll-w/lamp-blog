@@ -28,8 +28,7 @@ import space.lingu.lamp.web.data.dto.user.UserLoginRequest;
 import space.lingu.lamp.web.data.dto.user.UserRegisterRequest;
 import space.lingu.lamp.web.data.entity.user.Role;
 import space.lingu.lamp.web.service.auth.AuthenticationTokenService;
-import space.lingu.lamp.web.service.user.LoginService;
-import space.lingu.lamp.web.service.user.RegisterService;
+import space.lingu.lamp.web.service.user.LoginRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -38,15 +37,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 @UserApi
 public class LoginRegisterController {
-    private final LoginService loginService;
-    private final RegisterService registerService;
+    private final LoginRegisterService loginRegisterService;
     private final AuthenticationTokenService authenticationTokenService;
 
-    public LoginRegisterController(LoginService loginService,
-                                   RegisterService registerService,
+    public LoginRegisterController(LoginRegisterService loginRegisterService,
                                    AuthenticationTokenService authenticationTokenService) {
-        this.loginService = loginService;
-        this.registerService = registerService;
+        this.loginRegisterService = loginRegisterService;
         this.authenticationTokenService = authenticationTokenService;
     }
 
@@ -56,7 +52,7 @@ public class LoginRegisterController {
             @RequestBody UserLoginRequest loginRequest) {
         // account login, account maybe the username or email
         // needs to check the account type and get the user id
-        MessagePackage<UserInfo> res = loginService.loginUser(
+        MessagePackage<UserInfo> res = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
                 LoginStrategyType.PASSWORD);
@@ -89,7 +85,7 @@ public class LoginRegisterController {
 
     @PostMapping("/register")
     public HttpResponseEntity<Void> registerUser(@RequestBody UserRegisterRequest request) {
-        MessagePackage<UserInfo> res = registerService.registerUser(
+        MessagePackage<UserInfo> res = loginRegisterService.registerUser(
                 request.username(),
                 request.password(),
                 request.email(), Role.USER

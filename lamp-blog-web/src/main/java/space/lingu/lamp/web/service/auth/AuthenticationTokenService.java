@@ -28,5 +28,8 @@ import space.lingu.lamp.web.data.dto.TokenAuthResult;
 public interface AuthenticationTokenService {
     String generateAuthToken(long userId);
 
+    /**
+     * 只验证Token的合法性，不负责确认用户状态。
+     */
     TokenAuthResult verifyToken(String token);
 }
