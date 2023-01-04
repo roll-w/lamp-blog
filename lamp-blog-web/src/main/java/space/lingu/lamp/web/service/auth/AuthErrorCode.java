@@ -97,5 +97,7 @@ public enum AuthErrorCode implements ErrorCode {
         return ErrorCodeFinder.from(values(), codeValue);
     }
 
-
+    public static ErrorCodeFinder getFinderInstance() {
+        return SUCCESS;
+    }
 }

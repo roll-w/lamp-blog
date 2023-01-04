@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.data.dto.user;
+package space.lingu.lamp.web.common;
+
+import space.lingu.lamp.SystemRuntimeException;
 
 /**
  * @author RollW
  */
-public record UserRegisterRequest(
-        String username,
-        String password,
-        String email) {
+public class ParameterMissingException extends SystemRuntimeException {
+    public ParameterMissingException() {
+        super(WebCommonErrorCode.ERROR_PARAM_MISSING);
+    }
+
+    public ParameterMissingException(String message) {
+        super(WebCommonErrorCode.ERROR_PARAM_MISSING, message);
+    }
 }

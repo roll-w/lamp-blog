@@ -37,7 +37,7 @@ public class SystemSettingRepository {
         if (setting == null) {
             return null;
         }
-        return setting.getKey();
+        return setting.getValue();
     }
 
     public SystemSetting getSystemSetting(String key) {

@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.service;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Sets;
 import org.springframework.stereotype.Service;
 import space.lingu.Nullable;
 import space.lingu.Todo;
@@ -27,17 +28,22 @@ import space.lingu.lamp.web.data.SettingProvider;
 import space.lingu.lamp.web.data.database.repository.SystemSettingRepository;
 import space.lingu.lamp.web.data.entity.SystemSetting;
 
+import java.util.Set;
+
 /**
  * @author RollW
  */
 @Service
 public class SystemSettingService implements SettingProvider, SettingLoader,
         EventRegistry<SystemSetting, String> {
+    public static final String ALL_SETTINGS = "AllSettingsCallback";
+
     private final SystemSettingRepository systemSettingRepository;
 
     public SystemSettingService(SystemSettingRepository systemSettingRepository) {
         this.systemSettingRepository = systemSettingRepository;
     }
+    // TODO: setting cache
 
     @Nullable
     @Override
@@ -62,7 +68,9 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         if (Strings.isNullOrEmpty(key)) {
             return;
         }
-        systemSettingRepository.set(key, value);
+        SystemSetting setting = new SystemSetting(key, value);
+        invokeCallback(setting);
+        systemSettingRepository.set(setting);
     }
 
     @Override
@@ -70,7 +78,7 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         if (setting == null || Strings.isNullOrEmpty(setting.getKey())) {
             return;
         }
-
+        invokeCallback(setting);
         systemSettingRepository.set(setting);
     }
 
@@ -79,7 +87,8 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         if (Strings.isNullOrEmpty(key)) {
             return;
         }
-
+        SystemSetting change = new SystemSetting(key, null);
+        invokeCallback(change);
         systemSettingRepository.delete(key);
     }
 
@@ -87,8 +96,57 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
     @Todo(todo = "callback register")
     public void register(EventCallback<SystemSetting> eventCallback,
                          String messagePattern) {
-        // TODO: callback register
+        Callback callback = new Callback(eventCallback, messagePattern);
+        callbacks.add(callback);
     }
 
-    // NOTE: callback method calls needs to be async.
+    // TODO: callback method calls needs to be async.
+    private void invokeCallback(SystemSetting change) {
+        callbacks.forEach(callback -> {
+            if (checkMode(change.getKey(), callback.message)) {
+                callback.callback().onEvent(change);
+            }
+        });
+    }
+
+    private boolean checkModes(String checker, String[] modes) {
+        if (modes == null) {
+            return true;
+        }
+        if (checker == null) {
+            return false;
+        }
+        for (String mode : modes) {
+            if (ALL_SETTINGS.equals(mode)) {
+                return true;
+            }
+            if (checker.startsWith(mode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean checkMode(String checker, String mode) {
+        if (mode == null) {
+            return true;
+        }
+        if (checker == null) {
+            return false;
+        }
+        if (ALL_SETTINGS.equals(mode)) {
+            return true;
+        }
+        return checker.startsWith(mode);
+    }
+
+
+    private final Set<Callback> callbacks = Sets.newConcurrentHashSet();
+
+    private record Callback(
+            EventCallback<SystemSetting> callback,
+            String message
+    ) {
+    }
+
 }

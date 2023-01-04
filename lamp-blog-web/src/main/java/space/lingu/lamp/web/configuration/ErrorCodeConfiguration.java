@@ -19,7 +19,10 @@ package space.lingu.lamp.web.configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import space.lingu.lamp.ErrorCodeFinderChain;
+import space.lingu.lamp.IoErrorCode;
+import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.service.auth.AuthErrorCode;
+import space.lingu.lamp.web.service.user.UserErrorCode;
 
 /**
  * @author RollW
@@ -30,7 +33,10 @@ public class ErrorCodeConfiguration {
     @Bean
     public ErrorCodeFinderChain errorCodeFinderChain() {
         return ErrorCodeFinderChain.start(
-                AuthErrorCode.SUCCESS
+                WebCommonErrorCode.getFinderInstance(),
+                AuthErrorCode.getFinderInstance(),
+                IoErrorCode.getFinderInstance(),
+                UserErrorCode.getFinderInstance()
         );
     }
 

@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.service.user;
 
+import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.web.data.dto.user.UserInfo;
 
 /**
@@ -24,5 +25,5 @@ import space.lingu.lamp.web.data.dto.user.UserInfo;
 public interface RegisterTokenProvider {
     String createRegisterToken(UserInfo userInfo);
 
-    UserInfo verifyRegisterToken(String token);
+    ErrorCode verifyRegisterToken(String token);
 }

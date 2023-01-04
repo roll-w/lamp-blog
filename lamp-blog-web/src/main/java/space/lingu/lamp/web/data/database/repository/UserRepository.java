@@ -39,6 +39,15 @@ public class UserRepository {
         return userDao.insert(user);
     }
 
+    public void update(User user) {
+        userDao.update(user);
+    }
+
+    @Async
+    public void makeUserEnabled(User user) {
+        userDao.updateEnabledByUser(user.getId(), true);
+    }
+
     @Async
     public CompletableFuture<Long> asyncInsertUser(User user) {
         return CompletableFuture.completedFuture(

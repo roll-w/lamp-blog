@@ -16,11 +16,14 @@
 
 package space.lingu.lamp.web.controller.user;
 
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.MessagePackage;
 import space.lingu.lamp.web.authentication.login.LoginStrategyType;
+import space.lingu.lamp.web.common.ParamValidate;
 import space.lingu.lamp.web.data.dto.user.LoginResponse;
 import space.lingu.lamp.web.data.dto.user.LoginTokenSendRequest;
 import space.lingu.lamp.web.data.dto.user.UserInfo;
@@ -52,6 +55,9 @@ public class LoginRegisterController {
             @RequestBody UserLoginRequest loginRequest) {
         // account login, account maybe the username or email
         // needs to check the account type and get the user id
+        ParamValidate.notEmpty(loginRequest.identity(), "");
+        ParamValidate.notEmpty(loginRequest.token(), "");
+
         MessagePackage<UserInfo> res = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
@@ -93,9 +99,21 @@ public class LoginRegisterController {
         return HttpResponseEntity.create(res.toResponseBody(() -> null));
     }
 
+    @PostMapping("/register/token/confirm/{token}")
+    public HttpResponseEntity<Void> activateUser(@PathVariable String token) {
+        return null;
+    }
+
+    @PostMapping(value = "/register/token/resend")
+    public HttpResponseEntity<Void> resendRegisterToken(
+            @RequestParam String username) {
+
+        return null;
+    }
+
     @PostMapping("/logout")
     public HttpResponseEntity<Void> logout() {
-
+        loginRegisterService.logout();
         return HttpResponseEntity.success();
     }
 }

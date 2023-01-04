@@ -25,9 +25,9 @@ import space.lingu.Nullable;
 public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
     SUCCESS(SUCCESS_CODE, 200),
     ERROR_NOT_FOUND("B0100", 404),
-    ERROR_EXCEPTION("D0000", 500),
-    ERROR_NULL("D0001", 500),
-    ERROR_UNKNOWN("F0000", 500),
+    ERROR_EXCEPTION("B1000", 500),
+    ERROR_NULL("B1001", 500),
+    ERROR_UNKNOWN("D0000", 500),
 
     ;
 

@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.service.user;
 
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -26,10 +27,12 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
+import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.MessagePackage;
 import space.lingu.lamp.web.authentication.login.LoginStrategy;
 import space.lingu.lamp.web.authentication.login.LoginStrategyType;
+import space.lingu.lamp.web.data.database.repository.RegisterVerificationTokenRepository;
 import space.lingu.lamp.web.data.database.repository.UserRepository;
 import space.lingu.lamp.web.data.dto.user.UserInfo;
 import space.lingu.lamp.web.data.entity.LoginVerifiableToken;
@@ -37,6 +40,7 @@ import space.lingu.lamp.web.data.entity.user.RegisterVerificationToken;
 import space.lingu.lamp.web.data.entity.user.Role;
 import space.lingu.lamp.web.data.entity.user.User;
 import space.lingu.lamp.web.event.user.OnUserRegistrationEvent;
+import space.lingu.lamp.web.service.auth.AuthErrorCode;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -52,6 +56,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(LoginRegisterService.class);
 
     private final UserRepository userRepository;
+    private final RegisterVerificationTokenRepository registerVerificationTokenRepository;
     private final ApplicationEventPublisher eventPublisher;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -60,10 +65,12 @@ public class LoginRegisterService implements RegisterTokenProvider {
 
     public LoginRegisterService(@NonNull List<LoginStrategy> strategies,
                                 UserRepository userRepository,
+                                RegisterVerificationTokenRepository registerVerificationTokenRepository,
                                 ApplicationEventPublisher eventPublisher,
                                 PasswordEncoder passwordEncoder,
                                 AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
+        this.registerVerificationTokenRepository = registerVerificationTokenRepository;
         this.eventPublisher = eventPublisher;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
@@ -102,16 +109,21 @@ public class LoginRegisterService implements RegisterTokenProvider {
         return userRepository.getUserByName(identity);
     }
 
+
+    // TODO: wait for the MessageProvider complete, replace it with DataPackage
     public MessagePackage<UserInfo> loginUser(String identity,
                                               String token,
                                               LoginStrategyType type) {
+        Preconditions.checkNotNull(identity, "identity cannot be null");
+        Preconditions.checkNotNull(token, "token cannot be null");
+
         User user = tryGetUser(identity);
         if (user == null) {
-            return MessagePackage.create(UserErrorCode.ERROR_USER_NOT_EXIST, null);
+            return MessagePackage.create(UserErrorCode.ERROR_USER_NOT_EXIST, "User not exist");
         }
         ErrorCode code = verifyToken(token, user, type);
         if (!code.getState()) {
-            return MessagePackage.create(code, null);
+            return MessagePackage.create(code);
         }
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(user, token, user.getAuthorities());
@@ -127,12 +139,12 @@ public class LoginRegisterService implements RegisterTokenProvider {
         Long userId = userRepository.getUserIdByName(username);
         if (!User.isInvalidId(userId)) {
             return MessagePackage.create(UserErrorCode.ERROR_USER_EXISTED,
-                    "A user with same name is existed.", null
+                    "A user with same name is existed."
             );
         }
         if (userRepository.getUserByEmail(email) != null) {
             return MessagePackage.create(UserErrorCode.ERROR_EMAIL_EXISTED,
-                    "A user with same email is existed.", null
+                    "A user with same email is existed."
             );
         }
         long registerTime = System.currentTimeMillis();
@@ -152,12 +164,16 @@ public class LoginRegisterService implements RegisterTokenProvider {
                     .setRole(Role.ADMIN);
         }
         User user = builder.build();
+        long id = userRepository.insertUser(user);
+        user = builder.setId(id).build();
+
         if (!user.isEnabled()) {
             OnUserRegistrationEvent event = new OnUserRegistrationEvent(
-                    UserInfo.from(user), Locale.getDefault(), "");
+                    UserInfo.from(user), Locale.getDefault(),
+                    "http://localhost:5000/");
             eventPublisher.publishEvent(event);
         }
-        long id = userRepository.insertUser(user);
+
         logger.info("Register username: {}, email: {}, role: {}, id: {}",
                 username, email, role, id);
         return MessagePackage.success(UserInfo.from(user));
@@ -174,12 +190,47 @@ public class LoginRegisterService implements RegisterTokenProvider {
         RegisterVerificationToken registerVerificationToken = new RegisterVerificationToken(
                 token, userInfo.id(), System.currentTimeMillis(), false
         );
-
+        registerVerificationTokenRepository.insert(registerVerificationToken);
         return uuid.toString();
     }
 
     @Override
-    public UserInfo verifyRegisterToken(String token) {
-        return null;
+    public ErrorCode verifyRegisterToken(String token) {
+        RegisterVerificationToken verificationToken =
+                registerVerificationTokenRepository.findByToken(token);
+        if (verificationToken == null) {
+            return AuthErrorCode.ERROR_TOKEN_NOT_EXIST;
+        }
+        if (verificationToken.used()) {
+            return AuthErrorCode.ERROR_TOKEN_USED;
+        }
+        if (verificationToken.isExpired()) {
+            return AuthErrorCode.ERROR_TOKEN_EXPIRED;
+        }
+        registerVerificationTokenRepository.makeTokenVerified(verificationToken);
+        User user = userRepository
+                .getUserById(verificationToken.userId());
+        if (user.isCanceled()) {
+            return UserErrorCode.ERROR_USER_CANCELED;
+        }
+        if (user.isEnabled()) {
+            return UserErrorCode.ERROR_USER_ALREADY_ACTIVATED;
+        }
+        userRepository.makeUserEnabled(user);
+        return CommonErrorCode.SUCCESS;
     }
+
+    public ErrorCode resendToken(String username) {
+        User user = userRepository.getUserByName(username);
+        if (user == null) {
+            return UserErrorCode.ERROR_USER_NOT_EXIST;
+        }
+        OnUserRegistrationEvent event = new OnUserRegistrationEvent(
+                UserInfo.from(user), Locale.getDefault(),
+                "http://localhost:5000/");
+        eventPublisher.publishEvent(event);
+
+        return CommonErrorCode.SUCCESS;
+    }
+
 }

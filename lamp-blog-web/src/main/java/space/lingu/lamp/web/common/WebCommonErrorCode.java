@@ -14,45 +14,34 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp;
+package space.lingu.lamp.web.common;
 
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import space.lingu.NonNull;
-import space.lingu.Nullable;
-
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import space.lingu.lamp.ErrorCode;
+import space.lingu.lamp.ErrorCodeFinder;
+import space.lingu.lamp.SystemRuntimeException;
 
 /**
  * @author RollW
  */
-public enum IoErrorCode implements ErrorCode, ErrorCodeFinder {
-    SUCCESS(SUCCESS_CODE, 200),
-    ERROR_IO("A0700", 500),
-    ERROR_FILE_NOT_FOUND("A0701", 404),
-    ERROR_FILE_EXISTED("A0702"),
+public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder {
+    ERROR_PARAM_MISSING("A0201", 404),
+
     ;
 
 
     private final String value;
     private final int status;
 
-    IoErrorCode(String value, int status) {
+    WebCommonErrorCode(String value, int status) {
         this.value = value;
         this.status = status;
     }
 
-    IoErrorCode(String value) {
-        this.value = value;
-        this.status = 401;
-    }
-
     @Override
     public String toString() {
-        if (this == SUCCESS) {
-            return "SUCCESS";
-        }
-
-        return "IoError: %s, code: %s".formatted(name(), getCode());
+        return "WebCommonError: %s, code: %s".formatted(name(), getCode());
     }
 
     @NonNull
@@ -69,7 +58,7 @@ public enum IoErrorCode implements ErrorCode, ErrorCodeFinder {
 
     @Override
     public boolean getState() {
-        return this == SUCCESS;
+        return false;
     }
 
     @Override
@@ -82,12 +71,10 @@ public enum IoErrorCode implements ErrorCode, ErrorCodeFinder {
         if (e instanceof SystemRuntimeException sys) {
             return sys.getErrorCode();
         }
-        if (e instanceof FileNotFoundException) {
-            return ERROR_FILE_NOT_FOUND;
+        if (e instanceof MissingServletRequestParameterException) {
+            return ERROR_PARAM_MISSING;
         }
-        if (e instanceof IOException) {
-            return ERROR_IO;
-        }
+
         return null;
     }
 
@@ -96,22 +83,7 @@ public enum IoErrorCode implements ErrorCode, ErrorCodeFinder {
         return ErrorCodeFinder.from(values(), codeValue);
     }
 
-    @Nullable
-    private static IoErrorCode nullableFrom(String value) {
-        for (IoErrorCode errorCode : values()) {
-            if (errorCode.value.equals(value)) {
-                return errorCode;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    public static IoErrorCode from(String value) {
-        return nullableFrom(value);
-    }
-
     public static ErrorCodeFinder getFinderInstance() {
-        return SUCCESS;
+        return ERROR_PARAM_MISSING;
     }
 }

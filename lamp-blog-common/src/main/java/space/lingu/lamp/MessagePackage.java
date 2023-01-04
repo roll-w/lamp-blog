@@ -21,7 +21,9 @@ import java.util.function.Supplier;
 
 /**
  * @author RollW
+ * @deprecated use {@link DataPackage} instead.
  */
+@Deprecated
 public record MessagePackage<D>(
         ErrorCode errorCode,
         String message,
@@ -39,8 +41,16 @@ public record MessagePackage<D>(
         return new MessagePackage<>(code, message, data);
     }
 
+    public static <D> MessagePackage<D> create(ErrorCode code, String message) {
+        return new MessagePackage<>(code, message, null);
+    }
+
     public static <D> MessagePackage<D> create(ErrorCode code, D data) {
         return new MessagePackage<>(code, data);
+    }
+
+    public static <D> MessagePackage<D> create(ErrorCode code) {
+        return new MessagePackage<>(code, null);
     }
 
     public HttpResponseBody<D> toResponseBody() {

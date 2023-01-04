@@ -39,10 +39,10 @@ public abstract class SystemSettingDao {
     @Delete
     public abstract void delete(SystemSetting systemSetting);
 
-    @Delete("DELETE FROM system_setting WHERE key = {key}")
+    @Delete("DELETE FROM system_setting WHERE `key` = {key}")
     public abstract void deleteByKey(String key);
 
-    @Query("SELECT * FROM system_setting WHERE key = {key}")
+    @Query("SELECT * FROM system_setting WHERE `key` = {key}")
     public abstract SystemSetting getByKey(String key);
 
     @Query("SELECT * FROM system_setting")

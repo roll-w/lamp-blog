@@ -1,11 +1,11 @@
 /*
- * Copyright (C) 2022 Lingu.
+ * Copyright (C) 2023 RollW
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *        http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.event.user;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
@@ -72,26 +73,28 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
     void handleRegistration(OnUserRegistrationEvent event) {
         UserInfo userInfo = event.getUser();
         String token = registerTokenProvider.createRegisterToken(userInfo);
-        if (mailProperties == null) {
+        if (mailProperties == null || Strings.isNullOrEmpty(mailProperties.getHost())) {
             logger.debug("Not configure the mail, skip sending mail.");
             registerTokenProvider.verifyRegisterToken(token);
             return;
         }
-
         if (MailConfigKeys.isDisabled(mailProperties.getUsername())) {
             logger.debug("Mail is disabled, skip sending mail.");
             registerTokenProvider.verifyRegisterToken(token);
             return;
         }
         // TODO: make configurable
-        String subject = "[Lingu] Registration Confirmation";
+        String subject = "[Lamp Blog] Registration Confirmation";
         String confirmUrl = event.getUrl() + token;
         SimpleMailMessage mailMessage = new SimpleMailMessageBuilder()
                 .setTo(userInfo.email())
                 .setSubject(subject)
-                .setText(("You are now registering a new account, " +
-                        "click %s to confirm activate.").formatted(confirmUrl))
-                .setFrom(mailProperties.getUsername())
+                .setText(("Dear %s,\nYou are now registering a new account, " +
+                        "click %s to confirm activate.\n" +
+                        "If you are not registering for this account, please ignore this message.\n\n" +
+                        "Sincerely, Lamp Blog Team.")
+                        .formatted(userInfo.username(), confirmUrl))
+                .setFrom(username)
                 .build();
         mailSender.send(mailMessage);
     }
@@ -102,7 +105,7 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
         if (sender == null) {
             return mailProperties.getUsername();
         }
-        return sender;
+        return sender + " <" + mailProperties.getUsername() + ">";
     }
 
     @Override

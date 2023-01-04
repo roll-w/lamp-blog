@@ -22,6 +22,7 @@ import space.lingu.light.Dao;
 import space.lingu.light.Delete;
 import space.lingu.light.Insert;
 import space.lingu.light.Query;
+import space.lingu.light.Transaction;
 import space.lingu.light.Update;
 
 import java.util.List;
@@ -40,6 +41,14 @@ public abstract class UserDao {
 
     @Update
     public abstract void update(List<User> users);
+
+    @Transaction
+    @Delete("UPDATE user SET enabled = {enabled} WHERE id = {userId}")
+    public abstract void updateEnabledByUser(long userId, boolean enabled);
+
+    @Transaction
+    @Delete("UPDATE user SET enabled = 1 WHERE id = {user.getId()}")
+    protected abstract void updateEnabledByUser(User user);
 
     @Query("SELECT * FROM user WHERE id = {id}")
     public abstract User selectById(long id);

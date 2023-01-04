@@ -18,10 +18,13 @@ package space.lingu.lamp;
 
 /**
  * System Runtime Exception.
+ * <p>
+ * Avoid using this class directly to throw exception
+ * and try to use inherited classes instead.
  *
  * @author RollW
  */
-public abstract class SystemRuntimeException extends RuntimeException {
+public class SystemRuntimeException extends RuntimeException {
     private final ErrorCode errorCode;
     private final String message;
 

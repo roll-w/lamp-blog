@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.configuration;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -45,8 +47,14 @@ public class MailConfiguration {
         properties.setDefaultEncoding(StandardCharsets.UTF_8);
         String host = systemSettingRepository.get(MailConfigKeys.KEY_SMTP_SERVER_HOST);
         if (host == null) {
-            return null;
+            return properties;
         }
+        Map<String, String> conf = properties.getProperties();
+        conf.put("mail.smtp.auth", "true");
+        conf.put("smtp.starttls.enable", "true");
+        conf.put("smtp.starttls.required", "true");
+        conf.put("smtp.ssl.enable", "true");
+
         String port = systemSettingRepository.get(MailConfigKeys.KEY_SMTP_SERVER_PORT);
         String username = systemSettingRepository.get(MailConfigKeys.KEY_MAIL_USERNAME);
         String password = systemSettingRepository.get(MailConfigKeys.KEY_MAIL_PASSWORD);
@@ -65,7 +73,10 @@ public class MailConfiguration {
         return javaMailSender;
     }
 
+    private static final Logger logger = LoggerFactory.getLogger(MailConfiguration.class);
+
     private void applyProperties(MailProperties properties, JavaMailSenderImpl sender) {
+        logger.debug("Configure java mail sender, properties: {}", properties);
         sender.setHost(properties.getHost());
         if (properties.getPort() != null) {
             sender.setPort(properties.getPort());

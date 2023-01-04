@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.data.dto.user;
+package space.lingu.lamp.web.message;
+
+import space.lingu.lamp.ErrorCode;
+
+import java.util.Locale;
 
 /**
  * @author RollW
  */
-public record UserRegisterRequest(
-        String username,
-        String password,
-        String email) {
+public interface MessageProvider {
+    // TODO: may use this interface later to get error messages.
+    default String getMessage(ErrorCode errorCode) {
+        return getMessage(errorCode, Locale.CHINA);
+    }
+
+    String getMessage(ErrorCode errorCode, Locale locale);
 }

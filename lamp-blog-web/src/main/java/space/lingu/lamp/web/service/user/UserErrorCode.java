@@ -54,9 +54,13 @@ public enum UserErrorCode implements ErrorCode {
      */
     ERROR_USER_NOT_LOGIN("A0005", 401),
     /**
+     * 用户已注销
+     */
+    ERROR_USER_CANCELED("A0006", 401),
+    /**
      * 登陆状态过期
      */
-    ERROR_LOGIN_EXPIRED("A0006"),
+    ERROR_LOGIN_EXPIRED("A0007"),
     /**
      * 密码错误
      */
@@ -129,5 +133,9 @@ public enum UserErrorCode implements ErrorCode {
     @Override
     public ErrorCode findErrorCode(String codeValue) {
         return ErrorCodeFinder.from(values(), codeValue);
+    }
+
+    public static ErrorCodeFinder getFinderInstance() {
+        return SUCCESS;
     }
 }

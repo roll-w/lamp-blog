@@ -14,13 +14,25 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.data.dto.user;
+package space.lingu.lamp;
 
 /**
  * @author RollW
  */
-public record UserRegisterRequest(
-        String username,
-        String password,
-        String email) {
+public record DataPackage<D>(
+        ErrorCode errorCode,
+        D data
+) {
+
+    public static <D> DataPackage<D> success(D data) {
+        return new DataPackage<>(CommonErrorCode.SUCCESS, data);
+    }
+
+    public static <D> DataPackage<D> create(ErrorCode code, D data) {
+        return new DataPackage<>(code, data);
+    }
+
+    public static <D> DataPackage<D> create(ErrorCode code) {
+        return new DataPackage<>(code, null);
+    }
 }
