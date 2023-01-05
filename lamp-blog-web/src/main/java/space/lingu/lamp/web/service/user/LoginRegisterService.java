@@ -30,6 +30,7 @@ import space.lingu.NonNull;
 import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.MessagePackage;
+import space.lingu.lamp.Result;
 import space.lingu.lamp.web.authentication.login.LoginStrategy;
 import space.lingu.lamp.web.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.data.database.repository.RegisterVerificationTokenRepository;
@@ -110,26 +111,25 @@ public class LoginRegisterService implements RegisterTokenProvider {
     }
 
 
-    // TODO: wait for the MessageProvider complete, replace it with DataPackage
-    public MessagePackage<UserInfo> loginUser(String identity,
-                                              String token,
-                                              LoginStrategyType type) {
+    public Result<UserInfo> loginUser(String identity,
+                                      String token,
+                                      LoginStrategyType type) {
         Preconditions.checkNotNull(identity, "identity cannot be null");
         Preconditions.checkNotNull(token, "token cannot be null");
 
         User user = tryGetUser(identity);
         if (user == null) {
-            return MessagePackage.create(UserErrorCode.ERROR_USER_NOT_EXIST, "User not exist");
+            return Result.of(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
         ErrorCode code = verifyToken(token, user, type);
         if (!code.getState()) {
-            return MessagePackage.create(code);
+            return  Result.of(code);
         }
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(user, token, user.getAuthorities());
         authentication = authenticationManager.authenticate(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return MessagePackage.success(
+        return  Result.success(
                 UserInfo.from(user)
         );
     }
@@ -142,7 +142,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
                     "A user with same name is existed."
             );
         }
-        if (userRepository.getUserByEmail(email) != null) {
+        if (userRepository.getUserIdByEmail(email) != null) {
             return MessagePackage.create(UserErrorCode.ERROR_EMAIL_EXISTED,
                     "A user with same email is existed."
             );
@@ -187,11 +187,13 @@ public class LoginRegisterService implements RegisterTokenProvider {
     public String createRegisterToken(UserInfo userInfo) {
         UUID uuid = UUID.randomUUID();
         String token = uuid.toString();
+        long expiryTime = RegisterVerificationToken.calculateExpiryDate();
         RegisterVerificationToken registerVerificationToken = new RegisterVerificationToken(
-                token, userInfo.id(), System.currentTimeMillis(), false
+                token, userInfo.id(), expiryTime, false
         );
         registerVerificationTokenRepository.insert(registerVerificationToken);
         return uuid.toString();
+
     }
 
     @Override

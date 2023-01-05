@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.message;
+package space.lingu.lamp;
 
 import space.lingu.lamp.ErrorCode;
 
@@ -23,7 +23,8 @@ import java.util.Locale;
 /**
  * @author RollW
  */
-public interface MessageProvider {
+@FunctionalInterface
+public interface ErrorCodeMessageProvider {
     // TODO: may use this interface later to get error messages.
     default String getMessage(ErrorCode errorCode) {
         return getMessage(errorCode, Locale.CHINA);

@@ -21,7 +21,7 @@ import java.util.function.Supplier;
 
 /**
  * @author RollW
- * @deprecated use {@link DataPackage} instead.
+ * @deprecated use {@link Result} instead.
  */
 @Deprecated
 public record MessagePackage<D>(

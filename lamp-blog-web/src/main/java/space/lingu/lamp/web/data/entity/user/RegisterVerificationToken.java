@@ -26,11 +26,11 @@ import space.lingu.light.PrimaryKey;
 import java.util.Date;
 
 /**
- * Verification Token
+ * Register Verification Token.
  *
  * @author RollW
  */
-@DataTable(tableName = "verification_token",
+@DataTable(tableName = "register_verification_token",
         indices = @Index(value = "user_id"))
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
 public record RegisterVerificationToken(

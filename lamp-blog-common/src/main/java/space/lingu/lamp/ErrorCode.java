@@ -18,10 +18,12 @@ package space.lingu.lamp;
 
 import space.lingu.NonNull;
 
+import java.util.Locale;
+
 /**
  * @author RollW
  */
-public interface ErrorCode extends ErrorCodeFinder {
+public interface ErrorCode extends ErrorCodeFinder, ErrorCodeMessageProvider {
     String SUCCESS_CODE = "00000";
 
     @NonNull
@@ -35,4 +37,9 @@ public interface ErrorCode extends ErrorCodeFinder {
     int getStatus();
 
     String toString();
+
+    @Override
+    default String getMessage(ErrorCode errorCode, Locale locale) {
+        return toString();
+    }
 }

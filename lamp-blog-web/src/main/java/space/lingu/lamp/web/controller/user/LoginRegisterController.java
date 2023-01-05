@@ -20,8 +20,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.MessagePackage;
+import space.lingu.lamp.Result;
 import space.lingu.lamp.web.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.common.ParamValidate;
 import space.lingu.lamp.web.data.dto.user.LoginResponse;
@@ -58,13 +60,13 @@ public class LoginRegisterController {
         ParamValidate.notEmpty(loginRequest.identity(), "");
         ParamValidate.notEmpty(loginRequest.token(), "");
 
-        MessagePackage<UserInfo> res = loginRegisterService.loginUser(
+        Result<UserInfo> res = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
                 LoginStrategyType.PASSWORD);
         if (!res.errorCode().getState()) {
             return HttpResponseEntity.create(
-                    res.toResponseBody(() -> LoginResponse.NULL)
+                    res.toResponseBody(ErrorCode::toString, () -> LoginResponse.NULL)
             );
         }
         String token = authenticationTokenService.generateAuthToken(
