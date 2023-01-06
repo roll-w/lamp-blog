@@ -21,6 +21,22 @@ import space.lingu.NonNull;
 import java.util.Locale;
 
 /**
+ * <h2>Error Code</h2>
+ *
+ * <h3>Error Code Naming Format</h3>
+ * <ul>
+ *     <li>Success: {@code SUCCESS}</li>
+ *     <li>Error: {@code ERROR_{Specify error name}}, like {@code ERROR_FILE_NOT_EXIST}.</li>
+ * </ul>
+ *
+ * Class naming format:
+ *  {@code {Group}ErrorCode}, like {@code FileErrorCode}.
+ * <p>
+ * This affects the generation of the i18n key.
+ * <p>
+ * The final key format is: {@code error.{Group}.{Specify error name}},
+ * like {@code error.file.file_not_exist}.
+ *
  * @author RollW
  */
 public interface ErrorCode extends ErrorCodeFinder, ErrorCodeMessageProvider {
@@ -39,7 +55,7 @@ public interface ErrorCode extends ErrorCodeFinder, ErrorCodeMessageProvider {
     String toString();
 
     @Override
-    default String getMessage(ErrorCode errorCode, Locale locale) {
+    default String apply(ErrorCode errorCode, Locale locale, Object... args) {
         return toString();
     }
 }

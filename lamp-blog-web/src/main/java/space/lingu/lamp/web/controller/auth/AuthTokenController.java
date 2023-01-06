@@ -19,7 +19,6 @@ package space.lingu.lamp.web.controller.auth;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import space.lingu.lamp.HttpResponseBody;
 import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.web.controller.CommonApi;
 import space.lingu.lamp.web.data.dto.TokenAuthResult;
@@ -49,20 +48,14 @@ public class AuthTokenController {
                     tokenService.generateAuthToken(result.userId())
             );
         }
-        return HttpResponseEntity.failure(AuthErrorCode.ERROR_INVALID_TOKEN,
-                "Invalid refresh token.");
+        return HttpResponseEntity.of(AuthErrorCode.ERROR_INVALID_TOKEN);
     }
 
     @GetMapping("/token/v")
     public HttpResponseEntity<TokenAuthResult> verifyToken(
             @RequestParam String token) {
         TokenAuthResult authResult = tokenService.verifyToken(token);
-        return HttpResponseEntity.create(
-                HttpResponseBody.create(
-                        authResult.errorCode(),
-                        authResult.errorCode().toString(),
-                        authResult
-                )
-        );
+        return HttpResponseEntity.of(
+                        authResult.errorCode(), authResult);
     }
 }

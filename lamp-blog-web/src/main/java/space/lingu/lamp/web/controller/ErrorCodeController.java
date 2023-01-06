@@ -16,9 +16,15 @@
 
 package space.lingu.lamp.web.controller;
 
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import space.lingu.lamp.ErrorCodeFinderChain;
+import space.lingu.lamp.ErrorCode;
+import space.lingu.lamp.ErrorCodeFinder;
+import space.lingu.lamp.ErrorCodeMessageProvider;
+
+import java.util.Locale;
 
 /**
  * @author RollW
@@ -26,14 +32,24 @@ import space.lingu.lamp.ErrorCodeFinderChain;
 @RestController
 @CommonApi
 public class ErrorCodeController {
-    private final ErrorCodeFinderChain codeFinderChain;
+    private final ErrorCodeMessageProvider errorCodeMessageProvider;
+    private final ErrorCodeFinder errorCodeFinder;
 
-    public ErrorCodeController(ErrorCodeFinderChain codeFinderChain) {
-        this.codeFinderChain = codeFinderChain;
+    public ErrorCodeController(ErrorCodeMessageProvider errorCodeMessageProvider,
+                               ErrorCodeFinder errorCodeFinder) {
+        this.errorCodeMessageProvider = errorCodeMessageProvider;
+        this.errorCodeFinder = errorCodeFinder;
     }
 
     @GetMapping("/code")
-    public String getErrorCodeName(String code) {
-        return codeFinderChain.findErrorCode(code).getName();
+    public String getErrorCodeName(@RequestParam String code) {
+        return errorCodeFinder.findErrorCode(code).getName();
+    }
+
+    @GetMapping("/code/message")
+    public String getErrorCodeMessage(@RequestParam String code) {
+        Locale locale = LocaleContextHolder.getLocale();
+        ErrorCode errorCode = errorCodeFinder.findErrorCode(code);
+        return errorCodeMessageProvider.getMessage(errorCode, locale);
     }
 }

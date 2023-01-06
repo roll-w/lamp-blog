@@ -52,7 +52,7 @@ public class LampSystemExceptionHandler {
     @ResponseBody
     public HttpResponseEntity<String> handle(LightRuntimeException e) {
         logger.error("Unexpected sql error: %s".formatted(e.toString()), e);
-        return HttpResponseEntity.failure(
+        return HttpResponseEntity.of(
                 codeFinderChain.fromThrowable(e),
                 e.getMessage()
         );
@@ -62,7 +62,7 @@ public class LampSystemExceptionHandler {
     @ResponseBody
     public HttpResponseEntity<String> handle(ParameterMissingException e) {
         logger.warn("Param missing: %s".formatted(e.toString()), e);
-        return HttpResponseEntity.failure(
+        return HttpResponseEntity.of(
                 codeFinderChain.fromThrowable(e),
                 e.getMessage()
         );
@@ -72,7 +72,7 @@ public class LampSystemExceptionHandler {
     @ResponseBody
     public HttpResponseEntity<String> handle(SystemRuntimeException e) {
         logger.error("System runtime error: %s".formatted(e.toString()), e);
-        return HttpResponseEntity.failure(
+        return HttpResponseEntity.of(
                 codeFinderChain.fromThrowable(e),
                 e.getMessage()
         );
@@ -82,7 +82,7 @@ public class LampSystemExceptionHandler {
     @ResponseBody
     public HttpResponseEntity<String> handle(NullPointerException e) {
         logger.error("Null exception : %s".formatted(e.toString()), e);
-        return HttpResponseEntity.failure(
+        return HttpResponseEntity.of(
                 CommonErrorCode.ERROR_NULL,
                 e.getMessage()
         );
@@ -91,7 +91,7 @@ public class LampSystemExceptionHandler {
     @ExceptionHandler(FileNotFoundException.class)
     @ResponseBody
     public HttpResponseEntity<String> handle(FileNotFoundException e) {
-        return HttpResponseEntity.failure(
+        return HttpResponseEntity.of(
                 CommonErrorCode.ERROR_NOT_FOUND,
                 "404 Not found."
         );
@@ -101,7 +101,7 @@ public class LampSystemExceptionHandler {
     @ResponseBody
     public HttpResponseEntity<String> handle(IOException e) {
         logger.error("IO Error: %s".formatted(e.toString()), e);
-        return HttpResponseEntity.failure(
+        return HttpResponseEntity.of(
                 codeFinderChain.fromThrowable(e),
                 e.getMessage()
         );
@@ -111,7 +111,7 @@ public class LampSystemExceptionHandler {
     @ResponseBody
     public HttpResponseEntity<String> handle(Exception e) {
         logger.error("Error: %s".formatted(e.toString()), e);
-        return HttpResponseEntity.failure(
+        return HttpResponseEntity.of(
                 codeFinderChain.fromThrowable(e),
                 e.getMessage()
         );

@@ -84,6 +84,10 @@ public class HttpResponseBody<D> {
         return new HttpResponseBody<>(errorCode, status, message, data);
     }
 
+    public HttpResponseBody<D> fork(String message) {
+        return new HttpResponseBody<>(errorCode, status, message, data);
+    }
+
     public static <D> HttpResponseBody<D> success() {
         return (HttpResponseBody<D>) SUCCESS;
     }
@@ -109,28 +113,37 @@ public class HttpResponseBody<D> {
 
     // for semantic control
 
-    public static <D> HttpResponseBody<D> create(ErrorCode errorCode,
-                                                 int status,
-                                                 String message,
-                                                 D data) {
+    public static <D> HttpResponseBody<D> of(ErrorCode errorCode,
+                                             int status,
+                                             String message,
+                                             D data) {
         return new HttpResponseBody<>(errorCode, status, message, data);
     }
 
-    public static <D> HttpResponseBody<D> create(ErrorCode errorCode,
-                                                 int status,
-                                                 String message) {
+    public static <D> HttpResponseBody<D> of(ErrorCode errorCode,
+                                             int status,
+                                             String message) {
 
         return new HttpResponseBody<>(errorCode, status, message);
     }
 
-    public static <D> HttpResponseBody<D> create(ErrorCode errorCode,
-                                                 String message) {
+    public static <D> HttpResponseBody<D> of(ErrorCode errorCode,
+                                             String message) {
         return new HttpResponseBody<>(errorCode, errorCode.getStatus(), message);
     }
 
-    public static <D> HttpResponseBody<D> create(ErrorCode errorCode,
-                                                 String message,
-                                                 D data) {
+    public static <D> HttpResponseBody<D> of(ErrorCode errorCode,
+                                             D data) {
+        return new HttpResponseBody<>(errorCode, errorCode.getStatus(), null, data);
+    }
+
+    public static <D> HttpResponseBody<D> of(ErrorCode errorCode) {
+        return new HttpResponseBody<>(errorCode, errorCode.getStatus(), null);
+    }
+
+    public static <D> HttpResponseBody<D> of(ErrorCode errorCode,
+                                             String message,
+                                             D data) {
         return new HttpResponseBody<>(errorCode, errorCode.getStatus(), message, data);
     }
 }

@@ -52,7 +52,7 @@ public record Result<D>(
         if (errorCode.getState()) {
             return HttpResponseBody.success(message, data());
         }
-        return HttpResponseBody.create(errorCode(), message, data());
+        return HttpResponseBody.of(errorCode(), message, data());
     }
 
     public HttpResponseBody<D> toResponseBody() {
@@ -63,7 +63,7 @@ public record Result<D>(
         if (errorCode.getState()) {
             return HttpResponseBody.success(message, mapper.apply(data()));
         }
-        return HttpResponseBody.create(errorCode(), message, mapper.apply(data()));
+        return HttpResponseBody.of(errorCode(), message, mapper.apply(data()));
     }
 
     public <T> HttpResponseBody<T> toResponseBody(@NonNull ErrorCodeMessageProvider errorCodeMessageProvider,
@@ -84,7 +84,7 @@ public record Result<D>(
         if (errorCode.getState()) {
             return HttpResponseBody.success(message, supplier.get());
         }
-        return HttpResponseBody.create(errorCode(), message, supplier.get());
+        return HttpResponseBody.of(errorCode(), message, supplier.get());
     }
 
     public <T> HttpResponseBody<T> toResponseBody(@NonNull Supplier<T> supplier) {

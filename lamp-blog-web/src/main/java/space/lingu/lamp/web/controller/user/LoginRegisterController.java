@@ -16,13 +16,13 @@
 
 package space.lingu.lamp.web.controller.user;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.HttpResponseEntity;
-import space.lingu.lamp.MessagePackage;
 import space.lingu.lamp.Result;
 import space.lingu.lamp.web.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.common.ParamValidate;
@@ -42,6 +42,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 @UserApi
 public class LoginRegisterController {
+    private static final Logger logger = LoggerFactory.getLogger(LoginRegisterController.class);
+
     private final LoginRegisterService loginRegisterService;
     private final AuthenticationTokenService authenticationTokenService;
 
@@ -57,16 +59,16 @@ public class LoginRegisterController {
             @RequestBody UserLoginRequest loginRequest) {
         // account login, account maybe the username or email
         // needs to check the account type and get the user id
-        ParamValidate.notEmpty(loginRequest.identity(), "");
-        ParamValidate.notEmpty(loginRequest.token(), "");
+        ParamValidate.notEmpty(loginRequest.identity(), "identity cannot be null or empty.");
+        ParamValidate.notEmpty(loginRequest.token(), "token cannot be null or empty.");
 
         Result<UserInfo> res = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
                 LoginStrategyType.PASSWORD);
         if (!res.errorCode().getState()) {
-            return HttpResponseEntity.create(
-                    res.toResponseBody(ErrorCode::toString, () -> LoginResponse.NULL)
+            return HttpResponseEntity.of(
+                    res.toResponseBody(() -> LoginResponse.NULL)
             );
         }
         String token = authenticationTokenService.generateAuthToken(
@@ -93,12 +95,12 @@ public class LoginRegisterController {
 
     @PostMapping("/register")
     public HttpResponseEntity<Void> registerUser(@RequestBody UserRegisterRequest request) {
-        MessagePackage<UserInfo> res = loginRegisterService.registerUser(
+        Result<UserInfo> res = loginRegisterService.registerUser(
                 request.username(),
                 request.password(),
                 request.email(), Role.USER
         );
-        return HttpResponseEntity.create(res.toResponseBody(() -> null));
+        return HttpResponseEntity.of(res.toResponseBody(() -> null));
     }
 
     @PostMapping("/register/token/confirm/{token}")

@@ -36,56 +36,77 @@ public class HttpResponseEntity<D> extends ResponseEntity<HttpResponseBody<D>> {
         super(body, headers, body.getStatus());
     }
 
-    public static <D> HttpResponseEntity<D> create(HttpResponseBody<D> body) {
+    public HttpResponseEntity<D> fork() {
+        return new HttpResponseEntity<>(getBody(), getHeaders());
+    }
+
+    public HttpResponseEntity<D> fork(HttpResponseBody<D> newResponseBody) {
+        return new HttpResponseEntity<>(newResponseBody, getHeaders());
+    }
+
+    public static <D> HttpResponseEntity<D> of(HttpResponseBody<D> body) {
         return new HttpResponseEntity<>(body);
     }
 
     public static <D> HttpResponseEntity<D> success() {
-        return HttpResponseEntity.create(
+        return HttpResponseEntity.of(
                 HttpResponseBody.success()
         );
     }
 
     public static <D> HttpResponseEntity<D> success(String message) {
-        return HttpResponseEntity.create(
+        return HttpResponseEntity.of(
                 HttpResponseBody.success(message)
         );
     }
 
     public static <D> HttpResponseEntity<D> success(String message, D data) {
-        return HttpResponseEntity.create(
+        return HttpResponseEntity.of(
                 HttpResponseBody.success(message, data)
         );
     }
 
     public static <D> HttpResponseEntity<D> success(D data) {
-        return HttpResponseEntity.create(
+        return HttpResponseEntity.of(
                 HttpResponseBody.success(data)
         );
     }
 
-    // for semantic control
-    public static <D> HttpResponseEntity<D> failure(ErrorCode errorCode,
-                                                    int status,
-                                                    String message,
-                                                    D data) {
-        return HttpResponseEntity.create(
-                HttpResponseBody.create(errorCode, status, message, data)
+    public static <D> HttpResponseEntity<D> of(ErrorCode errorCode,
+                                               int status,
+                                               String message,
+                                               D data) {
+        return HttpResponseEntity.of(
+                HttpResponseBody.of(errorCode, status, message, data)
         );
     }
 
-    public static <D> HttpResponseEntity<D> failure(ErrorCode errorCode,
-                                                    String message) {
-        return HttpResponseEntity.create(
-                HttpResponseBody.create(errorCode, message)
+    public static <D> HttpResponseEntity<D> of(ErrorCode errorCode,
+                                               String message) {
+        return HttpResponseEntity.of(
+                HttpResponseBody.of(errorCode, message)
         );
     }
 
-    public static <D> HttpResponseEntity<D> failure(ErrorCode errorCode,
-                                                    String message,
-                                                    D data) {
-        return HttpResponseEntity.create(
-                HttpResponseBody.create(errorCode, message, data)
+    public static <D> HttpResponseEntity<D> of(ErrorCode errorCode) {
+        return HttpResponseEntity.of(
+                HttpResponseBody.of(errorCode)
         );
     }
+
+    public static <D> HttpResponseEntity<D> of(ErrorCode errorCode,
+                                               String message,
+                                               D data) {
+        return HttpResponseEntity.of(
+                HttpResponseBody.of(errorCode, message, data)
+        );
+    }
+
+    public static <D> HttpResponseEntity<D> of(ErrorCode errorCode,
+                                               D data) {
+        return HttpResponseEntity.of(
+                HttpResponseBody.of(errorCode, data)
+        );
+    }
+
 }

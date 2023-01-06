@@ -29,7 +29,6 @@ import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.MessagePackage;
 import space.lingu.lamp.Result;
 import space.lingu.lamp.web.authentication.login.LoginStrategy;
 import space.lingu.lamp.web.authentication.login.LoginStrategyType;
@@ -134,18 +133,14 @@ public class LoginRegisterService implements RegisterTokenProvider {
         );
     }
 
-    public MessagePackage<UserInfo> registerUser(String username, String password,
+    public Result<UserInfo> registerUser(String username, String password,
                                                  String email, Role role) {
         Long userId = userRepository.getUserIdByName(username);
         if (!User.isInvalidId(userId)) {
-            return MessagePackage.create(UserErrorCode.ERROR_USER_EXISTED,
-                    "A user with same name is existed."
-            );
+            return Result.of(UserErrorCode.ERROR_USER_EXISTED);
         }
         if (userRepository.getUserIdByEmail(email) != null) {
-            return MessagePackage.create(UserErrorCode.ERROR_EMAIL_EXISTED,
-                    "A user with same email is existed."
-            );
+            return Result.of(UserErrorCode.ERROR_EMAIL_EXISTED);
         }
         long registerTime = System.currentTimeMillis();
         String encodedPassword = passwordEncoder.encode(password);
@@ -176,7 +171,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
 
         logger.info("Register username: {}, email: {}, role: {}, id: {}",
                 username, email, role, id);
-        return MessagePackage.success(UserInfo.from(user));
+        return Result.success(UserInfo.from(user));
     }
 
     public void logout() {

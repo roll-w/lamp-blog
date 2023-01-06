@@ -16,9 +16,11 @@
 
 package space.lingu.lamp.web.configuration;
 
+import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import space.lingu.lamp.ErrorCodeFinderChain;
+import space.lingu.lamp.ErrorCodeMessageProvider;
 import space.lingu.lamp.IoErrorCode;
 import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.service.auth.AuthErrorCode;
@@ -29,6 +31,11 @@ import space.lingu.lamp.web.service.user.UserErrorCode;
  */
 @Configuration
 public class ErrorCodeConfiguration {
+
+    @Bean
+    public ErrorCodeMessageProvider errorCodeMessageProvider(MessageSource messageSource) {
+        return new ErrorCodeMessageProviderImpl(messageSource);
+    }
 
     @Bean
     public ErrorCodeFinderChain errorCodeFinderChain() {

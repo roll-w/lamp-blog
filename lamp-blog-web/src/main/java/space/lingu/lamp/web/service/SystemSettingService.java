@@ -20,7 +20,6 @@ import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
 import org.springframework.stereotype.Service;
 import space.lingu.Nullable;
-import space.lingu.Todo;
 import space.lingu.lamp.event.EventCallback;
 import space.lingu.lamp.event.EventRegistry;
 import space.lingu.lamp.web.data.SettingLoader;
@@ -37,7 +36,6 @@ import java.util.Set;
 public class SystemSettingService implements SettingProvider, SettingLoader,
         EventRegistry<SystemSetting, String> {
     public static final String ALL_SETTINGS = "AllSettingsCallback";
-
     private final SystemSettingRepository systemSettingRepository;
 
     public SystemSettingService(SystemSettingRepository systemSettingRepository) {
@@ -93,7 +91,6 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
     }
 
     @Override
-    @Todo(todo = "callback register")
     public void register(EventCallback<SystemSetting> eventCallback,
                          String messagePattern) {
         Callback callback = new Callback(eventCallback, messagePattern);

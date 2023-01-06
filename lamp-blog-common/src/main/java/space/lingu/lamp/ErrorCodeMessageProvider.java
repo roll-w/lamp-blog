@@ -16,8 +16,6 @@
 
 package space.lingu.lamp;
 
-import space.lingu.lamp.ErrorCode;
-
 import java.util.Locale;
 
 /**
@@ -30,5 +28,18 @@ public interface ErrorCodeMessageProvider {
         return getMessage(errorCode, Locale.CHINA);
     }
 
-    String getMessage(ErrorCode errorCode, Locale locale);
+    default String getMessage(ErrorCode errorCode, Object... args) {
+        return getMessage(errorCode, Locale.CHINA, args);
+    }
+
+    default String getMessage(ErrorCode errorCode, Locale locale) {
+        return apply(errorCode, locale);
+    }
+
+    default String getMessage(ErrorCode errorCode, Locale locale, Object... args) {
+        return apply(errorCode, locale, args);
+    }
+
+    // internal method
+    String apply(ErrorCode errorCode, Locale locale, Object... args);
 }
