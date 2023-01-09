@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.data;
 
+import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.web.data.entity.SystemSetting;
 
@@ -25,11 +26,19 @@ import space.lingu.lamp.web.data.entity.SystemSetting;
 public interface SettingProvider extends SettingLoader {
     @Nullable
     @Override
-    SystemSetting getSetting(String key);
+    SystemSetting getSetting(@NonNull String key);
 
     @Nullable
     @Override
-    String getSettingValue(String key);
+    SystemSetting getSetting(@NonNull String key, String defaultValue);
+
+    @Nullable
+    @Override
+    String getSettingValue(@NonNull String key);
+
+    @Nullable
+    @Override
+    String getSettingValue(@NonNull String key, String defaultValue);
 
     void setSetting(String key, String value);
 

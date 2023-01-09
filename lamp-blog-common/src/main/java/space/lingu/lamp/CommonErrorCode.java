@@ -28,7 +28,6 @@ public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
     ERROR_EXCEPTION("B1000", 500),
     ERROR_NULL("B1001", 500),
     ERROR_UNKNOWN("D0000", 500),
-
     ;
 
 

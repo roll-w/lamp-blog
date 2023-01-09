@@ -110,6 +110,6 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
 
     @Override
     public void onEvent(SystemSetting event) {
-        // TODO: on event
+        this.username = chooseUsername();
     }
 }

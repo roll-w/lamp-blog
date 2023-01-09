@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.data;
-
-import space.lingu.NonNull;
-import space.lingu.Nullable;
-import space.lingu.lamp.web.data.entity.SystemSetting;
+package space.lingu.lamp.web.service;
 
 /**
  * @author RollW
  */
-public interface SettingLoader {
-    @Nullable
-    SystemSetting getSetting(@NonNull String key);
+public class CacheNames {
+    public static final String SETTING = "setting";
 
-    @Nullable
-    SystemSetting getSetting(@NonNull String key, String defaultValue);
-
-    @Nullable
-    String getSettingValue(@NonNull String key);
-
-    @Nullable
-    String getSettingValue(@NonNull String key, String defaultValue);
+    private CacheNames() {
+    }
 }
