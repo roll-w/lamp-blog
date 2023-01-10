@@ -66,6 +66,23 @@ public class LoginRegisterController {
                 loginRequest.identity(),
                 loginRequest.token(),
                 LoginStrategyType.PASSWORD);
+        return loginResponse(res);
+    }
+
+    // TODO: login by email token
+    @PostMapping("/login/email")
+    public HttpResponseEntity<LoginResponse> loginByEmailToken(
+            HttpServletRequest request,
+            @RequestBody UserLoginRequest loginRequest) {
+        Result<UserInfo> res = loginRegisterService.loginUser(
+                loginRequest.identity(),
+                loginRequest.token(),
+                LoginStrategyType.EMAIL_TOKEN
+        );
+        return loginResponse(res);
+    }
+
+    private HttpResponseEntity<LoginResponse> loginResponse(Result<UserInfo> res) {
         if (!res.errorCode().getState()) {
             return HttpResponseEntity.of(
                     res.toResponseBody(() -> LoginResponse.NULL)
@@ -78,19 +95,16 @@ public class LoginRegisterController {
         return HttpResponseEntity.success(response);
     }
 
-    // TODO: login by email token
-    @PostMapping("/login/email")
-    public HttpResponseEntity<LoginResponse> loginByEmailToken(
-            HttpServletRequest request,
-            @RequestBody UserLoginRequest loginRequest) {
-        return null;
-    }
-
     @PostMapping("/login/email/token")
     public HttpResponseEntity<Void> sendEmailLoginToken(
             HttpServletRequest request,
             @RequestBody LoginTokenSendRequest loginTokenSendRequest) {
-        return null;
+        ParamValidate.notEmpty(loginTokenSendRequest.identity(), "identity cannot be null or empty.");
+        loginRegisterService.sendToken(
+                loginTokenSendRequest.identity(),
+                LoginStrategyType.EMAIL_TOKEN
+        );
+        return HttpResponseEntity.success();
     }
 
     @PostMapping("/register")

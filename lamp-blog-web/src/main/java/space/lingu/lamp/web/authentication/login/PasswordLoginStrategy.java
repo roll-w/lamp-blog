@@ -21,7 +21,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
+import space.lingu.Nullable;
 import space.lingu.lamp.ErrorCode;
+import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.data.dto.user.LoginPasswordToken;
 import space.lingu.lamp.web.data.entity.user.User;
 import space.lingu.lamp.web.data.entity.LoginVerifiableToken;
@@ -42,17 +44,8 @@ public class PasswordLoginStrategy implements LoginStrategy {
     }
 
     @Override
-    public LoginVerifiableToken createToken(User user) {
+    public LoginVerifiableToken createToken(User user) throws LoginTokenException {
         return new LoginPasswordToken(null, user.getId());
-    }
-
-    @Override
-    public ErrorCode verify(LoginVerifiableToken token) {
-        if (!(token instanceof LoginPasswordToken)) {
-            logger.error("Passed token type error: {}.", token.getClass().getName());
-            return AuthErrorCode.ERROR_INVALID_TOKEN;
-        }
-        return null;
     }
 
     @NonNull
@@ -66,7 +59,8 @@ public class PasswordLoginStrategy implements LoginStrategy {
     }
 
     @Override
-    public void sendToken(LoginVerifiableToken token) {
+    public void sendToken(LoginVerifiableToken token, User user, @Nullable RequestInfo requestInfo)
+            throws LoginTokenException {
         // no need to send token
     }
 

@@ -42,9 +42,15 @@ public enum AuthErrorCode implements ErrorCode {
      * 令牌过期
      */
     ERROR_TOKEN_EXPIRED("A1002", 401),
-    ERROR_TOKEN_NOT_EXIST("A1003", 401),
-    ERROR_TOKEN_NOT_MATCH("A1004", 401),
-    ERROR_TOKEN_USED("A1005", 401),
+    /**
+     * 令牌未过期
+     */
+    ERROR_TOKEN_NOT_EXPIRED("A1003", 401),
+    ERROR_TOKEN_EXISTED("A1004", 401),
+    ERROR_TOKEN_NOT_EXIST("A1004", 401),
+    ERROR_TOKEN_NOT_MATCH("A1005", 401),
+    ERROR_TOKEN_USED("A1006", 401),
+    ERROR_TOKEN_NOT_USED("A1007", 401),
     ;
 
 

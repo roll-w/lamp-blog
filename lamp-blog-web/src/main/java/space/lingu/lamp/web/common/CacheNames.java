@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.service;
+package space.lingu.lamp.web.common;
 
 /**
  * @author RollW
  */
 public class CacheNames {
     public static final String SETTING = "setting";
+
+    public static final String EMAIL_TOKEN = "email-token";
 
     private CacheNames() {
     }

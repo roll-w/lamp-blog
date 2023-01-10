@@ -20,6 +20,7 @@ import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -32,6 +33,7 @@ import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.Result;
 import space.lingu.lamp.web.authentication.login.LoginStrategy;
 import space.lingu.lamp.web.authentication.login.LoginStrategyType;
+import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.data.database.repository.RegisterVerificationTokenRepository;
 import space.lingu.lamp.web.data.database.repository.UserRepository;
 import space.lingu.lamp.web.data.dto.user.UserInfo;
@@ -86,7 +88,16 @@ public class LoginRegisterService implements RegisterTokenProvider {
         LoginStrategy strategy = getLoginStrategy(type);
         User user = userRepository.getUserById(userId);
         LoginVerifiableToken token = strategy.createToken(user);
-        strategy.sendToken(token);
+        RequestInfo requestInfo = new RequestInfo(LocaleContextHolder.getLocale(), null);
+        strategy.sendToken(token, user, requestInfo);
+    }
+
+    public void sendToken(String identity, LoginStrategyType type) {
+        LoginStrategy strategy = getLoginStrategy(type);
+        User user = tryGetUser(identity);
+        LoginVerifiableToken token = strategy.createToken(user);
+        RequestInfo requestInfo = new RequestInfo(LocaleContextHolder.getLocale(), null);
+        strategy.sendToken(token, user, requestInfo);
     }
 
     private ErrorCode verifyToken(String token,
@@ -94,12 +105,6 @@ public class LoginRegisterService implements RegisterTokenProvider {
                                   LoginStrategyType type) {
         LoginStrategy strategy = getLoginStrategy(type);
         return strategy.verify(token, user);
-    }
-
-    private ErrorCode verifyToken(LoginStrategyType type,
-                                  LoginVerifiableToken token) {
-        LoginStrategy strategy = getLoginStrategy(type);
-        return strategy.verify(token);
     }
 
     private User tryGetUser(String identity) {

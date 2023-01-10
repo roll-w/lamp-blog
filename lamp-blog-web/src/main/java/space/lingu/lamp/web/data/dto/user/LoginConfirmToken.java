@@ -14,27 +14,24 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.authentication.login;
+package space.lingu.lamp.web.data.dto.user;
 
-
-import space.lingu.NonNull;
-import space.lingu.Nullable;
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.web.common.RequestInfo;
-import space.lingu.lamp.web.data.entity.user.User;
+import space.lingu.lamp.web.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.data.entity.LoginVerifiableToken;
 
 /**
  * @author RollW
  */
-public interface LoginStrategy {
-    LoginVerifiableToken createToken(User user) throws LoginTokenException;
+public record LoginConfirmToken(
+        String token,
+        long userId,
+        Long expireTime,
+        LoginStrategyType strategyType
+) implements LoginVerifiableToken {
 
-    @NonNull
-    ErrorCode verify(String token, @NonNull User user);
+    public static LoginConfirmToken emailToken(String token, long userId, long expireTime) {
+        return new LoginConfirmToken(token, userId,
+                expireTime, LoginStrategyType.EMAIL_TOKEN);
+    }
 
-    void sendToken(LoginVerifiableToken token, User user, @Nullable RequestInfo requestInfo)
-            throws LoginTokenException;
-
-    LoginStrategyType getStrategyType();
 }

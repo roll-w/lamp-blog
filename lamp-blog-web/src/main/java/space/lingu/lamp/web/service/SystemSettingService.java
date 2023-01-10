@@ -25,6 +25,7 @@ import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.event.EventCallback;
 import space.lingu.lamp.event.EventRegistry;
+import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.data.SettingLoader;
 import space.lingu.lamp.web.data.SettingProvider;
 import space.lingu.lamp.web.data.database.repository.SystemSettingRepository;
