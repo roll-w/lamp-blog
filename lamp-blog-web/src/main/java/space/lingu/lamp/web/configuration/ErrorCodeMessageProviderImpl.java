@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.configuration;
 
 import org.springframework.context.MessageSource;
+import org.springframework.context.NoSuchMessageException;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeMessageProvider;
 import space.lingu.lamp.web.i18n.ErrorCodeKeyHelper;
@@ -39,10 +40,14 @@ public class ErrorCodeMessageProviderImpl implements ErrorCodeMessageProvider {
             return null;
         }
         String key = getI18nKey(errorCode);
-        if (locale == null) {
-            return messageSource.getMessage(key, args, Locale.getDefault());
+        try {
+            if (locale == null) {
+                return messageSource.getMessage(key, args, Locale.getDefault());
+            }
+            return messageSource.getMessage(key, args, locale);
+        } catch (NoSuchMessageException e) {
+            return null;
         }
-        return messageSource.getMessage(key, args, locale);
     }
 
     private String getI18nKey(ErrorCode errorCode) {

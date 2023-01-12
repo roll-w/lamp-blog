@@ -26,7 +26,7 @@ import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.Result;
 import space.lingu.lamp.web.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.common.ParamValidate;
-import space.lingu.lamp.web.data.dto.user.LoginResponse;
+import space.lingu.lamp.web.data.vo.user.LoginResponse;
 import space.lingu.lamp.web.data.dto.user.LoginTokenSendRequest;
 import space.lingu.lamp.web.data.dto.user.UserInfo;
 import space.lingu.lamp.web.data.dto.user.UserLoginRequest;

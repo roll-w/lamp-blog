@@ -22,6 +22,7 @@ import org.springframework.context.annotation.Configuration;
 import space.lingu.lamp.ErrorCodeFinderChain;
 import space.lingu.lamp.ErrorCodeMessageProvider;
 import space.lingu.lamp.IoErrorCode;
+import space.lingu.lamp.web.common.DataErrorCode;
 import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.service.auth.AuthErrorCode;
 import space.lingu.lamp.web.service.user.UserErrorCode;
@@ -43,7 +44,8 @@ public class ErrorCodeConfiguration {
                 WebCommonErrorCode.getFinderInstance(),
                 AuthErrorCode.getFinderInstance(),
                 IoErrorCode.getFinderInstance(),
-                UserErrorCode.getFinderInstance()
+                UserErrorCode.getFinderInstance(),
+                DataErrorCode.getFinderInstance()
         );
     }
 

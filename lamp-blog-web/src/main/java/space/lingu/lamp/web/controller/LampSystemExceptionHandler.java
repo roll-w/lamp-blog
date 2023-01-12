@@ -52,7 +52,8 @@ public class LampSystemExceptionHandler {
     public HttpResponseEntity<String> handle(LightRuntimeException e) {
         logger.error("Unexpected sql error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
-                codeFinderChain.fromThrowable(e)
+                codeFinderChain.fromThrowable(e),
+                e.getMessage()
         );
     }
 

@@ -14,14 +14,26 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.data.dto.user;
+package space.lingu.lamp.web.service.review;
 
 /**
  * @author RollW
  */
-public record LoginResponse(
-        String token,
-        UserInfo user
-) {
-    public static final LoginResponse NULL = new LoginResponse(null, null);
+public enum ReviewStatus {
+    /**
+     * Not reviewed.
+     */
+    NOT_REVIEWED,
+    /**
+     * Reviewed.
+     */
+    REVIEWED,
+    /**
+     * Rejected.
+     */
+    REJECTED;
+
+    public boolean isReviewed() {
+        return this != NOT_REVIEWED;
+    }
 }

@@ -28,7 +28,7 @@ public class HttpResponseBody<D> {
     private final int status;
     private String message;
     private ErrorCode errorCode;
-
+    private String tip;
     private D data;
 
     private HttpResponseBody() {
@@ -49,11 +49,26 @@ public class HttpResponseBody<D> {
         this.data = data;
     }
 
+    public HttpResponseBody(ErrorCode errorCode, int status,
+                            String message, String tip, D data) {
+        this.status = status;
+        this.message = message;
+        this.errorCode = errorCode;
+        this.tip = tip;
+        this.data = data;
+    }
+
     public int getStatus() {
         return status;
     }
 
     public String getMessage() {
+        if (message == null && tip == null) {
+            return null;
+        }
+        if (message == null) {
+            return tip;
+        }
         return message;
     }
 
@@ -80,12 +95,87 @@ public class HttpResponseBody<D> {
         return this;
     }
 
-    public HttpResponseBody<D> fork() {
-        return new HttpResponseBody<>(errorCode, status, message, data);
+    public String getTip() {
+        // for json convert
+        if (tip == null) {
+            return message;
+        }
+        return tip;
     }
 
-    public HttpResponseBody<D> fork(String message) {
-        return new HttpResponseBody<>(errorCode, status, message, data);
+    public String rawTip() {
+        return tip;
+    }
+
+    public HttpResponseBody<D> setTip(String tip) {
+        this.tip = tip;
+        return this;
+    }
+
+    public boolean hasTip() {
+        return tip != null;
+    }
+
+    public HttpResponseBody<D> fork() {
+        return new HttpResponseBody<>(errorCode, status, message, tip, data);
+    }
+
+    public HttpResponseBody<D> fork(String tip) {
+        return new HttpResponseBody<>(errorCode, status, message, tip, data);
+    }
+
+    public HttpResponseBody<D> fork(String message, String tip) {
+        return new HttpResponseBody<>(errorCode, status, message, tip, data);
+    }
+
+    public static <D> Builder<D> builder() {
+        return new Builder<>();
+    }
+
+    public static <D> Builder<D> builder(D data) {
+        return new Builder<D>().data(data);
+    }
+
+    public static class Builder<D> {
+        private Integer status;
+        private String message;
+        private ErrorCode errorCode;
+        private String tip;
+        private D data = null;
+
+        public Builder() {
+        }
+
+        public Builder<D> status(int status) {
+            this.status = status;
+            return this;
+        }
+
+        public Builder<D> message(String message) {
+            this.message = message;
+            return this;
+        }
+
+        public Builder<D> errorCode(ErrorCode errorCode) {
+            this.errorCode = errorCode;
+            return this;
+        }
+
+        public Builder<D> tip(String tip) {
+            this.tip = tip;
+            return this;
+        }
+
+        public Builder<D> data(D data) {
+            this.data = data;
+            return this;
+        }
+
+        public HttpResponseBody<D> build() {
+            return new HttpResponseBody<>(errorCode,
+                    status == null ? errorCode.getStatus() : status,
+                    message, tip, data);
+        }
     }
 
     public static <D> HttpResponseBody<D> success() {
@@ -93,25 +183,23 @@ public class HttpResponseBody<D> {
     }
 
     public static <D> HttpResponseBody<D> success(String message) {
-        return (HttpResponseBody<D>) success()
+        return HttpResponseBody.<D>success()
                 .fork()
                 .setMessage(message);
     }
 
     public static <D> HttpResponseBody<D> success(String message, D data) {
-        return (HttpResponseBody<D>) success()
+        return HttpResponseBody.<D>success()
                 .fork()
                 .setMessage(message)
                 .setData(data);
     }
 
     public static <D> HttpResponseBody<D> success(D data) {
-        return (HttpResponseBody<D>) success()
+        return HttpResponseBody.<D>success()
                 .fork()
                 .setData(data);
     }
-
-    // for semantic control
 
     public static <D> HttpResponseBody<D> of(ErrorCode errorCode,
                                              int status,
@@ -120,12 +208,6 @@ public class HttpResponseBody<D> {
         return new HttpResponseBody<>(errorCode, status, message, data);
     }
 
-    public static <D> HttpResponseBody<D> of(ErrorCode errorCode,
-                                             int status,
-                                             String message) {
-
-        return new HttpResponseBody<>(errorCode, status, message);
-    }
 
     public static <D> HttpResponseBody<D> of(ErrorCode errorCode,
                                              String message) {
@@ -145,5 +227,12 @@ public class HttpResponseBody<D> {
                                              String message,
                                              D data) {
         return new HttpResponseBody<>(errorCode, errorCode.getStatus(), message, data);
+    }
+
+    public static <D> HttpResponseBody<D> of(ErrorCode errorCode, Integer status,
+                                             String message, String tip, D data) {
+        return new HttpResponseBody<>(errorCode,
+                status == null ? errorCode.getStatus() : status,
+                message, tip, data);
     }
 }

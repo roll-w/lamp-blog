@@ -39,7 +39,7 @@ import java.util.Objects;
  * @author RollW
  */
 @ControllerAdvice
-public class ControllerResponseBodyAdvice implements ResponseBodyAdvice<HttpResponseBody<?>> {
+public class ControllerResponseBodyAdvice implements ResponseBodyAdvice<Object> {
     private final ErrorCodeMessageProvider errorCodeMessageProvider;
     private final MessageSource messageSource;
     private static final Logger logger = LoggerFactory.getLogger(ControllerResponseBodyAdvice.class);
@@ -62,36 +62,40 @@ public class ControllerResponseBodyAdvice implements ResponseBodyAdvice<HttpResp
     }
 
     @Override
-    public HttpResponseBody<?> beforeBodyWrite(
-            HttpResponseBody<?> body,
+    public Object beforeBodyWrite(
+            Object obj,
             @NonNull MethodParameter returnType,
             @NonNull MediaType selectedContentType,
             @NonNull Class<? extends HttpMessageConverter<?>> selectedConverterType,
             @NonNull ServerHttpRequest request,
             @NonNull ServerHttpResponse response) {
-        if (body == null) {
+        if (obj == null) {
             return null;
         }
-        String rawMessage = tryGetRawMessage(body);
-        String newMessage = replaceMessageIfNecessary(body);
-        if (Objects.equals(rawMessage, newMessage)) {
+        if (!(obj instanceof HttpResponseBody<?> body)) {
+            return obj;
+        }
+
+        String rawTip = tryGetRawTip(body);
+        String newTip = replaceTipIfNecessary(body);
+        if (Objects.equals(rawTip, newTip)) {
             return body;
         }
-        return body.fork(newMessage);
+        return body.fork(newTip);
     }
 
-    private String tryGetRawMessage(HttpResponseBody<?> responseBody) {
+    private String tryGetRawTip(HttpResponseBody<?> responseBody) {
         if (responseBody == null) {
             return null;
         }
-        return responseBody.getMessage();
+        return responseBody.rawTip();
     }
 
-    private String replaceMessageIfNecessary(HttpResponseBody<?> responseBody) {
+    private String replaceTipIfNecessary(HttpResponseBody<?> responseBody) {
         if (responseBody == null) {
             return null;
         }
-        String message = responseBody.getMessage();
+        String message = responseBody.rawTip();
         if (message != null) {
             return tryMessageSource(message);
         }

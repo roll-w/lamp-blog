@@ -60,7 +60,7 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
         this.settingLoader = settingLoader;
         this.mailProperties = mailProperties;
         this.mailSender = mailSender;
-        this.username = chooseUsername();
+        this.username = chooseUsername(mailProperties, settingLoader);
     }
 
 
@@ -100,7 +100,7 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
     }
 
 
-    private String chooseUsername() {
+    private static String chooseUsername(MailProperties mailProperties, SettingLoader settingLoader) {
         String sender = settingLoader.getSettingValue(MailConfigKeys.KEY_MAIL_SENDER_NAME);
         if (sender == null) {
             return mailProperties.getUsername();
@@ -110,6 +110,6 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
 
     @Override
     public void onEvent(SystemSetting event) {
-        this.username = chooseUsername();
+        this.username = chooseUsername(mailProperties, settingLoader);
     }
 }

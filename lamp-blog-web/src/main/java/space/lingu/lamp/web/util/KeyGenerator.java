@@ -19,14 +19,24 @@ package space.lingu.lamp.web.util;
 import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.IoErrorCode;
+import space.lingu.lamp.web.common.DataErrorCode;
 import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.i18n.ErrorCodeKeyHelper;
 import space.lingu.lamp.web.service.auth.AuthErrorCode;
 import space.lingu.lamp.web.service.user.UserErrorCode;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 /**
@@ -39,24 +49,73 @@ public class KeyGenerator {
     public static void main(String[] args) {
         List<Class<? extends ErrorCode>> errorCodeClasses = List.of(
                 CommonErrorCode.class, AuthErrorCode.class, IoErrorCode.class,
-                UserErrorCode.class, WebCommonErrorCode.class
+                UserErrorCode.class, WebCommonErrorCode.class, DataErrorCode.class
         );
+        String[] properties = new String[]{
+                "messages.properties",
+                "messages_en_US.properties",
+                "messages_zh_CN.properties"
+        };
+
         System.out.println("Start generate keys for ErrorCodes: " + errorCodeClasses);
         System.out.println();
 
         KeyGenerator generator = new KeyGenerator(errorCodeClasses);
         PrintWriter writer = new PrintWriter(System.out);
-        generator.write(writer);
+        List<String> keyNames = generator.keyNames();
+
+        for (String property : properties) {
+            writer.println(property + "\n============");
+            Map<String, KeyPair> keyPairs = readKeyPairs(property);
+            for (String keyName : keyNames) {
+                KeyPair keyPair = keyPairs.get(keyName);
+                if (keyPair == null) {
+                    writer.println(keyName + "=");
+                } else {
+                    writer.println(keyPair);
+                }
+            }
+            writer.println();
+            writer.flush();
+        }
+
         System.out.println("\nEnd.");
 
         writer.close();
     }
 
-    private final List<Class<? extends ErrorCode>> errorCodeClasses;
+    private static Map<String, KeyPair> readKeyPairs(String property) {
+        Properties properties = load(property);
+        return readProperties(properties);
+    }
+
+    private static Properties load(String path) {
+        Properties properties = new Properties();
+        try (InputStream in = KeyGenerator.class.getResourceAsStream("/" + path)) {
+            if (in == null) {
+                throw new IOException("Cannot find resource: " + path);
+            }
+            Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
+            properties.load(reader);
+        } catch (IOException e) {
+            throw new IllegalStateException("Failed to load properties: " + path, e);
+        }
+        return properties;
+    }
+
+    private static Map<String, KeyPair> readProperties(Properties properties) {
+        Map<String, KeyPair> keyPairs = new HashMap<>();
+        for (String key : properties.stringPropertyNames()) {
+            String value = properties.getProperty(key);
+            keyPairs.put(key, new KeyPair(key, value));
+        }
+        return keyPairs;
+    }
+
     private final Set<Key> keys = new HashSet<>();
 
     public KeyGenerator(List<Class<? extends ErrorCode>> errorCodeClasses) {
-        this.errorCodeClasses = errorCodeClasses;
+        errorCodeClasses.forEach(this::putSet);
     }
 
     private void putSet(Class<? extends ErrorCode> clz) {
@@ -91,8 +150,13 @@ public class KeyGenerator {
         return distinct.stream().sorted().toList();
     }
 
+    public List<String> keyNames() {
+        List<String> keys = new ArrayList<>(convertToKeyNames());
+        keys.add(0, "success");
+        return keys;
+    }
+
     public void write(PrintWriter writer) {
-        errorCodeClasses.forEach(this::putSet);
         List<String> keys = convertToKeyNames();
         writer.println("success=");
         keys.forEach(key -> writer.println(key + "="));
@@ -102,5 +166,14 @@ public class KeyGenerator {
     private record Key(String className,
                        String codeName) {
     }
+
+    private record KeyPair(String key,
+                           String value) {
+        @Override
+        public String toString() {
+            return key + "=" + value;
+        }
+    }
+
 
 }
