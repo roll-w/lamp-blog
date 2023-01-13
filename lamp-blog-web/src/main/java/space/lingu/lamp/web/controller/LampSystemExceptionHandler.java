@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
 import space.lingu.lamp.CommonErrorCode;
-import space.lingu.lamp.ErrorCodeFinderChain;
+import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.SystemRuntimeException;
 import space.lingu.lamp.web.authentication.login.LoginTokenException;
@@ -41,10 +41,10 @@ import java.io.IOException;
 @RestController
 public class LampSystemExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(LampSystemExceptionHandler.class);
-    private final ErrorCodeFinderChain codeFinderChain;
+    private final ErrorCodeFinder errorCodeFinder;
 
-    public LampSystemExceptionHandler(ErrorCodeFinderChain codeFinderChain) {
-        this.codeFinderChain = codeFinderChain;
+    public LampSystemExceptionHandler(ErrorCodeFinder errorCodeFinder) {
+        this.errorCodeFinder = errorCodeFinder;
     }
 
 
@@ -52,7 +52,7 @@ public class LampSystemExceptionHandler {
     public HttpResponseEntity<String> handle(LightRuntimeException e) {
         logger.error("Unexpected sql error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
-                codeFinderChain.fromThrowable(e),
+                errorCodeFinder.fromThrowable(e),
                 e.getMessage()
         );
     }
@@ -61,7 +61,7 @@ public class LampSystemExceptionHandler {
     public HttpResponseEntity<String> handle(ParameterMissingException e) {
         logger.warn("Param missing: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
-                codeFinderChain.fromThrowable(e),
+                errorCodeFinder.fromThrowable(e),
                 e.getMessage()
         );
     }
@@ -70,7 +70,7 @@ public class LampSystemExceptionHandler {
     public HttpResponseEntity<String> handle(LoginTokenException e) {
         logger.error("Token exception: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
-                codeFinderChain.fromThrowable(e)
+                errorCodeFinder.fromThrowable(e)
         );
     }
 
@@ -78,7 +78,7 @@ public class LampSystemExceptionHandler {
     public HttpResponseEntity<String> handle(SystemRuntimeException e) {
         logger.error("System runtime error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
-                codeFinderChain.fromThrowable(e)
+                errorCodeFinder.fromThrowable(e)
         );
     }
 
@@ -95,7 +95,7 @@ public class LampSystemExceptionHandler {
     public HttpResponseEntity<String> handle(FileNotFoundException e) {
         return HttpResponseEntity.of(
                 CommonErrorCode.ERROR_NOT_FOUND,
-                "404 Not found."
+                e.getMessage()
         );
     }
 
@@ -103,7 +103,7 @@ public class LampSystemExceptionHandler {
     public HttpResponseEntity<String> handle(IOException e) {
         logger.error("IO Error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
-                codeFinderChain.fromThrowable(e),
+                errorCodeFinder.fromThrowable(e),
                 e.getMessage()
         );
     }
@@ -112,7 +112,7 @@ public class LampSystemExceptionHandler {
     public HttpResponseEntity<String> handle(Exception e) {
         logger.error("Error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
-                codeFinderChain.fromThrowable(e),
+                errorCodeFinder.fromThrowable(e),
                 e.getMessage()
         );
     }

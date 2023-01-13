@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.data.dto.user;
 
+import org.springframework.security.core.userdetails.UserDetails;
 import space.lingu.lamp.web.data.entity.user.Role;
 import space.lingu.lamp.web.data.entity.user.User;
 
@@ -30,6 +31,18 @@ public record UserInfo(
 ) {
     public static UserInfo from(User user) {
         if (user == null) {
+            return null;
+        }
+        return new UserInfo(
+                user.getId(),
+                user.getUsername(),
+                user.getEmail(),
+                user.getRole()
+        );
+    }
+
+    public static UserInfo from(UserDetails userDetails) {
+        if (!(userDetails instanceof User user)) {
             return null;
         }
         return new UserInfo(
