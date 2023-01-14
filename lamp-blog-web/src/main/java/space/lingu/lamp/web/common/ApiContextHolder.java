@@ -18,7 +18,7 @@ package space.lingu.lamp.web.common;
 
 import com.google.common.base.Preconditions;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.data.dto.user.UserInfo;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
 
 import java.util.Locale;
 

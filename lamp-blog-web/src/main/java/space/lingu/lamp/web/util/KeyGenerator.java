@@ -22,8 +22,8 @@ import space.lingu.lamp.IoErrorCode;
 import space.lingu.lamp.web.common.DataErrorCode;
 import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.i18n.ErrorCodeKeyHelper;
-import space.lingu.lamp.web.service.auth.AuthErrorCode;
-import space.lingu.lamp.web.service.user.UserErrorCode;
+import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
+import space.lingu.lamp.web.domain.user.common.UserErrorCode;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -24,16 +24,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.Result;
-import space.lingu.lamp.web.authentication.login.LoginStrategyType;
+import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.common.ParamValidate;
-import space.lingu.lamp.web.data.vo.user.LoginResponse;
-import space.lingu.lamp.web.data.dto.user.LoginTokenSendRequest;
-import space.lingu.lamp.web.data.dto.user.UserInfo;
-import space.lingu.lamp.web.data.dto.user.UserLoginRequest;
-import space.lingu.lamp.web.data.dto.user.UserRegisterRequest;
-import space.lingu.lamp.web.data.entity.user.Role;
-import space.lingu.lamp.web.service.auth.AuthenticationTokenService;
-import space.lingu.lamp.web.service.user.LoginRegisterService;
+import space.lingu.lamp.web.domain.user.vo.LoginResponse;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.Role;
+import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.web.domain.user.service.LoginRegisterService;
 
 import javax.servlet.http.HttpServletRequest;
 

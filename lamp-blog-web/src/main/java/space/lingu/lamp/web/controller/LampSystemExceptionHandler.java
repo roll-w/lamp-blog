@@ -27,9 +27,9 @@ import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.SystemRuntimeException;
-import space.lingu.lamp.web.authentication.login.LoginTokenException;
+import space.lingu.lamp.web.domain.authentication.login.LoginTokenException;
 import space.lingu.lamp.web.common.ParameterMissingException;
-import space.lingu.lamp.web.service.auth.AuthErrorCode;
+import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.light.LightRuntimeException;
 
 import java.io.FileNotFoundException;

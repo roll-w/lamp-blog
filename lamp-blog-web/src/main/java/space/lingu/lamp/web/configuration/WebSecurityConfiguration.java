@@ -38,8 +38,8 @@ import org.springframework.web.servlet.HandlerExceptionResolver;
 import space.lingu.lamp.web.configuration.compenent.WebDelegateSecurityHandler;
 import space.lingu.lamp.web.configuration.filter.CorsConfigFilter;
 import space.lingu.lamp.web.configuration.filter.TokenAuthenticationFilter;
-import space.lingu.lamp.web.service.auth.AuthenticationTokenService;
-import space.lingu.lamp.web.service.user.UserDetailsService;
+import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.web.domain.user.service.UserDetailsService;
 
 /**
  * @author RollW

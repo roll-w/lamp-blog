@@ -20,9 +20,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import space.lingu.lamp.HttpResponseEntity;
-import space.lingu.lamp.web.data.dto.TokenAuthResult;
-import space.lingu.lamp.web.service.auth.AuthErrorCode;
-import space.lingu.lamp.web.service.auth.AuthenticationTokenService;
+import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
+import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
+import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
 
 /**
  * @author RollW

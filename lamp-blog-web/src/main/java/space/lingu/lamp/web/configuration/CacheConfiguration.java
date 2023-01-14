@@ -38,6 +38,7 @@ public class CacheConfiguration {
         CaffeineCacheManager caffeineCacheManager = new CaffeineCacheManager();
         Caffeine<Object, Object> caffeine = Caffeine
                 .newBuilder()
+                .expireAfterAccess(60, TimeUnit.MINUTES)
                 .expireAfterWrite(60, TimeUnit.MINUTES);
         caffeineCacheManager.setCaffeine(caffeine);
         return caffeineCacheManager;

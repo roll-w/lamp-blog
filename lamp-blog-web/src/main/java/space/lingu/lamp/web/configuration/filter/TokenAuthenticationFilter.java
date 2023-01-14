@@ -24,10 +24,10 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.common.ApiContextHolder;
-import space.lingu.lamp.web.data.dto.TokenAuthResult;
-import space.lingu.lamp.web.data.dto.user.UserInfo;
-import space.lingu.lamp.web.service.auth.AuthenticationTokenService;
-import space.lingu.lamp.web.service.user.UserDetailsService;
+import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.web.domain.user.service.UserDetailsService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

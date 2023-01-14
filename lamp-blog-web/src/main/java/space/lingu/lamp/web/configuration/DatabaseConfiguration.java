@@ -18,7 +18,7 @@ package space.lingu.lamp.web.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import space.lingu.lamp.web.data.database.LampDatabase;
+import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.light.Light;
 import space.lingu.light.connect.HikariConnectionPool;
 import space.lingu.light.log.LightSlf4jLogger;
