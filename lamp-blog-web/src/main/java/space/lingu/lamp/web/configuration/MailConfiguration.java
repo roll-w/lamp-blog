@@ -25,7 +25,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import space.lingu.lamp.event.EventCallback;
 import space.lingu.lamp.event.EventRegistry;
-import space.lingu.lamp.web.common.MailConfigKeys;
+import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.data.database.repository.SystemSettingRepository;
 import space.lingu.lamp.web.data.entity.SystemSetting;
 

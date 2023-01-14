@@ -119,7 +119,7 @@ public class Article {
         return categories;
     }
 
-    public static class Builder {
+    public final static class Builder {
         private Long id;
         private long userId;
         private String title;

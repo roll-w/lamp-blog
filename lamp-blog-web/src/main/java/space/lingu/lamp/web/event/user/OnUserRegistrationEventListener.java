@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.lamp.event.EventCallback;
 import space.lingu.lamp.event.EventRegistry;
-import space.lingu.lamp.web.common.MailConfigKeys;
+import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.common.SimpleMailMessageBuilder;
 import space.lingu.lamp.web.data.SettingLoader;
 import space.lingu.lamp.web.data.dto.user.UserInfo;

@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.configuration;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,11 +26,16 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import space.lingu.lamp.web.configuration.compenent.WebDelegateSecurityHandler;
 import space.lingu.lamp.web.configuration.filter.CorsConfigFilter;
 import space.lingu.lamp.web.configuration.filter.TokenAuthenticationFilter;
 import space.lingu.lamp.web.service.auth.AuthenticationTokenService;
@@ -51,13 +57,22 @@ public class WebSecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security,
                                                    CorsConfigFilter corsConfigFilter,
-                                                   TokenAuthenticationFilter tokenAuthenticationFilter) throws Exception {
+                                                   TokenAuthenticationFilter tokenAuthenticationFilter,
+                                                   AuthenticationEntryPoint authenticationEntryPoint,
+                                                   AccessDeniedHandler accessDeniedHandler) throws Exception {
+
+
         security.csrf().disable()
                 .authorizeRequests()
+                .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/**").permitAll()
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().permitAll();
         security.userDetailsService(userDetailsService);
+
+        security.exceptionHandling()
+                .authenticationEntryPoint(authenticationEntryPoint)
+                .accessDeniedHandler(accessDeniedHandler);
 
         security.sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.NEVER);
@@ -103,4 +118,14 @@ public class WebSecurityConfiguration {
         );
     }
 
+    @Bean
+    public WebDelegateSecurityHandler webDelegateSecurityHandler(
+            @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+        return new WebDelegateSecurityHandler(resolver);
+    }
+
+    @Bean
+    public GrantedAuthorityDefaults grantedAuthorityDefaults() {
+        return new GrantedAuthorityDefaults(""); // removes the "ROLE_" prefix
+    }
 }

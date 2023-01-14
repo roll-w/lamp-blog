@@ -114,7 +114,6 @@ public class LoginRegisterService implements RegisterTokenProvider {
         return userRepository.getUserByName(identity);
     }
 
-
     public Result<UserInfo> loginUser(String identity,
                                       String token,
                                       LoginStrategyType type) {
@@ -127,19 +126,19 @@ public class LoginRegisterService implements RegisterTokenProvider {
         }
         ErrorCode code = verifyToken(token, user, type);
         if (!code.getState()) {
-            return  Result.of(code);
+            return Result.of(code);
         }
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(user, token, user.getAuthorities());
         authentication = authenticationManager.authenticate(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        return  Result.success(
+        return Result.success(
                 UserInfo.from(user)
         );
     }
 
     public Result<UserInfo> registerUser(String username, String password,
-                                                 String email, Role role) {
+                                         String email, Role role) {
         Long userId = userRepository.getUserIdByName(username);
         if (!User.isInvalidId(userId)) {
             return Result.of(UserErrorCode.ERROR_USER_EXISTED);
@@ -166,18 +165,22 @@ public class LoginRegisterService implements RegisterTokenProvider {
         User user = builder.build();
         long id = userRepository.insertUser(user);
         user = builder.setId(id).build();
+        UserInfo userInfo = UserInfo.from(user);
 
         if (!user.isEnabled()) {
             OnUserRegistrationEvent event = new OnUserRegistrationEvent(
-                    UserInfo.from(user), Locale.getDefault(),
+                    userInfo, Locale.getDefault(),
                     "http://localhost:5000/");
+            // TODO: get url from config
             eventPublisher.publishEvent(event);
         }
 
         logger.info("Register username: {}, email: {}, role: {}, id: {}",
                 username, email, role, id);
-        return Result.success(UserInfo.from(user));
+        return Result.success(userInfo);
     }
+
+
 
     public void logout() {
         SecurityContextHolder.clearContext();

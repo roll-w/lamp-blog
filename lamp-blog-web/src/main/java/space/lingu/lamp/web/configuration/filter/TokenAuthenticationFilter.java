@@ -52,6 +52,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
+        ApiContextHolder.clearContext();
         String requestUri = request.getRequestURI();
         boolean isAdminApi = isAdminApi(requestUri);
         String remoteIp = tryGetIpAddress(request);
@@ -111,6 +112,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             "WL-Proxy-Client-IP",
             "HTTP_X_FORWARDED_FOR",
             "HTTP_X_FORWARDED",
+            "X-Real-IP",
             "HTTP_X_CLUSTER_CLIENT_IP",
             "HTTP_CLIENT_IP",
             "HTTP_FORWARDED_FOR",

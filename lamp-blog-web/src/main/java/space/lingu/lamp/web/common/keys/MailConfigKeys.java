@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.common;
+package space.lingu.lamp.web.common.keys;
 
 /**
  * @author RollW

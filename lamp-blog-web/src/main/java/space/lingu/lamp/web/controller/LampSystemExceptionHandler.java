@@ -18,6 +18,8 @@ package space.lingu.lamp.web.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,6 +29,7 @@ import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.SystemRuntimeException;
 import space.lingu.lamp.web.authentication.login.LoginTokenException;
 import space.lingu.lamp.web.common.ParameterMissingException;
+import space.lingu.lamp.web.service.auth.AuthErrorCode;
 import space.lingu.light.LightRuntimeException;
 
 import java.io.FileNotFoundException;
@@ -49,7 +52,7 @@ public class LampSystemExceptionHandler {
 
 
     @ExceptionHandler(LightRuntimeException.class)
-    public HttpResponseEntity<String> handle(LightRuntimeException e) {
+    public HttpResponseEntity<Void> handle(LightRuntimeException e) {
         logger.error("Unexpected sql error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
                 errorCodeFinder.fromThrowable(e),
@@ -58,7 +61,7 @@ public class LampSystemExceptionHandler {
     }
 
     @ExceptionHandler(ParameterMissingException.class)
-    public HttpResponseEntity<String> handle(ParameterMissingException e) {
+    public HttpResponseEntity<Void> handle(ParameterMissingException e) {
         logger.warn("Param missing: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
                 errorCodeFinder.fromThrowable(e),
@@ -67,7 +70,7 @@ public class LampSystemExceptionHandler {
     }
 
     @ExceptionHandler(LoginTokenException.class)
-    public HttpResponseEntity<String> handle(LoginTokenException e) {
+    public HttpResponseEntity<Void> handle(LoginTokenException e) {
         logger.error("Token exception: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
                 errorCodeFinder.fromThrowable(e)
@@ -75,7 +78,7 @@ public class LampSystemExceptionHandler {
     }
 
     @ExceptionHandler(SystemRuntimeException.class)
-    public HttpResponseEntity<String> handle(SystemRuntimeException e) {
+    public HttpResponseEntity<Void> handle(SystemRuntimeException e) {
         logger.error("System runtime error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
                 errorCodeFinder.fromThrowable(e)
@@ -83,7 +86,7 @@ public class LampSystemExceptionHandler {
     }
 
     @ExceptionHandler(NullPointerException.class)
-    public HttpResponseEntity<String> handle(NullPointerException e) {
+    public HttpResponseEntity<Void> handle(NullPointerException e) {
         logger.error("Null exception : %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
                 CommonErrorCode.ERROR_NULL,
@@ -92,7 +95,7 @@ public class LampSystemExceptionHandler {
     }
 
     @ExceptionHandler(FileNotFoundException.class)
-    public HttpResponseEntity<String> handle(FileNotFoundException e) {
+    public HttpResponseEntity<Void> handle(FileNotFoundException e) {
         return HttpResponseEntity.of(
                 CommonErrorCode.ERROR_NOT_FOUND,
                 e.getMessage()
@@ -100,7 +103,7 @@ public class LampSystemExceptionHandler {
     }
 
     @ExceptionHandler(IOException.class)
-    public HttpResponseEntity<String> handle(IOException e) {
+    public HttpResponseEntity<Void> handle(IOException e) {
         logger.error("IO Error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
                 errorCodeFinder.fromThrowable(e),
@@ -108,8 +111,19 @@ public class LampSystemExceptionHandler {
         );
     }
 
+    @ExceptionHandler(AccessDeniedException.class)
+    public HttpResponseEntity<Void> handleAuthException(AccessDeniedException e) {
+        return HttpResponseEntity.of(AuthErrorCode.ERROR_UNAUTHORIZED_USE);
+    }
+
+    @ExceptionHandler(AuthenticationException.class)
+    public HttpResponseEntity<Void> handleAuthException(AuthenticationException e) {
+        return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+    }
+
+
     @ExceptionHandler(Exception.class)
-    public HttpResponseEntity<String> handle(Exception e) {
+    public HttpResponseEntity<Void> handle(Exception e) {
         logger.error("Error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
                 errorCodeFinder.fromThrowable(e),

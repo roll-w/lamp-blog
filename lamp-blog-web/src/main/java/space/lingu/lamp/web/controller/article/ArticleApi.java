@@ -14,19 +14,24 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.service.user;
+package space.lingu.lamp.web.controller.article;
 
-import space.lingu.lamp.Result;
-import space.lingu.lamp.web.data.dto.user.UserInfo;
-import space.lingu.lamp.web.data.entity.user.Role;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author RollW
  */
-public interface UserService {
-    Result<UserInfo> createUser(String username, String password,
-                                String email, Role role);
-
-    Result<Void> deleteUser(long userId);
-
+@Documented
+@Target({ElementType.TYPE,ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@RequestMapping({"/api/article/", "/api/admin/article"})
+@RestController
+public @interface ArticleApi {
 }

@@ -14,19 +14,14 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.service.user;
-
-import space.lingu.lamp.Result;
-import space.lingu.lamp.web.data.dto.user.UserInfo;
-import space.lingu.lamp.web.data.entity.user.Role;
+package space.lingu.lamp.web.common.keys;
 
 /**
  * @author RollW
  */
-public interface UserService {
-    Result<UserInfo> createUser(String username, String password,
-                                String email, Role role);
+public final class MessageTemplateKeys {
+    public static final String EMAIL_LOGIN_TOKEN_TEMPLATE = "email.login-token";
 
-    Result<Void> deleteUser(long userId);
-
+    private MessageTemplateKeys() {
+    }
 }

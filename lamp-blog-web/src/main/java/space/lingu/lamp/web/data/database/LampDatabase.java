@@ -16,9 +16,10 @@
 
 package space.lingu.lamp.web.data.database;
 
+import space.lingu.lamp.web.data.database.dao.MessageResourceDao;
+import space.lingu.lamp.web.data.database.dao.RegisterVerificationTokenDao;
 import space.lingu.lamp.web.data.database.dao.SystemSettingDao;
 import space.lingu.lamp.web.data.database.dao.UserDao;
-import space.lingu.lamp.web.data.database.dao.RegisterVerificationTokenDao;
 import space.lingu.lamp.web.data.entity.MessageResource;
 import space.lingu.lamp.web.data.entity.SystemSetting;
 import space.lingu.lamp.web.data.entity.user.RegisterVerificationToken;
@@ -43,4 +44,6 @@ public abstract class LampDatabase extends LightDatabase {
     public abstract RegisterVerificationTokenDao getRegisterVerificationTokenDao();
 
     public abstract SystemSettingDao getSystemSettingDao();
+
+    public abstract MessageResourceDao getMessageResourceDao();
 }
