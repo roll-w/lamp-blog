@@ -84,7 +84,7 @@ public abstract class ErrorCodeFinderChain implements ErrorCodeFinder {
             return FinderChain.COMMON_CHAIN;
         }
         ErrorCodeFinder[] finders = new ErrorCodeFinder[errorCodeFinders.length + 1];
-        finders[0] =  FinderChain.COMMON_CHAIN;
+        finders[0] = FinderChain.COMMON_CHAIN;
         System.arraycopy(errorCodeFinders, 0, finders, 1, errorCodeFinders.length);
         return of(finders);
     }

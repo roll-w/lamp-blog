@@ -19,7 +19,7 @@ package space.lingu.lamp.web.system.repository;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.SystemSettingDao;
-import space.lingu.lamp.web.system.entity.SystemSetting;
+import space.lingu.lamp.web.system.SystemSetting;
 
 /**
  * @author RollW

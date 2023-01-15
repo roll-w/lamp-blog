@@ -27,7 +27,7 @@ import space.lingu.lamp.event.EventCallback;
 import space.lingu.lamp.event.EventRegistry;
 import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.system.repository.SystemSettingRepository;
-import space.lingu.lamp.web.system.entity.SystemSetting;
+import space.lingu.lamp.web.system.SystemSetting;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;

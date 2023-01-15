@@ -57,7 +57,7 @@ public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder {
     }
 
     @Override
-    public boolean getState() {
+    public boolean success() {
         return false;
     }
 

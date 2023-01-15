@@ -18,7 +18,6 @@ package space.lingu.lamp.web.system;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.system.entity.SystemSetting;
 
 /**
  * @author RollW

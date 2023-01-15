@@ -116,7 +116,7 @@ public enum UserErrorCode implements ErrorCode {
     }
 
     @Override
-    public boolean getState() {
+    public boolean success() {
         return this == SUCCESS;
     }
 

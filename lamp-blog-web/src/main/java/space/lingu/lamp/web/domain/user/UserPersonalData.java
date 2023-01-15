@@ -21,16 +21,16 @@ import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
- * 用户附加信息（个人资料）
+ * 用户个人资料
  *
  * @author RollW
  */
-// TODO: user additional info
 @DataTable(tableName = "user_additional_info")
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
-public final class UserAdditionalInfo implements Serializable {
+public final class UserPersonalData implements Serializable {
     @PrimaryKey
     @DataColumn(name = "id")
     private final long userId;
@@ -56,9 +56,9 @@ public final class UserAdditionalInfo implements Serializable {
     @DataColumn(name = "website")
     private final String website;
 
-    public UserAdditionalInfo(long userId, String nickname, String avatar,
-                              long birthday, String introduction,
-                              String gender, String location, String website) {
+    public UserPersonalData(long userId, String nickname, String avatar,
+                            long birthday, String introduction,
+                            String gender, String location, String website) {
         this.userId = userId;
         this.nickname = nickname;
         this.avatar = avatar;
@@ -110,6 +110,33 @@ public final class UserAdditionalInfo implements Serializable {
                 .setIntroduction(introduction)
                 .setWebsite(website)
                 .setLocation(location);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UserPersonalData that = (UserPersonalData) o;
+        return userId == that.userId && birthday == that.birthday &&
+                Objects.equals(nickname, that.nickname) && Objects.equals(avatar, that.avatar) && Objects.equals(introduction, that.introduction) && Objects.equals(gender, that.gender) && Objects.equals(location, that.location) && Objects.equals(website, that.website);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, nickname, avatar, birthday, introduction, gender, location, website);
+    }
+
+    @Override
+    public String toString() {
+        return "UserPersonalData{" + "userId=" + userId +
+                ", nickname='" + nickname + '\'' +
+                ", avatar='" + avatar + '\'' +
+                ", birthday=" + birthday +
+                ", introduction='" + introduction + '\'' +
+                ", gender='" + gender + '\'' +
+                ", location='" + location + '\'' +
+                ", website='" + website + '\'' +
+                '}';
     }
 
 
@@ -217,8 +244,8 @@ public final class UserAdditionalInfo implements Serializable {
             return website;
         }
 
-        public UserAdditionalInfo build() {
-            return new UserAdditionalInfo(userId, nickname, avatar,
+        public UserPersonalData build() {
+            return new UserPersonalData(userId, nickname, avatar,
                     birthday, introduction, gender, location, website);
         }
     }

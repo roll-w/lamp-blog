@@ -27,6 +27,7 @@ import space.lingu.light.PrimaryKey;
 
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * @author RollW
@@ -181,6 +182,36 @@ public class User implements Serializable, UserDetails {
                 .setLocked(locked)
                 .setAccountExpired(accountExpired)
                 .setCanceled(canceled);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return registerTime == user.registerTime && enabled == user.enabled && locked == user.locked && accountExpired == user.accountExpired && canceled == user.canceled && Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && role == user.role && Objects.equals(email, user.email) && Objects.equals(phone, user.phone);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, username, password, role, registerTime, email, phone, enabled, locked, accountExpired, canceled);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", registerTime=" + registerTime +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                ", enabled=" + enabled +
+                ", locked=" + locked +
+                ", accountExpired=" + accountExpired +
+                ", canceled=" + canceled +
+                '}';
     }
 
     public static boolean isInvalidId(Long userId) {

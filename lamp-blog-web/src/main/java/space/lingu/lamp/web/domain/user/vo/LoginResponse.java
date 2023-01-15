@@ -26,4 +26,8 @@ public record LoginResponse(
         UserInfo user
 ) {
     public static final LoginResponse NULL = new LoginResponse(null, null);
+
+    public static LoginResponse nullResponse() {
+        return NULL;
+    }
 }

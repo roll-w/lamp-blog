@@ -19,7 +19,7 @@ package space.lingu.lamp.web.system.repository;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.MessageResourceDao;
-import space.lingu.lamp.web.system.entity.MessageResource;
+import space.lingu.lamp.web.system.MessageResource;
 
 import java.util.List;
 import java.util.Locale;

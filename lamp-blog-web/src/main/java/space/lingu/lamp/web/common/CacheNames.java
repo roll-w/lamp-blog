@@ -24,6 +24,12 @@ public class CacheNames {
 
     public static final String EMAIL_TOKEN = "email-token";
 
+    public static final String ONLINE_USERS = "online-users";
+
+    public static final String USERS = "users";
+
+    public static final String ADMINS = "admins";
+
     private CacheNames() {
     }
 }

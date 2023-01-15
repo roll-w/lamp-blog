@@ -22,7 +22,8 @@ package space.lingu.lamp.web.domain.review;
 public record ReviewResult(
         ReviewStatus status,
         ReviewType type,
-        String reason,
+        String result,
+        String reviewContentId,
         long reviewer,
         long reviewTime
 ) {

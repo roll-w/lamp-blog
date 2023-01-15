@@ -14,7 +14,10 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review;
+package space.lingu.lamp.web.domain.review.service;
+
+import space.lingu.lamp.web.domain.review.ReviewResult;
+import space.lingu.lamp.web.domain.review.Reviewable;
 
 /**
  * @author RollW

@@ -32,7 +32,7 @@ import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.common.SimpleMailMessageBuilder;
 import space.lingu.lamp.web.system.SettingLoader;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
-import space.lingu.lamp.web.system.entity.SystemSetting;
+import space.lingu.lamp.web.system.SystemSetting;
 import space.lingu.lamp.web.domain.user.service.RegisterTokenProvider;
 
 /**

@@ -88,7 +88,7 @@ public enum AuthErrorCode implements ErrorCode {
     }
 
     @Override
-    public boolean getState() {
+    public boolean success() {
         return this == SUCCESS;
     }
 

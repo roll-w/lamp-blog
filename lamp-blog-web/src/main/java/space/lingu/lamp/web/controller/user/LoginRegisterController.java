@@ -16,21 +16,24 @@
 
 package space.lingu.lamp.web.controller.user;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.Result;
-import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
+import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.common.ParamValidate;
-import space.lingu.lamp.web.domain.user.vo.LoginResponse;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
-import space.lingu.lamp.web.domain.user.Role;
+import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.web.domain.user.Role;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.user.service.LoginRegisterService;
+import space.lingu.lamp.web.domain.user.vo.LoginResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -80,9 +83,9 @@ public class LoginRegisterController {
     }
 
     private HttpResponseEntity<LoginResponse> loginResponse(Result<UserInfo> res) {
-        if (!res.errorCode().getState()) {
+        if (res.errorCode().failed()) {
             return HttpResponseEntity.of(
-                    res.toResponseBody(() -> LoginResponse.NULL)
+                    res.toResponseBody(LoginResponse::nullResponse)
             );
         }
         String token = authenticationTokenService.generateAuthToken(
@@ -116,18 +119,29 @@ public class LoginRegisterController {
 
     @PostMapping("/register/token/confirm/{token}")
     public HttpResponseEntity<Void> activateUser(@PathVariable String token) {
-        return null;
+        ParamValidate.notEmpty(token, "Token cannot be null or empty.");
+        ErrorCode errorCode = loginRegisterService.verifyRegisterToken(token);
+        return HttpResponseEntity.of(errorCode);
     }
 
     @PostMapping(value = "/register/token/resend")
     public HttpResponseEntity<Void> resendRegisterToken(
-            @RequestParam String username) {
-
-        return null;
+            @RequestParam("username") String username) {
+        ParamValidate.notEmpty(username, "Username cannot be null or empty.");
+        ErrorCode errorCode = loginRegisterService.resendToken(username);
+        return HttpResponseEntity.of(errorCode);
     }
 
     @PostMapping("/logout")
-    public HttpResponseEntity<Void> logout() {
+    public HttpResponseEntity<Void> logout(HttpServletRequest request) {
+        String auth = request.getHeader("Authorization");
+        if (Strings.isNullOrEmpty(auth)) {
+            return HttpResponseEntity.success();
+        }
+        ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
+        if (context == null || context.userInfo() == null) {
+            return HttpResponseEntity.success();
+        }
         loginRegisterService.logout();
         return HttpResponseEntity.success();
     }

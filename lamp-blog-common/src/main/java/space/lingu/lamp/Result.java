@@ -49,7 +49,7 @@ public record Result<D>(
     }
 
     public HttpResponseBody<D> toResponseBody(String message) {
-        if (errorCode.getState()) {
+        if (errorCode.success()) {
             return HttpResponseBody.success(message, data());
         }
         return HttpResponseBody.of(errorCode(), message, data());
@@ -60,7 +60,7 @@ public record Result<D>(
     }
 
     public <T> HttpResponseBody<T> toResponseBody(String message, @NonNull Function<D, T> mapper) {
-        if (errorCode.getState()) {
+        if (errorCode.success()) {
             return HttpResponseBody.success(message, mapper.apply(data()));
         }
         return HttpResponseBody.of(errorCode(), message, mapper.apply(data()));
@@ -81,7 +81,7 @@ public record Result<D>(
     }
 
     public <T> HttpResponseBody<T> toResponseBody(String message, @NonNull Supplier<T> supplier) {
-        if (errorCode.getState()) {
+        if (errorCode.success()) {
             return HttpResponseBody.success(message, supplier.get());
         }
         return HttpResponseBody.of(errorCode(), message, supplier.get());

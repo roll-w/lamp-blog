@@ -29,7 +29,7 @@ public record TokenAuthResult(
         @NonNull
         AuthErrorCode errorCode) {
     public boolean state() {
-        return errorCode.getState();
+        return errorCode.success();
     }
 
     public static TokenAuthResult success(long userId, String token) {

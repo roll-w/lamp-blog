@@ -48,7 +48,11 @@ public interface ErrorCode extends ErrorCodeFinder, ErrorCodeMessageProvider {
     @NonNull
     String getName();
 
-    boolean getState();
+    boolean success();
+
+    default boolean failed() {
+        return !success();
+    }
 
     int getStatus();
 

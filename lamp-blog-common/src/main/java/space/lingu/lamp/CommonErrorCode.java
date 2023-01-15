@@ -61,7 +61,7 @@ public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
     }
 
     @Override
-    public boolean getState() {
+    public boolean success() {
         return this == SUCCESS;
     }
 

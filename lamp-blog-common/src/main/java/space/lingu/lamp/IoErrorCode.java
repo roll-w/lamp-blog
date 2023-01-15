@@ -68,7 +68,7 @@ public enum IoErrorCode implements ErrorCode, ErrorCodeFinder {
     }
 
     @Override
-    public boolean getState() {
+    public boolean success() {
         return this == SUCCESS;
     }
 

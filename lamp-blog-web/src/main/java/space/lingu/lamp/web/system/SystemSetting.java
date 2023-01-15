@@ -14,32 +14,35 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.system.entity;
+package space.lingu.lamp.web.system;
 
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
-import space.lingu.light.SQLDataType;
-
-import java.util.Locale;
 
 /**
- * Message resource, overrides the default message resource in system.
- * Could be used to override the default i18n messages in system.
- *
  * @author RollW
  */
-@DataTable(tableName = "message_resource")
-public record MessageResource(
-        @DataColumn(name = "key")
-        @PrimaryKey
-        String key,
+@DataTable(tableName = "system_setting")
+@SuppressWarnings("all")
+public class SystemSetting {
+    @DataColumn(name = "key")
+    @PrimaryKey
+    private final String key;
 
-        @DataColumn(name = "value", dataType = SQLDataType.LONGTEXT)
-        String value,
+    @DataColumn(name = "value")
+    private final String value;
 
-        @DataColumn(name = "locale")
-        @PrimaryKey
-        Locale locale
-) {
+    public SystemSetting(String key, String value) {
+        this.key = key;
+        this.value = value;
+    }
+
+    public String getKey() {
+        return key;
+    }
+
+    public String getValue() {
+        return value;
+    }
 }

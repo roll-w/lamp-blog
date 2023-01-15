@@ -48,12 +48,6 @@ public class Article {
     @DataColumn(name = "content", dataType = SQLDataType.LONGTEXT)
     private final String content;
 
-    @DataColumn(name = "tags")
-    private final String[] tags;
-
-    @DataColumn(name = "categories")
-    private final String[] categories;
-
     @DataColumn(name = "status")
     private final ArticleStatus status;
 
@@ -64,15 +58,13 @@ public class Article {
     private final long updateTime;
 
     public Article(Long id, long userId, String title, String cover,
-                   String content, String[] tags, String[] categories,
+                   String content,
                    ArticleStatus status, long createTime, long updateTime) {
         this.id = id;
         this.userId = userId;
         this.title = title;
         this.cover = cover;
         this.content = content;
-        this.tags = tags;
-        this.categories = categories;
         this.status = status;
         this.createTime = createTime;
         this.updateTime = updateTime;
@@ -111,22 +103,12 @@ public class Article {
         return cover;
     }
 
-    public String[] getTags() {
-        return tags;
-    }
-
-    public String[] getCategories() {
-        return categories;
-    }
-
     public final static class Builder {
         private Long id;
         private long userId;
         private String title;
         private String cover;
         private String content;
-        private String[] tags;
-        private String[] categories;
         private ArticleStatus status;
         private long createTime;
         private long updateTime;
@@ -171,18 +153,8 @@ public class Article {
             return this;
         }
 
-        public Builder setTags(String[] tags) {
-            this.tags = tags;
-            return this;
-        }
-
-        public Builder setCategories(String[] categories) {
-            this.categories = categories;
-            return this;
-        }
-
         public Article build() {
-            return new Article(id, userId, title, cover, content, tags, categories,
+            return new Article(id, userId, title, cover, content,
                     status, createTime, updateTime);
         }
     }

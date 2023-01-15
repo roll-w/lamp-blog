@@ -31,19 +31,19 @@ import space.lingu.NonNull;
 import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.Result;
+import space.lingu.lamp.web.common.RequestInfo;
+import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategy;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
-import space.lingu.lamp.web.common.RequestInfo;
-import space.lingu.lamp.web.domain.user.repository.RegisterVerificationTokenRepository;
-import space.lingu.lamp.web.domain.user.repository.UserRepository;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.authentication.login.LoginVerifiableToken;
 import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.user.event.OnUserRegistrationEvent;
-import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.user.common.UserErrorCode;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.event.OnUserRegistrationEvent;
+import space.lingu.lamp.web.domain.user.repository.RegisterVerificationTokenRepository;
+import space.lingu.lamp.web.domain.user.repository.UserRepository;
 
 import java.util.EnumMap;
 import java.util.List;
@@ -126,7 +126,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
             return Result.of(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
         ErrorCode code = verifyToken(token, user, type);
-        if (!code.getState()) {
+        if (code.failed()) {
             return Result.of(code);
         }
         Authentication authentication =

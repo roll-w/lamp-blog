@@ -29,7 +29,7 @@ public interface ArticleService {
 
     Result<Void> deleteArticle(long articleId);
 
-    Result<Void> updateArticle(ArticleRequest articleRequest);
+    Result<Void> updateArticle(long articleId, ArticleRequest articleRequest);
 
     Article getArticle(long articleId);
 }
