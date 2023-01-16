@@ -73,12 +73,13 @@ public enum UserErrorCode implements ErrorCode {
      * 用户名不合规
      */
     ERROR_USERNAME_NON_COMPLIANCE("A0012"),
+    ERROR_USERNAME_SENSITIVE("A0013"),
     /**
      * 邮件名不合规
      */
-    ERROR_EMAIL_NON_COMPLIANCE("A0013"),
+    ERROR_EMAIL_NON_COMPLIANCE("A0014"),
 
-    ERROR_EMAIL_EXISTED("A0014");
+    ERROR_EMAIL_EXISTED("A0015");
 
 
     private final String value;
