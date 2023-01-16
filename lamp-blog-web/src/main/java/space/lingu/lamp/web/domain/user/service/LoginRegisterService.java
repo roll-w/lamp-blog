@@ -41,7 +41,11 @@ import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.common.UserErrorCode;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.dto.UserInfoSignature;
 import space.lingu.lamp.web.domain.user.event.OnUserRegistrationEvent;
+import space.lingu.lamp.web.domain.user.filter.UserFilteringInfo;
+import space.lingu.lamp.web.domain.user.filter.UserFilteringInfoType;
+import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
 import space.lingu.lamp.web.domain.user.repository.RegisterVerificationTokenRepository;
 import space.lingu.lamp.web.domain.user.repository.UserRepository;
 
@@ -60,6 +64,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
 
     private final UserRepository userRepository;
     private final RegisterVerificationTokenRepository registerVerificationTokenRepository;
+    private final UserInfoFilter userInfoFilter;
     private final ApplicationEventPublisher eventPublisher;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
@@ -69,11 +74,13 @@ public class LoginRegisterService implements RegisterTokenProvider {
     public LoginRegisterService(@NonNull List<LoginStrategy> strategies,
                                 UserRepository userRepository,
                                 RegisterVerificationTokenRepository registerVerificationTokenRepository,
+                                UserInfoFilter userInfoFilter,
                                 ApplicationEventPublisher eventPublisher,
                                 PasswordEncoder passwordEncoder,
                                 AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.registerVerificationTokenRepository = registerVerificationTokenRepository;
+        this.userInfoFilter = userInfoFilter;
         this.eventPublisher = eventPublisher;
         this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
@@ -115,9 +122,9 @@ public class LoginRegisterService implements RegisterTokenProvider {
         return userRepository.getUserByName(identity);
     }
 
-    public Result<UserInfo> loginUser(String identity,
-                                      String token,
-                                      LoginStrategyType type) {
+    public Result<UserInfoSignature> loginUser(String identity,
+                                               String token,
+                                               LoginStrategyType type) {
         Preconditions.checkNotNull(identity, "identity cannot be null");
         Preconditions.checkNotNull(token, "token cannot be null");
 
@@ -134,7 +141,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
         authentication = authenticationManager.authenticate(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
         return Result.success(
-                UserInfo.from(user)
+                UserInfoSignature.from(user)
         );
     }
 
@@ -149,7 +156,11 @@ public class LoginRegisterService implements RegisterTokenProvider {
         }
         long registerTime = System.currentTimeMillis();
         String encodedPassword = passwordEncoder.encode(password);
-        // TODO: check params
+        ErrorCode validateUser = validate(username, password, email);
+        if (validateUser.failed()) {
+            return Result.of(validateUser);
+        }
+
         User.Builder builder = User.builder()
                 .setUsername(username)
                 .setEmail(email)
@@ -181,6 +192,22 @@ public class LoginRegisterService implements RegisterTokenProvider {
         return Result.success(userInfo);
     }
 
+    private ErrorCode validate(String username,
+                               String password,
+                               String email) {
+        List<UserFilteringInfo> filteringInfos = List.of(
+                new UserFilteringInfo(username, UserFilteringInfoType.USERNAME),
+                new UserFilteringInfo(password, UserFilteringInfoType.PASSWORD),
+                new UserFilteringInfo(email, UserFilteringInfoType.EMAIL)
+        );
+        for (UserFilteringInfo filteringInfo : filteringInfos) {
+            ErrorCode errorCode = userInfoFilter.filter(filteringInfo);
+            if (errorCode.failed()) {
+                return errorCode;
+            }
+        }
+        return CommonErrorCode.SUCCESS;
+    }
 
 
     public void logout() {

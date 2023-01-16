@@ -26,8 +26,10 @@ import space.lingu.lamp.web.domain.user.User;
  * @author RollW
  */
 @Service
-public class UserServiceImpl implements UserDetailsService {
+public class UserServiceImpl implements UserDetailsService, UserSignatureProvider {
     private final UserRepository userRepository;
+    // TODO: user cache
+
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -49,5 +51,14 @@ public class UserServiceImpl implements UserDetailsService {
             throw new UsernameNotFoundException("UserID " + userId + " not exist");
         }
         return user;
+    }
+
+    @Override
+    public String getSignature(long userId) {
+        User user = userRepository.getUserById(userId);
+        if (user == null) {
+            return null;
+        }
+        return user.getPassword();
     }
 }

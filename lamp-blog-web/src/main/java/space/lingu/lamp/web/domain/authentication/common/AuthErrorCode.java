@@ -21,7 +21,7 @@ import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
 
 /**
- * Auth Error Code.
+ * Authentication & Authorization Error Code.
  * <p>
  * From A1000 to A1049.
  *

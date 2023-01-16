@@ -32,6 +32,7 @@ import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.dto.UserInfoSignature;
 import space.lingu.lamp.web.domain.user.service.LoginRegisterService;
 import space.lingu.lamp.web.domain.user.vo.LoginResponse;
 
@@ -62,7 +63,7 @@ public class LoginRegisterController {
         ParamValidate.notEmpty(loginRequest.identity(), "identity cannot be null or empty.");
         ParamValidate.notEmpty(loginRequest.token(), "token cannot be null or empty.");
 
-        Result<UserInfo> res = loginRegisterService.loginUser(
+        Result<UserInfoSignature> res = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
                 LoginStrategyType.PASSWORD);
@@ -74,7 +75,7 @@ public class LoginRegisterController {
     public HttpResponseEntity<LoginResponse> loginByEmailToken(
             HttpServletRequest request,
             @RequestBody UserLoginRequest loginRequest) {
-        Result<UserInfo> res = loginRegisterService.loginUser(
+        Result<UserInfoSignature> res = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
                 LoginStrategyType.EMAIL_TOKEN
@@ -82,16 +83,18 @@ public class LoginRegisterController {
         return loginResponse(res);
     }
 
-    private HttpResponseEntity<LoginResponse> loginResponse(Result<UserInfo> res) {
+    private HttpResponseEntity<LoginResponse> loginResponse(Result<UserInfoSignature> res) {
         if (res.errorCode().failed()) {
             return HttpResponseEntity.of(
                     res.toResponseBody(LoginResponse::nullResponse)
             );
         }
+        UserInfoSignature infoSignature = res.data();
         String token = authenticationTokenService.generateAuthToken(
-                res.data().id()
+                infoSignature.id(), infoSignature.signature()
         );
-        LoginResponse response = new LoginResponse(token, res.data());
+        LoginResponse response = new LoginResponse(token,
+                res.extract(UserInfoSignature::toUserInfo));
         return HttpResponseEntity.success(response);
     }
 

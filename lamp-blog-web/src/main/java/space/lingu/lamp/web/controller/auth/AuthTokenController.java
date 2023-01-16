@@ -23,6 +23,7 @@ import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
 import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.web.domain.user.service.UserSignatureProvider;
 
 /**
  * @author RollW
@@ -30,21 +31,29 @@ import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenServi
 @AuthApi
 public class AuthTokenController {
     private final AuthenticationTokenService tokenService;
+    private final UserSignatureProvider userSignatureProvider;
 
-    public AuthTokenController(AuthenticationTokenService tokenService) {
+    public AuthTokenController(AuthenticationTokenService tokenService,
+                               UserSignatureProvider userSignatureProvider) {
         this.tokenService = tokenService;
+        this.userSignatureProvider = userSignatureProvider;
     }
 
     @PostMapping("/token/r")
     public HttpResponseEntity<String> refreshToken(
             @RequestParam(name = "token") String oldToken) {
-        TokenAuthResult result = tokenService.verifyToken(oldToken);
+        Long userId = tokenService.getUserId(oldToken);
+        if (userId == null) {
+            return HttpResponseEntity.of(AuthErrorCode.ERROR_INVALID_TOKEN);
+        }
+        String sig = userSignatureProvider.getSignature(userId);
+        TokenAuthResult result = tokenService.verifyToken(oldToken, sig);
         if (result.state()) {
             return HttpResponseEntity.success(oldToken);
         }
         if (result.errorCode() == AuthErrorCode.ERROR_TOKEN_EXPIRED) {
             return HttpResponseEntity.success(
-                    tokenService.generateAuthToken(result.userId())
+                    tokenService.generateAuthToken(result.userId(), sig)
             );
         }
         return HttpResponseEntity.of(AuthErrorCode.ERROR_INVALID_TOKEN);
@@ -53,7 +62,12 @@ public class AuthTokenController {
     @GetMapping("/token/v")
     public HttpResponseEntity<TokenAuthResult> verifyToken(
             @RequestParam String token) {
-        TokenAuthResult authResult = tokenService.verifyToken(token);
+        Long userId = tokenService.getUserId(token);
+        if (userId == null) {
+            return HttpResponseEntity.of(AuthErrorCode.ERROR_INVALID_TOKEN);
+        }
+        String sig = userSignatureProvider.getSignature(userId);
+        TokenAuthResult authResult = tokenService.verifyToken(token, sig);
         return HttpResponseEntity.of(
                         authResult.errorCode(), authResult);
     }

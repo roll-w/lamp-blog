@@ -27,7 +27,9 @@ import java.util.List;
 public enum Role {
     USER(new SimpleGrantedAuthority("USER")),
     ADMIN(new SimpleGrantedAuthority("ADMIN"), new SimpleGrantedAuthority("USER")),
-    GUEST(new SimpleGrantedAuthority("GUEST"));
+    REVIEWER(new SimpleGrantedAuthority("REVIEWER"), new SimpleGrantedAuthority("USER")),
+    CUSTOMER_SERVICE(new SimpleGrantedAuthority("CUSTOMER_SERVICE"), new SimpleGrantedAuthority("USER")),
+    ;
 
     private final List<GrantedAuthority> authority;
 

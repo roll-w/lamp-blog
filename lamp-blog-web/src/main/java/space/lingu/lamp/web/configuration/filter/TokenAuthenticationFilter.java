@@ -58,36 +58,42 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String remoteIp = tryGetIpAddress(request);
 
         if (SecurityContextHolder.getContext().getAuthentication() != null) {
-            setApiContext(isAdminApi, remoteIp, null);
-            filterChain.doFilter(request, response);
+            nullNextFilter(isAdminApi, remoteIp, request, response, filterChain);
             return;
         }
 
         String token = request.getHeader("Authorization");
         if (token == null || token.isEmpty()) {
-            setApiContext(isAdminApi, remoteIp, null);
-            filterChain.doFilter(request, response);
+            nullNextFilter(isAdminApi, remoteIp, request, response, filterChain);
             return;
         }
 
-        TokenAuthResult result = authenticationTokenService.verifyToken(token);
-
-        if (!result.state()) {
-            setApiContext(isAdminApi, remoteIp, null);
-            filterChain.doFilter(request, response);
+        Long userId = authenticationTokenService.getUserId(token);
+        if (userId == null) {
+            nullNextFilter(isAdminApi, remoteIp, request, response, filterChain);
             return;
         }
         UserDetails userDetails =
-                userDetailsService.loadUserByUserId(result.userId());
-        UserInfo userInfo = UserInfo.from(userDetails);
-        if (userDetails != null) {
-            Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(
-                    userDetails,
-                    userDetails.getPassword(),
-                    userDetails.getAuthorities()
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                userDetailsService.loadUserByUserId(userId);
+        if (userDetails == null) {
+            nullNextFilter(isAdminApi, remoteIp, request, response, filterChain);
+            return;
         }
+        TokenAuthResult result = authenticationTokenService.verifyToken(token,
+                userDetails.getPassword());
+        if (!result.state()) {
+            nullNextFilter(isAdminApi, remoteIp, request, response, filterChain);
+            return;
+        }
+
+
+        UserInfo userInfo = UserInfo.from(userDetails);
+        Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(
+                userDetails,
+                userDetails.getPassword(),
+                userDetails.getAuthorities()
+        );
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         setApiContext(isAdminApi, remoteIp, userInfo);
         filterChain.doFilter(request, response);
     }
@@ -104,6 +110,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         }
         String adminStart = requestUri.substring(0, 10);
         return adminStart.equalsIgnoreCase("/api/admin");
+    }
+
+    private void nullNextFilter(boolean isAdminApi, String remoteIp,
+                                HttpServletRequest request, HttpServletResponse response,
+                                FilterChain filterChain) throws IOException, ServletException {
+        setApiContext(isAdminApi, remoteIp, null);
+        filterChain.doFilter(request, response);
     }
 
     private static final String[] HEADERS_TO_TRY = {

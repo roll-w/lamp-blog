@@ -46,7 +46,7 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
     }
 
     @Override
-    public String generateAuthToken(long userId) {
+    public String generateAuthToken(long userId, String signature) {
         String rawToken = Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .setExpiration(getExpirationDateFromNow())
@@ -57,7 +57,7 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
     }
 
     @Override
-    public TokenAuthResult verifyToken(String token) {
+    public TokenAuthResult verifyToken(String token, String signature) {
         if (token == null) {
             return TokenAuthResult.failure(AuthErrorCode.ERROR_INVALID_TOKEN);
         }
@@ -83,6 +83,26 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
             return TokenAuthResult.failure(AuthErrorCode.ERROR_INVALID_TOKEN);
         }
     }
+
+    @Override
+    public Long getUserId(String token) {
+        if (!token.startsWith(TOKEN_HEAD)) {
+            return null;
+        }
+        try {
+            String rawToken = token.substring(TOKEN_HEAD.length());
+            Claims claims = Jwts.parserBuilder()
+                    .setClock(() -> VERIFYDATE)
+                    .build()
+                    .parseClaimsJws(rawToken)
+                    .getBody();
+            return Long.parseLong(claims.getSubject());
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private static final Date VERIFYDATE = new Date(1);
 
     private Date getExpirationDateFromNow() {
         long now = System.currentTimeMillis();
