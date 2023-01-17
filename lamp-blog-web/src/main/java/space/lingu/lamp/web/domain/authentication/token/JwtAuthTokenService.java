@@ -18,6 +18,8 @@ package space.lingu.lamp.web.domain.authentication.token;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jwt;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
@@ -91,23 +93,40 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
         }
         try {
             String rawToken = token.substring(TOKEN_HEAD.length());
-            Claims claims = Jwts.parserBuilder()
-                    .setClock(() -> VERIFYDATE)
-                    .build()
-                    .parseClaimsJws(rawToken)
-                    .getBody();
+            Claims claims = tryParseClaims(rawToken);
             return Long.parseLong(claims.getSubject());
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
 
+    @SuppressWarnings("all")
+    private static Claims tryParseClaims(String token) {
+        // https://github.com/jwtk/jjwt/issues/135
+        if (!token.contains(".")) {
+            throw new IllegalArgumentException("Invalid token format");
+        }
+        int i = token.lastIndexOf('.');
+        String withoutSignature = token.substring(0, i + 1);
+        Jwt<Header, Claims> untrusted = Jwts.parserBuilder()
+                .setClock(JwtAuthTokenService::getVerifydate)
+                .build()
+                .parseClaimsJwt(withoutSignature);
+        return untrusted.getBody();
+    }
+
     private static final Date VERIFYDATE = new Date(1);
+
+    private static Date getVerifydate() {
+        return VERIFYDATE;
+    }
 
     private Date getExpirationDateFromNow() {
         long now = System.currentTimeMillis();
-        long exp = now + MINUTES_5;
+        long exp = now + DAYS_7;
         return new Date(exp);
+        // TODO: allow set expiration date.
     }
 
     //
