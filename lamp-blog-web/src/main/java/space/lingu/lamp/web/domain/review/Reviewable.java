@@ -20,16 +20,12 @@ package space.lingu.lamp.web.domain.review;
  * @author RollW
  */
 public interface Reviewable {
-    ReviewStatus getCurrentReviewStatus();
+    String getReviewContentId();
 
-    void reviewReject();
-
-    void reviewPass();
-
-    ReviewType reviewType();
-
-    String content();
-
-    String title();
-    // TODO: review comment or other info
+    /**
+     * Get the type of the review.
+     *
+     * @return The type of the review.
+     */
+    ReviewType getReviewType();
 }

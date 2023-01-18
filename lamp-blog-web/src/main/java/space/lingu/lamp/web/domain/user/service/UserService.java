@@ -27,6 +27,5 @@ public interface UserService {
     Result<UserInfo> createUser(String username, String password,
                                 String email, Role role);
 
-    Result<Void> deleteUser(long userId);
-
+    void deleteUser(long userId);
 }

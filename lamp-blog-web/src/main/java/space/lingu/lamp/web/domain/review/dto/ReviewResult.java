@@ -14,7 +14,11 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review;
+package space.lingu.lamp.web.domain.review.dto;
+
+import space.lingu.lamp.web.domain.review.ReviewJob;
+import space.lingu.lamp.web.domain.review.ReviewStatus;
+import space.lingu.lamp.web.domain.review.ReviewType;
 
 /**
  * @author RollW
@@ -27,4 +31,17 @@ public record ReviewResult(
         long reviewer,
         long reviewTime
 ) {
+    public static ReviewResult of(ReviewJob job) {
+        if (job == null) {
+            return null;
+        }
+        return new ReviewResult(
+                job.getStatus(),
+                job.getType(),
+                job.getResult(),
+                job.getReviewContentId(),
+                job.getReviewerId(),
+                job.getReviewTime()
+        );
+    }
 }

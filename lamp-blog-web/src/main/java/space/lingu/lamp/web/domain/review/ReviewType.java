@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.domain.review;
 
+import com.google.common.base.Preconditions;
+
 /**
  * @author RollW
  */
@@ -23,15 +25,28 @@ public enum ReviewType {
     /**
      * Article.
      */
-    ARTICLE,
+    ARTICLE(2),
     /**
      * Comment.
      */
-    COMMENT,
+    COMMENT(1),
     /**
      * Image.
      */
-    IMAGE
+    IMAGE(1),
     ;
 
+    /**
+     * The weight of the review type.
+     */
+    private final int weight;
+
+    ReviewType(int weight) {
+        Preconditions.checkArgument(weight > 0, "Weight must be positive.");
+        this.weight = weight;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
 }

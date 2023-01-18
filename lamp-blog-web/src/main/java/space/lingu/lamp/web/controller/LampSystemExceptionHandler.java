@@ -16,24 +16,35 @@
 
 package space.lingu.lamp.web.controller;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.MessageSource;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
+import space.lingu.lamp.BusinessRuntimeException;
 import space.lingu.lamp.CommonErrorCode;
+import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.HttpResponseEntity;
-import space.lingu.lamp.SystemRuntimeException;
-import space.lingu.lamp.web.domain.authentication.login.LoginTokenException;
+import space.lingu.lamp.IoErrorCode;
+import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.common.ParameterMissingException;
 import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
+import space.lingu.lamp.web.domain.authentication.login.LoginTokenException;
+import space.lingu.lamp.web.system.ErrorRecord;
 import space.lingu.light.LightRuntimeException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.text.MessageFormat;
+import java.util.Deque;
+import java.util.Locale;
+import java.util.concurrent.LinkedBlockingDeque;
 
 /**
  * Handle {@link Exception}s
@@ -45,9 +56,12 @@ import java.io.IOException;
 public class LampSystemExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(LampSystemExceptionHandler.class);
     private final ErrorCodeFinder errorCodeFinder;
+    private final MessageSource messageSource;
 
-    public LampSystemExceptionHandler(ErrorCodeFinder errorCodeFinder) {
+    public LampSystemExceptionHandler(ErrorCodeFinder errorCodeFinder,
+                                      MessageSource messageSource) {
         this.errorCodeFinder = errorCodeFinder;
+        this.messageSource = messageSource;
     }
 
 
@@ -71,23 +85,52 @@ public class LampSystemExceptionHandler {
 
     @ExceptionHandler(LoginTokenException.class)
     public HttpResponseEntity<Void> handle(LoginTokenException e) {
-        logger.error("Token exception: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
                 errorCodeFinder.fromThrowable(e)
         );
     }
 
-    @ExceptionHandler(SystemRuntimeException.class)
-    public HttpResponseEntity<Void> handle(SystemRuntimeException e) {
+    @ExceptionHandler(BusinessRuntimeException.class)
+    public HttpResponseEntity<Void> handle(BusinessRuntimeException e) {
         logger.error("System runtime error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
-                errorCodeFinder.fromThrowable(e)
+                errorCodeFinder.fromThrowable(e),
+                tryGetMessage(e)
         );
+    }
+
+    private String tryGetMessage(BusinessRuntimeException e) {
+        if (Strings.isNullOrEmpty(e.getMessage())) {
+            return null;
+        }
+        ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
+        Locale locale = context == null ? Locale.getDefault() : context.locale();
+        try {
+            return messageSource.getMessage(
+                    e.getMessage(),
+                    e.getArgs(),
+                    locale
+            );
+        } catch (Exception ex) {
+            return tryFormatMessage(e.getMessage(), e.getArgs());
+        }
+    }
+
+    private String tryFormatMessage(String message, Object[] args) {
+        if (args == null || args.length == 0) {
+            return message;
+        }
+        try {
+            return MessageFormat.format(message, args);
+        } catch (Exception e) {
+            return message;
+        }
     }
 
     @ExceptionHandler(NullPointerException.class)
     public HttpResponseEntity<Void> handle(NullPointerException e) {
         logger.error("Null exception : %s".formatted(e.toString()), e);
+        recordErrorLog(CommonErrorCode.ERROR_NULL, e);
         return HttpResponseEntity.of(
                 CommonErrorCode.ERROR_NULL,
                 e.getMessage()
@@ -96,8 +139,9 @@ public class LampSystemExceptionHandler {
 
     @ExceptionHandler(FileNotFoundException.class)
     public HttpResponseEntity<Void> handle(FileNotFoundException e) {
+       recordErrorLog(IoErrorCode.ERROR_FILE_NOT_FOUND, e);
         return HttpResponseEntity.of(
-                CommonErrorCode.ERROR_NOT_FOUND,
+                IoErrorCode.ERROR_FILE_NOT_FOUND,
                 e.getMessage()
         );
     }
@@ -105,8 +149,9 @@ public class LampSystemExceptionHandler {
     @ExceptionHandler(IOException.class)
     public HttpResponseEntity<Void> handle(IOException e) {
         logger.error("IO Error: %s".formatted(e.toString()), e);
+        ErrorRecord errorRecord = recordErrorLog(e);
         return HttpResponseEntity.of(
-                errorCodeFinder.fromThrowable(e),
+                errorRecord.errorCode(),
                 e.getMessage()
         );
     }
@@ -121,13 +166,35 @@ public class LampSystemExceptionHandler {
         return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
     }
 
-
     @ExceptionHandler(Exception.class)
     public HttpResponseEntity<Void> handle(Exception e) {
         logger.error("Error: %s".formatted(e.toString()), e);
+        ErrorRecord errorRecord = recordErrorLog(e);
         return HttpResponseEntity.of(
-                errorCodeFinder.fromThrowable(e),
+                errorRecord.errorCode(),
                 e.getMessage()
         );
+    }
+
+    private final Deque<ErrorRecord> errorRecords = new LinkedBlockingDeque<>();
+
+    private ErrorRecord recordErrorLog(Throwable throwable) {
+        ErrorCode errorCode = errorCodeFinder.fromThrowable(throwable);
+        return recordErrorLog(errorCode, throwable);
+    }
+
+    private ErrorRecord recordErrorLog(ErrorCode errorCode, Throwable throwable) {
+        long time = System.currentTimeMillis();
+        ErrorRecord errorRecord = new ErrorRecord(errorCode, throwable, time);
+        putErrorRecord(errorRecord);
+        return errorRecord;
+    }
+
+    @Async
+    void putErrorRecord(ErrorRecord errorRecord) {
+        errorRecords.addLast(errorRecord);
+        if (errorRecords.size() > 100) {
+            errorRecords.removeFirst();
+        }
     }
 }

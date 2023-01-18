@@ -38,9 +38,7 @@ public class ParamValidate {
                                                       final String message,
                                                       final Object... values) {
         if (chars == null || chars.isEmpty()) {
-            throw new ParameterMissingException(
-                    String.format(message, values)
-            );
+            throw new ParameterMissingException(message, values);
         }
         return chars;
     }

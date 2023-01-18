@@ -16,6 +16,9 @@
 
 package space.lingu.lamp.web.domain.article;
 
+import space.lingu.lamp.DataItem;
+import space.lingu.lamp.web.domain.review.ReviewType;
+import space.lingu.lamp.web.domain.review.Reviewable;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.Index;
@@ -29,7 +32,7 @@ import space.lingu.light.SQLDataType;
 @DataTable(tableName = "article", indices = {
         @Index(value = {"user_id", "title"}, unique = true)
 })
-public class Article {
+public class Article implements Reviewable, DataItem {
     // TODO: article
 
     @DataColumn(name = "id")
@@ -101,6 +104,41 @@ public class Article {
 
     public String getCover() {
         return cover;
+    }
+
+    public Article fork(Long id) {
+        return new Article(id, userId, title, cover,
+                content, status, createTime, updateTime
+        );
+    }
+
+    public Builder toBuilder() {
+        return new Builder()
+                .setId(id)
+                .setUserId(userId)
+                .setTitle(title)
+                .setCover(cover)
+                .setContent(content)
+                .setStatus(status)
+                .setCreateTime(createTime)
+                .setUpdateTime(updateTime);
+    }
+
+    public static Builder builder() {
+        return new Builder();
+    }
+
+    @Override
+    public String getReviewContentId() {
+        if (id == null) {
+            throw new IllegalStateException("The article has not been saved.");
+        }
+        return "" + id;
+    }
+
+    @Override
+    public ReviewType getReviewType() {
+        return ReviewType.ARTICLE;
     }
 
     public final static class Builder {

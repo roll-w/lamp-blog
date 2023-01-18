@@ -25,7 +25,7 @@ public class NoticeBoard {
     private String title;
     private String content;
 
-    private long userId;// creator, needs to be ADMIN
+    private long userId;// creator, needs to be ADMIN or EDITOR
 
 
     private long createTime;

@@ -20,7 +20,7 @@ import org.springframework.web.bind.MissingServletRequestParameterException;
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
-import space.lingu.lamp.SystemRuntimeException;
+import space.lingu.lamp.BusinessRuntimeException;
 
 /**
  * @author RollW
@@ -68,7 +68,7 @@ public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder {
 
     @Override
     public ErrorCode fromThrowable(Throwable e, ErrorCode defaultErrorCode) {
-        if (e instanceof SystemRuntimeException sys) {
+        if (e instanceof BusinessRuntimeException sys) {
             return sys.getErrorCode();
         }
         if (e instanceof MissingServletRequestParameterException) {

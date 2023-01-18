@@ -23,6 +23,8 @@ import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.domain.user.User;
 
+import java.io.IOException;
+
 /**
  * @author RollW
  */
@@ -32,8 +34,14 @@ public interface LoginStrategy {
     @NonNull
     ErrorCode verify(String token, @NonNull User user);
 
+    /**
+     * Send login token to user.
+     *
+     * @throws LoginTokenException if login token invalid.
+     * @throws IOException         if send failed.
+     */
     void sendToken(LoginVerifiableToken token, User user, @Nullable RequestInfo requestInfo)
-            throws LoginTokenException;
+            throws LoginTokenException, IOException;
 
     LoginStrategyType getStrategyType();
 }

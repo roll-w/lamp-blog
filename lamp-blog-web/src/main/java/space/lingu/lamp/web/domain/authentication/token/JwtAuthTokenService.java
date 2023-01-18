@@ -39,16 +39,12 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
     private static final String TOKEN_HEAD = "Bearer ";
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthTokenService.class);
-
-    private final String secret = "JwtAuthByRollW. Copyright (C) 2023 RollW. Lamp Blog Project maintained by RollW.";
-    private final Key key = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-    // TODO: replace with external setting, and use RSA key pair.
-
     public JwtAuthTokenService() {
     }
 
     @Override
     public String generateAuthToken(long userId, String signature) {
+        Key key = Keys.hmacShaKeyFor(signature.getBytes(StandardCharsets.UTF_8));
         String rawToken = Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .setExpiration(getExpirationDateFromNow())
@@ -69,7 +65,7 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
         String rawToken = token.substring(TOKEN_HEAD.length());
         try {
             Claims claims = Jwts.parserBuilder()
-                    .setSigningKey(key)
+                    .setSigningKey(signature.getBytes(StandardCharsets.UTF_8))
                     .build()
                     .parseClaimsJws(rawToken)
                     .getBody();
@@ -116,6 +112,14 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
         return untrusted.getBody();
     }
 
+    private long expireTimeInSecond = DAYS_7;
+
+    @Override
+    public void setTokenExpireTime(long expireTimeInSecond) {
+        this.expireTimeInSecond = expireTimeInSecond;
+    }
+
+
     private static final Date VERIFYDATE = new Date(1);
 
     private static Date getVerifydate() {
@@ -124,12 +128,12 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
 
     private Date getExpirationDateFromNow() {
         long now = System.currentTimeMillis();
-        long exp = now + DAYS_7;
+        long exp = now + expireTimeInSecond * 1000;
         return new Date(exp);
         // TODO: allow set expiration date.
     }
 
     //
-    private static final long DAYS_7 = 1000 * 60 * 60 * 24 * 7;
-    private static final long MINUTES_5 = 1000 * 60 * 5;
+    private static final long DAYS_7 = 60 * 60 * 24 * 7;
+    private static final long MINUTES_5 = 60 * 5;
 }

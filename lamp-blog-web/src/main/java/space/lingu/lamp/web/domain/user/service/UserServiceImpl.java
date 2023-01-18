@@ -30,7 +30,6 @@ public class UserServiceImpl implements UserDetailsService, UserSignatureProvide
     private final UserRepository userRepository;
     // TODO: user cache
 
-
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -59,6 +58,6 @@ public class UserServiceImpl implements UserDetailsService, UserSignatureProvide
         if (user == null) {
             return null;
         }
-        return user.getPassword();
+        return "LampBlogUserSignature-" + user.getPassword();
     }
 }

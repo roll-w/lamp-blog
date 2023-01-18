@@ -16,17 +16,23 @@
 
 package space.lingu.lamp.web.common;
 
-import space.lingu.lamp.SystemRuntimeException;
+import space.lingu.lamp.BusinessRuntimeException;
 
 /**
  * @author RollW
  */
-public class ParameterMissingException extends SystemRuntimeException {
+public class ParameterMissingException extends BusinessRuntimeException {
+    private static final String DEFAULT_TEMPLATE = "Parameter {} is missing.";
+
     public ParameterMissingException() {
         super(WebCommonErrorCode.ERROR_PARAM_MISSING);
     }
 
-    public ParameterMissingException(String message) {
-        super(WebCommonErrorCode.ERROR_PARAM_MISSING, message);
+    public ParameterMissingException(String message, Object... args) {
+        super(WebCommonErrorCode.ERROR_PARAM_MISSING, message, args);
+    }
+
+    public ParameterMissingException(String parameterName) {
+        this(DEFAULT_TEMPLATE, parameterName);
     }
 }

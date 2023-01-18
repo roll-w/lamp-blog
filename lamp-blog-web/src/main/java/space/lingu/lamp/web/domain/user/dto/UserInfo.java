@@ -19,14 +19,22 @@ package space.lingu.lamp.web.domain.user.dto;
 import org.springframework.security.core.userdetails.UserDetails;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.User;
+import space.lingu.light.DataColumn;
 
 /**
  * @author RollW
  */
 public record UserInfo(
+        @DataColumn(name = "id")
         long id,
+
+        @DataColumn(name = "username")
         String username,
+
+        @DataColumn(name = "email")
         String email,
+
+        @DataColumn(name = "role")
         Role role
 ) {
     public static UserInfo from(User user) {

@@ -25,7 +25,7 @@ public enum ReviewStatus {
      */
     NOT_REVIEWED,
     /**
-     * Reviewed.
+     * Reviewed and approved.
      */
     REVIEWED,
     /**

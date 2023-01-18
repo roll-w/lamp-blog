@@ -127,6 +127,10 @@ public record Result<D>(
         return new Result<>(CommonErrorCode.SUCCESS, data);
     }
 
+    public static <D> Result<D> success() {
+        return (Result<D>) SUCCESS;
+    }
+
     public static <D> Result<D> of(ErrorCode code, D data) {
         return new Result<>(code, data);
     }
@@ -134,4 +138,6 @@ public record Result<D>(
     public static <D> Result<D> of(ErrorCode code) {
         return new Result<>(code, null);
     }
+
+    private static final Result<?> SUCCESS = new Result<>(CommonErrorCode.SUCCESS, null);
 }

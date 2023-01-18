@@ -58,7 +58,11 @@ public abstract class UserDao {
     public abstract void deleteById(long id);
 
     @Query("SELECT * FROM user")
-    public abstract List<User> get();
+    public abstract List<User> getAll();
+
+    // TODO: page query
+    @Query("SELECT * FROM user ORDER BY id ASC LIMIT {limit} OFFSET {offset}")
+    public abstract List<User> get(int offset, int limit);
 
     @Query("SELECT * FROM user WHERE id = {id}")
     public abstract User getUserById(long id);

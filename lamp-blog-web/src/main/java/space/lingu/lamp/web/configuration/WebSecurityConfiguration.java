@@ -64,6 +64,8 @@ public class WebSecurityConfiguration {
 
         security.csrf().disable()
                 .authorizeRequests()
+                // TODO: customize accessDecisionManager
+                .antMatchers("/api/auth/token/**").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/admin/review/**").hasRole("REVIEWER")
                 .antMatchers("/api/common/**").permitAll()
@@ -96,7 +98,8 @@ public class WebSecurityConfiguration {
                 .antMatchers("/error.html")
                 .antMatchers("/html/**")
                 .antMatchers("/js/**")
-                .antMatchers("/api/user/login/**");
+                .antMatchers("/api/user/login/**")
+                ;
     }
 
     @Bean

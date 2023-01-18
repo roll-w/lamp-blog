@@ -32,4 +32,6 @@ public interface AuthenticationTokenService {
     TokenAuthResult verifyToken(String token, String signature);
 
     Long getUserId(String token);
+
+    void setTokenExpireTime(long expireTimeInSecond);
 }

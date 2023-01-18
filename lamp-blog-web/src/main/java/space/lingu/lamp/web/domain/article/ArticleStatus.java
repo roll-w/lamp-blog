@@ -46,4 +46,8 @@ public enum ArticleStatus {
         return this == PUBLISHED;
     }
 
+    public boolean needsReview() {
+        return this == REVIEWING;
+    }
+
 }

@@ -14,16 +14,25 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.message;
+package space.lingu.lamp.web.domain.review.service;
+
+import org.springframework.stereotype.Service;
+import space.lingu.Todo;
+import space.lingu.lamp.web.domain.review.ReviewType;
 
 /**
  * @author RollW
  */
-public class Message {
-    private String content;
-    private long sender;
-    private long receiver;
-    private long time;
+@Service
+@Todo(todo = "Replace this with a real implementation.")
+public class TempReviewerServiceImpl implements ReviewerAllocateService {
+    @Override
+    public long allocateReviewer(ReviewType reviewType) {
 
-    // TODO: message
+        return 1;
+    }
+
+    @Override
+    public void releaseReviewer(long reviewerId, ReviewType reviewType) {
+    }
 }

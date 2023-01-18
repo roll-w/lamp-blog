@@ -17,19 +17,19 @@
 package space.lingu.lamp.web.domain.article.service;
 
 import space.lingu.lamp.Result;
-import space.lingu.lamp.web.controller.article.ArticleRequest;
 import space.lingu.lamp.web.domain.article.Article;
+import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
 
 /**
  * @author RollW
  */
 public interface ArticleService {
     // TODO: article service
-    Result<Void> publishArticle(ArticleRequest articleRequest);
+    Result<ArticleInfo> publishArticle(long userId, String title, String content);
 
     Result<Void> deleteArticle(long articleId);
 
-    Result<Void> updateArticle(long articleId, ArticleRequest articleRequest);
+    Result<Void> updateArticle(long articleId);
 
     Article getArticle(long articleId);
 }

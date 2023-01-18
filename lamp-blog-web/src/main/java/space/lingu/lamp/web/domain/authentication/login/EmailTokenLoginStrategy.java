@@ -18,6 +18,8 @@ package space.lingu.lamp.web.domain.authentication.login;
 
 import com.google.common.io.ByteStreams;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
@@ -30,12 +32,12 @@ import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.IoErrorCode;
+import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.common.MimeMailMessageBuilder;
 import space.lingu.lamp.web.common.RequestInfo;
-import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
+import space.lingu.lamp.web.domain.user.User;
 
 import javax.mail.internet.MimeMessage;
 import java.io.FileNotFoundException;
@@ -51,19 +53,24 @@ import java.util.Locale;
  */
 @Component
 public class EmailTokenLoginStrategy implements LoginStrategy {
+    private static final Logger logger = LoggerFactory.getLogger(EmailTokenLoginStrategy.class);
+
     private final Cache cache;
     private final MessageSource messageSource;
     private final MailProperties mailProperties;
     private final JavaMailSender mailSender;
+    private final ErrorCodeFinder errorCodeFinder;
 
     public EmailTokenLoginStrategy(CacheManager cacheManager,
                                    MessageSource messageSource,
                                    MailProperties mailProperties,
-                                   JavaMailSender mailSender) {
+                                   JavaMailSender mailSender,
+                                   ErrorCodeFinder errorCodeFinder) {
         this.cache = cacheManager.getCache(CacheNames.EMAIL_TOKEN);
         this.messageSource = messageSource;
         this.mailProperties = mailProperties;
         this.mailSender = mailSender;
+        this.errorCodeFinder = errorCodeFinder;
     }
 
     private static final String FULL_SEQUENCE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
@@ -104,7 +111,7 @@ public class EmailTokenLoginStrategy implements LoginStrategy {
 
     @Override
     public void sendToken(LoginVerifiableToken token, User user,
-                          @Nullable RequestInfo requestInfo) throws LoginTokenException {
+                          @Nullable RequestInfo requestInfo) throws LoginTokenException, IOException {
         if (!(token instanceof LoginConfirmToken confirmToken)) {
             throw new LoginTokenException(AuthErrorCode.ERROR_INVALID_TOKEN);
         }
@@ -116,9 +123,11 @@ public class EmailTokenLoginStrategy implements LoginStrategy {
                     requestInfo != null ? requestInfo.locale() : null);
             builder.setText(text, true);
         } catch (FileNotFoundException e) {
-            throw new LoginTokenException(IoErrorCode.ERROR_FILE_NOT_FOUND, e.getMessage());
+            logger.error("Mail template not found", e);
+            throw e;
         } catch (IOException e) {
-            throw new LoginTokenException(e);
+            logger.error("Failed to read mail template", e);
+            throw e;
         }
         MimeMailMessage message = builder
                 .setTo(user.getEmail())

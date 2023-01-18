@@ -37,6 +37,7 @@ import space.lingu.lamp.web.domain.user.service.LoginRegisterService;
 import space.lingu.lamp.web.domain.user.vo.LoginResponse;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
 
 /**
  * @author RollW
@@ -101,7 +102,7 @@ public class LoginRegisterController {
     @PostMapping("/login/email/token")
     public HttpResponseEntity<Void> sendEmailLoginToken(
             HttpServletRequest request,
-            @RequestBody LoginTokenSendRequest loginTokenSendRequest) {
+            @RequestBody LoginTokenSendRequest loginTokenSendRequest) throws IOException {
         ParamValidate.notEmpty(loginTokenSendRequest.identity(), "identity cannot be null or empty.");
         loginRegisterService.sendToken(
                 loginTokenSendRequest.identity(),

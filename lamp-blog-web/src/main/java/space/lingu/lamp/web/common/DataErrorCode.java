@@ -19,7 +19,7 @@ package space.lingu.lamp.web.common;
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
-import space.lingu.lamp.SystemRuntimeException;
+import space.lingu.lamp.BusinessRuntimeException;
 import space.lingu.light.LightRuntimeException;
 
 /**
@@ -71,7 +71,7 @@ public enum DataErrorCode implements ErrorCode, ErrorCodeFinder {
 
     @Override
     public ErrorCode fromThrowable(Throwable e, ErrorCode defaultErrorCode) {
-        if (e instanceof SystemRuntimeException sys) {
+        if (e instanceof BusinessRuntimeException sys) {
             return sys.getErrorCode();
         }
         if (e instanceof LightRuntimeException) {

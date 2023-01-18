@@ -31,6 +31,7 @@ import space.lingu.NonNull;
 import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.Result;
+import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategy;
@@ -49,6 +50,7 @@ import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
 import space.lingu.lamp.web.domain.user.repository.RegisterVerificationTokenRepository;
 import space.lingu.lamp.web.domain.user.repository.UserRepository;
 
+import java.io.IOException;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -92,7 +94,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
         return loginStrategyMap.get(type);
     }
 
-    public void sendToken(long userId, LoginStrategyType type) {
+    public void sendToken(long userId, LoginStrategyType type) throws IOException {
         LoginStrategy strategy = getLoginStrategy(type);
         User user = userRepository.getUserById(userId);
         LoginVerifiableToken token = strategy.createToken(user);
@@ -100,7 +102,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
         strategy.sendToken(token, user, requestInfo);
     }
 
-    public void sendToken(String identity, LoginStrategyType type) {
+    public void sendToken(String identity, LoginStrategyType type) throws IOException {
         LoginStrategy strategy = getLoginStrategy(type);
         User user = tryGetUser(identity);
         LoginVerifiableToken token = strategy.createToken(user);
@@ -147,11 +149,10 @@ public class LoginRegisterService implements RegisterTokenProvider {
 
     public Result<UserInfo> registerUser(String username, String password,
                                          String email, Role role) {
-        Long userId = userRepository.getUserIdByName(username);
-        if (!User.isInvalidId(userId)) {
+        if (userRepository.isExistByEmail(username)) {
             return Result.of(UserErrorCode.ERROR_USER_EXISTED);
         }
-        if (userRepository.getUserIdByEmail(email) != null) {
+        if (userRepository.isExistByEmail(email)) {
             return Result.of(UserErrorCode.ERROR_EMAIL_EXISTED);
         }
         long registerTime = System.currentTimeMillis();
@@ -259,7 +260,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
             return UserErrorCode.ERROR_USER_NOT_EXIST;
         }
         OnUserRegistrationEvent event = new OnUserRegistrationEvent(
-                UserInfo.from(user), Locale.getDefault(),
+                UserInfo.from(user), ApiContextHolder.getContext().locale(),
                 "http://localhost:5000/");
         eventPublisher.publishEvent(event);
 
