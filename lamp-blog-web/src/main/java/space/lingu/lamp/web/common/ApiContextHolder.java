@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.common;
 
 import com.google.common.base.Preconditions;
+import org.springframework.http.HttpMethod;
 import space.lingu.Nullable;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
@@ -54,6 +55,7 @@ public final class ApiContextHolder {
             boolean admin,
             String ip,
             Locale locale,
+            HttpMethod method,
             @Nullable
             UserInfo userInfo
     ) {

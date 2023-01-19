@@ -22,6 +22,8 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.NoSuchMessageException;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.core.MethodParameter;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -32,6 +34,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCodeMessageProvider;
 import space.lingu.lamp.HttpResponseBody;
+import space.lingu.lamp.HttpResponseEntity;
 
 import java.util.Objects;
 
@@ -72,16 +75,34 @@ public class ControllerResponseBodyAdvice implements ResponseBodyAdvice<Object> 
         if (obj == null) {
             return null;
         }
+        if (obj instanceof HttpResponseEntity<?>) {
+            return obj;
+        }
         if (!(obj instanceof HttpResponseBody<?> body)) {
             return obj;
         }
-
+        HttpMethod method = request.getMethod();
         String rawTip = tryGetRawTip(body);
         String newTip = replaceTipIfNecessary(body);
-        if (Objects.equals(rawTip, newTip)) {
+        int rawCode = body.getStatus();
+        int newCode = tryReplaceStatusCode(body, method);
+        if (Objects.equals(rawTip, newTip) && rawCode == newCode) {
             return body;
         }
-        return body.fork(newTip);
+        response.setStatusCode(HttpStatus.valueOf(newCode));
+        return body.fork(newTip, newCode);
+    }
+
+    private int tryReplaceStatusCode(HttpResponseBody<?> body, HttpMethod method) {
+        int code = body.getStatus();
+        if (code != 200) {
+            return code;
+        }
+        return switch (method) {
+            case POST, PUT, PATCH -> 201;
+            case DELETE -> 204;
+            default -> 200;
+        };
     }
 
     private String tryGetRawTip(HttpResponseBody<?> responseBody) {

@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.configuration.filter;
 
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -54,36 +55,37 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         ApiContextHolder.clearContext();
         String requestUri = request.getRequestURI();
+        HttpMethod method = HttpMethod.resolve(request.getMethod());
         boolean isAdminApi = isAdminApi(requestUri);
         String remoteIp = tryGetIpAddress(request);
 
         try {
             if (SecurityContextHolder.getContext().getAuthentication() != null) {
-                nullNextFilter(isAdminApi, remoteIp, request, response, filterChain);
+                nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
                 return;
             }
 
             String token = request.getHeader("Authorization");
             if (token == null || token.isEmpty()) {
-                nullNextFilter(isAdminApi, remoteIp, request, response, filterChain);
+                nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
                 return;
             }
 
             Long userId = authenticationTokenService.getUserId(token);
             if (userId == null) {
-                nullNextFilter(isAdminApi, remoteIp, request, response, filterChain);
+                nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
                 return;
             }
             UserDetails userDetails =
                     userDetailsService.loadUserByUserId(userId);
             if (userDetails == null) {
-                nullNextFilter(isAdminApi, remoteIp, request, response, filterChain);
+                nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
                 return;
             }
             TokenAuthResult result = authenticationTokenService.verifyToken(token,
                     userDetails.getPassword());
             if (!result.state()) {
-                nullNextFilter(isAdminApi, remoteIp, request, response, filterChain);
+                nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
                 return;
             }
 
@@ -94,16 +96,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     userDetails.getAuthorities()
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            setApiContext(isAdminApi, remoteIp, userInfo);
+            setApiContext(isAdminApi, remoteIp, method, userInfo);
             filterChain.doFilter(request, response);
         } finally {
             ApiContextHolder.clearContext();
         }
     }
 
-    private static void setApiContext(boolean isAdminApi, String remoteIp, UserInfo userInfo) {
+    private static void setApiContext(boolean isAdminApi, String remoteIp,
+                                      HttpMethod method, UserInfo userInfo) {
         ApiContextHolder.ApiContext apiContext = new ApiContextHolder.ApiContext(
-                isAdminApi, remoteIp, LocaleContextHolder.getLocale(), userInfo);
+                isAdminApi, remoteIp, LocaleContextHolder.getLocale(), method, userInfo);
         ApiContextHolder.setContext(apiContext);
     }
 
@@ -115,10 +118,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         return adminStart.equalsIgnoreCase("/api/admin");
     }
 
-    private void nullNextFilter(boolean isAdminApi, String remoteIp,
+    private void nullNextFilter(boolean isAdminApi, String remoteIp, HttpMethod method,
                                 HttpServletRequest request, HttpServletResponse response,
                                 FilterChain filterChain) throws IOException, ServletException {
-        setApiContext(isAdminApi, remoteIp, null);
+        setApiContext(isAdminApi, remoteIp, method, null);
         filterChain.doFilter(request, response);
     }
 

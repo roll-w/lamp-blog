@@ -124,6 +124,10 @@ public class HttpResponseBody<D> {
         return new HttpResponseBody<>(errorCode, status, message, tip, data);
     }
 
+    public HttpResponseBody<D> fork(String tip, int status) {
+        return new HttpResponseBody<>(errorCode, status, message, tip, data);
+    }
+
     public HttpResponseBody<D> fork(String message, String tip) {
         return new HttpResponseBody<>(errorCode, status, message, tip, data);
     }

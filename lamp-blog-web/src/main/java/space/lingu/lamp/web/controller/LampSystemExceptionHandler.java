@@ -21,6 +21,7 @@ import com.google.common.base.VerifyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
@@ -83,7 +84,7 @@ public class LampSystemExceptionHandler {
     public HttpResponseEntity<Void> handle(ParameterMissingException e) {
         logger.warn("Param missing: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
-                errorCodeFinder.fromThrowable(e),
+                WebCommonErrorCode.ERROR_PARAM_MISSING,
                 e.getMessage()
         );
     }
@@ -179,6 +180,11 @@ public class LampSystemExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public HttpResponseEntity<Void> handleAuthException(AuthenticationException e) {
         return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public HttpResponseEntity<Void> handleHttpMessageNotReadableException() {
+        return HttpResponseEntity.of(WebCommonErrorCode.ERROR_BODY_MISSING);
     }
 
     @ExceptionHandler(Exception.class)
