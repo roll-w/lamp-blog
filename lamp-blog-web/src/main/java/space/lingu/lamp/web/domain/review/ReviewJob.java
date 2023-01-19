@@ -39,6 +39,9 @@ public class ReviewJob implements DataItem {
     @DataColumn(name = "reviewer_id")
     private final long reviewerId;
 
+    @DataColumn(name = "operator_id")
+    private final long operatorId;
+
     @DataColumn(name = "status")
     private final ReviewStatus status;
 
@@ -56,11 +59,12 @@ public class ReviewJob implements DataItem {
 
     @Constructor
     public ReviewJob(Long jobId, String reviewContentId, long reviewerId,
-                     ReviewStatus status, ReviewType type,
+                     long operatorId, ReviewStatus status, ReviewType type,
                      long assignedTime, String result, long reviewTime) {
         this.jobId = jobId;
         this.reviewContentId = reviewContentId;
         this.reviewerId = reviewerId;
+        this.operatorId = operatorId;
         this.status = status;
         this.type = type;
         this.assignedTime = assignedTime;
@@ -69,8 +73,9 @@ public class ReviewJob implements DataItem {
     }
 
     public ReviewJob(String reviewContentId, long reviewerId,
-                     ReviewStatus status, ReviewType type,
+                     long operatorId, ReviewStatus status, ReviewType type,
                      long assignedTime, String result, long reviewTime) {
+        this.operatorId = operatorId;
         this.jobId = null;
         this.reviewContentId = reviewContentId;
         this.reviewerId = reviewerId;
@@ -91,6 +96,10 @@ public class ReviewJob implements DataItem {
 
     public long getReviewerId() {
         return reviewerId;
+    }
+
+    public long getOperatorId() {
+        return operatorId;
     }
 
     public ReviewStatus getStatus() {
@@ -116,7 +125,7 @@ public class ReviewJob implements DataItem {
     public ReviewJob reviewPass(long reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewerId,
-                ReviewStatus.REVIEWED,
+                operatorId, ReviewStatus.REVIEWED,
                 type, assignedTime, null, reviewTime
         );
     }
@@ -124,7 +133,7 @@ public class ReviewJob implements DataItem {
     public ReviewJob reviewReject(String result, long reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewerId,
-                ReviewStatus.REJECTED,
+                operatorId, ReviewStatus.REJECTED,
                 type, assignedTime, result, reviewTime
         );
     }
@@ -137,13 +146,13 @@ public class ReviewJob implements DataItem {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        ReviewJob reviewJob = (ReviewJob) o;
-        return reviewerId == reviewJob.reviewerId && assignedTime == reviewJob.assignedTime && reviewTime == reviewJob.reviewTime && Objects.equals(jobId, reviewJob.jobId) && Objects.equals(reviewContentId, reviewJob.reviewContentId) && status == reviewJob.status && type == reviewJob.type && Objects.equals(result, reviewJob.result);
+        ReviewJob job = (ReviewJob) o;
+        return reviewerId == job.reviewerId && operatorId == job.operatorId && assignedTime == job.assignedTime && reviewTime == job.reviewTime && Objects.equals(jobId, job.jobId) && Objects.equals(reviewContentId, job.reviewContentId) && status == job.status && type == job.type && Objects.equals(result, job.result);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(jobId, reviewContentId, reviewerId, status, type, assignedTime, result, reviewTime);
+        return Objects.hash(jobId, reviewContentId, reviewerId, operatorId, status, type, assignedTime, result, reviewTime);
     }
 
     @Override
@@ -152,6 +161,7 @@ public class ReviewJob implements DataItem {
                 "jobId=" + jobId +
                 ", reviewContentId='" + reviewContentId + '\'' +
                 ", reviewerId=" + reviewerId +
+                ", operatorId=" + operatorId +
                 ", status=" + status +
                 ", type=" + type +
                 ", assignedTime=" + assignedTime +
@@ -167,7 +177,8 @@ public class ReviewJob implements DataItem {
     public ReviewJob fork(long id) {
         return new ReviewJob(
                 id, reviewContentId, reviewerId,
-                status, type, assignedTime, result, reviewTime
+                operatorId, status, type, assignedTime,
+                result, reviewTime
         );
     }
 
@@ -175,6 +186,7 @@ public class ReviewJob implements DataItem {
         private Long jobId = null;
         private String reviewContentId;
         private long reviewerId;
+        private long operatorId;
         private ReviewStatus status;
         private ReviewType type;
         private long assignedTime;
@@ -188,6 +200,7 @@ public class ReviewJob implements DataItem {
             this.jobId = job.jobId;
             this.reviewContentId = job.reviewContentId;
             this.reviewerId = job.reviewerId;
+            this.operatorId = job.operatorId;
             this.status = job.status;
             this.type = job.type;
             this.assignedTime = job.assignedTime;
@@ -207,6 +220,11 @@ public class ReviewJob implements DataItem {
 
         public Builder setReviewerId(long reviewerId) {
             this.reviewerId = reviewerId;
+            return this;
+        }
+
+        public Builder setOperatorId(long operatorId) {
+            this.operatorId = operatorId;
             return this;
         }
 
@@ -238,7 +256,7 @@ public class ReviewJob implements DataItem {
         public ReviewJob build() {
             return new ReviewJob(
                     jobId, reviewContentId,
-                    reviewerId, status, type,
+                    reviewerId, operatorId, status, type,
                     assignedTime, result, reviewTime
             );
         }

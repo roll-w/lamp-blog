@@ -37,5 +37,5 @@ public interface ReviewContentServiceStrategy {
      *
      * @return The type of the review.
      */
-    ReviewType reviewType();
+    ReviewType getReviewType();
 }

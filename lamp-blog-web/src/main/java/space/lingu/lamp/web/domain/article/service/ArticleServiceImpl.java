@@ -27,6 +27,8 @@ import space.lingu.lamp.web.domain.article.ArticleStatus;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
 import space.lingu.lamp.web.domain.article.event.OnArticlePublishEvent;
 import space.lingu.lamp.web.domain.article.repository.ArticleRepository;
+import space.lingu.lamp.web.domain.review.ReviewType;
+import space.lingu.lamp.web.domain.review.event.ReviewStatusMarker;
 
 import javax.validation.constraints.NotEmpty;
 
@@ -34,7 +36,7 @@ import javax.validation.constraints.NotEmpty;
  * @author RollW
  */
 @Service
-public class ArticleServiceImpl implements ArticleService {
+public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker {
     private static final Logger logger = LoggerFactory.getLogger(ArticleServiceImpl.class);
 
     private final ArticleRepository articleRepository;
@@ -74,6 +76,7 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Result<Void> deleteArticle(long articleId) {
+        articleRepository.deleteArticle(articleId);
         return Result.success();
     }
 
@@ -84,6 +87,27 @@ public class ArticleServiceImpl implements ArticleService {
 
     @Override
     public Article getArticle(long articleId) {
-        return null;
+        return articleRepository.get(articleId);
+    }
+
+    @Override
+    public void markAsReviewed(String contentId) {
+        long id = Long.parseLong(contentId);
+        articleRepository.updateArticleStatus(id, ArticleStatus.PUBLISHED);
+        Article article = articleRepository.get(id);
+        OnArticlePublishEvent articlePublishEvent =
+                new OnArticlePublishEvent(article);
+        applicationEventPublisher.publishEvent(articlePublishEvent);
+    }
+
+    @Override
+    public void markAsRejected(String contentId, String reason) {
+        long id = Long.parseLong(contentId);
+        articleRepository.updateArticleStatus(id, ArticleStatus.REVIEW_REJECTED);
+    }
+
+    @Override
+    public ReviewType getReviewType() {
+        return ReviewType.ARTICLE;
     }
 }

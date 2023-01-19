@@ -14,40 +14,24 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article;
+package space.lingu.lamp.web.controller;
+
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
  * @author RollW
  */
-public enum ArticleStatus {
-    /**
-     * 草稿
-     */
-    DRAFT,
-    /**
-     * 审核中
-     */
-    REVIEWING,
-    /**
-     * 审核不通过
-     */
-    REVIEW_REJECTED,
-    /**
-     * 已发布
-     */
-    PUBLISHED,
-    /**
-     * 已删除
-     */
-    DELETED,
-    ;
-
-    public boolean isVisitable() {
-        return this == PUBLISHED;
-    }
-
-    public boolean needsReview() {
-        return this == REVIEWING;
-    }
-
+@Documented
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@RequestMapping({"/api/admin"})
+@RestController
+public @interface AdminApi {
 }

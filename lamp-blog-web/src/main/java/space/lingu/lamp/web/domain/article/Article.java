@@ -94,6 +94,14 @@ public class Article implements Reviewable, DataItem {
         return status;
     }
 
+    public boolean isVisitable() {
+        return getStatus().isVisitable();
+    }
+
+    public boolean needsReview() {
+        return getStatus().needsReview();
+    }
+
     public long getCreateTime() {
         return createTime;
     }

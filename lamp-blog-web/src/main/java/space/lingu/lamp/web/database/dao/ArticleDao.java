@@ -66,7 +66,7 @@ public abstract class ArticleDao {
     public abstract void setArticleStatus(long articleId, ArticleStatus status);
 
     @Query("SELECT * FROM article WHERE id = {id}")
-    public abstract Article getById(String id);
+    public abstract Article getById(long id);
 
     @Query("SELECT * FROM article WHERE user_id = {userId}")
     public abstract List<Article> getByUserId(long userId);

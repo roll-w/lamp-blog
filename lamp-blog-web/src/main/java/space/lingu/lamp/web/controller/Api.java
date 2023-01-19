@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.controller.article;
+package space.lingu.lamp.web.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,9 +29,9 @@ import java.lang.annotation.Target;
  * @author RollW
  */
 @Documented
-@Target({ElementType.TYPE,ElementType.METHOD})
+@Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@RequestMapping({"/api/article/", "/api/admin/article"})
+@RequestMapping({"/api"})
 @RestController
-public @interface ArticleApi {
+public @interface Api {
 }

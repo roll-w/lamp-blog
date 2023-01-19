@@ -17,15 +17,14 @@
 package space.lingu.lamp.web.domain.review.service;
 
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.domain.review.dto.ReviewContent;
 import space.lingu.lamp.web.domain.review.ReviewType;
+import space.lingu.lamp.web.domain.review.dto.ReviewContent;
 
 /**
  * @author RollW
  */
 @Service
 public class ArticleContentServiceStrategy implements ReviewContentServiceStrategy {
-
     @Override
     public ReviewContent getContent(String contentId) {
         long id = Long.parseLong(contentId);
@@ -37,7 +36,7 @@ public class ArticleContentServiceStrategy implements ReviewContentServiceStrate
     }
 
     @Override
-    public ReviewType reviewType() {
+    public ReviewType getReviewType() {
         return ReviewType.ARTICLE;
     }
 }

@@ -27,6 +27,7 @@ import space.lingu.lamp.BusinessRuntimeException;
  */
 public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder {
     ERROR_PARAM_MISSING("A0201", 404),
+    ERROR_PARAM_FAILED("A0201", 400),
 
     ;
 

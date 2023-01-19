@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.domain.review.service;
 
 import space.lingu.lamp.web.domain.review.ReviewJob;
-import space.lingu.lamp.web.domain.review.dto.ReviewResult;
+import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
 import space.lingu.lamp.web.domain.review.ReviewType;
 import space.lingu.lamp.web.domain.review.Reviewable;
 
@@ -27,7 +27,7 @@ import java.util.List;
  * @author RollW
  */
 public interface ReviewService {
-    ReviewResult makeReview(long jobId, boolean passed, String reason);
+    ReviewInfo makeReview(long jobId, boolean passed, String reason);
 
     ReviewJob assignReviewer(Reviewable reviewable);
 
@@ -39,5 +39,7 @@ public interface ReviewService {
 
     List<ReviewJob> getFinishedReviewJobs(long reviewerId);
 
-    ReviewResult getReviewResult(long reviewerId, String reviewContentId, ReviewType type);
+    ReviewInfo getReviewInfo(String reviewContentId, ReviewType type);
+
+    ReviewInfo getReviewInfo(long jobId);
 }

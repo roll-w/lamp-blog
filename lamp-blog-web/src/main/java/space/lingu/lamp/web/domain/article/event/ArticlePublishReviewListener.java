@@ -47,7 +47,7 @@ public class ArticlePublishReviewListener implements ApplicationListener<OnArtic
         if (article == null) {
             return;
         }
-        if (!article.getStatus().needsReview()) {
+        if (!article.needsReview()) {
             return;
         }
         ReviewJob job = reviewService.assignReviewer(article);

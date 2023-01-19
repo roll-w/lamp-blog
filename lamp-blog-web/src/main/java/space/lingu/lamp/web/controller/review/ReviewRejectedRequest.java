@@ -14,40 +14,12 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article;
+package space.lingu.lamp.web.controller.review;
 
 /**
  * @author RollW
  */
-public enum ArticleStatus {
-    /**
-     * 草稿
-     */
-    DRAFT,
-    /**
-     * 审核中
-     */
-    REVIEWING,
-    /**
-     * 审核不通过
-     */
-    REVIEW_REJECTED,
-    /**
-     * 已发布
-     */
-    PUBLISHED,
-    /**
-     * 已删除
-     */
-    DELETED,
-    ;
-
-    public boolean isVisitable() {
-        return this == PUBLISHED;
-    }
-
-    public boolean needsReview() {
-        return this == REVIEWING;
-    }
-
+public record ReviewRejectedRequest(
+        String reason
+) {
 }

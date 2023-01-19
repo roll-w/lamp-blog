@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.controller;
 
 import com.google.common.base.Strings;
+import com.google.common.base.VerifyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -25,6 +26,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import space.lingu.lamp.BusinessRuntimeException;
 import space.lingu.lamp.CommonErrorCode;
@@ -34,15 +36,18 @@ import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.IoErrorCode;
 import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.common.ParameterMissingException;
+import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.authentication.login.LoginTokenException;
 import space.lingu.lamp.web.system.ErrorRecord;
+import space.lingu.lamp.web.system.ErrorRecordVo;
 import space.lingu.light.LightRuntimeException;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.util.Deque;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.LinkedBlockingDeque;
 
@@ -137,9 +142,19 @@ public class LampSystemExceptionHandler {
         );
     }
 
+    // treat VerifyException as parameter failed
+    @ExceptionHandler(VerifyException.class)
+    public HttpResponseEntity<Void> handle(VerifyException e) {
+        recordErrorLog(WebCommonErrorCode.ERROR_PARAM_FAILED, e);
+        return HttpResponseEntity.of(
+                WebCommonErrorCode.ERROR_PARAM_FAILED,
+                e.getMessage()
+        );
+    }
+
     @ExceptionHandler(FileNotFoundException.class)
     public HttpResponseEntity<Void> handle(FileNotFoundException e) {
-       recordErrorLog(IoErrorCode.ERROR_FILE_NOT_FOUND, e);
+        recordErrorLog(IoErrorCode.ERROR_FILE_NOT_FOUND, e);
         return HttpResponseEntity.of(
                 IoErrorCode.ERROR_FILE_NOT_FOUND,
                 e.getMessage()
@@ -196,5 +211,14 @@ public class LampSystemExceptionHandler {
         if (errorRecords.size() > 100) {
             errorRecords.removeFirst();
         }
+    }
+
+    @GetMapping("/api/admin/error/records")
+    public HttpResponseEntity<List<ErrorRecordVo>> getErrorRecords() {
+        return HttpResponseEntity.success(
+                errorRecords.stream()
+                        .map(ErrorRecordVo::from)
+                        .toList()
+        );
     }
 }

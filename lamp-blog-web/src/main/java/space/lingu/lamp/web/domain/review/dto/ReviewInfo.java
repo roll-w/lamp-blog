@@ -23,19 +23,19 @@ import space.lingu.lamp.web.domain.review.ReviewType;
 /**
  * @author RollW
  */
-public record ReviewResult(
+public record ReviewInfo(
         ReviewStatus status,
         ReviewType type,
         String result,
-        String reviewContentId,
+        String contentId,
         long reviewer,
         long reviewTime
 ) {
-    public static ReviewResult of(ReviewJob job) {
+    public static ReviewInfo of(ReviewJob job) {
         if (job == null) {
             return null;
         }
-        return new ReviewResult(
+        return new ReviewInfo(
                 job.getStatus(),
                 job.getType(),
                 job.getResult(),

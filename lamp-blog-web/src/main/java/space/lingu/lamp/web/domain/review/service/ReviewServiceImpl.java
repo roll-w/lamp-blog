@@ -17,24 +17,24 @@
 package space.lingu.lamp.web.domain.review.service;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Verify;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.review.ReviewJob;
-import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;
-import space.lingu.lamp.web.domain.review.common.ReviewException;
-import space.lingu.lamp.web.domain.review.dto.ReviewResult;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 import space.lingu.lamp.web.domain.review.ReviewType;
 import space.lingu.lamp.web.domain.review.Reviewable;
+import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;
+import space.lingu.lamp.web.domain.review.common.ReviewException;
 import space.lingu.lamp.web.domain.review.dto.ReviewContent;
+import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
 import space.lingu.lamp.web.domain.review.event.OnReviewStateChangeEvent;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
 
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * @author RollW
@@ -55,20 +55,20 @@ public class ReviewServiceImpl implements ReviewService, ReviewContentService {
         this.reviewerAllocateService = reviewerAllocateService;
         this.eventPublisher = eventPublisher;
         contentServiceStrategies.forEach(strategy ->
-                reviewContentServiceStrategyMap.put(strategy.reviewType(), strategy));
+                reviewContentServiceStrategyMap.put(strategy.getReviewType(), strategy));
     }
 
     @Override
-    public ReviewResult makeReview(long jobId, boolean passed, String reason) {
+    public ReviewInfo makeReview(long jobId, boolean passed, String reason) {
         ReviewJob job = reviewJobRepository.get(jobId);
-        Preconditions.checkNotNull(job, "Review job not found");
+        Verify.verifyNotNull(job, "Review job not found");
         if (job.getStatus().isReviewed()) {
             throw new ReviewException(ReviewErrorCode.ERROR_REVIEWED);
         }
         ReviewJob reviewed = switchStatus(job, passed, reason);
         OnReviewStateChangeEvent event = new OnReviewStateChangeEvent(reviewed);
         eventPublisher.publishEvent(event);
-        return ReviewResult.of(job);
+        return ReviewInfo.of(job);
     }
 
     private ReviewJob switchStatus(ReviewJob job, boolean passed, String reason) {
@@ -121,24 +121,21 @@ public class ReviewServiceImpl implements ReviewService, ReviewContentService {
     }
 
     @Override
-    public ReviewResult getReviewResult(long reviewerId,
-                                        String reviewContentId,
-                                        ReviewType type) {
+    public ReviewInfo getReviewInfo(String reviewContentId, ReviewType type) {
         ReviewJob reviewJob = reviewJobRepository.getBy(reviewContentId, type);
-        if (reviewJob == null) {
-            return null;
-        }
-        if (Objects.equals(reviewerId, reviewJob.getReviewerId())) {
-            throw new IllegalArgumentException("Reviewer id not match");
-        }
-        return ReviewResult.of(reviewJob);
+        return ReviewInfo.of(reviewJob);
+    }
+
+    @Override
+    public ReviewInfo getReviewInfo(long jobId) {
+        return ReviewInfo.of(reviewJobRepository.get(jobId));
     }
 
     @NonNull
     @Override
     public ReviewContent getReviewContent(long jobId) {
         ReviewJob job = reviewJobRepository.get(jobId);
-        Preconditions.checkNotNull(job, "Review job not found");
+        Verify.verifyNotNull(job, "Review job not found");
         ReviewContentServiceStrategy strategy =
                 reviewContentServiceStrategyMap.get(job.getType());
         return strategy.getContent(job.getReviewContentId());

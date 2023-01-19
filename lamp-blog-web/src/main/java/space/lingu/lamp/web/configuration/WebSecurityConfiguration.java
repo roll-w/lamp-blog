@@ -67,8 +67,10 @@ public class WebSecurityConfiguration {
                 // TODO: customize accessDecisionManager
                 .antMatchers("/api/auth/token/**").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
-                .antMatchers("/api/admin/review/**").hasRole("REVIEWER")
+                .antMatchers("/api/*/review/**").hasRole("REVIEWER")
+                .antMatchers("/api/admin/*/review/**").hasRole("REVIEWER")
                 .antMatchers("/api/common/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/*/article/*").permitAll()
                 .antMatchers("/api/user/login/**").permitAll()
                 .antMatchers("/api/user/register/**").permitAll()
                 .antMatchers("/api/user/logout/**").permitAll()

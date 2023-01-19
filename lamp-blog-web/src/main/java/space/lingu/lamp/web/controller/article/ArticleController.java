@@ -19,18 +19,23 @@ package space.lingu.lamp.web.controller.article;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import space.lingu.Todo;
 import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.Result;
 import space.lingu.lamp.web.common.ApiContextHolder;
+import space.lingu.lamp.web.controller.WithAdminApi;
+import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
 import space.lingu.lamp.web.domain.article.service.ArticleService;
+import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 
 /**
  * @author RollW
  */
-@ArticleApi
+@WithAdminApi
 public class ArticleController {
     // TODO: article controller
     private final ArticleService articleService;
@@ -39,23 +44,60 @@ public class ArticleController {
         this.articleService = articleService;
     }
 
-    @PutMapping("/resource")
-    public HttpResponseEntity<ArticleInfo> createArticle(@RequestBody ArticleRequest articleRequest) {
+    @PostMapping("/{userId}/article")
+    public HttpResponseEntity<ArticleInfo> createArticle(
+            @PathVariable(name = "userId") Long userId,
+            @RequestBody ArticleRequest articleRequest) {
+        ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
+        if (!apiContext.allowAccess(userId)) {
+            return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+        }
         Result<ArticleInfo> articleInfoResult = articleService.publishArticle(
-                ApiContextHolder.getContext().userInfo().id(),
-                articleRequest.title(), articleRequest.content()
+                userId, articleRequest.title(), articleRequest.content()
         );
         return HttpResponseEntity.of(articleInfoResult.toResponseBody());
     }
 
-    @DeleteMapping("/resource/{id}")
-    public void deleteArticle(@PathVariable Long id) {
-
+    @PutMapping("/{userId}/article/{articleId}")
+    public HttpResponseEntity<ArticleInfo> updateArticle(
+            @RequestBody ArticleRequest articleRequest,
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "articleId") Long articleId) {
+        return HttpResponseEntity.success();
     }
 
-    @GetMapping("/resource/{id}")
-    public HttpResponseEntity<Void> getArticle(@PathVariable Long id) {
-        return null;
-        // TODO: get article
+
+    @DeleteMapping("/{userId}/article/{articleId}")
+    public HttpResponseEntity<Void> deleteArticle(
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "articleId") Long articleId) {
+        return HttpResponseEntity.success();
     }
+
+    @GetMapping("/{userId}/article/{articleId}")
+    public HttpResponseEntity<Article> getArticle(
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "articleId") Long articleId) {
+        Article article = articleService.getArticle(articleId);
+        ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
+        if (article.isVisitable() || apiContext.isAdminPass()) {
+            return HttpResponseEntity.success(article);
+        }
+        return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+    }
+
+    @GetMapping("{userId}/article/{articleId}/info")
+    // TODO: replace with ArticleInfoVo.
+    @Todo(todo = "replace with ArticleInfoVo.")
+    public HttpResponseEntity<ArticleInfo> getArticleInfo(
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "articleId") Long articleId) {
+        Article article = articleService.getArticle(articleId);
+        ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
+        if (article.isVisitable() || apiContext.isAdminPass()) {
+            return HttpResponseEntity.success(ArticleInfo.from(article));
+        }
+        return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+    }
+    // TODO: get article
 }

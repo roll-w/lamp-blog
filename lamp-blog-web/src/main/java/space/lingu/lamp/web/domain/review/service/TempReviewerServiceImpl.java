@@ -25,6 +25,7 @@ import space.lingu.lamp.web.domain.review.ReviewType;
  */
 @Service
 @Todo(todo = "Replace this with a real implementation.")
+// TODO: Replace this with a real implementation.
 public class TempReviewerServiceImpl implements ReviewerAllocateService {
     @Override
     public long allocateReviewer(ReviewType reviewType) {

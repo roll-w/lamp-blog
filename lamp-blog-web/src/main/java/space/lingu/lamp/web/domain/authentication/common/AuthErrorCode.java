@@ -51,9 +51,17 @@ public enum AuthErrorCode implements ErrorCode {
     ERROR_TOKEN_NOT_MATCH("A1005", 401),
     ERROR_TOKEN_USED("A1006", 401),
     ERROR_TOKEN_NOT_USED("A1007", 401),
-
+    /**
+     * 未认证
+     */
     ERROR_UNAUTHORIZED_USE("A1008", 403),
+    /**
+     * 无权限访问
+     */
     ERROR_NOT_HAS_ROLE("A1009", 401),
+    /**
+     * 黑名单用户
+     */
     ERROR_IN_BLOCKLIST("A1010", 401),
     ;
 

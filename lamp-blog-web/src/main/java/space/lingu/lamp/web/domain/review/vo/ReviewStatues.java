@@ -14,40 +14,27 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article;
+package space.lingu.lamp.web.domain.review.vo;
+
+import space.lingu.lamp.web.domain.review.ReviewStatus;
 
 /**
  * @author RollW
  */
-public enum ArticleStatus {
-    /**
-     * 草稿
-     */
-    DRAFT,
-    /**
-     * 审核中
-     */
-    REVIEWING,
-    /**
-     * 审核不通过
-     */
-    REVIEW_REJECTED,
-    /**
-     * 已发布
-     */
-    PUBLISHED,
-    /**
-     * 已删除
-     */
-    DELETED,
-    ;
+public enum ReviewStatues {
+    FINISHED(ReviewStatus.REVIEWED, ReviewStatus.REJECTED),
+    UNFINISHED(ReviewStatus.NOT_REVIEWED),
+    PASSED(ReviewStatus.REVIEWED),
+    REJECTED(ReviewStatus.REJECTED),
+    ALL(ReviewStatus.NOT_REVIEWED, ReviewStatus.REVIEWED, ReviewStatus.REJECTED);
 
-    public boolean isVisitable() {
-        return this == PUBLISHED;
+    private final ReviewStatus[] statuses;
+
+    ReviewStatues(ReviewStatus... statuses) {
+        this.statuses = statuses;
     }
 
-    public boolean needsReview() {
-        return this == REVIEWING;
+    public ReviewStatus[] getStatuses() {
+        return statuses;
     }
-
 }

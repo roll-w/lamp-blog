@@ -47,4 +47,12 @@ public class ArticleRepository {
         articleDao.setArticleStatus(id, ArticleStatus.DELETED);
         // mark article as deleted
     }
+
+    public void updateArticleStatus(long id, ArticleStatus status) {
+        articleDao.setArticleStatus(id, status);
+    }
+
+    public Article get(long id) {
+        return articleDao.getById(id);
+    }
 }
