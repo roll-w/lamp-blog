@@ -28,7 +28,6 @@ import space.lingu.lamp.web.domain.user.User;
 @Service
 public class UserServiceImpl implements UserDetailsService, UserSignatureProvider {
     private final UserRepository userRepository;
-    // TODO: user cache
 
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -47,7 +46,7 @@ public class UserServiceImpl implements UserDetailsService, UserSignatureProvide
     public UserDetails loadUserByUserId(long userId) throws UsernameNotFoundException {
         User user = userRepository.getUserById(userId);
         if (user == null) {
-            throw new UsernameNotFoundException("UserID " + userId + " not exist");
+            throw new UsernameNotFoundException("User ID " + userId + " not exist");
         }
         return user;
     }

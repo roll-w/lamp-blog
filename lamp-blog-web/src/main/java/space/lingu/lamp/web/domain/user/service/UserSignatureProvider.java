@@ -17,6 +17,8 @@
 package space.lingu.lamp.web.domain.user.service;
 
 /**
+ * Provides signature of user to sign the token.
+ *
  * @author RollW
  */
 public interface UserSignatureProvider {

@@ -1,5 +1,6 @@
 # Lamp Blog System
 
+A Blog System. Under development.
 
 ## Licence
 ```text
