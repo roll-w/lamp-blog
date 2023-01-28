@@ -18,6 +18,8 @@ package space.lingu.lamp;
 
 import space.lingu.Nullable;
 
+import java.util.List;
+
 /**
  * @author RollW
  */
@@ -35,6 +37,8 @@ public interface ErrorCodeFinder {
     ErrorCode fromThrowable(Throwable e, ErrorCode defaultErrorCode);
 
     ErrorCode findErrorCode(String codeValue);
+
+    List<ErrorCode> listErrorCodes();
 
     @Nullable
     static <T extends ErrorCode> T from(T[] codes, String codeValue) {

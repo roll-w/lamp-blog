@@ -22,12 +22,23 @@ import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.BusinessRuntimeException;
 
+import java.util.List;
+
 /**
  * @author RollW
  */
 public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder {
+    /**
+     * Request parameter missing.
+     */
     ERROR_PARAM_MISSING("A0201", 404),
+    /**
+     * Request parameter validate failed.
+     */
     ERROR_PARAM_FAILED("A0201", 400),
+    /**
+     * Request body missing.
+     */
     ERROR_BODY_MISSING("A0202", 400),
 
     ;
@@ -83,6 +94,13 @@ public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder {
     @Override
     public ErrorCode findErrorCode(String codeValue) {
         return ErrorCodeFinder.from(values(), codeValue);
+    }
+
+    private static final List<ErrorCode> CODES = List.of(values());
+
+    @Override
+    public List<ErrorCode> listErrorCodes() {
+        return CODES;
     }
 
     public static ErrorCodeFinder getFinderInstance() {

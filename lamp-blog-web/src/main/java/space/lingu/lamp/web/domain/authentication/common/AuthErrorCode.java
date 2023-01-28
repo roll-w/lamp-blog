@@ -20,6 +20,8 @@ import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
 
+import java.util.List;
+
 /**
  * Authentication & Authorization Error Code.
  * <p>
@@ -113,6 +115,13 @@ public enum AuthErrorCode implements ErrorCode {
     @Override
     public ErrorCode findErrorCode(String codeValue) {
         return ErrorCodeFinder.from(values(), codeValue);
+    }
+
+    private static final List<ErrorCode> CODES = List.of(values());
+
+    @Override
+    public List<ErrorCode> listErrorCodes() {
+        return CODES;
     }
 
     public static ErrorCodeFinder getFinderInstance() {

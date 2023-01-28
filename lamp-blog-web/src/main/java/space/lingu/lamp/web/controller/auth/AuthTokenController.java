@@ -48,7 +48,7 @@ public class AuthTokenController {
         }
         String sig = userSignatureProvider.getSignature(userId);
         TokenAuthResult result = tokenService.verifyToken(oldToken, sig);
-        if (result.state()) {
+        if (result.success()) {
             return HttpResponseEntity.success(oldToken);
         }
         if (result.errorCode() == AuthErrorCode.ERROR_TOKEN_EXPIRED) {

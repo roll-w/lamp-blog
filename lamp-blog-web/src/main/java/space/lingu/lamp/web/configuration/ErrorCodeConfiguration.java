@@ -43,9 +43,9 @@ public class ErrorCodeConfiguration {
         return ErrorCodeFinderChain.start(
                 WebCommonErrorCode.getFinderInstance(),
                 AuthErrorCode.getFinderInstance(),
+                DataErrorCode.getFinderInstance(),
                 IoErrorCode.getFinderInstance(),
-                UserErrorCode.getFinderInstance(),
-                DataErrorCode.getFinderInstance()
+                UserErrorCode.getFinderInstance()
         );
     }
 

@@ -22,6 +22,8 @@ import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.BusinessRuntimeException;
 import space.lingu.light.LightRuntimeException;
 
+import java.util.List;
+
 /**
  * @author RollW
  */
@@ -83,6 +85,13 @@ public enum DataErrorCode implements ErrorCode, ErrorCodeFinder {
     @Override
     public ErrorCode findErrorCode(String codeValue) {
         return ErrorCodeFinder.from(values(), codeValue);
+    }
+
+    private static final List<ErrorCode> CODES = List.of(values());
+
+    @Override
+    public List<ErrorCode> listErrorCodes() {
+        return CODES;
     }
 
     public static ErrorCodeFinder getFinderInstance() {

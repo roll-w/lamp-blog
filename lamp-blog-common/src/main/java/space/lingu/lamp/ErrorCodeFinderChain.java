@@ -16,6 +16,9 @@
 
 package space.lingu.lamp;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author RollW
  */
@@ -62,9 +65,23 @@ public abstract class ErrorCodeFinderChain implements ErrorCodeFinder {
         next = codeFinderChain;
     }
 
+    @Override
+    public List<ErrorCode> listErrorCodes() {
+        List<ErrorCode> codes = new ArrayList<>(listErrorCodes0());
+        ErrorCodeFinderChain next = this.next;
+        while (next != null) {
+            codes.addAll(next.listErrorCodes0());
+            next = next.next;
+        }
+        return codes;
+    }
+
+    // internal methods
     protected abstract ErrorCode findErrorCode0(String codeValue);
 
     protected abstract ErrorCode fromThrowable0(Throwable throwable);
+
+    protected abstract List<ErrorCode> listErrorCodes0();
 
     public static ErrorCodeFinderChain of(ErrorCodeFinder... errorCodeFinders) {
         if (errorCodeFinders.length == 0) {
@@ -119,6 +136,12 @@ public abstract class ErrorCodeFinderChain implements ErrorCodeFinder {
         protected ErrorCode fromThrowable0(Throwable throwable) {
             return errorCodeFinder.fromThrowable(throwable);
         }
+
+
+        @Override
+        protected List<ErrorCode> listErrorCodes0() {
+           return errorCodeFinder.listErrorCodes();
+        }
     }
 
     private static class EmptyErrorCodeFinderChain extends ErrorCodeFinderChain {
@@ -132,6 +155,11 @@ public abstract class ErrorCodeFinderChain implements ErrorCodeFinder {
         @Override
         protected ErrorCode fromThrowable0(Throwable throwable) {
             return null;
+        }
+
+        @Override
+        protected List<ErrorCode> listErrorCodes0() {
+            return List.of();
         }
     }
 }

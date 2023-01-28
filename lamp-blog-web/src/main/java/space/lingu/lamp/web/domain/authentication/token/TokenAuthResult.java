@@ -28,7 +28,7 @@ public record TokenAuthResult(
 
         @NonNull
         AuthErrorCode errorCode) {
-    public boolean state() {
+    public boolean success() {
         return errorCode.success();
     }
 

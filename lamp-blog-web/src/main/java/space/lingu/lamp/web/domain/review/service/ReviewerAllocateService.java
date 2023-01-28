@@ -22,6 +22,8 @@ import space.lingu.lamp.web.domain.review.ReviewType;
  * @author RollW
  */
 public interface ReviewerAllocateService {
+    long AUTO_REVIEWER = -1;
+
     long allocateReviewer(ReviewType reviewType);
 
     void releaseReviewer(long reviewerId, ReviewType reviewType);

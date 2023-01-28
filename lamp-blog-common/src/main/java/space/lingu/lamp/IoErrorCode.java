@@ -21,6 +21,7 @@ import space.lingu.Nullable;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author RollW
@@ -94,6 +95,13 @@ public enum IoErrorCode implements ErrorCode, ErrorCodeFinder {
     @Override
     public ErrorCode findErrorCode(String codeValue) {
         return ErrorCodeFinder.from(values(), codeValue);
+    }
+
+    private static final List<ErrorCode> CODES = List.of(values());
+
+    @Override
+    public List<ErrorCode> listErrorCodes() {
+        return CODES;
     }
 
     @Nullable

@@ -84,7 +84,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             }
             TokenAuthResult result = authenticationTokenService.verifyToken(token,
                     userDetails.getPassword());
-            if (!result.state()) {
+            if (!result.success()) {
                 nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
                 return;
             }

@@ -28,7 +28,7 @@ import java.util.Objects;
  *
  * @author RollW
  */
-@DataTable(tableName = "user_additional_info")
+@DataTable(tableName = "user_personal_data")
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
 public final class UserPersonalData implements Serializable {
     @PrimaryKey
