@@ -39,7 +39,6 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <project.version>0.0.1-SNAPSHOT</project.version>
         <light.version>0.4.2</light.version>
         <fiesta.version>0.2.1</fiesta.version>
         <guava.version>31.1-jre</guava.version>
@@ -151,7 +150,6 @@
             <artifactId>fiesta-checker</artifactId>
             <scope>provided</scope>
         </dependency>
-
     </dependencies>
 
 </project>
