@@ -25,5 +25,6 @@ import space.lingu.lamp.web.domain.review.ReviewType;
 public record ReviewContent(
         String content,
         @Nullable String title,
-        ReviewType type) {
+        ReviewType type
+) {
 }

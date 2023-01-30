@@ -17,7 +17,9 @@
 package space.lingu.lamp.web.domain.review.service;
 
 import org.springframework.stereotype.Service;
+import space.lingu.InfoPolicy;
 import space.lingu.Todo;
+import space.lingu.Warning;
 import space.lingu.lamp.web.domain.review.ReviewType;
 
 /**
@@ -25,7 +27,9 @@ import space.lingu.lamp.web.domain.review.ReviewType;
  */
 @Service
 @Todo(todo = "Replace this with a real implementation.")
+@Warning(value = "This is a temporary implementation.", policy = InfoPolicy.ALL)
 // TODO: Replace this with a real implementation.
+@Deprecated
 public class TempReviewerServiceImpl implements ReviewerAllocateService {
     @Override
     public long allocateReviewer(ReviewType reviewType) {

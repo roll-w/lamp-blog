@@ -20,17 +20,20 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import space.lingu.NonNull;
 import space.lingu.lamp.Result;
 import space.lingu.lamp.web.common.DataErrorCode;
 import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.domain.article.ArticleStatus;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
-import space.lingu.lamp.web.domain.article.event.OnArticlePublishEvent;
 import space.lingu.lamp.web.domain.article.repository.ArticleRepository;
+import space.lingu.lamp.web.domain.content.ContentStatus;
+import space.lingu.lamp.web.domain.content.event.ContentPublishEvent;
+import space.lingu.lamp.web.domain.content.event.PublishEventStage;
 import space.lingu.lamp.web.domain.review.ReviewType;
 import space.lingu.lamp.web.domain.review.event.ReviewStatusMarker;
 
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 /**
  * @author RollW
@@ -61,12 +64,11 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker {
                 .setTitle(title)
                 .setContent(content)
                 .setCreateTime(createTime)
-                .setUpdateTime(createTime)
-                .setStatus(ArticleStatus.REVIEWING);
+                .setUpdateTime(createTime);
         Article article = articleBuilder.build();
         article = articleRepository.createArticle(article);
-        OnArticlePublishEvent articlePublishEvent =
-                new OnArticlePublishEvent(article);
+        ContentPublishEvent<Article> articlePublishEvent =
+                new ContentPublishEvent<>(article, PublishEventStage.REVIEWING);
         applicationEventPublisher.publishEvent(articlePublishEvent);
 
         return Result.success(
@@ -91,23 +93,24 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker {
     }
 
     @Override
-    public void markAsReviewed(String contentId) {
+    public void markAsReviewed(ReviewType reviewType, String contentId) {
         long id = Long.parseLong(contentId);
-        articleRepository.updateArticleStatus(id, ArticleStatus.PUBLISHED);
+        articleRepository.updateArticleStatus(id, ContentStatus.PUBLISHED);
         Article article = articleRepository.get(id);
-        OnArticlePublishEvent articlePublishEvent =
-                new OnArticlePublishEvent(article);
+        ContentPublishEvent<Article> articlePublishEvent =
+                new ContentPublishEvent<>(article, PublishEventStage.PUBLISHED);
         applicationEventPublisher.publishEvent(articlePublishEvent);
     }
 
     @Override
-    public void markAsRejected(String contentId, String reason) {
+    public void markAsRejected(ReviewType reviewType, String contentId, String reason) {
         long id = Long.parseLong(contentId);
-        articleRepository.updateArticleStatus(id, ArticleStatus.REVIEW_REJECTED);
+        articleRepository.updateArticleStatus(id, ContentStatus.REVIEW_REJECTED);
     }
 
+    @NonNull
     @Override
-    public ReviewType getReviewType() {
-        return ReviewType.ARTICLE;
+    public List<ReviewType> getSupportedReviewTypes() {
+        return List.of(ReviewType.ARTICLE);
     }
 }

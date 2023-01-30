@@ -80,7 +80,8 @@ public class ArticleController {
             @PathVariable(name = "articleId") Long articleId) {
         Article article = articleService.getArticle(articleId);
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
-        if (article.isVisitable() || apiContext.isAdminPass()) {
+        // TODO: check visible
+        if ( apiContext.isAdminPass()) {
             return HttpResponseEntity.success(article);
         }
         return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
@@ -94,7 +95,7 @@ public class ArticleController {
             @PathVariable(name = "articleId") Long articleId) {
         Article article = articleService.getArticle(articleId);
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
-        if (article.isVisitable() || apiContext.isAdminPass()) {
+        if (apiContext.isAdminPass()) {
             return HttpResponseEntity.success(ArticleInfo.from(article));
         }
         return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);

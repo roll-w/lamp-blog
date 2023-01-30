@@ -21,8 +21,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.article.Article;
+import space.lingu.lamp.web.domain.content.event.ContentPublishEvent;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.service.ReviewService;
 
@@ -30,7 +30,7 @@ import space.lingu.lamp.web.domain.review.service.ReviewService;
  * @author RollW
  */
 @Component
-public class ArticlePublishReviewListener implements ApplicationListener<OnArticlePublishEvent> {
+public class ArticlePublishReviewListener implements ApplicationListener<ContentPublishEvent<Article>> {
     private static final Logger logger = LoggerFactory.getLogger(ArticlePublishReviewListener.class);
 
     private final ReviewService reviewService;
@@ -39,15 +39,16 @@ public class ArticlePublishReviewListener implements ApplicationListener<OnArtic
         this.reviewService = reviewService;
     }
 
+
     @Override
     @Async
-    public void onApplicationEvent(@NonNull OnArticlePublishEvent event) {
-        Article article = event.getArticle();
+    public void onApplicationEvent(ContentPublishEvent<Article> event) {
+        Article article = event.getContent();
         logger.debug("Article publish event received: {}", article);
         if (article == null) {
             return;
         }
-        if (!article.needsReview()) {
+        if (!event.getStage().needsAssign()) {
             return;
         }
         ReviewJob job = reviewService.assignReviewer(article);

@@ -17,7 +17,6 @@
 package space.lingu.lamp.web.database.dao;
 
 import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.domain.article.ArticleStatus;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
@@ -42,13 +41,13 @@ public abstract class ArticleDao {
     public abstract void insert(List<Article> articles);
 
     @Delete
-    public abstract void delete(Article Article);
+    protected abstract void delete(Article Article);
 
     @Delete
-    public abstract void delete(List<Article> articles);
+    protected abstract void delete(List<Article> articles);
 
     @Delete("DELETE FROM article")
-    public abstract void clearTable();
+    protected abstract void clearTable();
 
     @Query("SELECT * FROM article")
     public abstract List<Article> get();
@@ -62,9 +61,6 @@ public abstract class ArticleDao {
     @Query("SELECT title FROM article WHERE id = {articleId}")
     public abstract String getArticleContent(long articleId);
 
-    @Query("UPDATE article SET status = {status} WHERE id = {articleId}")
-    public abstract void setArticleStatus(long articleId, ArticleStatus status);
-
     @Query("SELECT * FROM article WHERE id = {id}")
     public abstract Article getById(long id);
 
@@ -74,11 +70,11 @@ public abstract class ArticleDao {
     @Query("SELECT * FROM article WHERE user_id = {userId} LIMIT {limit} OFFSET {offset}")
     public abstract List<Article> getByUserId(long userId, int limit, int offset);
 
-    @Query("SELECT `id`, `user_id`, `title`, `cover`, `status`, `create_time`, `update_time` " +
+    @Query("SELECT `id`, `user_id`, `title`, `cover`, `create_time`, `update_time` " +
             "FROM article LIMIT {limit} OFFSET {offset}")
     public abstract List<ArticleInfo> getArticleInfos(int limit, int offset);
 
-    @Query("SELECT `id`, `user_id`, `title`, `cover`, `status`, `create_time`, `update_time` " +
+    @Query("SELECT `id`, `user_id`, `title`, `cover`, `create_time`, `update_time` " +
             "FROM article WHERE user_id = {userId} LIMIT {limit} OFFSET {offset}")
     public abstract List<ArticleInfo> getArticleInfosByUser(long userId, int limit, int offset);
 }

@@ -17,20 +17,36 @@
 package space.lingu.lamp.web.domain.review.event;
 
 import org.springframework.context.ApplicationEvent;
+import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.review.ReviewJob;
+import space.lingu.lamp.web.domain.review.ReviewStatus;
 
 /**
  * @author RollW
  */
 public class OnReviewStateChangeEvent extends ApplicationEvent {
     private final ReviewJob reviewJob;
+    private final ReviewStatus previousStatus;
+    private final ReviewStatus currentStatus;
 
-    public OnReviewStateChangeEvent(ReviewJob reviewJob) {
+    public OnReviewStateChangeEvent(@NonNull ReviewJob reviewJob,
+                                    @NonNull ReviewStatus previousStatus,
+                                    @NonNull ReviewStatus currentStatus) {
         super(reviewJob);
         this.reviewJob = reviewJob;
+        this.previousStatus = previousStatus;
+        this.currentStatus = currentStatus;
     }
 
     public ReviewJob getReviewJob() {
         return reviewJob;
+    }
+
+    public ReviewStatus getPreviousStatus() {
+        return previousStatus;
+    }
+
+    public ReviewStatus getCurrentStatus() {
+        return currentStatus;
     }
 }

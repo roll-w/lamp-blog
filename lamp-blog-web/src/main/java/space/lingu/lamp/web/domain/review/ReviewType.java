@@ -25,11 +25,15 @@ public enum ReviewType {
     /**
      * Article.
      */
-    ARTICLE(2),
+    ARTICLE(3),
     /**
      * Comment.
      */
     COMMENT(1),
+    /**
+     * Post.
+     */
+    POST(1),
     /**
      * Image.
      */

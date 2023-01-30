@@ -35,10 +35,18 @@ import java.util.Map;
 @Component
 public class OnReviewStateChangeListener implements ApplicationListener<OnReviewStateChangeEvent> {
     private final Map<ReviewType, ReviewStatusMarker> typeStatusMarkers = new EnumMap<>(ReviewType.class);
+    // Multimaps.newSetMultimap(new EnumMap<>(ReviewType.class), HashSet::new);
 
     public OnReviewStateChangeListener(List<ReviewStatusMarker> statusMarkers) {
-        statusMarkers.forEach(marker ->
-                typeStatusMarkers.put(marker.getReviewType(), marker));
+        statusMarkers.forEach(marker -> {
+            List<ReviewType> types = marker.getSupportedReviewTypes();
+            types.forEach(reviewType -> {
+                if (typeStatusMarkers.containsKey(reviewType)) {
+                    throw new IllegalStateException("Duplicate ReviewStatusMarker for ReviewType: " + reviewType);
+                }
+                typeStatusMarkers.put(reviewType, marker);
+            });
+        });
     }
 
     @Override
@@ -46,17 +54,16 @@ public class OnReviewStateChangeListener implements ApplicationListener<OnReview
     public void onApplicationEvent(@NonNull OnReviewStateChangeEvent event) {
         ReviewJob job = event.getReviewJob();
         ReviewStatusMarker marker = typeStatusMarkers.get(job.getType());
-        call(marker, job);
+        reviewStateChanged(marker, job, event.getCurrentStatus());
     }
 
-    private void call(ReviewStatusMarker marker, ReviewJob job) {
-        ReviewStatus status = job.getStatus();
+    private void reviewStateChanged(ReviewStatusMarker marker, ReviewJob job, ReviewStatus status) {
         Preconditions.checkNotNull(status, "Review status cannot be null");
 
         switch (status) {
-            case NOT_REVIEWED -> throw new IllegalStateException("Review job is not reviewed");
-            case REJECTED -> marker.markAsRejected(job.getReviewContentId(), job.getResult());
-            case REVIEWED -> marker.markAsReviewed(job.getReviewContentId());
+            case NOT_REVIEWED -> throw new IllegalStateException("Review job is not reviewed.");
+            case REJECTED -> marker.markAsRejected(job.getType(), job.getReviewContentId(), job.getResult());
+            case REVIEWED -> marker.markAsReviewed(job.getType(), job.getReviewContentId());
         }
     }
 }

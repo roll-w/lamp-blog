@@ -14,21 +14,29 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.event;
+package space.lingu.lamp.web.domain.content.event;
 
-import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.review.ReviewType;
-
-import java.util.List;
+import org.springframework.context.ApplicationEvent;
 
 /**
  * @author RollW
  */
-public interface ReviewStatusMarker {
-    void markAsReviewed(ReviewType reviewType, String contentId);
+public class ContentPublishEvent<C> extends ApplicationEvent {
+    private final C content;
+    private final PublishEventStage stage;
 
-    void markAsRejected(ReviewType reviewType, String contentId, String reason);
+    public ContentPublishEvent(C content,
+                               PublishEventStage stage) {
+        super(content);
+        this.content = content;
+        this.stage = stage;
+    }
 
-    @NonNull
-    List<ReviewType> getSupportedReviewTypes();
+    public C getContent() {
+        return content;
+    }
+
+    public PublishEventStage getStage() {
+        return stage;
+    }
 }

@@ -51,9 +51,6 @@ public class Article implements Reviewable, DataItem {
     @DataColumn(name = "content", dataType = SQLDataType.LONGTEXT)
     private final String content;
 
-    @DataColumn(name = "status")
-    private final ArticleStatus status;
-
     @DataColumn(name = "create_time")
     private final long createTime;
 
@@ -62,17 +59,15 @@ public class Article implements Reviewable, DataItem {
 
     public Article(Long id, long userId, String title, String cover,
                    String content,
-                   ArticleStatus status, long createTime, long updateTime) {
+                   long createTime, long updateTime) {
         this.id = id;
         this.userId = userId;
         this.title = title;
         this.cover = cover;
         this.content = content;
-        this.status = status;
         this.createTime = createTime;
         this.updateTime = updateTime;
     }
-
 
     public Long getId() {
         return id;
@@ -90,18 +85,6 @@ public class Article implements Reviewable, DataItem {
         return content;
     }
 
-    public ArticleStatus getStatus() {
-        return status;
-    }
-
-    public boolean isVisitable() {
-        return getStatus().isVisitable();
-    }
-
-    public boolean needsReview() {
-        return getStatus().needsReview();
-    }
-
     public long getCreateTime() {
         return createTime;
     }
@@ -116,7 +99,7 @@ public class Article implements Reviewable, DataItem {
 
     public Article fork(Long id) {
         return new Article(id, userId, title, cover,
-                content, status, createTime, updateTime
+                content, createTime, updateTime
         );
     }
 
@@ -127,7 +110,6 @@ public class Article implements Reviewable, DataItem {
                 .setTitle(title)
                 .setCover(cover)
                 .setContent(content)
-                .setStatus(status)
                 .setCreateTime(createTime)
                 .setUpdateTime(updateTime);
     }
@@ -155,7 +137,6 @@ public class Article implements Reviewable, DataItem {
         private String title;
         private String cover;
         private String content;
-        private ArticleStatus status;
         private long createTime;
         private long updateTime;
 
@@ -179,11 +160,6 @@ public class Article implements Reviewable, DataItem {
             return this;
         }
 
-        public Builder setStatus(ArticleStatus status) {
-            this.status = status;
-            return this;
-        }
-
         public Builder setCreateTime(long createTime) {
             this.createTime = createTime;
             return this;
@@ -201,7 +177,7 @@ public class Article implements Reviewable, DataItem {
 
         public Article build() {
             return new Article(id, userId, title, cover, content,
-                    status, createTime, updateTime);
+                    createTime, updateTime);
         }
     }
 }

@@ -17,7 +17,6 @@
 package space.lingu.lamp.web.domain.article.dto;
 
 import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.domain.article.ArticleStatus;
 import space.lingu.light.DataColumn;
 
 /**
@@ -36,9 +35,6 @@ public record ArticleInfo(
         @DataColumn(name = "cover")
         String cover,
 
-        @DataColumn(name = "status")
-        ArticleStatus status,
-
         @DataColumn(name = "create_time")
         long createTime,
 
@@ -55,7 +51,6 @@ public record ArticleInfo(
                 article.getUserId(),
                 article.getTitle(),
                 article.getCover(),
-                article.getStatus(),
                 article.getCreateTime(),
                 article.getUpdateTime()
         );

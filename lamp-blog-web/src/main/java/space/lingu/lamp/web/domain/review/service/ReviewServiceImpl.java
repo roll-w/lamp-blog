@@ -66,7 +66,8 @@ public class ReviewServiceImpl implements ReviewService, ReviewContentService {
             throw new ReviewException(ReviewErrorCode.ERROR_REVIEWED);
         }
         ReviewJob reviewed = switchStatus(job, passed, reason);
-        OnReviewStateChangeEvent event = new OnReviewStateChangeEvent(reviewed);
+        OnReviewStateChangeEvent event = new OnReviewStateChangeEvent(reviewed,
+                job.getStatus(), reviewed.getStatus());
         eventPublisher.publishEvent(event);
         return ReviewInfo.of(job);
     }

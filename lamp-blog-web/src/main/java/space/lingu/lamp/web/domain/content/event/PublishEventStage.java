@@ -14,40 +14,33 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article;
+package space.lingu.lamp.web.domain.content.event;
 
 /**
+ * Stages in publishing a content.
+ *
  * @author RollW
  */
-public enum ArticleStatus {
+public enum PublishEventStage {
     /**
-     * 草稿
-     */
-    DRAFT,
-    /**
-     * 审核中
+     * Needs review, and not assigned to any reviewer.
      */
     REVIEWING,
     /**
-     * 审核不通过
+     * Needs review, but already assigned to a reviewer.
      */
-    REVIEW_REJECTED,
+    REVIEWING_ASSIGNED,
     /**
-     * 已发布
+     * Reviewed and published.
      */
     PUBLISHED,
-    /**
-     * 已删除
-     */
-    DELETED,
     ;
 
-    public boolean isVisitable() {
-        return this == PUBLISHED;
-    }
-
-    public boolean needsReview() {
+    public boolean needsAssign() {
         return this == REVIEWING;
     }
 
+    public boolean needsReview() {
+        return this == REVIEWING || this == REVIEWING_ASSIGNED;
+    }
 }

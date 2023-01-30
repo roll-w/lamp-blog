@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.event;
-
-import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.review.ReviewType;
-
-import java.util.List;
+package space.lingu.lamp.web.domain.content;
 
 /**
  * @author RollW
  */
-public interface ReviewStatusMarker {
-    void markAsReviewed(ReviewType reviewType, String contentId);
-
-    void markAsRejected(ReviewType reviewType, String contentId, String reason);
-
-    @NonNull
-    List<ReviewType> getSupportedReviewTypes();
+public enum ContentType {
+    /**
+     * Article.
+     */
+    ARTICLE,
+    /**
+     * Comment.
+     */
+    COMMENT,
+    /**
+     * Post.
+     */
+    POST,
+    ;
 }

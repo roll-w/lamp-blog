@@ -16,17 +16,53 @@
 
 package space.lingu.lamp.web.domain.comment;
 
+import space.lingu.light.DataColumn;
+import space.lingu.light.DataTable;
+import space.lingu.light.PrimaryKey;
+
 /**
  * @author RollW
  */
+@DataTable(tableName = "comment")
 public class Comment {
+    @DataColumn(name = "id")
+    @PrimaryKey(autoGenerate = true)
+    private Long id;
+
+    @DataColumn(name = "user_id")
     private long userId;
-    private long articleId;
+
+    @DataColumn(name = "content_id")
+    private String contentId;
+
+    @DataColumn(name = "parent_id")
     private Long parentId;
+
+    @DataColumn(name = "content")
     private String content;
+
+    @DataColumn(name = "create_time")
     private long createTime;
-    private long updateTime;
-    private int likeCount;
-    private int dislikeCount;
+
+    @DataColumn(name = "deleted")
+    private boolean deleted;
+
+    @DataColumn(name = "type")
+    private CommentType type;
+
+    public Comment(Long id, long userId, String contentId,
+                   Long parentId, String content, long createTime,
+                   boolean deleted, CommentType type) {
+        this.id = id;
+        this.userId = userId;
+        this.contentId = contentId;
+        this.parentId = parentId;
+        this.content = content;
+        this.createTime = createTime;
+        this.deleted = deleted;
+        this.type = type;
+    }
+
+
     // TODO: comment
 }

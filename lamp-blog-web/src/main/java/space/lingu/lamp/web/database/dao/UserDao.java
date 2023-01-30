@@ -55,8 +55,9 @@ public abstract class UserDao {
 
     @Delete("DELETE FROM user WHERE id = {id}")
     @Dangerous(message = "Will complete delete the user from database. This operation is dangerous.")
-    public abstract void deleteById(long id);
+    protected abstract void deleteById(long id);
 
+    // TODO: replace SELECT * with SELECT columns
     @Query("SELECT * FROM user")
     public abstract List<User> getAll();
 

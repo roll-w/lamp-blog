@@ -14,23 +14,44 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article.event;
-
-import org.springframework.context.ApplicationEvent;
-import space.lingu.lamp.web.domain.article.Article;
+package space.lingu.lamp.web.domain.content;
 
 /**
  * @author RollW
  */
-public class OnArticlePublishEvent extends ApplicationEvent {
-    private final Article article;
+public enum ContentStatus {
+    /**
+     * Under reviewing.
+     */
+    REVIEWING,
+    /**
+     * Review rejected.
+     */
+    REVIEW_REJECTED,
+    /**
+     * Published, visible to public (if public visitable).
+     */
+    PUBLISHED,
+    /**
+     * Deleted, and invisible to author.
+     */
+    DELETED,
+    /**
+     * Hide, and invisible to author.
+     */
+    FORBIDDEN,
+    /**
+     * Hide, but visible to author.
+     */
+    HIDE,
+    ;
 
-    public OnArticlePublishEvent(Article article) {
-        super(article);
-        this.article = article;
+    public boolean isPublicVisitable() {
+        return this == PUBLISHED;
     }
 
-    public Article getArticle() {
-        return article;
+    public boolean needsReview() {
+        return this == REVIEWING;
     }
+
 }

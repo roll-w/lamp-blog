@@ -33,6 +33,9 @@ public class ReviewJob implements DataItem {
     @PrimaryKey(autoGenerate = true)
     private final Long jobId;
 
+    // TODO: may add serial number to replace job id in the future
+    // private String serialNumber;
+
     @DataColumn(name = "content_id")
     private final String reviewContentId;
 

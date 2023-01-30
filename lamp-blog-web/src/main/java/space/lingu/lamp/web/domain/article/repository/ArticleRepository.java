@@ -20,7 +20,7 @@ import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ArticleDao;
 import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.domain.article.ArticleStatus;
+import space.lingu.lamp.web.domain.content.ContentStatus;
 
 /**
  * @author RollW
@@ -44,12 +44,10 @@ public class ArticleRepository {
     }
 
     public void deleteArticle(long id) {
-        articleDao.setArticleStatus(id, ArticleStatus.DELETED);
         // mark article as deleted
     }
 
-    public void updateArticleStatus(long id, ArticleStatus status) {
-        articleDao.setArticleStatus(id, status);
+    public void updateArticleStatus(long id, ContentStatus status) {
     }
 
     public Article get(long id) {
