@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.review.ReviewJob;
+import space.lingu.lamp.web.domain.review.ReviewMark;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 import space.lingu.lamp.web.domain.review.ReviewType;
 import space.lingu.lamp.web.domain.review.Reviewable;
@@ -100,6 +101,10 @@ public class ReviewServiceImpl implements ReviewService, ReviewContentService {
                 .setType(type)
                 .setStatus(ReviewStatus.NOT_REVIEWED)
                 .setAssignedTime(assignedTime)
+                .setReviewMark(ReviewMark.NORMAL)
+                // TODO: distinguish between different mark types of review
+                // if first time review, mark it as normal
+                // if it is the second or later review, mark it as report
                 .build();
         reviewJob = reviewJobRepository.insert(reviewJob);
         return reviewJob;

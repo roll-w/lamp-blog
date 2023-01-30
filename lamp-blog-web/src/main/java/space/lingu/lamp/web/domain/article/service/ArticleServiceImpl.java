@@ -26,8 +26,14 @@ import space.lingu.lamp.web.common.DataErrorCode;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
 import space.lingu.lamp.web.domain.article.repository.ArticleRepository;
+import space.lingu.lamp.web.domain.content.BasicContentInfo;
+import space.lingu.lamp.web.domain.content.Content;
+import space.lingu.lamp.web.domain.content.ContentAccessor;
 import space.lingu.lamp.web.domain.content.ContentStatus;
+import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.content.common.ContentException;
 import space.lingu.lamp.web.domain.content.event.ContentPublishEvent;
+import space.lingu.lamp.web.domain.content.event.ContentStatusEvent;
 import space.lingu.lamp.web.domain.content.event.PublishEventStage;
 import space.lingu.lamp.web.domain.review.ReviewType;
 import space.lingu.lamp.web.domain.review.event.ReviewStatusMarker;
@@ -39,7 +45,7 @@ import java.util.List;
  * @author RollW
  */
 @Service
-public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker {
+public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker, ContentAccessor<Article> {
     private static final Logger logger = LoggerFactory.getLogger(ArticleServiceImpl.class);
 
     private final ArticleRepository articleRepository;
@@ -78,7 +84,19 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker {
 
     @Override
     public Result<Void> deleteArticle(long articleId) {
-        articleRepository.deleteArticle(articleId);
+        if (!articleRepository.isArticleExist(articleId)) {
+            return Result.of(DataErrorCode.ERROR_DATA_NOT_EXIST);
+            // TODO: replace with ContentErrorCode
+        }
+
+        BasicContentInfo contentInfo = new BasicContentInfo(
+                1,
+                String.valueOf(articleId),
+                ContentType.ARTICLE
+        );
+        ContentStatusEvent<Content> statusEvent =
+                new ContentStatusEvent<>(contentInfo, null, ContentStatus.DELETED);
+        applicationEventPublisher.publishEvent(statusEvent);
         return Result.success();
     }
 
@@ -95,8 +113,8 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker {
     @Override
     public void markAsReviewed(ReviewType reviewType, String contentId) {
         long id = Long.parseLong(contentId);
-        articleRepository.updateArticleStatus(id, ContentStatus.PUBLISHED);
         Article article = articleRepository.get(id);
+        //articleRepository.updateArticleStatus(id, ContentStatus.PUBLISHED);
         ContentPublishEvent<Article> articlePublishEvent =
                 new ContentPublishEvent<>(article, PublishEventStage.PUBLISHED);
         applicationEventPublisher.publishEvent(articlePublishEvent);
@@ -105,12 +123,29 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker {
     @Override
     public void markAsRejected(ReviewType reviewType, String contentId, String reason) {
         long id = Long.parseLong(contentId);
-        articleRepository.updateArticleStatus(id, ContentStatus.REVIEW_REJECTED);
+
     }
 
     @NonNull
     @Override
     public List<ReviewType> getSupportedReviewTypes() {
         return List.of(ReviewType.ARTICLE);
+    }
+
+    @Override
+    public Article getContent(String contentId, ContentType contentType) {
+        if (contentType != ContentType.ARTICLE) {
+            return null;
+        }
+        try {
+            return articleRepository.get(Long.parseLong(contentId));
+        } catch (NumberFormatException e) {
+            throw new ContentException(e);
+        }
+    }
+
+    @Override
+    public boolean supports(ContentType contentType) {
+        return contentType == ContentType.ARTICLE;
     }
 }

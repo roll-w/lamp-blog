@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.domain.content.event;
 
+import space.lingu.lamp.web.domain.content.ContentStatus;
+
 /**
  * Stages in publishing a content.
  *
@@ -35,6 +37,13 @@ public enum PublishEventStage {
      */
     PUBLISHED,
     ;
+
+    public ContentStatus toStatus() {
+        return switch (this) {
+            case REVIEWING, REVIEWING_ASSIGNED -> ContentStatus.REVIEWING;
+            case PUBLISHED -> ContentStatus.PUBLISHED;
+        };
+    }
 
     public boolean needsAssign() {
         return this == REVIEWING;

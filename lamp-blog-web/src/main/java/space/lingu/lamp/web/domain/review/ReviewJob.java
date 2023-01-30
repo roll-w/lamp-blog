@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.domain.review;
 
+import com.google.common.base.Preconditions;
 import space.lingu.lamp.DataItem;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
@@ -60,10 +61,19 @@ public class ReviewJob implements DataItem {
     @DataColumn(name = "review_time")
     private final long reviewTime;
 
+    @DataColumn(name = "review_mark")
+    private final ReviewMark reviewMark;
+
     @Constructor
     public ReviewJob(Long jobId, String reviewContentId, long reviewerId,
                      long operatorId, ReviewStatus status, ReviewType type,
-                     long assignedTime, String result, long reviewTime) {
+                     long assignedTime, String result, long reviewTime,
+                     ReviewMark reviewMark) {
+        Preconditions.checkNotNull(reviewContentId);
+        Preconditions.checkNotNull(status);
+        Preconditions.checkNotNull(type);
+        Preconditions.checkNotNull(reviewMark);
+
         this.jobId = jobId;
         this.reviewContentId = reviewContentId;
         this.reviewerId = reviewerId;
@@ -73,20 +83,15 @@ public class ReviewJob implements DataItem {
         this.assignedTime = assignedTime;
         this.result = result;
         this.reviewTime = reviewTime;
+        this.reviewMark = reviewMark;
     }
 
     public ReviewJob(String reviewContentId, long reviewerId,
                      long operatorId, ReviewStatus status, ReviewType type,
-                     long assignedTime, String result, long reviewTime) {
-        this.operatorId = operatorId;
-        this.jobId = null;
-        this.reviewContentId = reviewContentId;
-        this.reviewerId = reviewerId;
-        this.status = status;
-        this.type = type;
-        this.assignedTime = assignedTime;
-        this.result = result;
-        this.reviewTime = reviewTime;
+                     long assignedTime, String result, long reviewTime,
+                     ReviewMark reviewMark) {
+        this(null, reviewContentId, reviewerId, operatorId, status, type,
+                assignedTime, result, reviewTime, reviewMark);
     }
 
     public Long getJobId() {
@@ -125,20 +130,24 @@ public class ReviewJob implements DataItem {
         return reviewTime;
     }
 
+    public ReviewMark getReviewMark() {
+        return reviewMark;
+    }
+
     public ReviewJob reviewPass(long reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewerId,
                 operatorId, ReviewStatus.REVIEWED,
-                type, assignedTime, null, reviewTime
-        );
+                type, assignedTime, null, reviewTime,
+                reviewMark);
     }
 
     public ReviewJob reviewReject(String result, long reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewerId,
                 operatorId, ReviewStatus.REJECTED,
-                type, assignedTime, result, reviewTime
-        );
+                type, assignedTime, result, reviewTime,
+                reviewMark);
     }
 
     public Builder toBuilder() {
@@ -150,12 +159,12 @@ public class ReviewJob implements DataItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReviewJob job = (ReviewJob) o;
-        return reviewerId == job.reviewerId && operatorId == job.operatorId && assignedTime == job.assignedTime && reviewTime == job.reviewTime && Objects.equals(jobId, job.jobId) && Objects.equals(reviewContentId, job.reviewContentId) && status == job.status && type == job.type && Objects.equals(result, job.result);
+        return reviewerId == job.reviewerId && operatorId == job.operatorId && assignedTime == job.assignedTime && reviewTime == job.reviewTime && Objects.equals(jobId, job.jobId) && Objects.equals(reviewContentId, job.reviewContentId) && status == job.status && type == job.type && Objects.equals(result, job.result) && reviewMark == job.reviewMark;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(jobId, reviewContentId, reviewerId, operatorId, status, type, assignedTime, result, reviewTime);
+        return Objects.hash(jobId, reviewContentId, reviewerId, operatorId, status, type, assignedTime, result, reviewTime, reviewMark);
     }
 
     @Override
@@ -170,6 +179,7 @@ public class ReviewJob implements DataItem {
                 ", assignedTime=" + assignedTime +
                 ", result='" + result + '\'' +
                 ", reviewTime=" + reviewTime +
+                ", reviewMark=" + reviewMark +
                 '}';
     }
 
@@ -181,8 +191,8 @@ public class ReviewJob implements DataItem {
         return new ReviewJob(
                 id, reviewContentId, reviewerId,
                 operatorId, status, type, assignedTime,
-                result, reviewTime
-        );
+                result, reviewTime,
+                reviewMark);
     }
 
     public final static class Builder {
@@ -195,6 +205,7 @@ public class ReviewJob implements DataItem {
         private long assignedTime;
         private String result;
         private long reviewTime;
+        private ReviewMark reviewMark;
 
         public Builder() {
         }
@@ -209,6 +220,7 @@ public class ReviewJob implements DataItem {
             this.assignedTime = job.assignedTime;
             this.result = job.result;
             this.reviewTime = job.reviewTime;
+            this.reviewMark = job.reviewMark;
         }
 
         public Builder setJobId(Long jobId) {
@@ -256,12 +268,17 @@ public class ReviewJob implements DataItem {
             return this;
         }
 
+        public Builder setReviewMark(ReviewMark reviewMark) {
+            this.reviewMark = reviewMark;
+            return this;
+        }
+
         public ReviewJob build() {
             return new ReviewJob(
                     jobId, reviewContentId,
                     reviewerId, operatorId, status, type,
-                    assignedTime, result, reviewTime
-            );
+                    assignedTime, result, reviewTime,
+                    reviewMark);
         }
     }
 }

@@ -16,7 +16,10 @@
 
 package space.lingu.lamp.web.domain.article.dto;
 
+import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.article.Article;
+import space.lingu.lamp.web.domain.content.Content;
+import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.light.DataColumn;
 
 /**
@@ -40,7 +43,7 @@ public record ArticleInfo(
 
         @DataColumn(name = "update_time")
         long updateTime
-) {
+) implements Content {
 
     public static ArticleInfo from(Article article) {
         if (article == null) {
@@ -54,5 +57,22 @@ public record ArticleInfo(
                 article.getCreateTime(),
                 article.getUpdateTime()
         );
+    }
+
+    @NonNull
+    @Override
+    public String getContentId() {
+        return String.valueOf(id);
+    }
+
+    @NonNull
+    @Override
+    public ContentType getContentType() {
+        return ContentType.ARTICLE;
+    }
+
+    @Override
+    public long getUserId() {
+        return userId;
     }
 }

@@ -58,6 +58,9 @@ public abstract class ArticleDao {
     @Query("SELECT title FROM article WHERE user_id = {userId} AND title = {title}")
     public abstract String getArticleTitle(String title, long userId);
 
+    @Query("SELECT user_id FROM article WHERE id = {id}")
+    public abstract Long getUserIdByArticleId(long userId);
+
     @Query("SELECT title FROM article WHERE id = {articleId}")
     public abstract String getArticleContent(long articleId);
 

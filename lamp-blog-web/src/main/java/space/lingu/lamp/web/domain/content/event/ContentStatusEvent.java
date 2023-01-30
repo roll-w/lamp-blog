@@ -16,37 +16,42 @@
 
 package space.lingu.lamp.web.domain.content.event;
 
+import org.springframework.context.ApplicationEvent;
+import space.lingu.NonNull;
+import space.lingu.Nullable;
 import space.lingu.lamp.web.domain.content.Content;
+import space.lingu.lamp.web.domain.content.ContentStatus;
 
 /**
- * Receive this event don't change the content status.
- *
  * @author RollW
  */
-public class ContentPublishEvent<C extends Content> extends ContentStatusEvent<C> {
+public class ContentStatusEvent<C extends Content> extends ApplicationEvent {
     private final C content;
-    private final PublishEventStage stage;
+    @Nullable
+    private final ContentStatus previousStatus;
+    @NonNull
+    private final ContentStatus currentStatus;
 
-    public ContentPublishEvent(C content,
-                               PublishEventStage stage) {
-        super(content, null, stage.toStatus());
+    public ContentStatusEvent(C content,
+                              @Nullable ContentStatus previousStatus,
+                              @NonNull ContentStatus currentStatus) {
+        super(content);
         this.content = content;
-        this.stage = stage;
+        this.previousStatus = previousStatus;
+        this.currentStatus = currentStatus;
     }
 
     public C getContent() {
         return content;
     }
 
-    public PublishEventStage getStage() {
-        return stage;
+    @Nullable
+    public ContentStatus getPreviousStatus() {
+        return previousStatus;
     }
 
-    public boolean needsAssign() {
-        return stage.needsAssign();
-    }
-
-    public boolean needsReview() {
-        return stage.needsReview();
+    @NonNull
+    public ContentStatus getCurrentStatus() {
+        return currentStatus;
     }
 }

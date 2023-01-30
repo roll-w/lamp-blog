@@ -16,7 +16,11 @@
 
 package space.lingu.lamp.web.domain.article;
 
+import space.lingu.NonNull;
+import space.lingu.Nullable;
 import space.lingu.lamp.DataItem;
+import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewType;
 import space.lingu.lamp.web.domain.review.Reviewable;
 import space.lingu.light.DataColumn;
@@ -32,7 +36,7 @@ import space.lingu.light.SQLDataType;
 @DataTable(tableName = "article", indices = {
         @Index(value = {"user_id", "title"}, unique = true)
 })
-public class Article implements Reviewable, DataItem {
+public class Article implements Reviewable, DataItem, ContentDetails {
     // TODO: article
 
     @DataColumn(name = "id")
@@ -73,14 +77,18 @@ public class Article implements Reviewable, DataItem {
         return id;
     }
 
+    @Override
     public long getUserId() {
         return userId;
     }
 
+    @Override
     public String getTitle() {
         return title;
     }
 
+    @Override
+    @Nullable
     public String getContent() {
         return content;
     }
@@ -120,15 +128,27 @@ public class Article implements Reviewable, DataItem {
 
     @Override
     public String getReviewContentId() {
-        if (id == null) {
-            throw new IllegalStateException("The article has not been saved.");
-        }
-        return "" + id;
+        return getContentId();
     }
 
     @Override
     public ReviewType getReviewType() {
         return ReviewType.ARTICLE;
+    }
+
+    @NonNull
+    @Override
+    public String getContentId() {
+        if (id == null) {
+            throw new IllegalStateException("The article has not been saved.");
+        }
+        return String.valueOf(id);
+    }
+
+    @NonNull
+    @Override
+    public ContentType getContentType() {
+        return ContentType.ARTICLE;
     }
 
     public final static class Builder {

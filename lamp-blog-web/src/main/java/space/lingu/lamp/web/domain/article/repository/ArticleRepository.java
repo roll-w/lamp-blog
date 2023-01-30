@@ -20,7 +20,6 @@ import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ArticleDao;
 import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.domain.content.ContentStatus;
 
 /**
  * @author RollW
@@ -43,14 +42,15 @@ public class ArticleRepository {
         return article.fork(id);
     }
 
-    public void deleteArticle(long id) {
-        // mark article as deleted
-    }
-
-    public void updateArticleStatus(long id, ContentStatus status) {
-    }
-
     public Article get(long id) {
         return articleDao.getById(id);
+    }
+
+    public Long getUserIdByArticleId(long userId) {
+        return articleDao.getUserIdByArticleId(userId);
+    }
+
+    public boolean isArticleExist(long articleId) {
+        return articleDao.getUserIdByArticleId(articleId) != null;
     }
 }

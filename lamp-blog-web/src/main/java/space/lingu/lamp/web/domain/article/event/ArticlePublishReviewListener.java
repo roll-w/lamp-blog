@@ -39,19 +39,18 @@ public class ArticlePublishReviewListener implements ApplicationListener<Content
         this.reviewService = reviewService;
     }
 
-
     @Override
     @Async
     public void onApplicationEvent(ContentPublishEvent<Article> event) {
         Article article = event.getContent();
-        logger.debug("Article publish event received: {}", article);
+        logger.debug("Article publish event received: {}.", article);
         if (article == null) {
             return;
         }
-        if (!event.getStage().needsAssign()) {
+        if (!event.needsAssign()) {
             return;
         }
         ReviewJob job = reviewService.assignReviewer(article);
-        logger.debug("Article review job assigned: {}", job);
+        logger.debug("Article review job assigned: {}.", job);
     }
 }
