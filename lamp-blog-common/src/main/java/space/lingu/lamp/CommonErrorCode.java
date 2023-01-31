@@ -26,9 +26,9 @@ import java.util.List;
  */
 public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
     SUCCESS(SUCCESS_CODE, 200),
-    ERROR_NOT_FOUND("B0100", 404),
     ERROR_EXCEPTION("B1000", 500),
-    ERROR_NULL("B1001", 500),
+    ERROR_NOT_FOUND("B1001", 404),
+    ERROR_NULL("B1002", 500),
     ERROR_UNKNOWN("D0000", 500),
     ;
 

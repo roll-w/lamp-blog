@@ -35,11 +35,11 @@ public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder {
     /**
      * Request parameter validate failed.
      */
-    ERROR_PARAM_FAILED("A0201", 400),
+    ERROR_PARAM_FAILED("A0202", 400),
     /**
      * Request body missing.
      */
-    ERROR_BODY_MISSING("A0202", 400),
+    ERROR_BODY_MISSING("A0203", 400),
 
     ;
 

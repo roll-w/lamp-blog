@@ -25,6 +25,7 @@ import space.lingu.light.LightRuntimeException;
 import java.util.List;
 
 /**
+ *
  * @author RollW
  */
 public enum DataErrorCode implements ErrorCode, ErrorCodeFinder {

@@ -27,8 +27,13 @@ import java.util.List;
  */
 public enum ContentErrorCode implements ErrorCode {
     SUCCESS(SUCCESS_CODE, 200),
-    ERROR_CONTENT_FORBIDDEN("B0020", 401),
-    ;
+    ERROR_CONTENT("A2000", 400),
+    ERROR_CONTENT_NOT_FOUND("A2001", 404),
+    ERROR_CONTENT_FORBIDDEN("A2002", 401),
+    ERROR_CONTENT_HIDE("A2003", 401),
+    ERROR_CONTENT_DELETED("A2004", 404),
+    ERROR_CONTENT_REVIEWING("A2005", 401),
+    ERROR_PASSWORD_REQUIRED("A2006", 401);
 
 
     private final String value;

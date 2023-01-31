@@ -49,22 +49,22 @@ public enum AuthErrorCode implements ErrorCode {
      */
     ERROR_TOKEN_NOT_EXPIRED("A1003", 401),
     ERROR_TOKEN_EXISTED("A1004", 401),
-    ERROR_TOKEN_NOT_EXIST("A1004", 401),
-    ERROR_TOKEN_NOT_MATCH("A1005", 401),
-    ERROR_TOKEN_USED("A1006", 401),
-    ERROR_TOKEN_NOT_USED("A1007", 401),
+    ERROR_TOKEN_NOT_EXIST("A1005", 401),
+    ERROR_TOKEN_NOT_MATCH("A1006", 401),
+    ERROR_TOKEN_USED("A1007", 401),
+    ERROR_TOKEN_NOT_USED("A1008", 401),
     /**
      * 未认证
      */
-    ERROR_UNAUTHORIZED_USE("A1008", 403),
+    ERROR_UNAUTHORIZED_USE("A1009", 403),
     /**
      * 无权限访问
      */
-    ERROR_NOT_HAS_ROLE("A1009", 401),
+    ERROR_NOT_HAS_ROLE("A1010", 401),
     /**
      * 黑名单用户
      */
-    ERROR_IN_BLOCKLIST("A1010", 401),
+    ERROR_IN_BLOCKLIST("A1011", 401),
     ;
 
 
