@@ -21,9 +21,11 @@ import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.IoErrorCode;
 import space.lingu.lamp.web.common.DataErrorCode;
 import space.lingu.lamp.web.common.WebCommonErrorCode;
-import space.lingu.lamp.web.i18n.ErrorCodeKeyHelper;
 import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
+import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
+import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;
 import space.lingu.lamp.web.domain.user.common.UserErrorCode;
+import space.lingu.lamp.web.i18n.ErrorCodeKeyHelper;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -49,7 +51,9 @@ public class KeyGenerator {
     public static void main(String[] args) {
         List<Class<? extends ErrorCode>> errorCodeClasses = List.of(
                 CommonErrorCode.class, AuthErrorCode.class, IoErrorCode.class,
-                UserErrorCode.class, WebCommonErrorCode.class, DataErrorCode.class
+                UserErrorCode.class, WebCommonErrorCode.class, DataErrorCode.class,
+                ContentErrorCode.class,
+                ReviewErrorCode.class
         );
         String[] properties = new String[]{
                 "messages.properties",
@@ -67,6 +71,13 @@ public class KeyGenerator {
         for (String property : properties) {
             writer.println(property + "\n============");
             Map<String, KeyPair> keyPairs = readKeyPairs(property);
+            Set<String> existingKeys = new HashSet<>(keyPairs.keySet());
+            List<String> nonExistingKeys = reportNonExistingKeys(keyPairs, keyNames);
+            if (!nonExistingKeys.isEmpty()) {
+                writer.println("\u001B[33mNon-existing keys: ");
+                nonExistingKeys.forEach(s -> writer.println("\u001B[33m- " + s));
+                writer.println("\u001B[0m============");
+            }
             for (String keyName : keyNames) {
                 KeyPair keyPair = keyPairs.get(keyName);
                 if (keyPair == null) {
@@ -74,14 +85,26 @@ public class KeyGenerator {
                 } else {
                     writer.println(keyPair);
                 }
+                existingKeys.remove(keyName);
             }
+            existingKeys.stream().sorted()
+                    .forEach(s -> writer.println(keyPairs.get(s)));
             writer.println();
             writer.flush();
         }
 
         System.out.println("\nEnd.");
-
         writer.close();
+    }
+
+    private static List<String> reportNonExistingKeys(Map<String, KeyPair> keyPairs,
+                                                      List<String> keyNames) {
+        List<String> nonExistingKeys = new ArrayList<>();
+        keyPairs.keySet().stream()
+                .filter(key -> key.startsWith("error."))
+                .filter(keyPair -> !keyNames.contains(keyPair))
+                .forEach(nonExistingKeys::add);
+        return nonExistingKeys;
     }
 
     private static Map<String, KeyPair> readKeyPairs(String property) {
@@ -156,13 +179,6 @@ public class KeyGenerator {
         return keys;
     }
 
-    public void write(PrintWriter writer) {
-        List<String> keys = convertToKeyNames();
-        writer.println("success=");
-        keys.forEach(key -> writer.println(key + "="));
-        writer.flush();
-    }
-
     private record Key(String className,
                        String codeName) {
     }
@@ -174,6 +190,4 @@ public class KeyGenerator {
             return key + "=" + value;
         }
     }
-
-
 }
