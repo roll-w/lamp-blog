@@ -16,11 +16,34 @@
 
 package space.lingu.lamp.web.controller;
 
+import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * @author RollW
  */
 @RestController
+@CommonApi
 public class CaptchaController {
+    private static final String CAPTCHA_COOKIE_NAME = "captack_id";
+
+
+    @GetMapping("/captcha")
+    public String getCaptcha(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
+        for (Cookie cookie : cookies) {
+            if (CAPTCHA_COOKIE_NAME.equals(cookie.getName())) {
+                return "OK";
+            }
+        }
+
+        Cookie cookie = new Cookie(CAPTCHA_COOKIE_NAME, RandomStringUtils.randomAlphanumeric(32));
+        response.addCookie(cookie);
+        return "OK";
+    }
 }

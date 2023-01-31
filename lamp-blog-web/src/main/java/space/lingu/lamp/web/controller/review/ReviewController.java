@@ -28,7 +28,9 @@ import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.controller.WithAdminApi;
 import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
+import space.lingu.lamp.web.domain.review.dto.ReviewContent;
 import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
+import space.lingu.lamp.web.domain.review.service.ReviewContentService;
 import space.lingu.lamp.web.domain.review.service.ReviewService;
 import space.lingu.lamp.web.domain.review.vo.ReviewStatues;
 
@@ -40,9 +42,12 @@ import java.util.List;
 @WithAdminApi
 public class ReviewController {
     private final ReviewService reviewService;
+    private final ReviewContentService reviewContentService;
 
-    public ReviewController(ReviewService reviewService) {
+    public ReviewController(ReviewService reviewService,
+                            ReviewContentService reviewContentService) {
         this.reviewService = reviewService;
+        this.reviewContentService = reviewContentService;
     }
 
     // TODO: verify user
@@ -63,7 +68,7 @@ public class ReviewController {
             @RequestParam(name = "status", required = false, defaultValue = "ALL") ReviewStatues statues) {
         ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
         Verify.verifyNotNull(context.userInfo());
-        if (context.allowAccess(userId)) {
+        if (!context.allowAccess(userId)) {
             return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
         }
         List<ReviewInfo> reviewInfos = reviewService
@@ -75,6 +80,18 @@ public class ReviewController {
     }
 
 
+    @GetMapping("/{userId}/review/{jobId}/content")
+    public HttpResponseEntity<ReviewContent> getReviewContent(
+            @PathVariable(name = "jobId") Long jobId,
+            @PathVariable(name = "userId") Long userId) {
+        ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
+        if (!context.allowAccess(userId)) {
+            return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+        }
+        ReviewContent reviewContent = reviewContentService.getReviewContent(jobId);
+        return HttpResponseEntity.success(reviewContent);
+    }
+
     // Delete: review rejected
     @DeleteMapping("/{userId}/review/{jobId}")
     public HttpResponseEntity<ReviewInfo> rejectReview(
@@ -83,7 +100,7 @@ public class ReviewController {
             @RequestBody ReviewRejectedRequest reviewRejectedRequest) {
         ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
         Verify.verifyNotNull(context.userInfo());
-        if (context.allowAccess(userId)) {
+        if (!context.allowAccess(userId)) {
             return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
         }
         ReviewInfo info = reviewService.makeReview(jobId, false,

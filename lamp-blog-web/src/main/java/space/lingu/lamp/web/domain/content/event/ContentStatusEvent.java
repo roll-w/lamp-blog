@@ -27,16 +27,18 @@ import space.lingu.lamp.web.domain.content.ContentStatus;
  */
 public class ContentStatusEvent<C extends Content> extends ApplicationEvent {
     private final C content;
+    private final long timestamp;
     @Nullable
     private final ContentStatus previousStatus;
     @NonNull
     private final ContentStatus currentStatus;
 
-    public ContentStatusEvent(C content,
+    public ContentStatusEvent(C content, long timestamp,
                               @Nullable ContentStatus previousStatus,
                               @NonNull ContentStatus currentStatus) {
         super(content);
         this.content = content;
+        this.timestamp = timestamp;
         this.previousStatus = previousStatus;
         this.currentStatus = currentStatus;
     }
@@ -53,5 +55,9 @@ public class ContentStatusEvent<C extends Content> extends ApplicationEvent {
     @NonNull
     public ContentStatus getCurrentStatus() {
         return currentStatus;
+    }
+
+    public long getEventTimestamp() {
+        return timestamp;
     }
 }

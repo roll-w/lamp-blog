@@ -21,6 +21,7 @@ import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
 import space.lingu.lamp.web.domain.content.ContentAccessCredential;
+import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.common.UserErrorCode;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
@@ -35,12 +36,18 @@ public class ContentUserChecker implements ContentPermitChecker {
     @Override
     @NonNull
     public ContentPermitResult checkPermit(@NonNull Content content,
-                                           @NonNull ContentAccessCredential credential) {
-        if (credential.getType() != ContentAccessAuthType.USER) {
+                                           @NonNull ContentAccessAuthType contentAccessAuthType,
+                                           @NonNull ContentAccessCredentials credentials) {
+        if (!contentAccessAuthType.needsAuth()) {
             return ContentPermitResult.permit();
         }
-        if (credential.getRawData() == null) {
+        ContentAccessCredential credential = credentials.getCredential(ContentAccessAuthType.USER);
+        if (credential == null || credential.getRawData() == null) {
             return ContentPermitResult.deny(UserErrorCode.ERROR_USER_NOT_LOGIN);
+        }
+
+        if (contentAccessAuthType != ContentAccessAuthType.PRIVATE) {
+            return ContentPermitResult.permit();
         }
 
         Type type = getType(credential.getRawData());
@@ -83,6 +90,12 @@ public class ContentUserChecker implements ContentPermitChecker {
         throw new IllegalArgumentException("Unknown type of data: " + data.getClass().getName());
     }
 
+    /**
+     * Supported types.
+     *
+     * @see ContentAccessAuthType#USER
+     * @see ContentAccessAuthType#getTypes()
+     */
     private enum Type {
         LONG, USER, USERINFO
     }

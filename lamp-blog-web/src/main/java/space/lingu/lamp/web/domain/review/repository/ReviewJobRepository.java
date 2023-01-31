@@ -19,9 +19,9 @@ package space.lingu.lamp.web.domain.review.repository;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ReviewJobDao;
+import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
-import space.lingu.lamp.web.domain.review.ReviewType;
 
 import java.util.List;
 
@@ -41,7 +41,6 @@ public class ReviewJobRepository {
         return reviewJob.fork(id);
     }
 
-
     public void update(ReviewJob reviewJob) {
         reviewJobDao.update(reviewJob);
     }
@@ -50,8 +49,8 @@ public class ReviewJobRepository {
         return reviewJobDao.get(id);
     }
 
-    public ReviewJob getBy(String contentId, ReviewType reviewType) {
-        return reviewJobDao.getReviewJobByContentId(contentId, reviewType);
+    public ReviewJob getBy(String contentId, ContentType contentType) {
+        return reviewJobDao.getReviewJobByContentId(contentId, contentType);
     }
 
     public List<ReviewJob> getReviewJobsByReviewer(long reviewerId) {

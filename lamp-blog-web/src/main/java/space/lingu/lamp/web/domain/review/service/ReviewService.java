@@ -16,10 +16,10 @@
 
 package space.lingu.lamp.web.domain.review.service;
 
+import space.lingu.lamp.web.domain.content.Content;
+import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
-import space.lingu.lamp.web.domain.review.ReviewType;
-import space.lingu.lamp.web.domain.review.Reviewable;
 
 import java.util.List;
 
@@ -29,9 +29,20 @@ import java.util.List;
 public interface ReviewService {
     ReviewInfo makeReview(long jobId, boolean passed, String reason);
 
-    ReviewJob assignReviewer(Reviewable reviewable);
+    default ReviewJob assignReviewer(Content content) {
+        return assignReviewer(content, false);
+    }
 
-    ReviewJob assignReviewer(String contentId, ReviewType type);
+    /**
+     * Assign a reviewer to a content.
+     *
+     * @param allowAutoReview if false, disable {@link ReviewerAllocateService#AUTO_REVIEWER
+     *                        auto reviewer} and force to assign a staff reviewer.
+     */
+    ReviewJob assignReviewer(Content content, boolean allowAutoReview);
+
+    ReviewJob assignReviewer(String contentId, ContentType contentType,
+                             boolean allowAutoReview);
 
     List<ReviewJob> getReviewJobs(long reviewerId);
 
@@ -39,7 +50,7 @@ public interface ReviewService {
 
     List<ReviewJob> getFinishedReviewJobs(long reviewerId);
 
-    ReviewInfo getReviewInfo(String reviewContentId, ReviewType type);
+    ReviewInfo getReviewInfo(String reviewContentId, ContentType contentType);
 
     ReviewInfo getReviewInfo(long jobId);
 }

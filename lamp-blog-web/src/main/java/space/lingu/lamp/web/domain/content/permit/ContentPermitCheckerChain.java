@@ -18,7 +18,8 @@ package space.lingu.lamp.web.domain.content.permit;
 
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.content.Content;
-import space.lingu.lamp.web.domain.content.ContentAccessCredential;
+import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
+import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
 
 /**
  * @author RollW
@@ -43,23 +44,26 @@ public abstract class ContentPermitCheckerChain implements ContentPermitChecker 
 
     @NonNull
     @Override
-    public ContentPermitResult checkPermit(@NonNull Content content, @NonNull ContentAccessCredential credential) {
-        if (!credential.getType().needsAuth()) {
+    public ContentPermitResult checkPermit(@NonNull Content content,
+                                           @NonNull ContentAccessAuthType contentAccessAuthType,
+                                           @NonNull ContentAccessCredentials credentials) {
+        if (!contentAccessAuthType.needsAuth()) {
             // no need to check.
             return ContentPermitResult.permit();
         }
-        ContentPermitResult result = checkPermitInternal(content, credential);
+        ContentPermitResult result = checkPermitInternal(content, contentAccessAuthType, credentials);
         if (next == null) {
             return result;
         }
         return result.plus(
-                next.checkPermit(content, credential)
+                next.checkPermit(content, contentAccessAuthType, credentials)
         );
     }
 
     @NonNull
     protected abstract ContentPermitResult checkPermitInternal(@NonNull Content content,
-                                                               @NonNull ContentAccessCredential credential);
+                                                               @NonNull ContentAccessAuthType contentAccessAuthType,
+                                                               @NonNull ContentAccessCredentials credentials);
 
     public static ContentPermitChecker of(ContentPermitChecker... filters) {
         if (filters == null || filters.length == 0) {
@@ -92,8 +96,9 @@ public abstract class ContentPermitCheckerChain implements ContentPermitChecker 
         @NonNull
         @Override
         protected ContentPermitResult checkPermitInternal(@NonNull Content content,
-                                                          @NonNull ContentAccessCredential credential) {
-            return filter.checkPermit(content, credential);
+                                                          @NonNull ContentAccessAuthType contentAccessAuthType,
+                                                          @NonNull ContentAccessCredentials credentials) {
+            return filter.checkPermit(content, contentAccessAuthType, credentials);
         }
     }
 
@@ -102,7 +107,7 @@ public abstract class ContentPermitCheckerChain implements ContentPermitChecker 
 
         @NonNull
         @Override
-        protected ContentPermitResult checkPermitInternal(@NonNull Content content, @NonNull ContentAccessCredential credential) {
+        protected ContentPermitResult checkPermitInternal(@NonNull Content content, @NonNull ContentAccessAuthType contentAccessAuthType, @NonNull ContentAccessCredentials credentials) {
             return ContentPermitResult.permit();
         }
     }

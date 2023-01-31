@@ -18,13 +18,18 @@ package space.lingu.lamp.web.domain.content.permit;
 
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.content.Content;
-import space.lingu.lamp.web.domain.content.ContentAccessCredential;
+import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
+import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
 
 /**
+ * Content permit checker.
+ *
  * @author RollW
+ * @implSpec Implementations should be thread-safe.
  */
 public interface ContentPermitChecker {
     @NonNull
     ContentPermitResult checkPermit(@NonNull Content content,
-                                    @NonNull ContentAccessCredential credential);
+                                    @NonNull ContentAccessAuthType contentAccessAuthType,
+                                    @NonNull ContentAccessCredentials credentials);
 }

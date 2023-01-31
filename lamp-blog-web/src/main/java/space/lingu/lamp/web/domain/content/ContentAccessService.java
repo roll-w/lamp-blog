@@ -25,22 +25,33 @@ public interface ContentAccessService {
     /**
      * Get the details of the content with access check.
      *
-     * @param contentId   the id of content
-     * @param contentType the type of content
-     * @param passes      the passes to access the content
+     * @param contentId                the id of content
+     * @param contentType              the type of content
+     * @param contentAccessCredentials the credentials to access the content
      * @return the details of the content, may need to convert to the specific type.
      * @throws ContentException if the content is not found or the passes are not valid.
      */
     ContentDetails openContent(String contentId, ContentType contentType,
-                               ContentAccessCredential... passes) throws ContentException;
+                               ContentAccessCredentials contentAccessCredentials)
+            throws ContentException;
 
     /**
      * Get the details of the content with no access check.
      *
      * @throws ContentException if the content is not found.
-     * @see #openContent(String, ContentType, ContentAccessCredential...)
+     * @see #openContent(String, ContentType, ContentAccessCredentials)
      */
     ContentDetails getContentDetails(String contentId, ContentType contentType)
+            throws ContentException;
+
+    /**
+     * Get the status of the content.
+     *
+     * @param contentId   the id of content
+     * @param contentType the type of content
+     * @throws ContentException if the content is not found.
+     */
+    ContentStatus getContentStatus(String contentId, ContentType contentType)
             throws ContentException;
 
 }

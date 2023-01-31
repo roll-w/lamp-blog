@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.domain.content;
 
+import space.lingu.NonNull;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -37,24 +38,51 @@ public class ContentMetadata {
     @DataColumn(name = "user_id")
     private final long userId;
 
-    @DataColumn(name = "content_id")
+    @DataColumn(name = "content_id", nullable = false)
+    @NonNull
     private final String contentId;
 
-    @DataColumn(name = "type")
+    @DataColumn(name = "type", nullable = false)
+    @NonNull
     private final ContentType contentType;
 
-    @DataColumn(name = "status")
+    @DataColumn(name = "status", nullable = false)
+    @NonNull
     private final ContentStatus contentStatus;
+
+    @DataColumn(name = "auth_type", nullable = false)
+    @NonNull
+    private final ContentAccessAuthType contentAccessAuthType;
 
     @Constructor
     public ContentMetadata(Long id, long userId,
-                           String contentId, ContentType contentType,
-                           ContentStatus contentStatus) {
+                           @NonNull String contentId, @NonNull ContentType contentType,
+                           @NonNull ContentStatus contentStatus,
+                           @NonNull ContentAccessAuthType contentAccessAuthType) {
+
         this.id = id;
         this.userId = userId;
         this.contentId = contentId;
         this.contentType = contentType;
         this.contentStatus = contentStatus;
+        this.contentAccessAuthType = contentAccessAuthType;
+        checkForNull();
+    }
+
+    @SuppressWarnings("all")
+    private void checkForNull() {
+        if (contentId == null) {
+            throw new NullPointerException("contentId is null");
+        }
+        if (contentType == null) {
+            throw new NullPointerException("contentType is null");
+        }
+        if (contentStatus == null) {
+            throw new NullPointerException("contentStatus is null");
+        }
+        if (contentAccessAuthType == null) {
+            throw new NullPointerException("contentAccessAuthType is null");
+        }
     }
 
     public Long getId() {
@@ -65,16 +93,32 @@ public class ContentMetadata {
         return userId;
     }
 
+    @NonNull
     public String getContentId() {
         return contentId;
     }
 
+    @NonNull
     public ContentType getContentType() {
         return contentType;
     }
 
+    @NonNull
     public ContentStatus getContentStatus() {
         return contentStatus;
+    }
+
+    @NonNull
+    public ContentAccessAuthType getContentAccessAuthType() {
+        return contentAccessAuthType;
+    }
+
+    public Builder toBuilder() {
+        return new Builder(this);
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static class Builder {
@@ -83,6 +127,7 @@ public class ContentMetadata {
         private String contentId;
         private ContentType contentType;
         private ContentStatus contentStatus;
+        private ContentAccessAuthType contentAccessAuthType;
 
         public Builder() {
         }
@@ -93,6 +138,7 @@ public class ContentMetadata {
             this.contentId = contentMetadata.contentId;
             this.contentType = contentMetadata.contentType;
             this.contentStatus = contentMetadata.contentStatus;
+            this.contentAccessAuthType = contentMetadata.contentAccessAuthType;
         }
 
         public Builder setId(Long id) {
@@ -105,23 +151,31 @@ public class ContentMetadata {
             return this;
         }
 
-        public Builder setContentId(String contentId) {
+        public Builder setContentId(@NonNull String contentId) {
             this.contentId = contentId;
             return this;
         }
 
-        public Builder setContentType(ContentType contentType) {
+        public Builder setContentType(@NonNull ContentType contentType) {
             this.contentType = contentType;
             return this;
         }
 
-        public Builder setContentStatus(ContentStatus contentStatus) {
+        public Builder setContentStatus(@NonNull ContentStatus contentStatus) {
             this.contentStatus = contentStatus;
             return this;
         }
 
+        public Builder setContentAccessAuthType(@NonNull ContentAccessAuthType contentAccessAuthType) {
+            this.contentAccessAuthType = contentAccessAuthType;
+            return this;
+        }
+
         public ContentMetadata build() {
-            return new ContentMetadata(id, userId, contentId, contentType, contentStatus);
+            return new ContentMetadata(id, userId, contentId,
+                    contentType, contentStatus, contentAccessAuthType);
         }
     }
+
+
 }

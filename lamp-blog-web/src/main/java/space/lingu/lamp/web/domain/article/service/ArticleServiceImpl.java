@@ -35,7 +35,6 @@ import space.lingu.lamp.web.domain.content.common.ContentException;
 import space.lingu.lamp.web.domain.content.event.ContentPublishEvent;
 import space.lingu.lamp.web.domain.content.event.ContentStatusEvent;
 import space.lingu.lamp.web.domain.content.event.PublishEventStage;
-import space.lingu.lamp.web.domain.review.ReviewType;
 import space.lingu.lamp.web.domain.review.event.ReviewStatusMarker;
 
 import javax.validation.constraints.NotEmpty;
@@ -45,7 +44,8 @@ import java.util.List;
  * @author RollW
  */
 @Service
-public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker, ContentAccessor<Article> {
+public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker,
+        ContentAccessor<Article> {
     private static final Logger logger = LoggerFactory.getLogger(ArticleServiceImpl.class);
 
     private final ArticleRepository articleRepository;
@@ -74,7 +74,7 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker, C
         Article article = articleBuilder.build();
         article = articleRepository.createArticle(article);
         ContentPublishEvent<Article> articlePublishEvent =
-                new ContentPublishEvent<>(article, PublishEventStage.REVIEWING);
+                new ContentPublishEvent<>(article, createTime, PublishEventStage.REVIEWING);
         applicationEventPublisher.publishEvent(articlePublishEvent);
 
         return Result.success(
@@ -94,8 +94,10 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker, C
                 String.valueOf(articleId),
                 ContentType.ARTICLE
         );
-        ContentStatusEvent<Content> statusEvent =
-                new ContentStatusEvent<>(contentInfo, null, ContentStatus.DELETED);
+        long timestamp = System.currentTimeMillis();
+        ContentStatusEvent<Content> statusEvent = new ContentStatusEvent<>(
+                contentInfo, timestamp,
+                null, ContentStatus.DELETED);
         applicationEventPublisher.publishEvent(statusEvent);
         return Result.success();
     }
@@ -111,25 +113,23 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker, C
     }
 
     @Override
-    public void markAsReviewed(ReviewType reviewType, String contentId) {
+    public void markAsReviewed(ContentType reviewType, String contentId) {
         long id = Long.parseLong(contentId);
         Article article = articleRepository.get(id);
-        //articleRepository.updateArticleStatus(id, ContentStatus.PUBLISHED);
+        long timestamp = System.currentTimeMillis();
         ContentPublishEvent<Article> articlePublishEvent =
-                new ContentPublishEvent<>(article, PublishEventStage.PUBLISHED);
+                new ContentPublishEvent<>(article, timestamp, PublishEventStage.PUBLISHED);
         applicationEventPublisher.publishEvent(articlePublishEvent);
     }
 
     @Override
-    public void markAsRejected(ReviewType reviewType, String contentId, String reason) {
-        long id = Long.parseLong(contentId);
-
+    public void markAsRejected(ContentType contentType, String contentId, String reason) {
     }
 
     @NonNull
     @Override
-    public List<ReviewType> getSupportedReviewTypes() {
-        return List.of(ReviewType.ARTICLE);
+    public List<ContentType> getSupportedReviewTypes() {
+        return List.of(ContentType.ARTICLE);
     }
 
     @Override

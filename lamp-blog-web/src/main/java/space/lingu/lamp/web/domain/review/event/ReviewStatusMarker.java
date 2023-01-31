@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.domain.review.event;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.review.ReviewType;
+import space.lingu.lamp.web.domain.content.ContentType;
 
 import java.util.List;
 
@@ -25,10 +25,10 @@ import java.util.List;
  * @author RollW
  */
 public interface ReviewStatusMarker {
-    void markAsReviewed(ReviewType reviewType, String contentId);
+    void markAsReviewed(ContentType reviewType, String contentId);
 
-    void markAsRejected(ReviewType reviewType, String contentId, String reason);
+    void markAsRejected(ContentType contentType, String contentId, String reason);
 
     @NonNull
-    List<ReviewType> getSupportedReviewTypes();
+    List<ContentType> getSupportedReviewTypes();
 }

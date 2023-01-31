@@ -14,28 +14,38 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.service;
-
-import space.lingu.lamp.web.domain.review.dto.ReviewContent;
-import space.lingu.lamp.web.domain.review.ReviewType;
+package space.lingu.lamp.web.domain.staff;
 
 /**
  * @author RollW
  */
-public interface ReviewContentServiceStrategy {
+public enum StaffType {
     /**
-     * Get the content of the review.
-     *
-     * @param contentId The content id.
-     * @return The content of the review.
+     * Administrator.
      */
-    ReviewContent getContent(String contentId);
-    // if type is image, returns the image url
+    ADMIN,
+    /**
+     * Reviewer.
+     *
+     * @see space.lingu.lamp.web.domain.review.ReviewJob
+     */
+    REVIEWER,
+    /**
+     * Customer service.
+     */
+    CUSTOMER_SERVICE,
+    /**
+     * Editor.
+     */
+    EDITOR,
+    ;
 
-    /**
-     * Get the type of the review.
-     *
-     * @return The type of the review.
-     */
-    ReviewType getReviewType();
+    public static StaffType of(String name) {
+        for (StaffType type : values()) {
+            if (type.name().equalsIgnoreCase(name)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("No such staff type: " + name);
+    }
 }

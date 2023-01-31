@@ -18,6 +18,7 @@ package space.lingu.lamp.web.domain.review;
 
 import com.google.common.base.Preconditions;
 import space.lingu.lamp.DataItem;
+import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -50,7 +51,7 @@ public class ReviewJob implements DataItem {
     private final ReviewStatus status;
 
     @DataColumn(name = "type")
-    private final ReviewType type;
+    private final ContentType type;
 
     @DataColumn(name = "create_time")
     private final long assignedTime;
@@ -66,7 +67,7 @@ public class ReviewJob implements DataItem {
 
     @Constructor
     public ReviewJob(Long jobId, String reviewContentId, long reviewerId,
-                     long operatorId, ReviewStatus status, ReviewType type,
+                     long operatorId, ReviewStatus status, ContentType type,
                      long assignedTime, String result, long reviewTime,
                      ReviewMark reviewMark) {
         Preconditions.checkNotNull(reviewContentId);
@@ -87,7 +88,7 @@ public class ReviewJob implements DataItem {
     }
 
     public ReviewJob(String reviewContentId, long reviewerId,
-                     long operatorId, ReviewStatus status, ReviewType type,
+                     long operatorId, ReviewStatus status, ContentType type,
                      long assignedTime, String result, long reviewTime,
                      ReviewMark reviewMark) {
         this(null, reviewContentId, reviewerId, operatorId, status, type,
@@ -114,7 +115,7 @@ public class ReviewJob implements DataItem {
         return status;
     }
 
-    public ReviewType getType() {
+    public ContentType getType() {
         return type;
     }
 
@@ -201,7 +202,7 @@ public class ReviewJob implements DataItem {
         private long reviewerId;
         private long operatorId;
         private ReviewStatus status;
-        private ReviewType type;
+        private ContentType type;
         private long assignedTime;
         private String result;
         private long reviewTime;
@@ -248,7 +249,7 @@ public class ReviewJob implements DataItem {
             return this;
         }
 
-        public Builder setType(ReviewType type) {
+        public Builder setType(ContentType type) {
             this.type = type;
             return this;
         }

@@ -16,9 +16,9 @@
 
 package space.lingu.lamp.web.database.dao;
 
+import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
-import space.lingu.lamp.web.domain.review.ReviewType;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
 import space.lingu.light.Insert;
@@ -73,6 +73,6 @@ public abstract class ReviewJobDao {
     public abstract List<ReviewJob> getReviewJobsByStatuses(long userId, ReviewStatus... statuses);
 
     @Query("SELECT * FROM review_job WHERE content_id = {contentId} type = {type}")
-    public abstract ReviewJob getReviewJobByContentId(String contentId, ReviewType type);
+    public abstract ReviewJob getReviewJobByContentId(String contentId, ContentType type);
 }
 

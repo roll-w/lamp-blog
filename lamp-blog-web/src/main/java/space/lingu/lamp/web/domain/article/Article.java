@@ -21,8 +21,6 @@ import space.lingu.Nullable;
 import space.lingu.lamp.DataItem;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.review.ReviewType;
-import space.lingu.lamp.web.domain.review.Reviewable;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.Index;
@@ -36,7 +34,7 @@ import space.lingu.light.SQLDataType;
 @DataTable(tableName = "article", indices = {
         @Index(value = {"user_id", "title"}, unique = true)
 })
-public class Article implements Reviewable, DataItem, ContentDetails {
+public class Article implements DataItem, ContentDetails {
     // TODO: article
 
     @DataColumn(name = "id")
@@ -126,16 +124,6 @@ public class Article implements Reviewable, DataItem, ContentDetails {
         return new Builder();
     }
 
-    @Override
-    public String getReviewContentId() {
-        return getContentId();
-    }
-
-    @Override
-    public ReviewType getReviewType() {
-        return ReviewType.ARTICLE;
-    }
-
     @NonNull
     @Override
     public String getContentId() {
@@ -149,6 +137,11 @@ public class Article implements Reviewable, DataItem, ContentDetails {
     @Override
     public ContentType getContentType() {
         return ContentType.ARTICLE;
+    }
+
+    @Override
+    public int getVersion() {
+        return 0;
     }
 
     public final static class Builder {

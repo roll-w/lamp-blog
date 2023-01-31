@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article.event;
+package space.lingu.lamp.web.domain.review.event;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-import space.lingu.lamp.web.domain.article.Article;
+import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.event.ContentPublishEvent;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.service.ReviewService;
@@ -30,27 +30,26 @@ import space.lingu.lamp.web.domain.review.service.ReviewService;
  * @author RollW
  */
 @Component
-public class ArticlePublishReviewListener implements ApplicationListener<ContentPublishEvent<Article>> {
-    private static final Logger logger = LoggerFactory.getLogger(ArticlePublishReviewListener.class);
-
+public class ContentPublishReviewListener implements ApplicationListener<ContentPublishEvent<?>> {
+    private static final Logger logger = LoggerFactory.getLogger(ContentPublishReviewListener.class);
     private final ReviewService reviewService;
 
-    public ArticlePublishReviewListener(ReviewService reviewService) {
+    public ContentPublishReviewListener(ReviewService reviewService) {
         this.reviewService = reviewService;
     }
 
     @Override
     @Async
-    public void onApplicationEvent(ContentPublishEvent<Article> event) {
-        Article article = event.getContent();
-        logger.debug("Article publish event received: {}.", article);
-        if (article == null) {
+    public void onApplicationEvent(ContentPublishEvent<?> event) {
+        Content content = event.getContent();
+        logger.debug("Content publish event received: {}.", content);
+        if (content == null) {
             return;
         }
         if (!event.needsAssign()) {
             return;
         }
-        ReviewJob job = reviewService.assignReviewer(article);
-        logger.debug("Article review job assigned: {}.", job);
+        ReviewJob job = reviewService.assignReviewer(content);
+        logger.debug("Content review job assigned: {}.", job);
     }
 }

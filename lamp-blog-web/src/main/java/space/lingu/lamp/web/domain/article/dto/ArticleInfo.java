@@ -72,6 +72,11 @@ public record ArticleInfo(
     }
 
     @Override
+    public int getVersion() {
+        return 0;
+    }
+
+    @Override
     public long getUserId() {
         return userId;
     }

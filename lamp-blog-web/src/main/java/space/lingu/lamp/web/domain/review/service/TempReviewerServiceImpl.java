@@ -20,7 +20,7 @@ import org.springframework.stereotype.Service;
 import space.lingu.InfoPolicy;
 import space.lingu.Todo;
 import space.lingu.Warning;
-import space.lingu.lamp.web.domain.review.ReviewType;
+import space.lingu.lamp.web.domain.content.ContentType;
 
 /**
  * @author RollW
@@ -32,12 +32,12 @@ import space.lingu.lamp.web.domain.review.ReviewType;
 @Deprecated
 public class TempReviewerServiceImpl implements ReviewerAllocateService {
     @Override
-    public long allocateReviewer(ReviewType reviewType) {
+    public long allocateReviewer(ContentType contentType, boolean allowAutoReviewer) {
 
         return 1;
     }
 
     @Override
-    public void releaseReviewer(long reviewerId, ReviewType reviewType) {
+    public void releaseReviewer(long reviewerId, ContentType contentType) {
     }
 }

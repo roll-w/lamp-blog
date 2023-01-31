@@ -42,4 +42,9 @@ public record BasicContentInfo(
     public ContentType getContentType() {
         return contentType;
     }
+
+    @Override
+    public int getVersion() {
+        return 0;
+    }
 }

@@ -16,16 +16,16 @@
 
 package space.lingu.lamp.web.domain.review.dto;
 
+import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
-import space.lingu.lamp.web.domain.review.ReviewType;
 
 /**
  * @author RollW
  */
 public record ReviewInfo(
         ReviewStatus status,
-        ReviewType type,
+        ContentType type,
         String result,
         String contentId,
         long reviewer,

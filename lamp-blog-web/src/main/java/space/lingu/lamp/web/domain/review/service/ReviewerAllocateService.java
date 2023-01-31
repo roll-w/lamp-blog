@@ -16,15 +16,31 @@
 
 package space.lingu.lamp.web.domain.review.service;
 
-import space.lingu.lamp.web.domain.review.ReviewType;
+import space.lingu.lamp.web.domain.content.ContentType;
 
 /**
  * @author RollW
  */
 public interface ReviewerAllocateService {
+    /**
+     * The reviewer id for auto-reviewer.
+     * <p>
+     * Reviewed by keyword filter or other machine learning algorithms.
+     */
     long AUTO_REVIEWER = -1;
 
-    long allocateReviewer(ReviewType reviewType);
+    /**
+     * Allocate a reviewer for the content with the given content type.
+     *
+     * @param allowAutoReviewer whether to allow auto-reviewer
+     */
+    long allocateReviewer(ContentType contentType, boolean allowAutoReviewer);
 
-    void releaseReviewer(long reviewerId, ReviewType reviewType);
+    /**
+     * Callback when the reviewer is released.
+     *
+     * @param reviewerId  the reviewer id
+     * @param contentType the content type
+     */
+    void releaseReviewer(long reviewerId, ContentType contentType);
 }

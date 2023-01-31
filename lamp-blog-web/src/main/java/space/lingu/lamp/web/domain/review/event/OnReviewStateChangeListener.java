@@ -17,35 +17,32 @@
 package space.lingu.lamp.web.domain.review.event;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Multimaps;
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
+import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
-import space.lingu.lamp.web.domain.review.ReviewType;
 
+import java.util.Collection;
 import java.util.EnumMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author RollW
  */
 @Component
 public class OnReviewStateChangeListener implements ApplicationListener<OnReviewStateChangeEvent> {
-    private final Map<ReviewType, ReviewStatusMarker> typeStatusMarkers = new EnumMap<>(ReviewType.class);
-    // Multimaps.newSetMultimap(new EnumMap<>(ReviewType.class), HashSet::new);
+    private final Multimap<ContentType, ReviewStatusMarker> typeStatusMarkers = Multimaps.newSetMultimap(new EnumMap<>(ContentType.class), HashSet::new);
 
     public OnReviewStateChangeListener(List<ReviewStatusMarker> statusMarkers) {
         statusMarkers.forEach(marker -> {
-            List<ReviewType> types = marker.getSupportedReviewTypes();
-            types.forEach(reviewType -> {
-                if (typeStatusMarkers.containsKey(reviewType)) {
-                    throw new IllegalStateException("Duplicate ReviewStatusMarker for ReviewType: " + reviewType);
-                }
-                typeStatusMarkers.put(reviewType, marker);
-            });
+            List<ContentType> types = marker.getSupportedReviewTypes();
+            types.forEach(reviewType -> typeStatusMarkers.put(reviewType, marker));
         });
     }
 
@@ -53,8 +50,8 @@ public class OnReviewStateChangeListener implements ApplicationListener<OnReview
     @Async
     public void onApplicationEvent(@NonNull OnReviewStateChangeEvent event) {
         ReviewJob job = event.getReviewJob();
-        ReviewStatusMarker marker = typeStatusMarkers.get(job.getType());
-        reviewStateChanged(marker, job, event.getCurrentStatus());
+        Collection<ReviewStatusMarker> markers = typeStatusMarkers.get(job.getType());
+        markers.forEach(m -> reviewStateChanged(m, job, event.getCurrentStatus()));
     }
 
     private void reviewStateChanged(ReviewStatusMarker marker, ReviewJob job, ReviewStatus status) {

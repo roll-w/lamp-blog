@@ -14,28 +14,34 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.dto;
+package space.lingu.lamp.web.domain.article.vo;
 
-import space.lingu.Nullable;
+import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.content.ContentDetails;
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.review.ReviewJob;
 
 /**
  * @author RollW
  */
-public record ReviewContent(
-        long jobId,
+public record ArticleVo(
+        long id,
+        String title,
         String content,
-        @Nullable String title,
-        ContentType type
+        long authorId,
+        long createTime,
+        long updateTime
+        // TODO: add more fields
 ) {
-    public static ReviewContent of(ReviewJob job, ContentDetails contentDetails) {
-        return new ReviewContent(
-                job.getJobId(),
-                contentDetails.getContent(),
-                contentDetails.getTitle(),
-                contentDetails.getContentType()
+    public static ArticleVo from(ContentDetails contentDetails) {
+        if (!(contentDetails instanceof Article article)) {
+            return null;
+        }
+        return new ArticleVo(
+                article.getId(),
+                article.getTitle(),
+                article.getContent(),
+                article.getUserId(),
+                article.getCreateTime(),
+                article.getUpdateTime()
         );
     }
 }

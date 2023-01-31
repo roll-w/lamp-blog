@@ -21,11 +21,13 @@ import com.google.common.base.Verify;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
+import space.lingu.lamp.web.domain.content.Content;
+import space.lingu.lamp.web.domain.content.ContentAccessService;
+import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewMark;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
-import space.lingu.lamp.web.domain.review.ReviewType;
-import space.lingu.lamp.web.domain.review.Reviewable;
 import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;
 import space.lingu.lamp.web.domain.review.common.ReviewException;
 import space.lingu.lamp.web.domain.review.dto.ReviewContent;
@@ -33,30 +35,26 @@ import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
 import space.lingu.lamp.web.domain.review.event.OnReviewStateChangeEvent;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
 
-import java.util.EnumMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author RollW
  */
 @Service
 public class ReviewServiceImpl implements ReviewService, ReviewContentService {
-    private final Map<ReviewType, ReviewContentServiceStrategy> reviewContentServiceStrategyMap =
-            new EnumMap<>(ReviewType.class);
+    private final ContentAccessService contentAccessService;
     private final ReviewJobRepository reviewJobRepository;
     private final ReviewerAllocateService reviewerAllocateService;
     private final ApplicationEventPublisher eventPublisher;
 
-    public ReviewServiceImpl(List<ReviewContentServiceStrategy> contentServiceStrategies,
+    public ReviewServiceImpl(ContentAccessService contentAccessService,
                              ReviewJobRepository reviewJobRepository,
                              ReviewerAllocateService reviewerAllocateService,
                              ApplicationEventPublisher eventPublisher) {
+        this.contentAccessService = contentAccessService;
         this.reviewJobRepository = reviewJobRepository;
         this.reviewerAllocateService = reviewerAllocateService;
         this.eventPublisher = eventPublisher;
-        contentServiceStrategies.forEach(strategy ->
-                reviewContentServiceStrategyMap.put(strategy.getReviewType(), strategy));
     }
 
     @Override
@@ -85,20 +83,20 @@ public class ReviewServiceImpl implements ReviewService, ReviewContentService {
     }
 
     @Override
-    public ReviewJob assignReviewer(Reviewable reviewable) {
-        Preconditions.checkNotNull(reviewable, "Reviewable cannot be null");
-        return assignReviewer(reviewable.getReviewContentId(), reviewable.getReviewType());
+    public ReviewJob assignReviewer(Content content, boolean allowAutoReview) {
+        Preconditions.checkNotNull(content, "Reviewable cannot be null");
+        return assignReviewer(content.getContentId(), content.getContentType(), allowAutoReview);
     }
 
     @Override
-    public ReviewJob assignReviewer(String contentId, ReviewType type) {
+    public ReviewJob assignReviewer(String contentId, ContentType contentType, boolean allowAutoReview) {
         long assignedTime = System.currentTimeMillis();
-        long reviewerId = reviewerAllocateService.allocateReviewer(type);
+        long reviewerId = reviewerAllocateService.allocateReviewer(contentType, allowAutoReview);
 
         ReviewJob reviewJob = ReviewJob.builder()
                 .setReviewContentId(contentId)
                 .setReviewerId(reviewerId)
-                .setType(type)
+                .setType(contentType)
                 .setStatus(ReviewStatus.NOT_REVIEWED)
                 .setAssignedTime(assignedTime)
                 .setReviewMark(ReviewMark.NORMAL)
@@ -127,8 +125,8 @@ public class ReviewServiceImpl implements ReviewService, ReviewContentService {
     }
 
     @Override
-    public ReviewInfo getReviewInfo(String reviewContentId, ReviewType type) {
-        ReviewJob reviewJob = reviewJobRepository.getBy(reviewContentId, type);
+    public ReviewInfo getReviewInfo(String reviewContentId, ContentType contentType) {
+        ReviewJob reviewJob = reviewJobRepository.getBy(reviewContentId, contentType);
         return ReviewInfo.of(reviewJob);
     }
 
@@ -142,8 +140,8 @@ public class ReviewServiceImpl implements ReviewService, ReviewContentService {
     public ReviewContent getReviewContent(long jobId) {
         ReviewJob job = reviewJobRepository.get(jobId);
         Verify.verifyNotNull(job, "Review job not found");
-        ReviewContentServiceStrategy strategy =
-                reviewContentServiceStrategyMap.get(job.getType());
-        return strategy.getContent(job.getReviewContentId());
+        ContentDetails details = contentAccessService.getContentDetails(
+                job.getReviewContentId(), job.getType());
+        return ReviewContent.of(job, details);
     }
 }

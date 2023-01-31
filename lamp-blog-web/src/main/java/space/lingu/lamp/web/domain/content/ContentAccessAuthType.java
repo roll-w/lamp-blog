@@ -65,6 +65,11 @@ public enum ContentAccessAuthType {
         this.types = types;
     }
 
+    /**
+     * Get the types of data that can be used to authenticate.
+     *
+     * @return supported types.
+     */
     public Class<?>[] getTypes() {
         return types;
     }

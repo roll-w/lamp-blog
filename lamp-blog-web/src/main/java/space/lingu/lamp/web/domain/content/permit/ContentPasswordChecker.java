@@ -20,6 +20,8 @@ import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
 import space.lingu.lamp.web.domain.content.ContentAccessCredential;
+import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
+import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 
 /**
  * Check content's password.
@@ -30,9 +32,15 @@ public class ContentPasswordChecker implements ContentPermitChecker {
 
     @Override
     @NonNull
-    public ContentPermitResult checkPermit(@NonNull Content content, @NonNull ContentAccessCredential credential) {
-        if (credential.getType() != ContentAccessAuthType.PASSWORD) {
+    public ContentPermitResult checkPermit(@NonNull Content content,
+                                           @NonNull ContentAccessAuthType contentAccessAuthType,
+                                           @NonNull ContentAccessCredentials credentials) {
+        if (contentAccessAuthType != ContentAccessAuthType.PASSWORD) {
             return ContentPermitResult.permit();
+        }
+        ContentAccessCredential credential = credentials.getCredential(ContentAccessAuthType.PASSWORD);
+        if (credential == null) {
+            return ContentPermitResult.deny(ContentErrorCode.ERROR_PASSWORD_REQUIRED);
         }
         // TODO: add password check
         return ContentPermitResult.permit();

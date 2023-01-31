@@ -28,8 +28,9 @@ public class ContentPublishEvent<C extends Content> extends ContentStatusEvent<C
     private final PublishEventStage stage;
 
     public ContentPublishEvent(C content,
+                               long timestamp,
                                PublishEventStage stage) {
-        super(content, null, stage.toStatus());
+        super(content, timestamp, null, stage.toStatus());
         this.content = content;
         this.stage = stage;
     }

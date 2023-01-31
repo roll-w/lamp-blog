@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.domain.content;
 
+import com.google.common.base.Preconditions;
+
 /**
  * @author RollW
  */
@@ -23,14 +25,32 @@ public enum ContentType {
     /**
      * Article.
      */
-    ARTICLE,
+    ARTICLE(3),
     /**
      * Comment.
      */
-    COMMENT,
+    COMMENT(1),
     /**
      * Post.
      */
-    POST,
+    POST(1),
+    /**
+     * Image.
+     */
+    IMAGE(1),
     ;
+
+    /**
+     * The weight of the review type.
+     */
+    private final int weight;
+
+    ContentType(int weight) {
+        Preconditions.checkArgument(weight > 0, "Weight must be positive.");
+        this.weight = weight;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
 }

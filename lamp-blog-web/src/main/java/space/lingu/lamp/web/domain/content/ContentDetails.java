@@ -38,6 +38,7 @@ public interface ContentDetails extends Content {
     @NonNull
     @Override
     ContentType getContentType();
+
     /**
      * @inheritDoc
      */
@@ -45,7 +46,14 @@ public interface ContentDetails extends Content {
     long getUserId();
 
     /**
+     * @inheritDoc
+     */
+    @Override
+    int getVersion();
+
+    /**
      * Get the title of the content, if exists.
+     *
      * @return title
      */
     @Nullable
@@ -53,6 +61,7 @@ public interface ContentDetails extends Content {
 
     /**
      * Get the content of the content, if exists.
+     *
      * @return content
      */
     @Nullable

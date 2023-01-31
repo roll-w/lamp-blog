@@ -48,4 +48,7 @@ public interface Content extends Serializable {
      */
     @NonNull
     ContentType getContentType();
+
+    // TODO: support history version
+    int getVersion();
 }

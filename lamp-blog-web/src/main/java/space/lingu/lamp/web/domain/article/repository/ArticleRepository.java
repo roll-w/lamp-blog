@@ -46,8 +46,8 @@ public class ArticleRepository {
         return articleDao.getById(id);
     }
 
-    public Long getUserIdByArticleId(long userId) {
-        return articleDao.getUserIdByArticleId(userId);
+    public Long getUserIdByArticleId(long articleId) {
+        return articleDao.getUserIdByArticleId(articleId);
     }
 
     public boolean isArticleExist(long articleId) {
