@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.domain.article.service;
 
+import com.google.common.base.Strings;
+import com.google.common.base.Verify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -31,6 +33,7 @@ import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentAccessor;
 import space.lingu.lamp.web.domain.content.ContentStatus;
 import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
 import space.lingu.lamp.web.domain.content.event.ContentPublishEvent;
 import space.lingu.lamp.web.domain.content.event.ContentStatusEvent;
@@ -64,6 +67,10 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker,
         if (articleRepository.isTitleExist(userId, title)) {
             return Result.of(DataErrorCode.ERROR_DATA_EXISTED);
         }
+        Verify.verify(!Strings.isNullOrEmpty(title),
+                "content should not be empty");
+        Verify.verify(!Strings.isNullOrEmpty(content),
+                "content should not be empty");
         long createTime = System.currentTimeMillis();
         Article.Builder articleBuilder = Article.builder()
                 .setUserId(userId)
@@ -73,8 +80,9 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker,
                 .setUpdateTime(createTime);
         Article article = articleBuilder.build();
         article = articleRepository.createArticle(article);
-        ContentPublishEvent<Article> articlePublishEvent =
-                new ContentPublishEvent<>(article, createTime, PublishEventStage.REVIEWING);
+        ContentPublishEvent<Article> articlePublishEvent = new ContentPublishEvent<>(
+                article, createTime, true,
+                PublishEventStage.REVIEWING);
         applicationEventPublisher.publishEvent(articlePublishEvent);
 
         return Result.success(
@@ -85,12 +93,13 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker,
     @Override
     public Result<Void> deleteArticle(long articleId) {
         if (!articleRepository.isArticleExist(articleId)) {
-            return Result.of(DataErrorCode.ERROR_DATA_NOT_EXIST);
+            return Result.of(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
             // TODO: replace with ContentErrorCode
         }
-
+        // TODO: replace with ArticleInfo
+        Article article = articleRepository.get(articleId);
         BasicContentInfo contentInfo = new BasicContentInfo(
-                1,
+                article.getUserId(),
                 String.valueOf(articleId),
                 ContentType.ARTICLE
         );
@@ -118,7 +127,8 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker,
         Article article = articleRepository.get(id);
         long timestamp = System.currentTimeMillis();
         ContentPublishEvent<Article> articlePublishEvent =
-                new ContentPublishEvent<>(article, timestamp, PublishEventStage.PUBLISHED);
+                new ContentPublishEvent<>(article, timestamp,
+                        false, PublishEventStage.PUBLISHED);
         applicationEventPublisher.publishEvent(articlePublishEvent);
     }
 

@@ -25,13 +25,16 @@ import space.lingu.lamp.web.domain.content.Content;
  */
 public class ContentPublishEvent<C extends Content> extends ContentStatusEvent<C> {
     private final C content;
+    private final boolean firstCreated;
     private final PublishEventStage stage;
 
     public ContentPublishEvent(C content,
                                long timestamp,
+                               boolean firstCreated,
                                PublishEventStage stage) {
         super(content, timestamp, null, stage.toStatus());
         this.content = content;
+        this.firstCreated = firstCreated;
         this.stage = stage;
     }
 
@@ -49,5 +52,9 @@ public class ContentPublishEvent<C extends Content> extends ContentStatusEvent<C
 
     public boolean needsReview() {
         return stage.needsReview();
+    }
+
+    public boolean isFirstCreated() {
+        return firstCreated;
     }
 }
