@@ -71,7 +71,7 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
 
     @Async
     void handleRegistration(OnUserRegistrationEvent event) {
-        UserInfo userInfo = event.getUser();
+        UserInfo userInfo = event.getUserInfo();
         String token = registerTokenProvider.createRegisterToken(userInfo);
         if (mailProperties == null || Strings.isNullOrEmpty(mailProperties.getHost())) {
             logger.debug("Not configure the mail, skip sending mail.");
@@ -83,6 +83,7 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
             registerTokenProvider.verifyRegisterToken(token);
             return;
         }
+        // TODO: move to email service
         // TODO: make configurable
         String subject = "[Lamp Blog] Registration Confirmation";
         String confirmUrl = event.getUrl() + token;

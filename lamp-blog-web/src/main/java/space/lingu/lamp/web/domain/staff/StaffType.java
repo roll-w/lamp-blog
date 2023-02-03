@@ -16,7 +16,11 @@
 
 package space.lingu.lamp.web.domain.staff;
 
+import space.lingu.lamp.web.domain.user.Role;
+
 /**
+ * For job assignment, we need to know the type of staff.
+ *
  * @author RollW
  */
 public enum StaffType {
@@ -24,6 +28,10 @@ public enum StaffType {
      * Administrator.
      */
     ADMIN,
+    /**
+     * Unassigned.
+     */
+    UNASSIGNED,
     /**
      * Reviewer.
      *
@@ -47,5 +55,16 @@ public enum StaffType {
             }
         }
         throw new IllegalArgumentException("No such staff type: " + name);
+    }
+
+    public static StaffType of(Role role) {
+        return switch (role) {
+            case ADMIN -> ADMIN;
+            case REVIEWER -> REVIEWER;
+            case CUSTOMER_SERVICE -> CUSTOMER_SERVICE;
+            case EDITOR -> EDITOR;
+            case STAFF -> UNASSIGNED;
+            default -> throw new IllegalArgumentException("No such staff type: " + role);
+        };
     }
 }

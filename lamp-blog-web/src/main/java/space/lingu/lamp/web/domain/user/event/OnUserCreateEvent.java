@@ -16,33 +16,23 @@
 
 package space.lingu.lamp.web.domain.user.event;
 
+import org.springframework.context.ApplicationEvent;
+import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
-
-import java.util.Locale;
 
 /**
  * @author RollW
  */
-public class OnUserRegistrationEvent extends OnUserCreateEvent {
-    /**
-     * Confirm url prefix.
-     */
-    private final String url;
-    private final Locale locale;
+public class OnUserCreateEvent extends ApplicationEvent {
+    private final UserInfo userInfo;
 
-    public OnUserRegistrationEvent(UserInfo userInfo,
-                                   Locale locale,
-                                   String url) {
+    public OnUserCreateEvent(@NonNull UserInfo userInfo) {
         super(userInfo);
-        this.locale = locale;
-        this.url = url;
+        this.userInfo = userInfo;
     }
 
-    public String getUrl() {
-        return url;
-    }
-
-    public Locale getLocale() {
-        return locale;
+    @NonNull
+    public final UserInfo getUserInfo() {
+        return userInfo;
     }
 }

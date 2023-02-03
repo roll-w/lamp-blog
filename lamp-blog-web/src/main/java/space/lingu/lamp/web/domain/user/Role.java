@@ -17,18 +17,23 @@
 package space.lingu.lamp.web.domain.user;
 
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import space.lingu.lamp.web.domain.authorization.Authorities;
 
 import java.util.List;
 
 /**
+ * For authorization, we use the concept of role.
+ *
+ * @see space.lingu.lamp.web.domain.staff.StaffType
  * @author RollW
  */
 public enum Role {
-    USER(new SimpleGrantedAuthority("USER")),
-    ADMIN(new SimpleGrantedAuthority("ADMIN"), new SimpleGrantedAuthority("USER")),
-    REVIEWER(new SimpleGrantedAuthority("REVIEWER"), new SimpleGrantedAuthority("USER")),
-    CUSTOMER_SERVICE(new SimpleGrantedAuthority("CUSTOMER_SERVICE"), new SimpleGrantedAuthority("USER")),
+    USER(Authorities.USER),
+    ADMIN(Authorities.ADMIN, Authorities.USER),
+    STAFF(Authorities.STAFF, Authorities.USER),
+    REVIEWER(Authorities.REVIEWER, Authorities.STAFF, Authorities.USER),
+    CUSTOMER_SERVICE(Authorities.CUSTOMER_SERVICE, Authorities.STAFF, Authorities.USER),
+    EDITOR(Authorities.EDITOR, Authorities.STAFF, Authorities.USER),
     ;
 
     private final List<GrantedAuthority> authority;
@@ -43,5 +48,9 @@ public enum Role {
 
     public List<GrantedAuthority> toAuthority() {
         return authority;
+    }
+
+    public boolean hasAuthority(GrantedAuthority authority) {
+        return this.authority.contains(authority);
     }
 }

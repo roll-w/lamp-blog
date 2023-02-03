@@ -14,18 +14,16 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review;
+package space.lingu.lamp.web.domain.staff;
 
 /**
  * @author RollW
  */
-public interface Reviewable {
-    String getReviewContentId();
-
+public interface StaffSerialNumberGenerator {
     /**
-     * Get the type of the review.
+     * Auto-generate a serial number for a new staff.
      *
-     * @return The type of the review.
+     * @return serial number
      */
-    ReviewType getReviewType();
+    String generate(long userId, StaffType staffType);
 }

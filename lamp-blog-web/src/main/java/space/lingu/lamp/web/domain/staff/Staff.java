@@ -21,6 +21,7 @@ import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
 
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Set;
 
 /**
@@ -46,17 +47,22 @@ public class Staff {
     @DataColumn(name = "update_time")
     private final long updateTime;
 
+    @DataColumn(name = "allow_user")
+    private final boolean allowUser;
+
     @DataColumn(name = "deleted")
     private final boolean deleted;
 
     public Staff(long userId, String employeeId,
                  Set<StaffType> types, long createTime,
-                 long updateTime, boolean deleted) {
+                 long updateTime, boolean allowUser,
+                 boolean deleted) {
         this.userId = userId;
         this.employeeId = employeeId;
         this.types = EnumSet.copyOf(types);
         this.createTime = createTime;
         this.updateTime = updateTime;
+        this.allowUser = allowUser;
         this.deleted = deleted;
     }
 
@@ -80,13 +86,48 @@ public class Staff {
         return updateTime;
     }
 
+    public boolean isAllowUser() {
+        return allowUser;
+    }
+
     public boolean isDeleted() {
         return deleted;
     }
 
-    public Builder toBuilder() {
-        return new Builder();
+    public boolean hasType(StaffType type) {
+        return types.contains(type);
     }
+
+    public Builder toBuilder() {
+        return new Builder(this);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Staff staff = (Staff) o;
+        return userId == staff.userId && createTime == staff.createTime && updateTime == staff.updateTime && allowUser == staff.allowUser && deleted == staff.deleted && Objects.equals(employeeId, staff.employeeId) && Objects.equals(types, staff.types);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, employeeId, types, createTime, updateTime, allowUser, deleted);
+    }
+
+    @Override
+    public String toString() {
+        return "Staff{" +
+                "userId=" + userId +
+                ", employeeId='" + employeeId + '\'' +
+                ", types=" + types +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", allowUser=" + allowUser +
+                ", deleted=" + deleted +
+                '}';
+    }
+
 
     public static Builder builder() {
         return new Builder();
@@ -98,6 +139,7 @@ public class Staff {
         private Set<StaffType> type;
         private long createTime;
         private long updateTime;
+        private boolean allowUser;
         private boolean deleted;
 
         public Builder() {
@@ -109,6 +151,7 @@ public class Staff {
             this.type = staff.types;
             this.createTime = staff.createTime;
             this.updateTime = staff.updateTime;
+            this.allowUser = staff.allowUser;
             this.deleted = staff.deleted;
         }
 
@@ -146,13 +189,19 @@ public class Staff {
             return this;
         }
 
+        public Builder setAllowUser(boolean allowUser) {
+            this.allowUser = allowUser;
+            return this;
+        }
+
         public Builder setDeleted(boolean deleted) {
             this.deleted = deleted;
             return this;
         }
 
         public Staff build() {
-            return new Staff(userId, employeeId, type, createTime, updateTime, deleted);
+            return new Staff(userId, employeeId, type, createTime,
+                    updateTime, allowUser, deleted);
         }
     }
 }
