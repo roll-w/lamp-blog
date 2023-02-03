@@ -23,7 +23,6 @@ import java.util.Locale;
  */
 @FunctionalInterface
 public interface ErrorCodeMessageProvider {
-    // TODO: may use this interface later to get error messages.
     default String getMessage(ErrorCode errorCode) {
         return getMessage(errorCode, Locale.CHINA);
     }
