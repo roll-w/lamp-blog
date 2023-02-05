@@ -67,7 +67,7 @@ public class ContentService implements ContentAccessService {
         if (errorCode.failed()) {
             throw new ContentException(errorCode);
         }
-        ContentPermitResult permitResult = contentPermitChecker.checkPermit(
+        ContentPermitResult permitResult = contentPermitChecker.checkAccessPermit(
                 new BasicContentInfo(metadata.getUserId(), contentId, contentType),
                 metadata.getContentAccessAuthType(),
                 contentAccessCredentials

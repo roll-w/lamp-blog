@@ -94,7 +94,6 @@ public class ArticleServiceImpl implements ArticleService, ReviewStatusMarker,
     public Result<Void> deleteArticle(long articleId) {
         if (!articleRepository.isArticleExist(articleId)) {
             return Result.of(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
-            // TODO: replace with ContentErrorCode
         }
         // TODO: replace with ArticleInfo
         Article article = articleRepository.get(articleId);

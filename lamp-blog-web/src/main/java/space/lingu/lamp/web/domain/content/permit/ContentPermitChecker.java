@@ -29,7 +29,7 @@ import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
  */
 public interface ContentPermitChecker {
     @NonNull
-    ContentPermitResult checkPermit(@NonNull Content content,
-                                    @NonNull ContentAccessAuthType contentAccessAuthType,
-                                    @NonNull ContentAccessCredentials credentials);
+    ContentPermitResult checkAccessPermit(@NonNull Content content,
+                                          @NonNull ContentAccessAuthType contentAccessAuthType,
+                                          @NonNull ContentAccessCredentials credentials);
 }

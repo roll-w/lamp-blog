@@ -22,9 +22,8 @@ import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
 import space.lingu.lamp.web.domain.content.ContentAccessCredential;
 import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
-import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.lamp.web.domain.user.common.UserErrorCode;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
 
 /**
  * @author RollW
@@ -35,9 +34,9 @@ public class ContentUserChecker implements ContentPermitChecker {
 
     @Override
     @NonNull
-    public ContentPermitResult checkPermit(@NonNull Content content,
-                                           @NonNull ContentAccessAuthType contentAccessAuthType,
-                                           @NonNull ContentAccessCredentials credentials) {
+    public ContentPermitResult checkAccessPermit(@NonNull Content content,
+                                                 @NonNull ContentAccessAuthType contentAccessAuthType,
+                                                 @NonNull ContentAccessCredentials credentials) {
         if (!contentAccessAuthType.needsAuth()) {
             return ContentPermitResult.permit();
         }
@@ -53,8 +52,7 @@ public class ContentUserChecker implements ContentPermitChecker {
         Type type = getType(credential.getRawData());
         return switch (type) {
             case LONG -> checkIfLong(content, (Long) credential.getRawData());
-            case USER -> checkIfUser(content, (User) credential.getRawData());
-            case USERINFO -> checkIfUserInfo(content, (UserInfo) credential.getRawData());
+            case USER_IDENTITY -> checkIfUserIdentity(content, (UserIdentity) credential.getRawData());
         };
     }
 
@@ -65,15 +63,8 @@ public class ContentUserChecker implements ContentPermitChecker {
         return ContentPermitResult.deny(AuthErrorCode.ERROR_NOT_HAS_ROLE);
     }
 
-    private ContentPermitResult checkIfUser(Content content, User user) {
-        if (content.getUserId() == user.getId()) {
-            return ContentPermitResult.permit();
-        }
-        return ContentPermitResult.deny(AuthErrorCode.ERROR_NOT_HAS_ROLE);
-    }
-
-    private ContentPermitResult checkIfUserInfo(Content content, UserInfo userInfo) {
-        if (content.getUserId() == userInfo.id()) {
+    private ContentPermitResult checkIfUserIdentity(Content content, UserIdentity user) {
+        if (content.getUserId() == user.getUserId()) {
             return ContentPermitResult.permit();
         }
         return ContentPermitResult.deny(AuthErrorCode.ERROR_NOT_HAS_ROLE);
@@ -82,10 +73,8 @@ public class ContentUserChecker implements ContentPermitChecker {
     private Type getType(Object data) {
         if (data instanceof Long) {
             return Type.LONG;
-        } else if (data instanceof User) {
-            return Type.USER;
-        } else if (data instanceof UserInfo) {
-            return Type.USERINFO;
+        } else if (data instanceof UserIdentity) {
+            return Type.USER_IDENTITY;
         }
         throw new IllegalArgumentException("Unknown type of data: " + data.getClass().getName());
     }
@@ -97,6 +86,7 @@ public class ContentUserChecker implements ContentPermitChecker {
      * @see ContentAccessAuthType#getTypes()
      */
     private enum Type {
-        LONG, USER, USERINFO
+        LONG,
+        USER_IDENTITY
     }
 }

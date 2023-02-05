@@ -44,9 +44,9 @@ public abstract class ContentPermitCheckerChain implements ContentPermitChecker 
 
     @NonNull
     @Override
-    public ContentPermitResult checkPermit(@NonNull Content content,
-                                           @NonNull ContentAccessAuthType contentAccessAuthType,
-                                           @NonNull ContentAccessCredentials credentials) {
+    public ContentPermitResult checkAccessPermit(@NonNull Content content,
+                                                 @NonNull ContentAccessAuthType contentAccessAuthType,
+                                                 @NonNull ContentAccessCredentials credentials) {
         if (!contentAccessAuthType.needsAuth()) {
             // no need to check.
             return ContentPermitResult.permit();
@@ -56,7 +56,7 @@ public abstract class ContentPermitCheckerChain implements ContentPermitChecker 
             return result;
         }
         return result.plus(
-                next.checkPermit(content, contentAccessAuthType, credentials)
+                next.checkAccessPermit(content, contentAccessAuthType, credentials)
         );
     }
 
@@ -98,7 +98,7 @@ public abstract class ContentPermitCheckerChain implements ContentPermitChecker 
         protected ContentPermitResult checkPermitInternal(@NonNull Content content,
                                                           @NonNull ContentAccessAuthType contentAccessAuthType,
                                                           @NonNull ContentAccessCredentials credentials) {
-            return filter.checkPermit(content, contentAccessAuthType, credentials);
+            return filter.checkAccessPermit(content, contentAccessAuthType, credentials);
         }
     }
 

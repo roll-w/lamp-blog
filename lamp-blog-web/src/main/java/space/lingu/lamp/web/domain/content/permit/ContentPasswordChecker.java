@@ -32,9 +32,9 @@ public class ContentPasswordChecker implements ContentPermitChecker {
 
     @Override
     @NonNull
-    public ContentPermitResult checkPermit(@NonNull Content content,
-                                           @NonNull ContentAccessAuthType contentAccessAuthType,
-                                           @NonNull ContentAccessCredentials credentials) {
+    public ContentPermitResult checkAccessPermit(@NonNull Content content,
+                                                 @NonNull ContentAccessAuthType contentAccessAuthType,
+                                                 @NonNull ContentAccessCredentials credentials) {
         if (contentAccessAuthType != ContentAccessAuthType.PASSWORD) {
             return ContentPermitResult.permit();
         }
