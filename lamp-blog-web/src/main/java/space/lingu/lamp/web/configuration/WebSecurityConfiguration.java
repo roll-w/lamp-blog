@@ -64,7 +64,9 @@ public class WebSecurityConfiguration {
 
         security.csrf().disable()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 // TODO: customize accessDecisionManager
+                //.accessDecisionManager(accessDecisionManager())
                 .antMatchers("/api/auth/token/**").permitAll()
                 .antMatchers("/api/admin/**").hasRole("ADMIN")
                 .antMatchers("/api/*/review/**").hasRole("REVIEWER")
@@ -75,7 +77,6 @@ public class WebSecurityConfiguration {
                 .antMatchers("/api/user/register/**").permitAll()
                 .antMatchers("/api/user/logout/**").permitAll()
                 .antMatchers("/**").hasRole("USER")
-                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .anyRequest().permitAll();
         security.userDetailsService(userDetailsService);
 
@@ -100,7 +101,6 @@ public class WebSecurityConfiguration {
                 .antMatchers("/error.html")
                 .antMatchers("/html/**")
                 .antMatchers("/js/**")
-                .antMatchers("/api/user/login/**")
                 ;
     }
 
