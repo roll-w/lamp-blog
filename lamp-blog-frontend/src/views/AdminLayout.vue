@@ -39,8 +39,6 @@
 <script setup>
 import AdminNavBar from "@/components/AdminNavBar.vue";
 import Footer from "@/components/Footer.vue";
-
-
 </script>
 
 <style scoped>

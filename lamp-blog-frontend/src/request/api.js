@@ -1,5 +1,10 @@
-const prefix = 'http://localhost:5100/api';
-const adminPrefix = 'http://localhost:5100/api/admin';
+const base = 'localhost:5100';
+
+export const baseUrl = `http://${base}`;
+export const wsBaseUrl = `ws://${base}`;
+
+const prefix = `${baseUrl}/api`;
+const adminPrefix = `${baseUrl}/api/admin`;
 
 const passwordLogin = `${prefix}/user/login/password`;
 const emailLogin = `${prefix}/user/login/email`;
@@ -16,6 +21,10 @@ const articleCreate = (userId, admin) => {
     return `${admin ? adminPrefix : prefix}/${userId}/article`;
 }
 
+const userList = `${adminPrefix}/users`;
+
+const systemErrorLog = `${adminPrefix}/error/records`;
+
 export default {
     passwordLogin,
     emailLogin,
@@ -24,4 +33,7 @@ export default {
     tokenRefresh,
     articleCreate,
     articleDetails,
+
+    userList,
+    systemErrorLog,
 }

@@ -21,16 +21,92 @@
         <span>Lamp Blog</span>
       </n-text>
       <div class="flex justify-end justify-items-end flex-grow">
-        <n-button @click="handleLoginClick">Login</n-button>
+        <n-button v-if="!userStore.isLogin" @click="handleLoginClick">登录</n-button>
+        <n-dropdown v-else :options="options" trigger="hover" @select="handleSelect">
+          <n-avatar>{{ username }}</n-avatar>
+        </n-dropdown>
       </div>
     </div>
   </n-layout-header>
 </template>
 
+
 <script setup>
 import {useRouter} from "vue-router";
+import {useUserStore} from "@/stores/user";
+import {h, ref} from "vue";
+import {NAvatar, NText} from "naive-ui";
 
 const router = useRouter();
+const userStore = useUserStore();
+
+const username = ref(userStore.user.username);
+const role = ref(userStore.user.role);
+
+const userOptions = [
+  {
+    label: `${userStore.user.username}`,
+    key: "username",
+  },
+  {
+    label: "文章管理",
+    key: "article",
+  },
+  {
+    label: "个人中心",
+    key: "center",
+  },
+  {
+    key: 'header-divider',
+    type: 'divider'
+  },
+  {
+    label: "退出",
+    key: "logout",
+  }
+]
+
+const adminOptions = [
+  {
+    label: "个人中心",
+    key: "center",
+  },
+  {
+    label: "文章管理",
+    key: "article",
+  },
+  {
+    label: "系统管理",
+    key: "system",
+  },
+  {
+    key: 'header-divider',
+    type: 'divider'
+  },
+  {
+    label: "退出",
+    key: "logout",
+  }
+]
+
+const options = ref(userOptions)
+
+const chooseOptions = () => {
+  if (!role.value) {
+    return
+  }
+  if (role.value !== "USER") {
+    options.value = adminOptions
+  } else {
+    options.value = userOptions
+  }
+}
+
+router.afterEach(() => {
+  username.value = userStore.user.username;
+  role.value = userStore.user.role;
+  chooseOptions()
+})
 
 const handleLogoClick = () => {
   router.push({
@@ -43,6 +119,23 @@ const handleLoginClick = () => {
     name: "login-page"
   });
 };
+
+const handleSelect = (key) => {
+  switch (key) {
+    case "logout":
+      userStore.logout();
+      router.push({
+        name: "index"
+      })
+      break;
+    case "system":
+      router.push({
+        name: "admin-index"
+      })
+      break;
+  }
+}
+
 
 </script>
 

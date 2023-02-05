@@ -61,6 +61,64 @@ hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('json', javascript)
 // highlight.js
 
+import {tokenKey, userKey, useUserStore} from "@/stores/user";
+import router, {index} from "@/router";
+
+const userStore = useUserStore()
+
+router.beforeEach((to, from, next) => {
+  if (!to.name.startsWith("admin")) {
+    return next()
+  }
+  const role = userStore.user.role
+  if (!userStore.isLogin || !role || role.value === "USER") {
+    return next({
+      name: index
+    })
+  }
+  return next()
+})
+
+
+const loadFromLocal = () => {
+  const token = localStorage.getItem("L2w9t0k3n")
+  const user = JSON.parse(localStorage.getItem("user"))
+  return {user, token}
+}
+
+const loadFromSession = () => {
+  const token = sessionStorage.getItem("L2w9t0k3n")
+  const user = JSON.parse(sessionStorage.getItem("user"))
+  return {user, token}
+}
+
+const local = loadFromLocal()
+const session = loadFromSession()
+
+const tryLoginFromState = () => {
+  if (local.user && local.token) {
+    userStore.loginUser(local.user, local.token, true)
+    return
+  }
+  if (session.user && session.token) {
+    userStore.loginUser(session.user, session.token, false)
+  }
+}
+tryLoginFromState()
+
+userStore.$subscribe((mutation, state) => {
+  console.log("subscribe value")
+  if (!state.remember) {
+    sessionStorage.setItem(tokenKey, state.token)
+    sessionStorage.setItem(userKey, JSON.stringify(state.user))
+    return
+  }
+  localStorage.setItem(tokenKey, state.token)
+  localStorage.setItem(userKey, JSON.stringify(state.user))
+})
+
+
+
 </script>
 
 <template>

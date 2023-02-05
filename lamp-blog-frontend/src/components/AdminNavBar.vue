@@ -15,6 +15,18 @@
   -->
 
 <template>
+<!--  <n-watermark-->
+<!--      :content="username  + ' ID:' + userId + ' ' + role"-->
+<!--      :font-size="16"-->
+<!--      :height="384"-->
+<!--      :line-height="16"-->
+<!--      :rotate="-15"-->
+<!--      :width="384"-->
+<!--      :x-offset="12"-->
+<!--      :y-offset="60"-->
+<!--      cross-->
+<!--      fullscreen-->
+<!--  />-->
   <!--  TODO: collapse sidebar -->
   <n-layout-sider :collapsed-width="0"
                   :native-scrollbar="false"
@@ -30,23 +42,45 @@
 <script setup>
 
 import {RouterLink, useRouter} from "vue-router";
-import {h} from "vue";
+import {h, onBeforeMount, ref} from "vue";
+import {admin, adminUsers, index, systemLog} from "@/router";
+import {useUserStore} from "@/stores/user";
+import {useMessage} from "naive-ui";
+
+const message = useMessage()
+const userStore = useUserStore()
+const username = ref(userStore.user.username)
+const userId = ref(userStore.user.id)
+const role = ref(userStore.user.role)
 
 const router = useRouter()
-
-const routerName = router.currentRoute.value.name
-
-const calcChooseOption = () => {
-  switch (routerName) {
-    case "admin-index":
-      return "home"
-    case "index":
-      return "blog"
-    default:
-      return "home"
+const checkAdminRole = () => {
+  if (!userStore.isLogin || !role || role.value === "USER") {
+    message.error("无权限访问该页面")
+    router.push({name: index})
+    return false
   }
+  return true
 }
-const chooseOn = calcChooseOption()
+
+onBeforeMount(() => {
+  checkAdminRole()
+})
+
+let routerName = router.currentRoute.value.name
+const chooseOn = ref()
+const calcChooseOption = () => {
+  return routerName
+}
+
+chooseOn.value = calcChooseOption()
+
+router.afterEach(() => {
+  routerName = router.currentRoute.value.name
+  chooseOn.value = calcChooseOption()
+})
+
+
 
 const menuOptions = [
   {
@@ -54,34 +88,41 @@ const menuOptions = [
         RouterLink,
         {
           to: {
-            name: "admin-index",
+            name: admin,
           }
         },
         {default: () => "系统首页"}
     ),
-    key: "home",
+    key: admin,
   },
   {
     label: () => h(
         RouterLink,
         {
           to: {
-            name: "index",
+            name: index,
           }
         },
         {default: () => "返回博客"}
     ),
-    key: "blog",
+    key: index,
 
   },
-
   {
     label: "用户管理",
     key: "user-management",
     children: [
       {
-        label: "用户列表",
-        key: "user-management-list"
+        label: () => h(
+            RouterLink,
+            {
+              to: {
+                name: adminUsers,
+              }
+            },
+            {default: () => "用户列表"}
+        ),
+        key: adminUsers
       },
       {
         label: "工作人员管理",
@@ -140,8 +181,16 @@ const menuOptions = [
         key: "system-management-setting"
       },
       {
-        label: "系统日志",
-        key: "system-management-log"
+        label: () => h(
+            RouterLink,
+            {
+              to: {
+                name: systemLog,
+              }
+            },
+            {default: () => "系统日志"}
+        ),
+        key: systemLog
       },
       {
         label: "系统监控",

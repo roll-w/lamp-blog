@@ -15,8 +15,14 @@
  */
 
 import {createRouter, createWebHistory} from 'vue-router'
-import LoginView from "@/views/LoginView.vue";
 import UserLayout from "@/views/UserLayout.vue";
+
+export const index = "index"
+export const login = "login-page"
+export const register = "register-page"
+export const admin = "admin-index"
+export const adminUsers = "admin-user-list"
+export const systemLog = "admin=system-log"
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -29,7 +35,7 @@ const router = createRouter({
             children: [
                 {
                     path: '/',
-                    name: 'index',
+                    name: index,
                     component: () => import('@/views/UserIndex.vue'),
                     meta: {
                         title: "首页 | Lamp Blog"
@@ -37,7 +43,7 @@ const router = createRouter({
                 },
                 {
                     path: '/login',
-                    name: 'login-page',
+                    name: login,
                     component: () => import('@/views/LoginView.vue'),
                     meta: {
                         title: "登录 | Lamp Blog"
@@ -45,7 +51,7 @@ const router = createRouter({
                 },
                 {
                     path: '/register',
-                    name: 'register-page',
+                    name: register,
                     component: () => import('@/views/LoginView.vue'),
                     meta: {
                         title: "注册 | Lamp Blog"
@@ -62,9 +68,29 @@ const router = createRouter({
             children: [
                 {
                     path: '/admin',
-                    name: 'admin-index',
+                    name: admin,
                     component: () => import('@/views/AdminIndex.vue'),
+                    meta: {
+                        title: "系统管理 | Lamp Blog"
+                    }
                 },
+                {
+                    path: '/admin/user',
+                    name: adminUsers,
+                    component: () => import('@/views/admin/UsersList.vue'),
+                    meta: {
+                        title: "用户管理 | Lamp Blog"
+                    }
+                },
+                {
+                    path: '/admin/system/logs',
+                    name: systemLog,
+                    component: () => import('@/views/admin/SystemLog.vue'),
+                    meta: {
+                        title: "系统日志 | Lamp Blog"
+                    }
+                }
+
             ]
         }
 
