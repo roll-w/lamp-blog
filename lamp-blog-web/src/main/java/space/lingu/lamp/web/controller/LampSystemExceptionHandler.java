@@ -21,14 +21,19 @@ import com.google.common.base.VerifyException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.validation.BindException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.NoHandlerFoundException;
 import space.lingu.lamp.BusinessRuntimeException;
 import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCode;
@@ -44,6 +49,7 @@ import space.lingu.lamp.web.system.ErrorRecord;
 import space.lingu.lamp.web.system.ErrorRecordVo;
 import space.lingu.light.LightRuntimeException;
 
+import javax.validation.ConstraintViolationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -70,6 +76,18 @@ public class LampSystemExceptionHandler {
         this.messageSource = messageSource;
     }
 
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public HttpResponseEntity<Void> handleNoHandlerFoundException(NoHandlerFoundException e) {
+        HttpMethod method = HttpMethod.resolve(e.getHttpMethod());
+        if (method == HttpMethod.OPTIONS) {
+            return new HttpResponseEntity<>(HttpStatus.OK);
+        }
+        return HttpResponseEntity.of(
+                CommonErrorCode.ERROR_NOT_FOUND,
+                e.getMessage()
+        );
+    }
+
 
     @ExceptionHandler(LightRuntimeException.class)
     public HttpResponseEntity<Void> handle(LightRuntimeException e) {
@@ -82,9 +100,20 @@ public class LampSystemExceptionHandler {
 
     @ExceptionHandler(ParameterMissingException.class)
     public HttpResponseEntity<Void> handle(ParameterMissingException e) {
-        logger.warn("Param missing: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
                 WebCommonErrorCode.ERROR_PARAM_MISSING,
+                e.getMessage()
+        );
+    }
+
+    @ExceptionHandler({
+            BindException.class,
+            ConstraintViolationException.class,
+            MethodArgumentNotValidException.class,
+    })
+    public HttpResponseEntity<Void> handleParamException(Exception e) {
+        return HttpResponseEntity.of(
+                WebCommonErrorCode.ERROR_PARAM_FAILED,
                 e.getMessage()
         );
     }
@@ -146,7 +175,6 @@ public class LampSystemExceptionHandler {
     // treat VerifyException as parameter failed
     @ExceptionHandler(VerifyException.class)
     public HttpResponseEntity<Void> handle(VerifyException e) {
-        recordErrorLog(WebCommonErrorCode.ERROR_PARAM_FAILED, e);
         return HttpResponseEntity.of(
                 WebCommonErrorCode.ERROR_PARAM_FAILED,
                 e.getMessage()
@@ -219,7 +247,7 @@ public class LampSystemExceptionHandler {
         }
     }
 
-    @GetMapping("/api/admin/error/records")
+    @GetMapping("/api/admin/system/errors")
     public HttpResponseEntity<List<ErrorRecordVo>> getErrorRecords() {
         return HttpResponseEntity.success(
                 errorRecords.stream()

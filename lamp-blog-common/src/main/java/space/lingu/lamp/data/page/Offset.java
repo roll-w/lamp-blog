@@ -23,4 +23,6 @@ public record Offset(
         int limit,
         int offset
 ) {
+
+    public static final Offset DEFAULT = new Offset(10, 0);
 }

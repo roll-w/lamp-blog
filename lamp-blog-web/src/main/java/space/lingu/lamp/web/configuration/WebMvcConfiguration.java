@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.configuration;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.MapperFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -33,15 +33,15 @@ import space.lingu.lamp.web.configuration.json.ErrorCodeSerializer;
 public class WebMvcConfiguration implements WebMvcConfigurer {
 
     @Bean
-    public ObjectMapper mapper(ErrorCodeFinderChain finderChain) {
+    public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder(ErrorCodeFinderChain finderChain) {
         ErrorCodeDeserializer errorCodeDeserializer = new ErrorCodeDeserializer(finderChain);
         ErrorCodeSerializer errorCodeSerializer = new ErrorCodeSerializer();
 
         return Jackson2ObjectMapperBuilder
                 .json()
+                .featuresToEnable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
                 .serializerByType(ErrorCode.class, errorCodeSerializer)
-                .deserializerByType(ErrorCode.class, errorCodeDeserializer)
-                .build();
+                .deserializerByType(ErrorCode.class, errorCodeDeserializer);
     }
 
 }
