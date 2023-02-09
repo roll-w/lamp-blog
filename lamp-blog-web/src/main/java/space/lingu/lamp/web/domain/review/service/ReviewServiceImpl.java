@@ -76,6 +76,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewContentService {
             return null;
         }
         long time = System.currentTimeMillis();
+        reviewerAllocateService.releaseReviewer(job.getReviewerId(), job.getType());
         if (passed) {
             return job.reviewPass(time);
         }

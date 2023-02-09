@@ -41,6 +41,7 @@ public class ReviewJob implements DataItem {
     @DataColumn(name = "content_id")
     private final String reviewContentId;
 
+    // TODO: may change to reviewer ids in the future
     @DataColumn(name = "reviewer_id")
     private final long reviewerId;
 

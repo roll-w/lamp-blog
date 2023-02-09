@@ -49,6 +49,10 @@ public class ReviewJobRepository {
         return reviewJobDao.get(id);
     }
 
+    public List<ReviewJob> getBy(ReviewStatus status) {
+        return reviewJobDao.getReviewJobsByStatus(status);
+    }
+
     public ReviewJob getBy(String contentId, ContentType contentType) {
         return reviewJobDao.getReviewJobByContentId(contentId, contentType);
     }

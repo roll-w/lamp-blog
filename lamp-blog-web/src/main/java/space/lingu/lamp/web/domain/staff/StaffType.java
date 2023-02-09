@@ -27,26 +27,40 @@ public enum StaffType {
     /**
      * Administrator.
      */
-    ADMIN,
+    ADMIN(3),
     /**
      * Unassigned.
      */
-    UNASSIGNED,
+    UNASSIGNED(1),
     /**
      * Reviewer.
      *
      * @see space.lingu.lamp.web.domain.review.ReviewJob
      */
-    REVIEWER,
+    REVIEWER(1),
     /**
      * Customer service.
      */
-    CUSTOMER_SERVICE,
+    CUSTOMER_SERVICE(1),
     /**
      * Editor.
      */
-    EDITOR,
+    EDITOR(1),
     ;
+
+    /**
+     * When staff type changes, which staff type has higher
+     * priority will be assigned user's role.
+     */
+    private final int priority;
+
+    StaffType(int priority) {
+        this.priority = priority;
+    }
+
+    public int getPriority() {
+        return priority;
+    }
 
     public static StaffType of(String name) {
         for (StaffType type : values()) {

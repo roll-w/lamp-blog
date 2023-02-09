@@ -1,0 +1,116 @@
+/*
+ * Copyright (C) 2023 RollW
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package space.lingu.lamp.web.domain.staff.service;
+
+import org.springframework.stereotype.Service;
+import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.review.ReviewStatus;
+import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
+import space.lingu.lamp.web.domain.review.service.ReviewerAllocateService;
+import space.lingu.lamp.web.domain.staff.Staff;
+import space.lingu.lamp.web.domain.staff.StaffType;
+import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+/**
+ * @author RollW
+ */
+@Service
+public class ReviewerAllocateServiceImpl implements ReviewerAllocateService {
+    private final StaffRepository staffRepository;
+    private final ReviewJobRepository reviewJobRepository;
+    private final Map<Long, Integer> weights = new HashMap<>();
+    private final TreeMap<Integer, List<Long>> staffReviewingCount = new TreeMap<>();
+
+    public ReviewerAllocateServiceImpl(StaffRepository staffRepository,
+                                       ReviewJobRepository reviewJobRepository) {
+        this.staffRepository = staffRepository;
+        this.reviewJobRepository = reviewJobRepository;
+
+        loadStaffReviewingCount();
+    }
+
+    private void loadStaffReviewingCount() {
+        weights.clear();
+        staffReviewingCount.clear();
+
+        // add weight by reviewer
+        reviewJobRepository.getBy(ReviewStatus.NOT_REVIEWED).forEach(reviewJob -> {
+            long reviewerId = reviewJob.getReviewerId();
+            int weight = reviewJob.getType().getWeight();
+            weights.put(reviewerId, weights.getOrDefault(reviewerId, 0) + weight);
+        });
+
+        List<Staff> staffs = staffRepository.getActiveStaffsByType(StaffType.REVIEWER);
+        weights.forEach((staffId, weight) -> {
+            List<Long> staffIds = staffReviewingCount.getOrDefault(weight,
+                    new ArrayList<>());
+            staffIds.add(staffId);
+            staffReviewingCount.put(weight, staffIds);
+        });
+
+        staffs.forEach(staff -> {
+            if (weights.containsKey(staff.getUserId())) {
+                return;
+            }
+            weights.put(staff.getUserId(), 0);
+        });
+    }
+
+    private void remappingReviewer(long reviewer, int original, int weight) {
+        weights.put(reviewer, weight);
+
+        List<Long> staffIds = staffReviewingCount.get(original);
+        staffIds.remove(reviewer);
+        if (staffIds.isEmpty()) {
+            staffReviewingCount.remove(original);
+        }
+        staffIds = staffReviewingCount.getOrDefault(weight, new ArrayList<>());
+        staffIds.add(reviewer);
+        staffReviewingCount.put(weight, staffIds);
+    }
+
+    @Override
+    public long allocateReviewer(ContentType contentType, boolean allowAutoReviewer) {
+        if (canAutoReview(contentType) && allowAutoReviewer) {
+            return AUTO_REVIEWER;
+        }
+        Map.Entry<Integer, List<Long>> entry = staffReviewingCount.firstEntry();
+        List<Long> ids = entry.getValue();
+        long reviewerId = ids.get(0);
+        remappingReviewer(reviewerId, entry.getKey(), entry.getKey() + contentType.getWeight());
+        return reviewerId;
+    }
+
+    @Override
+    public void releaseReviewer(long reviewerId, ContentType contentType) {
+        if (reviewerId == AUTO_REVIEWER) {
+            return;
+        }
+        int weight = weights.get(reviewerId);
+        remappingReviewer(reviewerId, weight, weight - contentType.getWeight());
+    }
+
+    private boolean canAutoReview(ContentType contentType) {
+        return false;
+    }
+}
