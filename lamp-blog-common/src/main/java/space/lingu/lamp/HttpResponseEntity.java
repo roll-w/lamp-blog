@@ -28,6 +28,10 @@ public class HttpResponseEntity<D> extends ResponseEntity<HttpResponseBody<D>> {
         super(status);
     }
 
+    public HttpResponseEntity(int status) {
+        super(HttpStatus.valueOf(status));
+    }
+
     public HttpResponseEntity(HttpResponseBody<D> body) {
         super(body, null, body.getStatus());
     }

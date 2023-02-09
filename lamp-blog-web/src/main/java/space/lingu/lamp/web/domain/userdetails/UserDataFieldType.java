@@ -14,24 +14,18 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.common;
+package space.lingu.lamp.web.domain.userdetails;
 
 /**
  * @author RollW
  */
-public class CacheNames {
-    public static final String SETTING = "setting";
-
-    public static final String CAPTCHA = "captcha";
-
-    public static final String EMAIL_TOKEN = "email-token";
-
-    public static final String ONLINE_USERS = "online-users";
-
-    public static final String USERS = "users";
-
-    public static final String STAFFS = "staffs";
-
-    private CacheNames() {
-    }
+public enum UserDataFieldType {
+    AVATAR,
+    NICKNAME,
+    INTRO,
+    GENDER,
+    BIRTHDAY,
+    LOCATION,
+    WEBSITE,
+    ;
 }

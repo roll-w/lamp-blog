@@ -43,7 +43,6 @@ public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder {
 
     ;
 
-
     private final String value;
     private final int status;
 

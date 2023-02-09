@@ -60,10 +60,25 @@ public abstract class StaffDao {
     @Query("SELECT * FROM staff")
     public abstract List<Staff> get();
 
-    @Query("SELECT * FROM staff WHERE types LIKE '%{type}%'")
-    public abstract List<Staff> getStaffOfType(StaffType type);
+    @Query("SELECT * FROM staff WHERE id = {id}")
+    public abstract Staff getById(long id);
 
-    @Query("SELECT * FROM staff WHERE types REGEXP '{type1}|{type2}'")
-    public abstract List<Staff> getStaffOfTypes(StaffType type1, StaffType type2);
+    @Delete("UPDATE staff SET deleted = {deleted} WHERE id = {id}")
+    public abstract void setStaffDeleted(long id, boolean deleted);
+
+    @Query("SELECT * FROM staff WHERE types LIKE CONCAT('%', {type}, '%')")
+    public abstract List<Staff> getStaffsOfType(StaffType type);
+
+    @Query("SELECT * FROM staff WHERE types LIKE CONCAT('%', {type}, '%')")
+    public abstract List<Staff> getStaffsOfType(StaffType type, boolean deleted);
+
+    @Query("SELECT COUNT(*) FROM staff WHERE types LIKE CONCAT('%', {type}, '%')")
+    public abstract int getStaffsCountOfType(StaffType type);
+
+    @Query("SELECT * FROM staff WHERE types REGEXP CONCAT({type1}, '|', {type2})")
+    public abstract List<Staff> getStaffsOfTypes(StaffType type1, StaffType type2);
+
+    @Query("SELECT COUNT(*) FROM staff WHERE types REGEXP CONCAT({type1}, '|', {type2})")
+    public abstract int getStaffsCountOfTypes(StaffType type1, StaffType type2);
 }
 

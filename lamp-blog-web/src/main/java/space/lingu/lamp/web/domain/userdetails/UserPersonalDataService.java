@@ -14,24 +14,27 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.common;
+package space.lingu.lamp.web.domain.userdetails;
+
+import space.lingu.lamp.web.domain.user.UserIdentity;
+
+import java.util.List;
 
 /**
  * @author RollW
  */
-public class CacheNames {
-    public static final String SETTING = "setting";
+public interface UserPersonalDataService {
+    UserPersonalData getPersonalData(long userId);
 
-    public static final String CAPTCHA = "captcha";
+    UserPersonalData getPersonalData(UserIdentity userIdentity);
 
-    public static final String EMAIL_TOKEN = "email-token";
+    List<UserPersonalData> getPersonalData(List<? extends UserIdentity> userIdentities);
 
-    public static final String ONLINE_USERS = "online-users";
+    List<UserPersonalData> getPersonalData(Long[] ids);
 
-    public static final String USERS = "users";
+    void updatePersonalData(long userId, UserDataFieldType type, Object value);
 
-    public static final String STAFFS = "staffs";
+    void updatePersonalData(long userId, UserDataField... fields);
 
-    private CacheNames() {
-    }
+    void createPersonalData(UserPersonalData data);
 }

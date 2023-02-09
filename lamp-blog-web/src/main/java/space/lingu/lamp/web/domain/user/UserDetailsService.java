@@ -14,24 +14,17 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.common;
+package space.lingu.lamp.web.domain.user;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
  * @author RollW
  */
-public class CacheNames {
-    public static final String SETTING = "setting";
+public interface UserDetailsService extends org.springframework.security.core.userdetails.UserDetailsService {
+    @Override
+    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
-    public static final String CAPTCHA = "captcha";
-
-    public static final String EMAIL_TOKEN = "email-token";
-
-    public static final String ONLINE_USERS = "online-users";
-
-    public static final String USERS = "users";
-
-    public static final String STAFFS = "staffs";
-
-    private CacheNames() {
-    }
+    UserDetails loadUserByUserId(long userId) throws UsernameNotFoundException;
 }

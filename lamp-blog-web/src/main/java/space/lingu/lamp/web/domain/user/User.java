@@ -37,7 +37,7 @@ import java.util.Objects;
 })
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
 @SuppressWarnings({"ClassCanBeRecord"})
-public class User implements Serializable, UserDetails {
+public class User implements Serializable, UserDetails, UserIdentity {
     @PrimaryKey(autoGenerate = true)
     @DataColumn(name = "id")
     private final Long id;
@@ -104,14 +104,22 @@ public class User implements Serializable, UserDetails {
         return id;
     }
 
+    @Override
+    public long getUserId() {
+        return id;
+    }
+
+    @Override
     public String getUsername() {
         return username;
     }
 
+    @Override
     public String getPassword() {
         return password;
     }
 
+    @Override
     public Role getRole() {
         return role;
     }

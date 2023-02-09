@@ -18,6 +18,7 @@ package space.lingu.lamp.web.database.dao;
 
 import space.lingu.Dangerous;
 import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
 import space.lingu.light.Insert;
@@ -31,7 +32,6 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-@SuppressWarnings("SqlNoDataSourceInspection")
 public abstract class UserDao {
     @Insert
     public abstract long insert(User user);
@@ -61,12 +61,23 @@ public abstract class UserDao {
     @Query("SELECT * FROM user")
     public abstract List<User> getAll();
 
-    // TODO: page query
-    @Query("SELECT * FROM user ORDER BY id ASC LIMIT {limit} OFFSET {offset}")
+    @Query("SELECT * FROM user ORDER BY id ASC LIMIT 10 OFFSET 0")
     public abstract List<User> get(int offset, int limit);
+
+    @Query("SELECT * FROM user WHERE enabled = {enabled} ORDER BY id ASC LIMIT {limit} OFFSET {offset}")
+    public abstract List<User> getWithEnableState(int offset, int limit, boolean enabled);
+
+    @Query("SELECT * FROM user WHERE account_canceled = {canceled} ORDER BY id ASC LIMIT {limit} OFFSET {offset}")
+    public abstract List<User> getWithCanceledState(int offset, int limit, boolean canceled);
+
+    @Query("SELECT * FROM user WHERE enabled = {enabled} AND account_canceled = {canceled} ORDER BY id ASC LIMIT {limit} OFFSET {offset}")
+    public abstract List<User> getWithEnableCanceledState(int offset, int limit,  boolean enabled, boolean canceled);
 
     @Query("SELECT * FROM user WHERE id = {id}")
     public abstract User getUserById(long id);
+
+    @Query("SELECT id, username, email, role FROM user WHERE id = {id}")
+    public abstract UserInfo getUserInfoById(long id);
 
     @Query("SELECT * FROM user WHERE email = {email}")
     public abstract User getUserByEmail(String email);

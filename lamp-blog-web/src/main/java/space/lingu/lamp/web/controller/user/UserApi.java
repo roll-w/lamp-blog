@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@RequestMapping("/api/user/")
+@RequestMapping("/api/v1/user/")
 @RestController
 public @interface UserApi {
 }

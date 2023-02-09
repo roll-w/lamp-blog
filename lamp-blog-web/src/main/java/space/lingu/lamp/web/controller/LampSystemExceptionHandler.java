@@ -255,4 +255,9 @@ public class LampSystemExceptionHandler {
                         .toList()
         );
     }
+
+    @GetMapping("/api/common/error/occur")
+    public void makeException() {
+        throw new RuntimeException("test log");
+    }
 }

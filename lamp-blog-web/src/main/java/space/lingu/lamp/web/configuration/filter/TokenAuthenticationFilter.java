@@ -28,7 +28,7 @@ import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.web.domain.user.service.UserDetailsService;
+import space.lingu.lamp.web.domain.user.UserDetailsService;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;

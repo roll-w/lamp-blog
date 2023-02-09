@@ -69,7 +69,7 @@ public abstract class ReviewJobDao {
     @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND status = {status}")
     public abstract List<ReviewJob> getReviewJobsByStatus(long userId, ReviewStatus status);
 
-    @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND status IN {statuses}")
+    @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND status IN ({statuses})")
     public abstract List<ReviewJob> getReviewJobsByStatuses(long userId, ReviewStatus... statuses);
 
     @Query("SELECT * FROM review_job WHERE content_id = {contentId} type = {type}")

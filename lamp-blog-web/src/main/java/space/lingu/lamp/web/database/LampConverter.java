@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.database;
 
 import space.lingu.lamp.web.domain.staff.StaffType;
+import space.lingu.lamp.web.domain.userdetails.Birthday;
 import space.lingu.light.DataConverter;
 
 import java.util.EnumSet;
@@ -52,6 +53,16 @@ public class LampConverter {
         StringJoiner joiner = new StringJoiner(",");
         staffTypes.forEach(type -> joiner.add(type.name()));
         return joiner.toString();
+    }
+
+    @DataConverter
+    public static String convertBirthday(Birthday birthday) {
+        return birthday.getBirthday();
+    }
+
+    @DataConverter
+    public static Birthday convertToBirthday(String birthday) {
+        return Birthday.fromString(birthday);
     }
 
     private LampConverter() {

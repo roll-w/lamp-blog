@@ -37,6 +37,7 @@ import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
 import space.lingu.lamp.web.domain.content.ContentAccessService;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
 
 /**
  * @author RollW
@@ -53,41 +54,36 @@ public class ArticleController {
         this.contentAccessService = contentAccessService;
     }
 
-    @PostMapping("/{userId}/article")
+    @PostMapping("/article")
     public HttpResponseEntity<ArticleInfo> createArticle(
-            @PathVariable(name = "userId") Long userId,
             @RequestBody ArticleRequest articleRequest) {
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
-        if (!apiContext.allowAccess(userId)) {
-            return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
-        }
+        long userId = apiContext.id();
         Result<ArticleInfo> articleInfoResult = articleService.publishArticle(
                 userId, articleRequest.title(), articleRequest.content()
         );
         return HttpResponseEntity.of(articleInfoResult.toResponseBody());
     }
 
-    @PutMapping("/{userId}/article/{articleId}")
+    @PutMapping("/article/{articleId}")
     public HttpResponseEntity<ArticleInfo> updateArticle(
             @RequestBody ArticleRequest articleRequest,
-            @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {
         return HttpResponseEntity.success();
     }
 
 
-    @DeleteMapping("/{userId}/article/{articleId}")
+    @DeleteMapping("/article/{articleId}")
     public HttpResponseEntity<Void> deleteArticle(
-            @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {
         return HttpResponseEntity.success();
     }
 
-    @GetMapping("/{userId}/article/{articleId}")
+    @GetMapping("/article/{articleId}")
     public HttpResponseEntity<ArticleVo> getArticle(
-            @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
+        UserInfo userInfo = apiContext.userInfo();
         if (apiContext.isAdminPass()) {
             ContentDetails details = contentAccessService.getContentDetails(
                     Long.toString(articleId),
@@ -98,17 +94,16 @@ public class ArticleController {
         ContentDetails details = contentAccessService.openContent(
                 Long.toString(articleId),
                 ContentType.ARTICLE,
-                ContentAccessCredentials.of(ContentAccessAuthType.USER, userId)
+                ContentAccessCredentials.of(ContentAccessAuthType.USER, userInfo)
         );
 
         return HttpResponseEntity.success(ArticleVo.from(details));
     }
 
-    @GetMapping("{userId}/article/{articleId}/info")
+    @GetMapping("/article/{articleId}/info")
     // TODO: replace with ArticleInfoVo.
     @Todo(todo = "replace with ArticleInfoVo.")
     public HttpResponseEntity<ArticleInfo> getArticleInfo(
-            @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {
         Article article = articleService.getArticle(articleId);
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();

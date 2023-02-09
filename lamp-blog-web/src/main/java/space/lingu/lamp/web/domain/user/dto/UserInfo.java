@@ -19,6 +19,7 @@ package space.lingu.lamp.web.domain.user.dto;
 import org.springframework.security.core.userdetails.UserDetails;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.light.DataColumn;
 
 /**
@@ -36,7 +37,7 @@ public record UserInfo(
 
         @DataColumn(name = "role")
         Role role
-) {
+) implements UserIdentity {
     public static UserInfo from(User user) {
         if (user == null) {
             return null;
@@ -59,5 +60,25 @@ public record UserInfo(
                 user.getEmail(),
                 user.getRole()
         );
+    }
+
+    @Override
+    public long getUserId() {
+        return id;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    @Override
+    public String getEmail() {
+        return email;
+    }
+
+    @Override
+    public Role getRole() {
+        return role;
     }
 }

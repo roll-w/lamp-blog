@@ -14,17 +14,26 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
+package space.lingu.lamp.web.domain.user.event;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.context.ApplicationEvent;
+import space.lingu.NonNull;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
 
 /**
  * @author RollW
  */
-public interface UserDetailsService extends org.springframework.security.core.userdetails.UserDetailsService {
-    @Override
-    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+public class OnUserLoginEvent extends ApplicationEvent {
+    @NonNull
+    private final UserInfo userInfo;
 
-    UserDetails loadUserByUserId(long userId) throws UsernameNotFoundException;
+    public OnUserLoginEvent(@NonNull UserInfo userInfo) {
+        super(userInfo);
+        this.userInfo = userInfo;
+    }
+
+    @NonNull
+    public UserInfo getUserInfo() {
+        return userInfo;
+    }
 }

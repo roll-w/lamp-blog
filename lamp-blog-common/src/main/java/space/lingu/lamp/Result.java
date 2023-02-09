@@ -33,6 +33,10 @@ public record Result<D>(
         @Nullable
         D data
 ) {
+    public boolean failed() {
+        return errorCode.failed();
+    }
+
     public <R> Result<R> map(@NonNull Function<? super D, ? extends R> function) {
         if (!isPresent()) {
             return Result.of(errorCode, null);
@@ -140,4 +144,5 @@ public record Result<D>(
     }
 
     private static final Result<?> SUCCESS = new Result<>(CommonErrorCode.SUCCESS, null);
+
 }

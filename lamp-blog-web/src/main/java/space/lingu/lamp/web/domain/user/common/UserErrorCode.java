@@ -55,14 +55,15 @@ public enum UserErrorCode implements ErrorCode {
      * 用户未登录
      */
     ERROR_USER_NOT_LOGIN("A0005", 401),
+    ERROR_USER_DISABLED("A0006", 401),
     /**
      * 用户已注销
      */
-    ERROR_USER_CANCELED("A0006", 401),
+    ERROR_USER_CANCELED("A0007", 401),
     /**
      * 登陆状态过期
      */
-    ERROR_LOGIN_EXPIRED("A0007"),
+    ERROR_LOGIN_EXPIRED("A0008"),
     /**
      * 密码错误
      */
@@ -81,7 +82,9 @@ public enum UserErrorCode implements ErrorCode {
      */
     ERROR_EMAIL_NON_COMPLIANCE("A0014"),
 
-    ERROR_EMAIL_EXISTED("A0015");
+    ERROR_EMAIL_EXISTED("A0015"),
+
+    ;
 
 
     private final String value;

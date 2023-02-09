@@ -20,10 +20,15 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
+import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.UserDao;
 import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
+
+import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author RollW
@@ -82,6 +87,14 @@ public class UserRepository {
         return queried;
     }
 
+    public UserInfo getUserInfoById(long id) {
+        User cached = userCache.get(id, User.class);
+        if (cached != null) {
+            return UserInfo.from(cached);
+        }
+        return userDao.getUserInfoById(id);
+    }
+
     public User getUserByName(String name) {
         User cached = userCache.get(name, User.class);
         if (cached != null) {
@@ -112,11 +125,32 @@ public class UserRepository {
         return !User.isInvalidId(getUserIdByEmail(email));
     }
 
+    public List<User> getAll() {
+        return userDao.getAll();
+    }
+
+    public List<User> getUsers(Offset offset) {
+        if (offset == null) {
+            return getUsers(Offset.DEFAULT);
+        }
+        return userDao.get(offset.offset(), offset.limit());
+    }
+
+    private final AtomicBoolean hasUsers = new AtomicBoolean(false);
+
     public boolean hasUsers() {
-        return userDao.hasUsers() != null;
+        if (hasUsers.get()) {
+            return hasUsers.get();
+        }
+        boolean has = userDao.hasUsers() != null;
+        hasUsers.set(has);
+        return hasUsers.get();
     }
 
     private void updateCache(User user) {
+        if (user == null) {
+            return;
+        }
         userCache.put(user.getId(), user);
         userCache.put(user.getUsername(), user);
         userCache.put(user.getEmail(), user);

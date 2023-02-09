@@ -30,7 +30,7 @@ import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.common.ParamValidate;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.web.domain.user.Role;
+import space.lingu.lamp.RequestMetadata;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.user.dto.UserInfoSignature;
 import space.lingu.lamp.web.domain.user.service.LoginRegisterService;
@@ -67,21 +67,41 @@ public class LoginRegisterController {
         Result<UserInfoSignature> res = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
+                null,
                 LoginStrategyType.PASSWORD);
         return loginResponse(res);
     }
 
     // TODO: login by email token
-    @PostMapping("/login/email")
+    @PostMapping("/login/token/email")
     public HttpResponseEntity<LoginResponse> loginByEmailToken(
             HttpServletRequest request,
             @RequestBody UserLoginRequest loginRequest) {
         Result<UserInfoSignature> res = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
+                null,
+                LoginStrategyType.EMAIL_TOKEN);
+        return loginResponse(res);
+    }
+
+    private RequestMetadata getLoginMetadata(HttpServletRequest request) {
+        String ip = ApiContextHolder.getContext().ip();
+        String userAgent = request.getHeader("User-Agent");
+
+        return new RequestMetadata(ip, userAgent);
+    }
+
+    @PostMapping("/login/token")
+    public HttpResponseEntity<Void> sendEmailLoginToken(
+            HttpServletRequest request,
+            @RequestBody LoginTokenSendRequest loginTokenSendRequest) throws IOException {
+        ParamValidate.notEmpty(loginTokenSendRequest.identity(), "identity cannot be null or empty.");
+        loginRegisterService.sendToken(
+                loginTokenSendRequest.identity(),
                 LoginStrategyType.EMAIL_TOKEN
         );
-        return loginResponse(res);
+        return HttpResponseEntity.success();
     }
 
     private HttpResponseEntity<LoginResponse> loginResponse(Result<UserInfoSignature> res) {
@@ -99,36 +119,24 @@ public class LoginRegisterController {
         return HttpResponseEntity.success(response);
     }
 
-    @PostMapping("/login/email/token")
-    public HttpResponseEntity<Void> sendEmailLoginToken(
-            HttpServletRequest request,
-            @RequestBody LoginTokenSendRequest loginTokenSendRequest) throws IOException {
-        ParamValidate.notEmpty(loginTokenSendRequest.identity(), "identity cannot be null or empty.");
-        loginRegisterService.sendToken(
-                loginTokenSendRequest.identity(),
-                LoginStrategyType.EMAIL_TOKEN
-        );
-        return HttpResponseEntity.success();
-    }
-
     @PostMapping("/register")
     public HttpResponseEntity<Void> registerUser(@RequestBody UserRegisterRequest request) {
         Result<UserInfo> res = loginRegisterService.registerUser(
                 request.username(),
                 request.password(),
-                request.email(), Role.USER
+                request.email()
         );
         return HttpResponseEntity.of(res.toResponseBody(() -> null));
     }
 
-    @PostMapping("/register/token/confirm/{token}")
+    @PostMapping("/register/token/{token}")
     public HttpResponseEntity<Void> activateUser(@PathVariable String token) {
         ParamValidate.notEmpty(token, "Token cannot be null or empty.");
         ErrorCode errorCode = loginRegisterService.verifyRegisterToken(token);
         return HttpResponseEntity.of(errorCode);
     }
 
-    @PostMapping(value = "/register/token/resend")
+    @PostMapping(value = "/register/token")
     public HttpResponseEntity<Void> resendRegisterToken(
             @RequestParam("username") String username) {
         ParamValidate.notEmpty(username, "Username cannot be null or empty.");

@@ -51,11 +51,12 @@ public class ReviewController {
     }
 
     // TODO: verify user
-    @GetMapping("/{userId}/review/{jobId}")
+    @GetMapping("/review/{jobId}")
     public HttpResponseEntity<ReviewInfo> getReviewInfo(
-            @PathVariable(name = "jobId") Long jobId,
-            @PathVariable(name = "userId") Long userId) {
+            @PathVariable(name = "jobId") Long jobId) {
         ReviewInfo reviewInfo = reviewService.getReviewInfo(jobId);
+        ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
+
         if (reviewInfo == null) {
             return HttpResponseEntity.of(CommonErrorCode.ERROR_NOT_FOUND, "Not found review info.");
         }
@@ -80,44 +81,33 @@ public class ReviewController {
     }
 
 
-    @GetMapping("/{userId}/review/{jobId}/content")
+    @GetMapping("/review/{jobId}/content")
     public HttpResponseEntity<ReviewContent> getReviewContent(
-            @PathVariable(name = "jobId") Long jobId,
-            @PathVariable(name = "userId") Long userId) {
+            @PathVariable(name = "jobId") Long jobId) {
         ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
-        if (!context.allowAccess(userId)) {
-            return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
-        }
+
         ReviewContent reviewContent = reviewContentService.getReviewContent(jobId);
         return HttpResponseEntity.success(reviewContent);
     }
 
     // Delete: review rejected
-    @DeleteMapping("/{userId}/review/{jobId}")
+    @DeleteMapping("/review/{jobId}")
     public HttpResponseEntity<ReviewInfo> rejectReview(
             @PathVariable(name = "jobId") Long jobId,
-            @PathVariable(name = "userId") Long userId,
             @RequestBody ReviewRejectedRequest reviewRejectedRequest) {
         ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
         Verify.verifyNotNull(context.userInfo());
-        if (!context.allowAccess(userId)) {
-            return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
-        }
         ReviewInfo info = reviewService.makeReview(jobId, false,
                 reviewRejectedRequest.reason());
         return HttpResponseEntity.success(info);
     }
 
     // Put: review passed
-    @PutMapping("/{userId}/review/{jobId}")
+    @PutMapping("/review/{jobId}")
     public HttpResponseEntity<ReviewInfo> passReview(
-            @PathVariable(name = "jobId") Long jobId,
-            @PathVariable(name = "userId") Long userId) {
+            @PathVariable(name = "jobId") Long jobId) {
         ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
         Verify.verifyNotNull(context.userInfo());
-        if (!context.allowAccess(userId)) {
-            return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
-        }
         ReviewInfo reviewInfo = reviewService.makeReview(jobId, true, null);
         return HttpResponseEntity.success(reviewInfo);
     }
