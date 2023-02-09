@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@RequestMapping({"/api", "/api/admin"})
+@RequestMapping({"/api/v1", "/api/v1/admin"})
 @RestController
 public @interface WithAdminApi {
 }

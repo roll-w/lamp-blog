@@ -20,6 +20,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.access.AccessDecisionManager;
+import org.springframework.security.access.AccessDecisionVoter;
+import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
@@ -33,13 +36,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import space.lingu.lamp.web.configuration.compenent.PermissionAccessDecisionVoter;
 import space.lingu.lamp.web.configuration.compenent.WebDelegateSecurityHandler;
 import space.lingu.lamp.web.configuration.filter.CorsConfigFilter;
 import space.lingu.lamp.web.configuration.filter.TokenAuthenticationFilter;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.web.domain.user.service.UserDetailsService;
+import space.lingu.lamp.web.domain.user.UserDetailsService;
+
+import java.util.List;
 
 /**
  * @author RollW
@@ -67,15 +74,15 @@ public class WebSecurityConfiguration {
                 .antMatchers(HttpMethod.OPTIONS).permitAll()
                 // TODO: customize accessDecisionManager
                 //.accessDecisionManager(accessDecisionManager())
-                .antMatchers("/api/auth/token/**").permitAll()
-                .antMatchers("/api/admin/**").hasRole("ADMIN")
-                .antMatchers("/api/*/review/**").hasRole("REVIEWER")
-                .antMatchers("/api/admin/*/review/**").hasRole("REVIEWER")
-                .antMatchers("/api/common/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/*/article/*").permitAll()
-                .antMatchers("/api/user/login/**").permitAll()
-                .antMatchers("/api/user/register/**").permitAll()
-                .antMatchers("/api/user/logout/**").permitAll()
+                .antMatchers("/api/{version}/auth/token/**").permitAll()
+                .antMatchers("/api/{version}/admin/**").hasRole("ADMIN")
+                .antMatchers("/api/{version}/*/review/**").hasRole("REVIEWER")
+                .antMatchers("/api/{version}/admin/*/review/**").hasRole("REVIEWER")
+                .antMatchers("/api/{version}/common/**").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/{version}/*/article/*").permitAll()
+                .antMatchers("/api/{version}/user/login/**").permitAll()
+                .antMatchers("/api/{version}/user/register/**").permitAll()
+                .antMatchers("/api/{version}/user/logout/**").permitAll()
                 .antMatchers("/**").hasRole("USER")
                 .anyRequest().permitAll();
         security.userDetailsService(userDetailsService);
@@ -104,6 +111,17 @@ public class WebSecurityConfiguration {
                 ;
     }
 
+    public PermissionAccessDecisionVoter accessDecisionProcessor() {
+        return new PermissionAccessDecisionVoter();
+    }
+
+    public AccessDecisionManager accessDecisionManager() {
+        List<AccessDecisionVoter<?>> decisionVoters = List.of(
+                new WebExpressionVoter(),
+                accessDecisionProcessor()
+        );
+        return new AffirmativeBased(decisionVoters);
+    }
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();

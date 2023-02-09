@@ -31,7 +31,7 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE,ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
-@RequestMapping("/api/common/")
+@RequestMapping("/api/v1/common/")
 @RestController
 public @interface CommonApi {
 }
