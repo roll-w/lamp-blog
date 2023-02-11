@@ -48,6 +48,10 @@ body {
     width: 100% !important;
 }
 
+.w-75 {
+    width: 75% !important;
+}
+
 .w-100vh {
     width: 100vh !important;
 }

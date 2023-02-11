@@ -42,20 +42,31 @@
 import RegisterForm from "@/components/user/RegisterForm.vue";
 import LoginForm from "@/components/user/LoginForm.vue";
 import {useRouter} from "vue-router";
+import {useUserStore} from "@/stores/user";
+import {index, login} from "@/router";
 
 const router = useRouter()
+const userStore = useUserStore()
 
-const isLoginPage = () => {
-  return router.currentRoute.value.name === 'login-page'
+const checkLogin = () => {
+  if (userStore.isLogin) {
+    router.push({
+      name: index
+    })
+  }
 }
 
-const code = `
-public class LampBlog {
+checkLogin()
+
+const isLoginPage = () => {
+  return router.currentRoute.value.name === login
+}
+
+const code = `public class LampBlog {
   public static void main(String[] args) {
     System.out.println("Hello, Lamp Blog!");
   }
-}
-`
+}`
 </script>
 
 <style scoped>

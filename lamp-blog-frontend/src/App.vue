@@ -17,6 +17,11 @@
 <script setup>
 import {RouterView} from 'vue-router'
 import BlogNavBar from "@/components/BlogNavBar.vue";
+import {tokenKey, userKey, useUserStore} from "@/stores/user";
+import router, {index, page404} from "@/router";
+import {ref} from "vue";
+import {darkTheme, zhCN, enUS, lightTheme} from "naive-ui";
+import {useSiteStore} from "@/stores/site";
 
 // highlight.js
 import hljs from 'highlight.js/lib/core'
@@ -61,24 +66,7 @@ hljs.registerLanguage('javascript', javascript)
 hljs.registerLanguage('json', javascript)
 // highlight.js
 
-import {tokenKey, userKey, useUserStore} from "@/stores/user";
-import router, {index} from "@/router";
-
 const userStore = useUserStore()
-
-router.beforeEach((to, from, next) => {
-  if (!to.name.startsWith("admin")) {
-    return next()
-  }
-  const role = userStore.user.role
-  if (!userStore.isLogin || !role || role.value === "USER") {
-    return next({
-      name: index
-    })
-  }
-  return next()
-})
-
 
 const loadFromLocal = () => {
   const token = localStorage.getItem("L2w9t0k3n")
@@ -107,7 +95,6 @@ const tryLoginFromState = () => {
 tryLoginFromState()
 
 userStore.$subscribe((mutation, state) => {
-  console.log("subscribe value")
   if (!state.remember) {
     sessionStorage.setItem(tokenKey, state.token)
     sessionStorage.setItem(userKey, JSON.stringify(state.user))
@@ -118,14 +105,91 @@ userStore.$subscribe((mutation, state) => {
 })
 
 
+/**
+ * @type import('naive-ui').GlobalThemeOverrides
+ */
+const themeOverrides = {
+  "common": {
+    "primaryColor": "#ECA602FF",
+    "baseColor": "#F4F4F4FF",
+    "primaryColorHover": "#F1BB55FF",
+    "primaryColorPressed": "#F6CC6AFF",
+    "primaryColorSuppl": "#D0A75FFF",
+    "warningColor": "#ED7F3BFF",
+    "warningColorHover": "#FC8E40FF",
+    "warningColorPressed": "#C96610FF",
+    "warningColorSuppl": "#FC8240FF",
+    "errorColor": "#D03050FF",
+    "errorColorHover": "#DE5782FF",
+    "errorColorPressed": "#AB1F39FF",
+    "errorColorSuppl": "#E85364FF",
+    "fontFamily": `'Muli', '思源黑体', 'Source Han Sans',  -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif`,
+  },
+}
+
+const dark = ref(lightTheme)
+const locale = ref({
+  locale: zhCN
+})
+
+const extractLocale = (locale) => {
+  if (!locale) {
+    return zhCN
+  }
+  switch (locale) {
+    case "zh-CN":
+    case "zh-TW":
+      return zhCN
+    case "en-US":
+      return enUS
+
+  }
+  return zhCN
+}
+
+const setupSiteState = (isDark, localeString) => {
+  if (isDark) {
+    dark.value = darkTheme
+  } else {
+    dark.value = lightTheme
+  }
+  locale.value.locale = extractLocale(localeString)
+}
+
+
+const siteStore = useSiteStore()
+
+const loadSiteDataLocal = () => {
+  let data = localStorage.getItem("site");
+  if (!data) {
+    return
+  }
+  const site = JSON.parse(data)
+  siteStore.setLocale(site.locale)
+  siteStore.setDark(site.dark)
+
+  setupSiteState(site.dark, site.locale)
+}
+
+loadSiteDataLocal()
+
+router.afterEach((to, from) => {
+  loadSiteDataLocal()
+})
+
+siteStore.$subscribe((mutation, state) => {
+  setupSiteState(state.dark, state.locale)
+  localStorage.setItem("site", JSON.stringify(state))
+})
+
 
 </script>
 
 <template>
-  <n-config-provider :hljs="hljs" class="h-100">
+  <n-config-provider :hljs="hljs" :locale="locale.locale" :theme="dark" :theme-overrides="themeOverrides" class="h-100">
     <n-loading-bar-provider>
       <n-message-provider>
-        <n-notification-provider>
+        <n-notification-provider :max="5">
           <n-dialog-provider>
             <n-layout position="absolute">
               <BlogNavBar/>
@@ -135,6 +199,7 @@ userStore.$subscribe((mutation, state) => {
         </n-notification-provider>
       </n-message-provider>
     </n-loading-bar-provider>
+    <n-global-style/>
   </n-config-provider>
 </template>
 

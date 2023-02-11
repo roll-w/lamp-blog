@@ -14,7 +14,6 @@
  * limitations under the License.
  */
 
-import {ref, computed} from 'vue'
 import {defineStore} from 'pinia'
 
 export const tokenKey = "L2w9t0k3n"
@@ -36,6 +35,8 @@ export const useUserStore = defineStore('user', {
         getUser: state => state.user,
         /** @return {string} */
         getToken: state => state.token,
+
+        canAccessAdmin: state => state.user.role && state.user.role !== "USER",
     },
     actions: {
         /**

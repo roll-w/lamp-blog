@@ -15,25 +15,19 @@
   -->
 
 <template>
-  <n-layout :native-scrollbar="false" position="absolute"
-            style="top: var(--header-height);">
-    <n-layout
-        content-style="min-height: calc(100vh - var(--header-height)); display: flex; flex-direction: column;">
-      <router-view v-slot="{ Component }">
-        <transition mode="out-in" name="fade">
-          <component :is="Component"/>
-        </transition>
-      </router-view>
-      <n-back-top :right="100" />
-      <Footer/>
-    </n-layout>
-  </n-layout>
+  <div class="p-5">
+    <n-result status="404" title="404 资源不存在。" >
+      <template #footer>
+        <n-button type="primary" @click="() => $router.push('/')">回到首页</n-button>
+      </template>
+    </n-result>
+  </div>
 </template>
 
 <script setup>
-import BlogNavBar from "@/components/BlogNavBar.vue";
-import Footer from "@/components/Footer.vue";
+
 </script>
 
 <style scoped>
+
 </style>

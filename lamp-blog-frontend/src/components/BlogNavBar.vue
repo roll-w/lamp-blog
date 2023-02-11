@@ -18,13 +18,21 @@
   <n-layout-header bordered style="height: var(--header-height)">
     <div class="p-5 flex">
       <n-text :depth="1" class="ui-logo flex justify-start" @click="handleLogoClick">
+        <img src="../assets/lamp.svg" alt="Logo">
         <span>Lamp Blog</span>
       </n-text>
       <div class="flex justify-end justify-items-end flex-grow">
-        <n-button v-if="!userStore.isLogin" @click="handleLoginClick">登录</n-button>
-        <n-dropdown v-else :options="options" trigger="hover" @select="handleSelect">
-          <n-avatar>{{ username }}</n-avatar>
-        </n-dropdown>
+        <n-space>
+          <n-button @click="handleThemeClick">切换主题</n-button>
+          <div>
+          <n-button v-if="!userStore.isLogin" @click="handleLoginClick">登录</n-button>
+          <n-dropdown v-else :options="options" trigger="hover" @select="handleSelect">
+            <n-avatar>{{ username }}</n-avatar>
+          </n-dropdown>
+        </div>
+        </n-space>
+
+
       </div>
     </div>
   </n-layout-header>
@@ -36,12 +44,16 @@ import {useRouter} from "vue-router";
 import {useUserStore} from "@/stores/user";
 import {h, ref} from "vue";
 import {NAvatar, NText} from "naive-ui";
+import LampLogo from "@/components/LampLogo.vue";
+import {useSiteStore} from "@/stores/site";
 
 const router = useRouter();
-const userStore = useUserStore();
 
-const username = ref(userStore.user.username);
-const role = ref(userStore.user.role);
+const siteStore = useSiteStore()
+const userStore = useUserStore()
+
+const username = ref(userStore.user.username)
+const role = ref(userStore.user.role)
 
 const userOptions = [
   {
@@ -134,6 +146,11 @@ const handleSelect = (key) => {
       })
       break;
   }
+}
+
+
+const handleThemeClick = () => {
+  siteStore.toggleTheme()
 }
 
 

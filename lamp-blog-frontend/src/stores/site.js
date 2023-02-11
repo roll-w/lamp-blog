@@ -14,21 +14,33 @@
  * limitations under the License.
  */
 
-import {createApp} from 'vue'
-import {createPinia} from 'pinia'
-import App from './App.vue'
-import router from './router'
-import './style.css'
-import naive from "naive-ui";
+import {defineStore} from 'pinia'
 
-const app = createApp(App)
-app.use(createPinia())
+export const useSiteStore = defineStore('site', {
+    state: () => ({
+        locale: "",
+        dark: false
+    }),
+    getters: {
+        isDark: state => state.dark,
+        getLocale: state => state.locale
+    },
+    actions: {
+        /**
+         * @param locale {string}
+         */
+        setLocale(locale) {
+            this.locale = locale
+        },
+        /**
+         * @param dark {boolean}
+         */
+        setDark(dark) {
+            this.dark = dark
+        },
 
-app.use(naive)
-app.use(router)
-
-const meta = document.createElement('meta')
-meta.name = 'naive-ui-style'
-document.head.appendChild(meta)
-
-app.mount('#app')
+        toggleTheme() {
+            this.dark = !this.dark
+        }
+    }
+})

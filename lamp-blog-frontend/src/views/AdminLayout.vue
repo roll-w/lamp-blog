@@ -31,6 +31,7 @@
           <component :is="Component"/>
         </transition>
       </router-view>
+      <n-back-top :right="100" />
       <Footer/>
     </n-layout>
   </n-layout>

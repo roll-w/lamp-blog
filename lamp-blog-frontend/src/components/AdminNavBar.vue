@@ -43,9 +43,10 @@
 
 import {RouterLink, useRouter} from "vue-router";
 import {h, onBeforeMount, ref} from "vue";
-import {admin, adminUsers, index, systemLog} from "@/router";
+import {admin, adminUsers, index, systemLog, systemSettings} from "@/router";
 import {useUserStore} from "@/stores/user";
 import {useMessage} from "naive-ui";
+import {convertsToMenuOptions, requestFullMenu} from "@/views/menu";
 
 const message = useMessage()
 const userStore = useUserStore()
@@ -80,125 +81,7 @@ router.afterEach(() => {
   chooseOn.value = calcChooseOption()
 })
 
-
-
-const menuOptions = [
-  {
-    label: () => h(
-        RouterLink,
-        {
-          to: {
-            name: admin,
-          }
-        },
-        {default: () => "系统首页"}
-    ),
-    key: admin,
-  },
-  {
-    label: () => h(
-        RouterLink,
-        {
-          to: {
-            name: index,
-          }
-        },
-        {default: () => "返回博客"}
-    ),
-    key: index,
-
-  },
-  {
-    label: "用户管理",
-    key: "user-management",
-    children: [
-      {
-        label: () => h(
-            RouterLink,
-            {
-              to: {
-                name: adminUsers,
-              }
-            },
-            {default: () => "用户列表"}
-        ),
-        key: adminUsers
-      },
-      {
-        label: "工作人员管理",
-        key: "user-management-staff"
-      }
-    ]
-  },
-  {
-    label: "文章管理",
-    key: "article-management",
-    children: [
-      {
-        label: "文章列表",
-        key: "article-management-list"
-      },
-      {
-        label: "文章分类",
-        key: "article-management-category"
-      },
-      {
-        label: "文章标签",
-        key: "article-management-tag"
-      },
-    ]
-  },
-  {
-    label: "评论管理",
-    key: "comment-management",
-    children: [
-      {
-        label: "评论列表",
-        key: "comment-management-list"
-      },
-    ]
-  },
-  {
-    label: "审核管理",
-    key: "audit-management",
-    children: [
-      {
-        label: "审核列表",
-        key: "audit-management-list"
-      },
-      {
-        label: "审核任务",
-        key: "audit-management-task"
-      }
-    ]
-  },
-  {
-    label: "系统管理",
-    key: "system-management",
-    children: [
-      {
-        label: "系统设置",
-        key: "system-management-setting"
-      },
-      {
-        label: () => h(
-            RouterLink,
-            {
-              to: {
-                name: systemLog,
-              }
-            },
-            {default: () => "系统日志"}
-        ),
-        key: systemLog
-      },
-      {
-        label: "系统监控",
-        key: "system-management-monitor"
-      },
-    ]
-  },
-]
+const menuOptions = convertsToMenuOptions(requestFullMenu())
 
 </script>
 
