@@ -1,0 +1,111 @@
+<!--
+  - Copyright (C) 2023 RollW
+  -
+  - Licensed under the Apache License, Version 2.0 (the "License");
+  - you may not use this file except in compliance with the License.
+  - You may obtain a copy of the License at
+  -
+  -        http://www.apache.org/licenses/LICENSE-2.0
+  -
+  - Unless required by applicable law or agreed to in writing, software
+  - distributed under the License is distributed on an "AS IS" BASIS,
+  - WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  - See the License for the specific language governing permissions and
+  - limitations under the License.
+  -->
+
+<template>
+  <div class="p-5 ">
+    <AdminBreadcrumb :location="systemSettings" :menu="menuSystem" />
+    <n-h1>系统设置</n-h1>
+    <n-text>
+      系统内部设置调整。
+    </n-text>
+    <n-data-table
+        :bordered="false"
+        :columns="columns"
+        :data="data"
+        :pagination="pagination"
+    />
+  </div>
+</template>
+
+<script setup>
+
+import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
+import {NButton, NButtonGroup, useNotification} from "naive-ui";
+import {useUserStore} from "@/stores/user";
+import {h, ref} from "vue";
+import axios from "axios";
+import api from "@/request/api";
+import {systemSettings} from "@/router";
+import {menuSystem} from "@/views/menu";
+
+const notification = useNotification()
+const userStorage = useUserStore()
+
+const pagination = {
+  pageSize: 10
+}
+
+const columns = [
+  {
+    title: "设置名",
+    key: "key"
+  },
+  {
+    title: "设置值",
+    key: "value"
+  },
+  {
+    title: "操作",
+    key: "actions",
+    render(row) {
+      return h(
+          NButtonGroup,
+          {},
+          () => [
+            h(NButton,
+                {
+                  size: 'small',
+                  onClick: () => {
+                    console.log("edit: " + row.key)
+                  }
+                },
+                {default: () => "编辑"}),
+            h(NButton,
+                {
+                  size: 'small',
+                  onClick: () => {
+
+                  }
+                },
+                {default: () => "删除"}),
+          ]
+      );
+    }
+  }
+]
+
+const data = ref([])
+
+axios.get(api.systemSettings, {
+  headers: {
+    "Authorization": userStorage.getToken
+  }
+}).then((res) => {
+  data.value = res.data.data
+  console.log(res);
+}).catch((err) => {
+  console.log(err);
+  const msg = err.response.data.tip +
+      "\n信息： " + err.response.data.message
+  notification.error({
+    title: "请求错误",
+    content: msg,
+    meta: "设置请求错误",
+    duration: 3000,
+    keepAliveOnHover: true
+  })
+})
+</script>

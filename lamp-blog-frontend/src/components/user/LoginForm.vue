@@ -34,6 +34,7 @@
     </n-form-item>
     <n-form-item label="密码" path="token">
       <n-input v-model:value="formValue.token" placeholder="请输入密码" type="password"
+               show-password-on="click"
                @keydown.enter.prevent/>
     </n-form-item>
     <n-form-item path="rememberMe">
@@ -49,8 +50,9 @@
         重置
       </n-button>
     </n-button-group>
-    <n-code :code="JSON.stringify(formValue)" language="json"/>
+    <n-a>忘记密码</n-a>
   </n-form>
+
 </template>
 
 <script setup>
@@ -59,7 +61,9 @@ import axios from "axios";
 import api from "@/request/api";
 import {useMessage} from "naive-ui";
 import {useRouter} from "vue-router";
+import {useUserStore} from "@/stores/user";
 
+const userStore = useUserStore()
 const message = useMessage()
 const loginForm = ref(null)
 const router = useRouter()
@@ -101,8 +105,23 @@ const onLoginClick = (e) => {
   e.preventDefault()
   validateFormValue(() => {
     axios.post(api.passwordLogin, formValue.value).then(res => {
-      message.success(res.data.tip)
-      console.log(res)
+      /**
+       * @type {{ user: {
+       * username: string, id: number,
+       * role: string, email: string },
+       * token: string
+       * }}
+       */
+      const recvData = res.data.data
+      let user = {
+        id: recvData.user.id,
+        username: recvData.user.username,
+        role: recvData.user.role,
+      }
+      userStore.loginUser(user, recvData.token, formValue.value.rememberMe)
+      router.push({
+        name: "index"
+      })
     }).catch(err => {
       message.error(err.response.data.tip)
     })

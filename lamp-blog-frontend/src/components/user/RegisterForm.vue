@@ -31,15 +31,17 @@
                @keydown.enter.prevent/>
     </n-form-item>
     <n-form-item label="邮箱" path="email">
-      <n-input v-model:value="formValue.email" placeholder="请输入邮箱"
+      <n-input :input-props="{ type: 'email' }" v-model:value="formValue.email" type="text" placeholder="请输入邮箱"
                @keydown.enter.prevent/>
     </n-form-item>
     <n-form-item label="密码" path="password">
-      <n-input v-model:value="formValue.password" placeholder="请输入密码" type="password"
+      <n-input v-model:value="formValue.password" placeholder="请输入密码" show-password-on="click"
+               type="password"
                @keydown.enter.prevent/>
     </n-form-item>
     <n-form-item label="确认密码" path="confirmPassword">
-      <n-input v-model:value="formValue.confirmPassword" placeholder="请再次输入密码" type="password"
+      <n-input v-model:value="formValue.confirmPassword" placeholder="请再次输入密码" show-password-on="click"
+               type="password"
                @keydown.enter.prevent/>
     </n-form-item>
     <n-form-item path="agree">
@@ -56,17 +58,19 @@
         重置
       </n-button>
     </n-button-group>
-    <n-code :code="JSON.stringify(formValue)" language="json"/>
   </n-form>
-
-
 </template>
 
 <script setup>
 import {ref} from "vue";
 import {useRouter} from "vue-router";
+import axios from "axios";
+import api from "@/request/api";
+import {useMessage} from "naive-ui";
+import {registerTip} from "@/router";
 
 const router = useRouter();
+const message = useMessage()
 
 const formValue = ref({
   username: null,
@@ -133,7 +137,13 @@ const validateFormValue = (callback) => {
 
 const onRegisterClick = () => {
   validateFormValue(() => {
-    console.log("register")
+    axios.post(api.register, formValue.value)
+        .then((response) => {
+          router.push({name: registerTip})
+        })
+        .catch((error) => {
+          message.error(error.response.data.tip)
+        })
   })
 };
 
