@@ -28,8 +28,9 @@ import static space.lingu.lamp.CommonErrorCode.SUCCESS;
  * @author RollW
  */
 public enum ReviewErrorCode implements ErrorCode {
-    ERROR_REVIEW("A2200", 400),
-    ERROR_REVIEWED("A2201", 400),
+    ERROR_REVIEW("A2100", 400),
+    ERROR_REVIEWED("A2101", 400),
+    ERROR_NOT_REVIEWED("A2102", 400),
     ;
 
 

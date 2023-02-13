@@ -49,7 +49,9 @@ public interface ContentDetails extends Content {
      * @inheritDoc
      */
     @Override
-    int getVersion();
+    default int getVersion() {
+        return Content.super.getVersion();
+    }
 
     /**
      * Get the title of the content, if exists.
@@ -66,4 +68,9 @@ public interface ContentDetails extends Content {
      */
     @Nullable
     String getContent();
+
+    @Nullable
+    default ContentDetailsMetadata getMetadata() {
+        return null;
+    }
 }

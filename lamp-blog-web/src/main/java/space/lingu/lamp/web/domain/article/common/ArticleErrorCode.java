@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.content.common;
+package space.lingu.lamp.web.domain.article.common;
 
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
@@ -25,39 +25,34 @@ import java.util.List;
 /**
  * @author RollW
  */
-public enum ContentErrorCode implements ErrorCode {
-    SUCCESS(SUCCESS_CODE, 200),
-    ERROR_CONTENT("A2000", 400),
-    ERROR_CONTENT_NOT_FOUND("A2001", 404),
-    ERROR_CONTENT_FORBIDDEN("A2002", 401),
-    ERROR_CONTENT_HIDE("A2003", 401),
-    ERROR_CONTENT_DELETED("A2004", 404),
-    ERROR_CONTENT_REVIEWING("A2005", 401),
-    ERROR_PASSWORD_REQUIRED("A2006", 401),
-    ERROR_CONTENT_EXISTED("A2007", 400),
-    ERROR_CONTENT_NOT_DELETED("A2008", 400);
+public enum ArticleErrorCode implements ErrorCode {
+    ERROR_ARTICLE("A2300"),
+    ERROR_TITLE_EMPTY("A2301", 400),
+    ERROR_TITLE_TOO_LONG("A2302", 400),
+    ERROR_TITLE_TOO_SHORT("A2303", 400),
+    ERROR_CONTENT_EMPTY("A2304", 400),
+    ERROR_CONTENT_TOO_LONG("A2305", 400),
+    ERROR_CONTENT_TOO_SHORT("A2306", 400),
+
+    ;
 
 
     private final String value;
     private final int status;
 
-    ContentErrorCode(String value, int status) {
+    ArticleErrorCode(String value, int status) {
         this.value = value;
         this.status = status;
     }
 
-    ContentErrorCode(String value) {
+    ArticleErrorCode(String value) {
         this.value = value;
         this.status = 403;
     }
 
     @Override
     public String toString() {
-        if (this == SUCCESS) {
-            return "SUCCESS";
-        }
-
-        return "ContentError: %s, code: %s".formatted(name(), getCode());
+        return "ArticleError: %s, code: %s".formatted(name(), getCode());
     }
 
     @Override
@@ -100,6 +95,6 @@ public enum ContentErrorCode implements ErrorCode {
     }
 
     public static ErrorCodeFinder getFinderInstance() {
-        return SUCCESS;
+        return ERROR_ARTICLE;
     }
 }

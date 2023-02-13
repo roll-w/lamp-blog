@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.domain.review;
 
 import com.google.common.base.Preconditions;
+import space.lingu.Nullable;
 import space.lingu.lamp.DataItem;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.light.Constructor;
@@ -29,7 +30,7 @@ import java.util.Objects;
 /**
  * @author RollW
  */
-@DataTable(tableName = "review_job")
+@DataTable(name = "review_job")
 public class ReviewJob implements DataItem {
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
@@ -43,10 +44,11 @@ public class ReviewJob implements DataItem {
 
     // TODO: may change to reviewer ids in the future
     @DataColumn(name = "reviewer_id")
-    private final long reviewerId;
+    private final Long reviewerId;
 
     @DataColumn(name = "operator_id")
-    private final long operatorId;
+    @Nullable
+    private final Long operatorId;
 
     @DataColumn(name = "status")
     private final ReviewStatus status;
@@ -67,8 +69,10 @@ public class ReviewJob implements DataItem {
     private final ReviewMark reviewMark;
 
     @Constructor
-    public ReviewJob(Long jobId, String reviewContentId, long reviewerId,
-                     long operatorId, ReviewStatus status, ContentType type,
+    public ReviewJob(Long jobId, String reviewContentId,
+                     Long reviewerId,
+                     @Nullable Long operatorId,
+                     ReviewStatus status, ContentType type,
                      long assignedTime, String result, long reviewTime,
                      ReviewMark reviewMark) {
         Preconditions.checkNotNull(reviewContentId);
@@ -104,11 +108,12 @@ public class ReviewJob implements DataItem {
         return reviewContentId;
     }
 
-    public long getReviewerId() {
+    public Long getReviewerId() {
         return reviewerId;
     }
 
-    public long getOperatorId() {
+    @Nullable
+    public Long getOperatorId() {
         return operatorId;
     }
 
@@ -136,7 +141,7 @@ public class ReviewJob implements DataItem {
         return reviewMark;
     }
 
-    public ReviewJob reviewPass(long reviewTime) {
+    public ReviewJob reviewPass(long operatorId, long reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewerId,
                 operatorId, ReviewStatus.REVIEWED,
@@ -144,7 +149,7 @@ public class ReviewJob implements DataItem {
                 reviewMark);
     }
 
-    public ReviewJob reviewReject(String result, long reviewTime) {
+    public ReviewJob reviewReject(long operatorId, String result, long reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewerId,
                 operatorId, ReviewStatus.REJECTED,
@@ -161,7 +166,7 @@ public class ReviewJob implements DataItem {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReviewJob job = (ReviewJob) o;
-        return reviewerId == job.reviewerId && operatorId == job.operatorId && assignedTime == job.assignedTime && reviewTime == job.reviewTime && Objects.equals(jobId, job.jobId) && Objects.equals(reviewContentId, job.reviewContentId) && status == job.status && type == job.type && Objects.equals(result, job.result) && reviewMark == job.reviewMark;
+        return Objects.equals(reviewerId, job.reviewerId) && Objects.equals(operatorId, job.operatorId) && assignedTime == job.assignedTime && reviewTime == job.reviewTime && Objects.equals(jobId, job.jobId) && Objects.equals(reviewContentId, job.reviewContentId) && status == job.status && type == job.type && Objects.equals(result, job.result) && reviewMark == job.reviewMark;
     }
 
     @Override
@@ -200,8 +205,8 @@ public class ReviewJob implements DataItem {
     public final static class Builder {
         private Long jobId = null;
         private String reviewContentId;
-        private long reviewerId;
-        private long operatorId;
+        private Long reviewerId;
+        private Long operatorId;
         private ReviewStatus status;
         private ContentType type;
         private long assignedTime;
@@ -235,12 +240,12 @@ public class ReviewJob implements DataItem {
             return this;
         }
 
-        public Builder setReviewerId(long reviewerId) {
+        public Builder setReviewerId(Long reviewerId) {
             this.reviewerId = reviewerId;
             return this;
         }
 
-        public Builder setOperatorId(long operatorId) {
+        public Builder setOperatorId(Long operatorId) {
             this.operatorId = operatorId;
             return this;
         }

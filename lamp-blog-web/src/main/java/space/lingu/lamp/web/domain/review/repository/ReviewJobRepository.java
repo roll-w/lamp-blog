@@ -49,6 +49,10 @@ public class ReviewJobRepository {
         return reviewJobDao.get(id);
     }
 
+    public List<ReviewJob> getAll(int offset, int limit) {
+        return reviewJobDao.getByPage(offset, limit);
+    }
+
     public List<ReviewJob> getBy(ReviewStatus status) {
         return reviewJobDao.getReviewJobsByStatus(status);
     }
@@ -61,11 +65,13 @@ public class ReviewJobRepository {
         return reviewJobDao.getReviewJobsByUserId(reviewerId);
     }
 
-    public List<ReviewJob> getReviewJobsByReviewer(long reviewerId, ReviewStatus status) {
-        return reviewJobDao.getReviewJobsByStatus(reviewerId, status);
+    public List<ReviewJob> getReviewJobsByReviewer(long reviewerId, int offset, int limit,
+                                                   ReviewStatus status) {
+        return reviewJobDao.getReviewJobsByStatus(reviewerId, offset, limit, status);
     }
 
-    public List<ReviewJob> getReviewJobsByStatuses(long reviewerId, ReviewStatus... statuses) {
-        return reviewJobDao.getReviewJobsByStatuses(reviewerId, statuses);
+    public List<ReviewJob> getReviewJobsByStatuses(long reviewerId, int offset, int limit,
+                                                   ReviewStatus... statuses) {
+        return reviewJobDao.getReviewJobsByStatuses(reviewerId, offset, limit, statuses);
     }
 }

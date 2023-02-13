@@ -60,19 +60,22 @@ public abstract class ReviewJobDao {
     @Query("SELECT * FROM review_job WHERE id = {id}")
     public abstract ReviewJob get(long id);
 
+    @Query("SELECT * FROM review_job ORDER BY id LIMIT {limit} OFFSET {offset}")
+    public abstract List<ReviewJob> getByPage(int offset, int limit);
+
     @Query("SELECT * FROM review_job WHERE reviewer_id = {userId}")
     public abstract List<ReviewJob> getReviewJobsByUserId(long userId);
 
     @Query("SELECT * FROM review_job WHERE status = {status}")
     public abstract List<ReviewJob> getReviewJobsByStatus(ReviewStatus status);
 
-    @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND status = {status}")
-    public abstract List<ReviewJob> getReviewJobsByStatus(long userId, ReviewStatus status);
+    @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND `status` = {status} LIMIT {limit} OFFSET {offset}")
+    public abstract List<ReviewJob> getReviewJobsByStatus(long userId, int offset, int limit, ReviewStatus status);
 
-    @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND status IN ({statuses})")
-    public abstract List<ReviewJob> getReviewJobsByStatuses(long userId, ReviewStatus... statuses);
+    @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND `status` IN ({statuses}) LIMIT {limit} OFFSET {offset}")
+    public abstract List<ReviewJob> getReviewJobsByStatuses(long userId, int offset, int limit,  ReviewStatus... statuses);
 
-    @Query("SELECT * FROM review_job WHERE content_id = {contentId} type = {type}")
+    @Query("SELECT * FROM review_job WHERE content_id = {contentId} AND type = {type}")
     public abstract ReviewJob getReviewJobByContentId(String contentId, ContentType type);
 }
 

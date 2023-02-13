@@ -61,7 +61,7 @@ public abstract class UserDao {
     @Query("SELECT * FROM user")
     public abstract List<User> getAll();
 
-    @Query("SELECT * FROM user ORDER BY id ASC LIMIT 10 OFFSET 0")
+    @Query("SELECT * FROM user ORDER BY id ASC LIMIT {limit} OFFSET {offset}")
     public abstract List<User> get(int offset, int limit);
 
     @Query("SELECT * FROM user WHERE enabled = {enabled} ORDER BY id ASC LIMIT {limit} OFFSET {offset}")

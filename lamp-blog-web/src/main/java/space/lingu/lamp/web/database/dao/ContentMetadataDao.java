@@ -34,7 +34,7 @@ import java.util.List;
 @Dao
 public abstract class ContentMetadataDao {
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(ContentMetadata... contentMetadata);
+    public abstract void insert(ContentMetadata contentMetadata);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     public abstract void insert(List<ContentMetadata> contentMetadata);
@@ -57,11 +57,14 @@ public abstract class ContentMetadataDao {
     @Query("SELECT * FROM content_metadata")
     public abstract List<ContentMetadata> get();
 
-    @Delete("UPDATE content_metadata SET status = {status} WHERE content_id = {contentId} AND content_type = {contentType}")
+    @Delete("UPDATE content_metadata SET status = {status} WHERE content_id = {contentId} AND type = {contentType}")
     public abstract void updateStatus(String contentId, ContentType contentType,
                                       ContentStatus status);
 
-    @Query("SELECT * FROM content_metadata WHERE content_id = {contentId} AND content_type = {contentType}")
+    @Query("SELECT * FROM content_metadata WHERE content_id = {contentId} AND type = {contentType}")
     public abstract ContentMetadata getById(String contentId, ContentType contentType);
 
+    @Query("SELECT status FROM content_metadata WHERE content_id IN ({contentIds}) AND type = {contentType}")
+    public abstract List<ContentStatus> getStatusByIds(
+            List<String> contentIds, ContentType contentType);
 }

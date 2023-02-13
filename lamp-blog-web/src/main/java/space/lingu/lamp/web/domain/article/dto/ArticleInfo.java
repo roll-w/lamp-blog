@@ -19,6 +19,7 @@ package space.lingu.lamp.web.domain.article.dto;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.content.Content;
+import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.light.DataColumn;
 
@@ -57,6 +58,16 @@ public record ArticleInfo(
                 article.getCreateTime(),
                 article.getUpdateTime()
         );
+    }
+
+    public static ArticleInfo from(ContentDetails contentDetails) {
+        if (contentDetails == null) {
+            return null;
+        }
+        if (contentDetails instanceof Article article) {
+            return from(article);
+        }
+        return null;
     }
 
     @NonNull

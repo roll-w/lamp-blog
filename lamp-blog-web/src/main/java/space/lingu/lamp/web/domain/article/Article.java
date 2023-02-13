@@ -20,6 +20,7 @@ import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.DataItem;
 import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -89,6 +90,12 @@ public class Article implements DataItem, ContentDetails {
     @Nullable
     public String getContent() {
         return content;
+    }
+
+    @Nullable
+    @Override
+    public ContentDetailsMetadata getMetadata() {
+        return null;
     }
 
     public long getCreateTime() {

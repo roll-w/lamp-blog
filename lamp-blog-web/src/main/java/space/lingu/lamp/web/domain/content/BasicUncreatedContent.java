@@ -14,31 +14,47 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.dto;
+package space.lingu.lamp.web.domain.content;
 
+import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.domain.content.ContentDetails;
-import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.review.ReviewJob;
 
 /**
  * @author RollW
  */
-public record ReviewContent(
-        long jobId,
-        ContentType type,
+public record BasicUncreatedContent(
+        @NonNull ContentType contentType,
+        long userId,
         @Nullable String title,
-        String content,
+        @Nullable String content,
         @Nullable ContentDetailsMetadata metadata
-) {
-    public static ReviewContent of(ReviewJob job, ContentDetails contentDetails) {
-        return new ReviewContent(
-                job.getJobId(),
-                contentDetails.getContentType(),
-                contentDetails.getTitle(),
-                contentDetails.getContent(),
-                contentDetails.getMetadata()
-        );
+) implements UncreatedContent {
+    @NonNull
+    @Override
+    public ContentType getContentType() {
+        return contentType;
+    }
+
+    @Override
+    public long getUserId() {
+        return userId;
+    }
+
+    @Nullable
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Nullable
+    @Override
+    public String getContent() {
+        return content;
+    }
+
+    @Nullable
+    @Override
+    public ContentDetailsMetadata getMetadata() {
+        return metadata;
     }
 }

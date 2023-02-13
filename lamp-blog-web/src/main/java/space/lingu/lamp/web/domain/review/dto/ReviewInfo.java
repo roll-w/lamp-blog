@@ -18,17 +18,22 @@ package space.lingu.lamp.web.domain.review.dto;
 
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
+import space.lingu.lamp.web.domain.review.ReviewMark;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 
 /**
  * @author RollW
  */
 public record ReviewInfo(
+        long id,
         ReviewStatus status,
         ContentType type,
         String result,
         String contentId,
-        long reviewer,
+        ReviewMark reviewMark,
+        Long reviewer,
+        Long operator,
+        long assignedTime,
         long reviewTime
 ) {
     public static ReviewInfo of(ReviewJob job) {
@@ -36,11 +41,15 @@ public record ReviewInfo(
             return null;
         }
         return new ReviewInfo(
+                job.getJobId(),
                 job.getStatus(),
                 job.getType(),
                 job.getResult(),
                 job.getReviewContentId(),
+                job.getReviewMark(),
                 job.getReviewerId(),
+                job.getOperatorId(),
+                job.getAssignedTime(),
                 job.getReviewTime()
         );
     }

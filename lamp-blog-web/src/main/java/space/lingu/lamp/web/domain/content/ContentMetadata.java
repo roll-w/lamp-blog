@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.domain.content;
 
 import space.lingu.NonNull;
+import space.lingu.lamp.DataItem;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -26,10 +27,10 @@ import space.lingu.light.PrimaryKey;
 /**
  * @author RollW
  */
-@DataTable(tableName = "content_metadata", indices =
+@DataTable(name = "content_metadata", indices =
 @Index(value = {"content_id", "type"}, unique = true))
 @SuppressWarnings({"ClassCanBeRecord", "unused"})
-public class ContentMetadata {
+public class ContentMetadata implements DataItem {
     // only maintains the metadata of the content.
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)

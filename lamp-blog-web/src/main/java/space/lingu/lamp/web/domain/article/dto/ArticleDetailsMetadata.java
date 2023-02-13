@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article.service;
+package space.lingu.lamp.web.domain.article.dto;
 
-import space.lingu.lamp.Result;
-import space.lingu.lamp.web.domain.article.Article;
+import space.lingu.Nullable;
+import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
 
 /**
  * @author RollW
  */
-public interface ArticleService {
-
-    Result<Void> deleteArticle(long articleId);
-
-    Result<Void> updateArticle(long articleId);
-
-    Article getArticle(long articleId);
+public record ArticleDetailsMetadata(
+        @Nullable
+        String cover
+) implements ContentDetailsMetadata {
+    public static final ArticleDetailsMetadata EMPTY =
+            new ArticleDetailsMetadata(null);
 }

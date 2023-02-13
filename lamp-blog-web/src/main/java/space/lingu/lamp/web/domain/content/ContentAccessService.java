@@ -18,6 +18,8 @@ package space.lingu.lamp.web.domain.content;
 
 import space.lingu.lamp.web.domain.content.common.ContentException;
 
+import java.util.List;
+
 /**
  * @author RollW
  */
@@ -52,6 +54,12 @@ public interface ContentAccessService {
      * @throws ContentException if the content is not found.
      */
     ContentStatus getContentStatus(String contentId, ContentType contentType)
+            throws ContentException;
+
+    List<ContentStatus> getContentStatuses(List<String> contentIds, ContentType contentType)
+            throws ContentException;
+
+    List<ContentStatus> getContentStatuses(List<? extends Content> contents)
             throws ContentException;
 
 }

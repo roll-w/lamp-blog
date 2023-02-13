@@ -16,9 +16,11 @@
 
 package space.lingu.lamp.web.domain.review.service;
 
+import com.google.common.base.Preconditions;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
+import space.lingu.lamp.web.domain.review.common.NotReviewedException;
 import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
 
 import java.util.List;
@@ -27,9 +29,10 @@ import java.util.List;
  * @author RollW
  */
 public interface ReviewService {
-    ReviewInfo makeReview(long jobId, boolean passed, String reason);
+    ReviewInfo makeReview(long jobId, long operator, boolean passed, String reason);
 
-    default ReviewJob assignReviewer(Content content) {
+    default ReviewJob assignReviewer(Content content)
+            throws NotReviewedException {
         return assignReviewer(content, false);
     }
 
@@ -39,16 +42,30 @@ public interface ReviewService {
      * @param allowAutoReview if false, disable {@link ReviewerAllocateService#AUTO_REVIEWER
      *                        auto reviewer} and force to assign a staff reviewer.
      */
-    ReviewJob assignReviewer(Content content, boolean allowAutoReview);
+    default ReviewJob assignReviewer(Content content, boolean allowAutoReview)
+            throws NotReviewedException {
+        Preconditions.checkNotNull(content, "Reviewable cannot be null");
+        return assignReviewer(
+                content.getContentId(),
+                content.getContentType(),
+                allowAutoReview
+        );
+    }
 
     ReviewJob assignReviewer(String contentId, ContentType contentType,
-                             boolean allowAutoReview);
+                             boolean allowAutoReview) throws NotReviewedException;
 
-    List<ReviewJob> getReviewJobs(long reviewerId);
+    List<ReviewJob> getReviewJobs(long reviewerId, int page, int size);
 
-    List<ReviewJob> getUnfinishedReviewJobs(long reviewerId);
+    List<ReviewJob> getReviewJobs(int page, int size);
 
-    List<ReviewJob> getFinishedReviewJobs(long reviewerId);
+    List<ReviewJob> getUnfinishedReviewJobs(long reviewerId, int page, int size);
+
+    List<ReviewJob> getFinishedReviewJobs(long reviewerId, int page, int size);
+
+    List<ReviewJob> getRejectedReviewJobs(long reviewerId, int page, int size);
+
+    List<ReviewJob> getPassedReviewJobs(long reviewerId, int page, int size);
 
     ReviewInfo getReviewInfo(String reviewContentId, ContentType contentType);
 

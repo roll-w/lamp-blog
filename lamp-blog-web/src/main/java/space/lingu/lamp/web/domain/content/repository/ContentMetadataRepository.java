@@ -23,6 +23,8 @@ import space.lingu.lamp.web.domain.content.ContentMetadata;
 import space.lingu.lamp.web.domain.content.ContentStatus;
 import space.lingu.lamp.web.domain.content.ContentType;
 
+import java.util.List;
+
 /**
  * @author RollW
  */
@@ -46,7 +48,13 @@ public class ContentMetadataRepository {
         return contentMetadataDao.getById(contentId, contentType);
     }
 
-    public void updateStatus(String contentId, ContentType contentType, ContentStatus status) {
+    public List<ContentStatus> getStatusByIds(List<String> contentIds,
+                                              ContentType contentType) {
+        return contentMetadataDao.getStatusByIds(contentIds, contentType);
+    }
+
+    public void updateStatus(String contentId, ContentType contentType,
+                             ContentStatus status) {
         contentMetadataDao.updateStatus(contentId, contentType, status);
     }
 }

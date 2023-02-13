@@ -47,4 +47,7 @@ public abstract class SystemSettingDao {
 
     @Query("SELECT `key`, `value` FROM system_setting")
     public abstract List<SystemSetting> get();
+
+    @Query("SELECT `key`, `value` FROM system_setting ORDER BY `key` LIMIT {limit} OFFSET {offset}")
+    public abstract List<SystemSetting> get(int limit, int offset);
 }

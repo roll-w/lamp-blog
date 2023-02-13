@@ -16,41 +16,67 @@
 
 package space.lingu.lamp.web.domain.content.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.web.domain.content.BasicContentInfo;
+import space.lingu.lamp.web.domain.content.Content;
+import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
 import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
 import space.lingu.lamp.web.domain.content.ContentAccessService;
 import space.lingu.lamp.web.domain.content.ContentAccessor;
+import space.lingu.lamp.web.domain.content.ContentDeleteService;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentMetadata;
+import space.lingu.lamp.web.domain.content.ContentPublishService;
+import space.lingu.lamp.web.domain.content.ContentPublisher;
+import space.lingu.lamp.web.domain.content.UncreatedContent;
 import space.lingu.lamp.web.domain.content.ContentStatus;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
+import space.lingu.lamp.web.domain.content.event.ContentStatusEvent;
 import space.lingu.lamp.web.domain.content.permit.ContentPermitChecker;
 import space.lingu.lamp.web.domain.content.permit.ContentPermitResult;
 import space.lingu.lamp.web.domain.content.repository.ContentMetadataRepository;
+import space.lingu.lamp.web.domain.review.ReviewJob;
+import space.lingu.lamp.web.domain.review.common.NotReviewedException;
+import space.lingu.lamp.web.domain.review.service.ReviewService;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 /**
  * @author RollW
  */
 @Service
-public class ContentService implements ContentAccessService {
+public class ContentService implements ContentAccessService,
+        ContentPublishService, ContentDeleteService {
+    private static final Logger logger = LoggerFactory.getLogger(ContentService.class);
+
     private final Set<ContentAccessor<?>> contentAccessors;
+    private final Set<ContentPublisher> contentPublishers;
     private final ContentPermitChecker contentPermitChecker;
     private final ContentMetadataRepository contentMetadataRepository;
+    private final ReviewService reviewService;
+    private final ApplicationEventPublisher eventPublisher;
 
     public ContentService(Set<ContentAccessor<?>> contentAccessors,
+                          Set<ContentPublisher> contentPublishers,
                           ContentPermitChecker contentPermitChecker,
-                          ContentMetadataRepository contentMetadataRepository) {
+                          ContentMetadataRepository contentMetadataRepository,
+                          ReviewService reviewService,
+                          ApplicationEventPublisher eventPublisher) {
         this.contentAccessors = contentAccessors;
+        this.contentPublishers = contentPublishers;
         this.contentPermitChecker = contentPermitChecker;
         this.contentMetadataRepository = contentMetadataRepository;
+        this.reviewService = reviewService;
+        this.eventPublisher = eventPublisher;
     }
 
     /**
@@ -108,6 +134,21 @@ public class ContentService implements ContentAccessService {
         return metadata.getContentStatus();
     }
 
+    @Override
+    public List<ContentStatus> getContentStatuses(List<String> contentIds,
+                                                  ContentType contentType)
+            throws ContentException {
+
+        return contentMetadataRepository.getStatusByIds(contentIds, contentType);
+    }
+
+    @Override
+    public List<ContentStatus> getContentStatuses(List<? extends Content> contents)
+            throws ContentException {
+
+        return null;
+    }
+
     private ContentAccessor<?> getFirstAvailableOf(ContentType type) {
         return contentAccessors
                 .stream()
@@ -116,6 +157,16 @@ public class ContentService implements ContentAccessService {
                 .orElseThrow(() ->
                         new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND,
                                 "Unsupported content type of " + type));
+    }
+
+    private ContentPublisher getFirstAvailablePublisherOf(ContentType type) {
+        return contentPublishers
+                .stream()
+                .filter(accessor -> accessor.supports(type))
+                .findFirst()
+                .orElseThrow(() -> new ContentException(
+                        ContentErrorCode.ERROR_CONTENT_NOT_FOUND,
+                        "Unsupported content type of " + type));
     }
 
     private ErrorCode fromContentStatus(ContentStatus status) {
@@ -130,5 +181,101 @@ public class ContentService implements ContentAccessService {
 
     private static ErrorCode selectFirst(Collection<ErrorCode> errorCodes) {
         return errorCodes.iterator().next();
+    }
+
+    @Override
+    public ContentDetails publishContent(UncreatedContent uncreatedContent) throws ContentException {
+        long timestamp = System.currentTimeMillis();
+        ContentPublisher contentPublisher = getFirstAvailablePublisherOf(
+                uncreatedContent.getContentType());
+        ContentDetails contentDetails = contentPublisher.publish(
+                uncreatedContent,
+                timestamp
+        );
+        ContentMetadata contentMetadata = ContentMetadata.builder()
+                .setContentId(contentDetails.getContentId())
+                .setContentType(contentDetails.getContentType())
+                .setUserId(contentDetails.getUserId())
+                .setContentStatus(ContentStatus.REVIEWING)
+                .setContentAccessAuthType(ContentAccessAuthType.PUBLIC)
+                .build();
+        contentMetadataRepository.insert(contentMetadata);
+        ContentStatusEvent<?> event = new ContentStatusEvent<>(
+                contentDetails,
+                timestamp,
+                null,
+                ContentStatus.REVIEWING
+        );
+        eventPublisher.publishEvent(event);
+
+        try {
+            ReviewJob reviewJob = reviewService.assignReviewer(contentDetails);
+            logger.debug("Content review job assigned: {}.", reviewJob);
+        } catch (NotReviewedException e) {
+            logger.debug("Content review job already assigned: {}.", e.getReviewJob());
+        }
+        return contentDetails;
+    }
+
+    @Override
+    public void deleteContent(ContentType contentType, String contentId) {
+        tryUpdateContentStatus(contentId, contentType, ContentStatus.DELETED);
+    }
+
+    @Override
+    public void forbiddenContent(ContentType contentType, String contentId) {
+        tryUpdateContentStatus(contentId, contentType, ContentStatus.FORBIDDEN);
+    }
+
+    @Override
+    public void restoreContent(ContentType contentType, String contentId) {
+        ContentMetadata contentMetadata =
+                tryGetContentMetadata(contentId, contentType);
+        if (contentMetadata.getContentStatus() != ContentStatus.DELETED) {
+            throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_DELETED);
+        }
+    }
+
+    private void tryUpdateContentStatus(String contentId,
+                                        ContentType contentType,
+                                        ContentStatus newStatus) {
+        ContentMetadata contentMetadata =
+                tryGetContentMetadata(contentId, contentType);
+        tryUpdateContentStatus(contentMetadata, newStatus);
+    }
+
+    private void tryUpdateContentStatus(ContentMetadata contentMetadata,
+                                        ContentStatus newStatus) {
+        long timestamp = System.currentTimeMillis();
+        if (contentMetadata.getContentStatus() == newStatus) {
+            return;
+        }
+        contentMetadataRepository.updateStatus(
+                contentMetadata.getContentId(),
+                contentMetadata.getContentType(),
+                newStatus
+        );
+        BasicContentInfo contentInfo = new BasicContentInfo(
+                contentMetadata.getUserId(),
+                contentMetadata.getContentId(),
+                contentMetadata.getContentType()
+        );
+        ContentStatusEvent<?> event = new ContentStatusEvent<>(
+                contentInfo,
+                timestamp,
+                contentMetadata.getContentStatus(),
+                newStatus
+        );
+        eventPublisher.publishEvent(event);
+    }
+
+    private ContentMetadata tryGetContentMetadata(String contentId,
+                                                  ContentType contentType) {
+        ContentMetadata contentMetadata =
+                contentMetadataRepository.getById(contentId, contentType);
+        if (contentMetadata == null) {
+            throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
+        }
+        return contentMetadata;
     }
 }

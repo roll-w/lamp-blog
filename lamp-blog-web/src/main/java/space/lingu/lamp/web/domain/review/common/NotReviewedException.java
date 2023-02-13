@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.event;
+package space.lingu.lamp.web.domain.review.common;
 
-import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.content.ContentType;
-
-import java.util.List;
+import space.lingu.lamp.web.domain.review.ReviewJob;
 
 /**
  * @author RollW
  */
-public interface ReviewStatusMarker {
-    void markAsReviewed(ContentType reviewType, String contentId);
+public class NotReviewedException extends ReviewException {
+    private final ReviewJob reviewJob;
 
-    void markAsRejected(ContentType contentType, String contentId, String reason);
+    public NotReviewedException(ReviewJob reviewJob) {
+        super(ReviewErrorCode.ERROR_NOT_REVIEWED);
+        this.reviewJob = reviewJob;
+    }
 
-    @NonNull
-    List<ContentType> getSupportedReviewTypes();
+    public ReviewJob getReviewJob() {
+        return reviewJob;
+    }
 }
