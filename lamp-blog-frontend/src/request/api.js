@@ -27,6 +27,20 @@ const emailLogin = `${prefix}/user/login/email`;
 const logout = `${prefix}/user/logout`;
 const register = `${prefix}/user/register`;
 
+const userInfo = (userId, admin) => {
+    return `${admin ? adminPrefix : prefix}/user/${userId}`;
+}
+
+const allReviews = `${adminPrefix}/reviews`;
+const currentReviews = `${prefix}/reviews`;
+
+const statusReviews = (userId, admin) =>
+    `${admin ? adminPrefix : prefix}/${userId}/reviews`;
+const reviewContent = (jobId, admin) =>
+    `${admin ? adminPrefix : prefix}/review/${jobId}/content`;
+const reviewResource = (jobId, admin) =>
+    `${admin ? adminPrefix : prefix}/review/${jobId}`;
+
 const tokenRefresh = `${prefix}/auth/token/r`;
 
 const articleDetails = (userId, articleId, admin) => {
@@ -48,10 +62,18 @@ export default {
     logout,
     register,
     tokenRefresh,
+    userInfo,
+
     articleCreate,
     articleDetails,
 
     userList,
+
+    allReviews,
+    currentReviews,
+    statusReviews,
+    reviewContent,
+    reviewResource,
     systemErrorLog,
     systemSettings,
 }

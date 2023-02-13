@@ -31,7 +31,7 @@
                @keydown.enter.prevent/>
     </n-form-item>
     <n-form-item label="邮箱" path="email">
-      <n-input :input-props="{ type: 'email' }" v-model:value="formValue.email" type="text" placeholder="请输入邮箱"
+      <n-input v-model:value="formValue.email" :input-props="{ type: 'email' }" placeholder="请输入邮箱" type="text"
                @keydown.enter.prevent/>
     </n-form-item>
     <n-form-item label="密码" path="password">
@@ -67,7 +67,7 @@ import {useRouter} from "vue-router";
 import axios from "axios";
 import api from "@/request/api";
 import {useMessage} from "naive-ui";
-import {registerTip} from "@/router";
+import {login, registerTip} from "@/router";
 
 const router = useRouter();
 const message = useMessage()
@@ -109,17 +109,18 @@ const formRules = ref({
       required: true,
       message: "请再次输入密码",
       trigger: ["input"]
+    },
+    {
+      validator(rule, value) {
+        return value === formValue.value.password;
+      },
+      message: "两次输入密码不一致",
+      trigger: ["input"]
     }
   ],
   agree: [
     {
       required: true,
-      validator(rule, value) {
-        if (!value) {
-          return new Error("请阅读并同意用户协议")
-        }
-        return true
-      },
       message: "请阅读并同意用户协议",
       trigger: ["input"]
     }
@@ -149,7 +150,7 @@ const onRegisterClick = () => {
 
 const handleToLogin = () => {
   router.push({
-    name: "login-page"
+    name: login
   })
 };
 
@@ -161,6 +162,7 @@ const onResetClick = () => {
     confirmPassword: null,
     agree: false
   };
+  registerForm.value?.restoreValidation()
 };
 
 </script>

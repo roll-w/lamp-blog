@@ -18,10 +18,13 @@
 import {RouterView} from 'vue-router'
 import BlogNavBar from "@/components/BlogNavBar.vue";
 import {tokenKey, userKey, useUserStore} from "@/stores/user";
-import router, {index, page404} from "@/router";
+import router from "@/router";
 import {ref} from "vue";
 import {darkTheme, zhCN, enUS, lightTheme} from "naive-ui";
 import {useSiteStore} from "@/stores/site";
+
+import katex from 'katex'
+import 'katex/dist/katex.css'
 
 // highlight.js
 import hljs from 'highlight.js/lib/core'
@@ -124,6 +127,13 @@ const themeOverrides = {
     "errorColorPressed": "#AB1F39FF",
     "errorColorSuppl": "#E85364FF",
     "fontFamily": `'Muli', '思源黑体', 'Source Han Sans',  -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen-Sans, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif`,
+    "fontSize": "16px",
+    "fontSizeMini": "14px",
+    "fontSizeTiny": "14px",
+    "fontSizeSmall": "16px",
+    "fontSizeMedium": "16px",
+    "fontSizeLarge": "17px",
+    "fontSizeHuge": "18px",
   },
 }
 
@@ -186,7 +196,8 @@ siteStore.$subscribe((mutation, state) => {
 </script>
 
 <template>
-  <n-config-provider :hljs="hljs" :locale="locale.locale" :theme="dark" :theme-overrides="themeOverrides" class="h-100">
+  <n-config-provider :hljs="hljs" :locale="locale.locale" :katex="katex"
+                     :theme="dark" :theme-overrides="themeOverrides" class="h-100">
     <n-loading-bar-provider>
       <n-message-provider>
         <n-notification-provider :max="5">

@@ -14,7 +14,16 @@
  * limitations under the License.
  */
 
-import {admin, adminUsers, index, systemLog, systemSettings} from "@/router";
+import {
+    admin,
+    adminReviews,
+    adminUsers,
+    index,
+    reviewerReviews,
+    reviewsQueue,
+    systemLog,
+    systemSettings
+} from "@/router";
 import {h} from "vue";
 import {RouterLink} from "vue-router";
 
@@ -84,12 +93,20 @@ const menus = [
         key: menuReview,
         children: [
             {
-                name: "审核列表",
-                key: "audit-management-list"
+                name: "管理审核列表",
+                key: adminReviews,
+                routerLink: adminReviews
             },
             {
+                name: "审核列表",
+                key: reviewerReviews,
+                routerLink: reviewerReviews
+            },
+
+            {
                 name: "审核任务",
-                key: "audit-management-task"
+                key: reviewsQueue,
+                routerLink: reviewsQueue
             }
         ]
     },

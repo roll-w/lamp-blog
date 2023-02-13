@@ -31,8 +31,6 @@
           </n-dropdown>
         </div>
         </n-space>
-
-
       </div>
     </div>
   </n-layout-header>
@@ -40,12 +38,13 @@
 
 
 <script setup>
-import {useRouter} from "vue-router";
+import {RouterLink, useRouter} from "vue-router";
 import {useUserStore} from "@/stores/user";
 import {h, ref} from "vue";
 import {NAvatar, NText} from "naive-ui";
 import LampLogo from "@/components/LampLogo.vue";
 import {useSiteStore} from "@/stores/site";
+import {admin, index, login, userPage} from "@/router";
 
 const router = useRouter();
 
@@ -65,12 +64,27 @@ const userOptions = [
     key: "article",
   },
   {
-    label: "个人中心",
+    label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: userPage,
+            params: {
+              id: userStore.user.id
+            }
+          }
+        },
+        {default: () => "个人主页"}
+    ),
     key: "center",
   },
   {
     key: 'header-divider',
     type: 'divider'
+  },
+  {
+    label: "个人设置",
+    key: "settings",
   },
   {
     label: "退出",
@@ -80,7 +94,22 @@ const userOptions = [
 
 const adminOptions = [
   {
-    label: "个人中心",
+    label: `${userStore.user.username}`,
+    key: "username",
+  },
+  {
+    label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: userPage,
+            params: {
+              id: userStore.user.id
+            }
+          }
+        },
+        {default: () => "个人主页"}
+    ),
     key: "center",
   },
   {
@@ -88,12 +117,24 @@ const adminOptions = [
     key: "article",
   },
   {
-    label: "系统管理",
+    label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: admin
+          }
+        },
+        {default: () => "系统管理"}
+    ),
     key: "system",
   },
   {
     key: 'header-divider',
     type: 'divider'
+  },
+  {
+    label: "个人设置",
+    key: "settings",
   },
   {
     label: "退出",
@@ -122,13 +163,13 @@ router.afterEach(() => {
 
 const handleLogoClick = () => {
   router.push({
-    name: "index"
+    name: index
   });
 };
 
 const handleLoginClick = () => {
   router.push({
-    name: "login-page"
+    name: login
   });
 };
 
@@ -138,11 +179,6 @@ const handleSelect = (key) => {
       userStore.logout();
       router.push({
         name: "index"
-      })
-      break;
-    case "system":
-      router.push({
-        name: "admin-index"
       })
       break;
   }

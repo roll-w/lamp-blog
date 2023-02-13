@@ -62,6 +62,7 @@ import api from "@/request/api";
 import {useMessage} from "naive-ui";
 import {useRouter} from "vue-router";
 import {useUserStore} from "@/stores/user";
+import {register} from "@/router";
 
 const userStore = useUserStore()
 const message = useMessage()
@@ -134,11 +135,12 @@ const onResetClick = () => {
     token: null,
     rememberMe: false
   }
+  loginForm.value?.restoreValidation()
 }
 
 const handleToRegister = () => {
   router.push({
-    name: "register-page"
+    name: register
   })
 }
 

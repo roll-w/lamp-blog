@@ -23,8 +23,13 @@ export const login = "login-page"
 export const register = "register-page"
 export const registerActivate = "register-activate"
 export const registerTip = "register-tip"
+export const userPage = "user-page"
+export const articleEditorPage = "article-page"
 export const admin = "admin-index"
 export const adminUsers = "admin-user-list"
+export const adminReviews = "admin-review-list"
+export const reviewsQueue = "admin-review-queue"
+export const reviewerReviews = "admin-reviewer-review-list"
 export const systemLog = "admin-system-log"
 export const systemSettings = "admin-system-settings"
 export const page404 = "404"
@@ -47,7 +52,7 @@ const adminRoutes = [
             {
                 path: '/admin/user',
                 name: adminUsers,
-                component: () => import('@/views/admin/UsersList.vue'),
+                component: () => import('@/views/admin/user/UsersList.vue'),
                 meta: {
                     title: "用户管理 | Lamp Blog"
                 }
@@ -55,7 +60,7 @@ const adminRoutes = [
             {
                 path: '/admin/system/logs',
                 name: systemLog,
-                component: () => import('@/views/admin/SystemLog.vue'),
+                component: () => import('@/views/admin/system/SystemLog.vue'),
                 meta: {
                     title: "系统日志 | Lamp Blog"
                 }
@@ -79,7 +84,7 @@ const router = createRouter({
                     name: index,
                     component: () => import('@/views/UserIndex.vue'),
                     meta: {
-                        title: "首页 | Lamp Blog"
+                        title: "首页"
                     }
                 },
                 {
@@ -87,7 +92,7 @@ const router = createRouter({
                     name: login,
                     component: () => import('@/views/LoginView.vue'),
                     meta: {
-                        title: "登录 | Lamp Blog"
+                        title: "登录"
                     }
                 },
                 {
@@ -95,7 +100,7 @@ const router = createRouter({
                     name: register,
                     component: () => import('@/views/LoginView.vue'),
                     meta: {
-                        title: "注册 | Lamp Blog"
+                        title: "注册"
                     }
                 },
                 {
@@ -103,7 +108,7 @@ const router = createRouter({
                     name: registerActivate,
                     component: () => import('@/views/user/RegisterActivation.vue'),
                     meta: {
-                        title: "激活账户 | Lamp Blog"
+                        title: "激活账户"
                     }
                 },
                 {
@@ -111,11 +116,28 @@ const router = createRouter({
                     name: registerTip,
                     component: () => import('@/views/user/RegisterTips.vue'),
                     meta: {
-                        title: "注册 | Lamp Blog"
+                        title: "注册"
+                    }
+                },
+                {
+                    path: '/user/space/:id',
+                    name: userPage,
+                    component: () => import('@/views/user/UserPersonalPage.vue'),
+                    meta: {
+                        title: "用户主页"
                     }
                 },
                 {
                     path: '/article/:id',
+                },
+
+                {
+                    path: '/article/editor',
+                    name: articleEditorPage,
+                    component: () => import('@/views/article/ArticleEditor.vue'),
+                    meta: {
+                        title: "文章编辑"
+                    }
                 },
                 {
                     path: '/404',
@@ -143,31 +165,55 @@ const router = createRouter({
                     name: admin,
                     component: () => import('@/views/AdminIndex.vue'),
                     meta: {
-                        title: "系统管理 | Lamp Blog"
+                        title: "系统管理"
                     }
                 },
                 {
                     path: '/admin/user',
                     name: adminUsers,
-                    component: () => import('@/views/admin/UsersList.vue'),
+                    component: () => import('@/views/admin/user/UsersList.vue'),
                     meta: {
-                        title: "用户管理 | Lamp Blog"
+                        title: "用户管理"
+                    }
+                },
+                {
+                    path: '/admin/reviews/reviewer',
+                    name: reviewerReviews,
+                    component: () => import('@/views/admin/review/ReviewJobs.vue'),
+                    meta: {
+                        title: "审核记录"
+                    }
+                },
+                {
+                    path: '/admin/reviews/manage',
+                    name: adminReviews,
+                    component: () => import('@/views/admin/review/ReviewJobs.vue'),
+                    meta: {
+                        title: "管理审核记录"
+                    }
+                },
+                {
+                    path: '/admin/reviews/queue',
+                    name: reviewsQueue,
+                    component: () => import('@/views/admin/review/ReviewJobQueue.vue'),
+                    meta: {
+                        title: "审核队列"
                     }
                 },
                 {
                     path: '/admin/system/logs',
                     name: systemLog,
-                    component: () => import('@/views/admin/SystemLog.vue'),
+                    component: () => import('@/views/admin/system/SystemLog.vue'),
                     meta: {
-                        title: "系统日志 | Lamp Blog"
+                        title: "系统日志"
                     }
                 },
                 {
                     path: '/admin/system/settings',
                     name: systemSettings,
-                    component: () => import('@/views/admin/SystemSettings.vue'),
+                    component: () => import('@/views/admin/system/SystemSettings.vue'),
                     meta: {
-                        title: "系统设置 | Lamp Blog"
+                        title: "系统设置"
                     }
                 },
             ]
@@ -179,7 +225,7 @@ const router = createRouter({
 const defaultTitle = "Lamp Blog";
 
 router.beforeEach((to, from, next) => {
-    document.title = to.meta.title ? to.meta.title : defaultTitle
+    document.title = to.meta.title ? to.meta.title + " | 灯客_Lamp Blog" : defaultTitle
     next()
 })
 
