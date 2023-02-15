@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.system;
 
+import space.lingu.lamp.DataItem;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
@@ -29,7 +30,7 @@ import java.util.Locale;
  *
  * @author RollW
  */
-@DataTable(tableName = "message_resource")
+@DataTable(name = "message_resource")
 public record MessageResource(
         @DataColumn(name = "key")
         @PrimaryKey
@@ -41,5 +42,5 @@ public record MessageResource(
         @DataColumn(name = "locale")
         @PrimaryKey
         Locale locale
-) {
+) implements DataItem {
 }

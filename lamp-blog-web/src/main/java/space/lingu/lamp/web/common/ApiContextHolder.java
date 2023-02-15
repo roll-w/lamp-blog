@@ -23,7 +23,6 @@ import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
 
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * @author RollW
@@ -84,14 +83,20 @@ public final class ApiContextHolder {
         }
 
         public boolean equalsUserId(Long userId) {
-            return Objects.equals(id(), userId);
+            if (userId == null) {
+                return false;
+            }
+            if (userInfo == null) {
+                return false;
+            }
+            return userInfo.id() == userId;
         }
 
         /**
          * Allow access to resource, only if the user is admin and the access API is
          * the admin API or the resource is owned by the user.
          */
-        public boolean allowAccess(Long userId) {
+        public boolean allowAccessResource(Long userId) {
             return isAdminPass() || equalsUserId(userId);
         }
 

@@ -21,7 +21,9 @@ import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.IoErrorCode;
 import space.lingu.lamp.web.common.DataErrorCode;
 import space.lingu.lamp.web.common.WebCommonErrorCode;
+import space.lingu.lamp.web.domain.article.common.ArticleErrorCode;
 import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
+import space.lingu.lamp.web.domain.comment.common.CommentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;
 import space.lingu.lamp.web.domain.user.common.UserErrorCode;
@@ -52,8 +54,8 @@ public class KeyGenerator {
         List<Class<? extends ErrorCode>> errorCodeClasses = List.of(
                 CommonErrorCode.class, AuthErrorCode.class, IoErrorCode.class,
                 UserErrorCode.class, WebCommonErrorCode.class, DataErrorCode.class,
-                ContentErrorCode.class,
-                ReviewErrorCode.class
+                ContentErrorCode.class, ReviewErrorCode.class, ArticleErrorCode.class,
+                CommentErrorCode.class
         );
         String[] properties = new String[]{
                 "messages.properties",

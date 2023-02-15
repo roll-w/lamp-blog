@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.system;
 
+import space.lingu.lamp.DataItem;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
@@ -23,9 +24,9 @@ import space.lingu.light.PrimaryKey;
 /**
  * @author RollW
  */
-@DataTable(tableName = "system_setting")
+@DataTable(name = "system_setting")
 @SuppressWarnings("all")
-public class SystemSetting {
+public class SystemSetting implements DataItem {
     @DataColumn(name = "key")
     @PrimaryKey
     private final String key;

@@ -21,6 +21,8 @@ import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.SystemSettingDao;
 import space.lingu.lamp.web.system.SystemSetting;
 
+import java.util.List;
+
 /**
  * @author RollW
  */
@@ -55,5 +57,13 @@ public class SystemSettingRepository {
 
     public void delete(String key) {
         systemSettingDao.deleteByKey(key);
+    }
+
+    public List<SystemSetting> getAll() {
+        return systemSettingDao.get();
+    }
+
+    public List<SystemSetting> get(int offset, int limit) {
+        return systemSettingDao.get(limit, offset);
     }
 }

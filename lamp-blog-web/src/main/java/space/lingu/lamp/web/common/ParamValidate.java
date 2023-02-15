@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.common;
 
+import java.util.function.Supplier;
+
 /**
  * @author RollW
  */
@@ -43,6 +45,23 @@ public class ParamValidate {
         return chars;
     }
 
+    public static <T extends CharSequence, X extends Throwable> T notEmpty(
+            final T chars,
+            final Supplier<X> throwableSupplier) throws X {
+        if (chars == null || chars.isEmpty()) {
+            throw throwableSupplier.get();
+        }
+        return chars;
+    }
+
+    public static <X extends Throwable> String notEmpty(
+            final String string,
+            final Supplier<X> throwableSupplier) throws X {
+        if (string == null || string.isEmpty()) {
+            throw throwableSupplier.get();
+        }
+        return string;
+    }
 
     private ParamValidate() {
     }

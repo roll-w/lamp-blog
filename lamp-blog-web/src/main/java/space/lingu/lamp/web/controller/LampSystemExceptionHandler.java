@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import space.lingu.lamp.BusinessRuntimeException;
 import space.lingu.lamp.CommonErrorCode;
@@ -118,6 +119,15 @@ public class LampSystemExceptionHandler {
         );
     }
 
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public HttpResponseEntity<Void> handleMethodTypeMismatchException(
+            MethodArgumentTypeMismatchException e) {
+        return HttpResponseEntity.of(
+                WebCommonErrorCode.ERROR_PARAM_FAILED,
+                e.getMessage()
+        );
+    }
+
     @ExceptionHandler(LoginTokenException.class)
     public HttpResponseEntity<Void> handle(LoginTokenException e) {
         return HttpResponseEntity.of(
@@ -127,7 +137,7 @@ public class LampSystemExceptionHandler {
 
     @ExceptionHandler(BusinessRuntimeException.class)
     public HttpResponseEntity<Void> handle(BusinessRuntimeException e) {
-        logger.error("System runtime error: %s".formatted(e.toString()), e);
+        logger.trace("System runtime error: %s".formatted(e.toString()), e);
         return HttpResponseEntity.of(
                 errorCodeFinder.fromThrowable(e),
                 tryGetMessage(e)
@@ -247,7 +257,7 @@ public class LampSystemExceptionHandler {
         }
     }
 
-    @GetMapping("/api/admin/system/errors")
+    @GetMapping("/api/v1/admin/system/errors")
     public HttpResponseEntity<List<ErrorRecordVo>> getErrorRecords() {
         return HttpResponseEntity.success(
                 errorRecords.stream()
@@ -256,7 +266,7 @@ public class LampSystemExceptionHandler {
         );
     }
 
-    @GetMapping("/api/common/error/occur")
+    @GetMapping("/api/v1/common/error/occur")
     public void makeException() {
         throw new RuntimeException("test log");
     }

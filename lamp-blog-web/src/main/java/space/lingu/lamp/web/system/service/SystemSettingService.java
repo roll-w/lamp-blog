@@ -23,6 +23,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
+import space.lingu.lamp.data.page.Offset;
+import space.lingu.lamp.data.page.PageHelper;
 import space.lingu.lamp.event.EventCallback;
 import space.lingu.lamp.event.EventRegistry;
 import space.lingu.lamp.web.common.CacheNames;
@@ -31,6 +33,7 @@ import space.lingu.lamp.web.system.SystemSetting;
 import space.lingu.lamp.web.system.SettingLoader;
 import space.lingu.lamp.web.system.SettingProvider;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -100,6 +103,12 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         SystemSetting setting = systemSettingRepository.getSystemSetting(key);
         cache.put(key, setting);
         return tryGetValue(setting, defaultValue);
+    }
+
+    @Override
+    public List<SystemSetting> getSettings(int page, int size) {
+        Offset offset = PageHelper.offset(page, size);
+        return systemSettingRepository.get(offset.offset(), offset.limit());
     }
 
     private String tryGetValue(SystemSetting setting, String defaultValue) {

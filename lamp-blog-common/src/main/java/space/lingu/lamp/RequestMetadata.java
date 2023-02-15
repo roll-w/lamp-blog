@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.controller.article;
+package space.lingu.lamp;
 
 /**
  * @author RollW
  */
-public record ArticleRequest(
-        long userId,
-        String title,
-        String content
+public record RequestMetadata(
+        String ip,
+        String userAgent
 ) {
 }

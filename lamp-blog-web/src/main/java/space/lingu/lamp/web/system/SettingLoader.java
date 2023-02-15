@@ -19,6 +19,8 @@ package space.lingu.lamp.web.system;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 
+import java.util.List;
+
 /**
  * @author RollW
  */
@@ -34,4 +36,6 @@ public interface SettingLoader {
 
     @Nullable
     String getSettingValue(@NonNull String key, String defaultValue);
+
+    List<SystemSetting> getSettings(int page, int size);
 }

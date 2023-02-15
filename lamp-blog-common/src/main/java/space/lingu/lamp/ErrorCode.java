@@ -28,7 +28,7 @@ import java.util.Locale;
  *     <li>Success: {@code SUCCESS}</li>
  *     <li>Error: {@code ERROR_{Specify error name}}, like {@code ERROR_FILE_NOT_EXIST}.</li>
  * </ul>
- *
+ * <p>
  * Class naming format:
  *  {@code {Group}ErrorCode}, like {@code FileErrorCode}.
  * <p>

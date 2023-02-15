@@ -19,6 +19,8 @@ package space.lingu.lamp.web.system;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 
+import java.util.List;
+
 /**
  * @author RollW
  */
@@ -38,6 +40,9 @@ public interface SettingProvider extends SettingLoader {
     @Nullable
     @Override
     String getSettingValue(@NonNull String key, String defaultValue);
+
+    @Override
+    List<SystemSetting> getSettings(int page, int size);
 
     void setSetting(String key, String value);
 

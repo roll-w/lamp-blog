@@ -16,18 +16,16 @@
 
 package space.lingu.lamp.web.configuration;
 
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
-import space.lingu.lamp.event.EventCallback;
-import space.lingu.lamp.event.EventRegistry;
 import space.lingu.lamp.web.common.keys.MailConfigKeys;
-import space.lingu.lamp.web.system.repository.SystemSettingRepository;
-import space.lingu.lamp.web.system.SystemSetting;
+import space.lingu.lamp.web.system.SettingLoader;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -37,43 +35,44 @@ import java.util.Properties;
  * @author RollW
  */
 @Configuration
-public class MailConfiguration implements EventCallback<SystemSetting> {
-    private final SystemSettingRepository systemSettingRepository;
-    private final EventRegistry<SystemSetting, String> registry;
+public class MailConfiguration {
+    private final SettingLoader settingLoader;
 
-    public MailConfiguration(SystemSettingRepository systemSettingRepository,
-                             EventRegistry<SystemSetting, String> registry) {
-        this.systemSettingRepository = systemSettingRepository;
-        this.registry = registry;
+    public MailConfiguration(SettingLoader settingLoader) {
+        this.settingLoader = settingLoader;
     }
 
     @Bean
+    @Primary
     public MailProperties mailProperties() {
         MailProperties properties = new MailProperties();
         properties.setDefaultEncoding(StandardCharsets.UTF_8);
-        String host = systemSettingRepository.get(MailConfigKeys.KEY_SMTP_SERVER_HOST);
-        if (host == null) {
-            return properties;
-        }
+        setProperties(properties, settingLoader);
+        return properties;
+    }
+
+    public static void setProperties(MailProperties properties, SettingLoader settingLoader) {
         Map<String, String> conf = properties.getProperties();
         conf.put("mail.smtp.auth", "true");
-        conf.put("smtp.starttls.enable", "true");
-        conf.put("smtp.starttls.required", "true");
-        conf.put("smtp.ssl.enable", "true");
+        conf.put("mail.smtp.starttls.enable", "false");
+        conf.put("mail.smtp.starttls.required", "false");
+        conf.put("mail.smtp.ssl.enable", "false");
 
-        String port = systemSettingRepository.get(MailConfigKeys.KEY_SMTP_SERVER_PORT);
-        String username = systemSettingRepository.get(MailConfigKeys.KEY_MAIL_USERNAME);
-        String password = systemSettingRepository.get(MailConfigKeys.KEY_MAIL_PASSWORD);
+        String host = settingLoader.getSettingValue(MailConfigKeys.KEY_SMTP_SERVER_HOST);
+        String port = settingLoader.getSettingValue(MailConfigKeys.KEY_SMTP_SERVER_PORT);
+        String username = settingLoader.getSettingValue(MailConfigKeys.KEY_MAIL_USERNAME);
+        String password = settingLoader.getSettingValue(MailConfigKeys.KEY_MAIL_PASSWORD);
         properties.setHost(host);
-        properties.setPort(Integer.parseInt(port));
-        properties.setUsername(username);
+        if (Strings.isNullOrEmpty(port)) properties.setPort(25);
+        else properties.setPort(Integer.parseInt(port));
+        String senderName = chooseUsername(username, settingLoader);
+        properties.setUsername(senderName);
         properties.setPassword(password);
-        return properties;
     }
 
     // from springboot
     @Bean
-    public JavaMailSender javaMailSender(MailProperties mailProperties) {
+    public JavaMailSenderImpl javaMailSender(MailProperties mailProperties) {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         applyProperties(mailProperties, javaMailSender);
         return javaMailSender;
@@ -81,7 +80,7 @@ public class MailConfiguration implements EventCallback<SystemSetting> {
 
     private static final Logger logger = LoggerFactory.getLogger(MailConfiguration.class);
 
-    private void applyProperties(MailProperties properties, JavaMailSenderImpl sender) {
+    protected static void applyProperties(MailProperties properties, JavaMailSenderImpl sender) {
         logger.debug("Configure java mail sender, properties: {}", properties);
         sender.setHost(properties.getHost());
         if (properties.getPort() != null) {
@@ -98,14 +97,17 @@ public class MailConfiguration implements EventCallback<SystemSetting> {
         }
     }
 
-    private Properties asProperties(Map<String, String> source) {
+    private static Properties asProperties(Map<String, String> source) {
         Properties properties = new Properties();
         properties.putAll(source);
         return properties;
     }
 
-    @Override
-    public void onEvent(SystemSetting event) {
-        registry.register(this, MailConfigKeys.PREFIX);
+    private static String chooseUsername(String username, SettingLoader settingLoader) {
+        String sender = settingLoader.getSettingValue(MailConfigKeys.KEY_MAIL_SENDER_NAME);
+        if (Strings.isNullOrEmpty(sender)) {
+            return username;
+        }
+        return sender + " <" + username + ">";
     }
 }
