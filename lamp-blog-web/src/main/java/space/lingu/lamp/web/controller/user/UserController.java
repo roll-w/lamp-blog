@@ -61,7 +61,8 @@ public class UserController {
     }
 
     @GetMapping("/user/{userId}")
-    public HttpResponseEntity<UserCommonDetailsVo> getUserInfo(@PathVariable("userId") Long userId) {
+    public HttpResponseEntity<UserCommonDetailsVo> getUserInfo(
+            @PathVariable("userId") Long userId) {
         UserIdentity userIdentity = userSearchService.findUser(userId);
         UserPersonalData userPersonalData =
                 userPersonalDataService.getPersonalData(userIdentity);

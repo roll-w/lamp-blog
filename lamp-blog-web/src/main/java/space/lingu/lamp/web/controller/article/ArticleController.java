@@ -24,20 +24,22 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import space.lingu.Todo;
 import space.lingu.lamp.HttpResponseEntity;
-import space.lingu.lamp.Result;
 import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.controller.WithAdminApi;
-import space.lingu.lamp.web.domain.article.Article;
+import space.lingu.lamp.web.domain.article.dto.ArticleDetailsMetadata;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
-import space.lingu.lamp.web.domain.article.service.ArticleService;
+import space.lingu.lamp.web.domain.article.dto.ArticleRequest;
 import space.lingu.lamp.web.domain.article.vo.ArticleVo;
-import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
 import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
 import space.lingu.lamp.web.domain.content.ContentAccessService;
 import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentPublishService;
 import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.content.UncreatedContent;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
+
+import java.util.List;
 
 /**
  * @author RollW
@@ -45,13 +47,19 @@ import space.lingu.lamp.web.domain.user.dto.UserInfo;
 @WithAdminApi
 public class ArticleController {
     // TODO: article controller
-    private final ArticleService articleService;
+    private final ContentPublishService contentPublishService;
     private final ContentAccessService contentAccessService;
 
-    public ArticleController(ArticleService articleService,
+    public ArticleController(ContentPublishService contentPublishService,
                              ContentAccessService contentAccessService) {
-        this.articleService = articleService;
+        this.contentPublishService = contentPublishService;
         this.contentAccessService = contentAccessService;
+    }
+
+    @GetMapping("/{userId}/articles")
+    public HttpResponseEntity<List<ArticleVo>> getArticles(
+            @PathVariable String userId) {
+        return null;
     }
 
     @PostMapping("/article")
@@ -59,28 +67,35 @@ public class ArticleController {
             @RequestBody ArticleRequest articleRequest) {
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
         long userId = apiContext.id();
-        Result<ArticleInfo> articleInfoResult = articleService.publishArticle(
-                userId, articleRequest.title(), articleRequest.content()
+        UncreatedContent uncreatedContent = articleRequest.toUncreatedContent(
+                userId,
+                ArticleDetailsMetadata.EMPTY
         );
-        return HttpResponseEntity.of(articleInfoResult.toResponseBody());
+        ContentDetails articleDetails =
+                contentPublishService.publishContent(uncreatedContent);
+        ArticleInfo articleInfo = ArticleInfo.from(articleDetails);
+        return HttpResponseEntity.success(articleInfo);
     }
 
-    @PutMapping("/article/{articleId}")
+    @PutMapping("/{userId}/article/{articleId}")
     public HttpResponseEntity<ArticleInfo> updateArticle(
-            @RequestBody ArticleRequest articleRequest,
-            @PathVariable(name = "articleId") Long articleId) {
+            @PathVariable(name = "userId") Long userId,
+            @PathVariable(name = "articleId") Long articleId,
+            @RequestBody ArticleRequest articleRequest) {
         return HttpResponseEntity.success();
     }
 
 
-    @DeleteMapping("/article/{articleId}")
+    @DeleteMapping("/{userId}/article/{articleId}")
     public HttpResponseEntity<Void> deleteArticle(
+            @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {
         return HttpResponseEntity.success();
     }
 
-    @GetMapping("/article/{articleId}")
+    @GetMapping("/{userId}/article/{articleId}")
     public HttpResponseEntity<ArticleVo> getArticle(
+            @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
         UserInfo userInfo = apiContext.userInfo();
@@ -100,17 +115,13 @@ public class ArticleController {
         return HttpResponseEntity.success(ArticleVo.from(details));
     }
 
-    @GetMapping("/article/{articleId}/info")
+    @GetMapping("/{userId}/article/{articleId}/info")
     // TODO: replace with ArticleInfoVo.
     @Todo(todo = "replace with ArticleInfoVo.")
     public HttpResponseEntity<ArticleInfo> getArticleInfo(
+            @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {
-        Article article = articleService.getArticle(articleId);
-        ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
-        if (apiContext.isAdminPass()) {
-            return HttpResponseEntity.success(ArticleInfo.from(article));
-        }
-        return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+       return null;
     }
     // TODO: get article
 }
