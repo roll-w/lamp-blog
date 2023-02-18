@@ -59,15 +59,15 @@
 import {ref} from "vue";
 import axios from "axios";
 import api from "@/request/api";
-import {useMessage} from "naive-ui";
+import {useNotification} from "naive-ui";
 import {useRouter} from "vue-router";
 import {useUserStore} from "@/stores/user";
-import {register} from "@/router";
+import {index, register} from "@/router";
 
 const userStore = useUserStore()
-const message = useMessage()
 const loginForm = ref(null)
 const router = useRouter()
+const notification = useNotification()
 
 const formValue = ref({
   identity: null,
@@ -121,10 +121,18 @@ const onLoginClick = (e) => {
       }
       userStore.loginUser(user, recvData.token, formValue.value.rememberMe)
       router.push({
-        name: "index"
+        name: index
       })
     }).catch(err => {
-      message.error(err.response.data.tip)
+      console.log(err)
+      const msg = err.response.data.tip
+      notification.error({
+        title: "请求错误",
+        content: msg,
+        meta: "登录错误",
+        duration: 3000,
+        keepAliveOnHover: true
+      })
     })
   })
 }
@@ -143,5 +151,4 @@ const handleToRegister = () => {
     name: register
   })
 }
-
 </script>

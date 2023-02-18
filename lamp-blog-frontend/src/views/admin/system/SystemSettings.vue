@@ -16,17 +16,23 @@
 
 <template>
   <div class="p-5 ">
-    <AdminBreadcrumb :location="systemSettings" :menu="menuSystem" />
+    <AdminBreadcrumb :location="systemSettings" :menu="menuSystem"/>
     <n-h1>系统设置</n-h1>
-    <n-text>
+    <n-text class="mt-5">
       系统内部设置调整。
     </n-text>
     <n-data-table
         :bordered="false"
         :columns="columns"
         :data="data"
-        :pagination="pagination"
+        :pagination="false"
+        class="mt-5"
     />
+    <div class="flex items-start justify-start mt-5">
+      <div>
+        <n-pagination v-model:page="page" :page-count="1"/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -40,13 +46,9 @@ import axios from "axios";
 import api from "@/request/api";
 import {systemSettings} from "@/router";
 import {menuSystem} from "@/views/menu";
+import {createConfig} from "@/request/axios_config";
 
 const notification = useNotification()
-const userStorage = useUserStore()
-
-const pagination = {
-  pageSize: 10
-}
 
 const columns = [
   {
@@ -89,11 +91,11 @@ const columns = [
 
 const data = ref([])
 
-axios.get(api.systemSettings, {
-  headers: {
-    "Authorization": userStorage.getToken
-  }
-}).then((res) => {
+const page = ref(1)
+
+const config = createConfig()
+
+axios.get(api.systemSettings, config).then((res) => {
   data.value = res.data.data
   console.log(res);
 }).catch((err) => {

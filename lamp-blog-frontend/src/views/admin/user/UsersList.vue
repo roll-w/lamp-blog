@@ -16,14 +16,25 @@
 
 <template>
   <div class="p-5">
-    <AdminBreadcrumb :location="adminUsers" :menu="menuUsers" />
-    <n-h1>用户列表</n-h1>
+    <AdminBreadcrumb :location="adminUsers" :menu="menuUsers"/>
+    <div class="flex items-baseline mt-5">
+      <n-h1>用户列表</n-h1>
+      <div class="flex flex-grow justify-end">
+        <n-button >创建新用户</n-button>
+      </div>
+    </div>
     <n-data-table
         :bordered="false"
         :columns="columns"
         :data="data"
         :pagination="false"
+        class="mt-5"
     />
+    <div class="flex items-start justify-start mt-5">
+      <div>
+        <n-pagination v-model:page="page" :page-count="1"/>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -39,6 +50,8 @@ import {adminUsers} from "@/router";
 import {menuUsers} from "@/views/menu";
 
 const userStore = useUserStore()
+
+const page = ref(1)
 
 const columns = [
   {

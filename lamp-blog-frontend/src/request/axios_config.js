@@ -19,14 +19,17 @@ import {useUserStore} from "@/stores/user";
 
 axios.defaults.withCredentials = true
 
-export function createConfig() {
+export function createConfig(isJson = false) {
     const userStore = useUserStore()
-    if (!userStore.isLogin) {
-        return {}
-    }
-    return {
+    const config = {
         headers: {
-            "Authorization":  userStore.token
         }
     }
+    if (userStore.isLogin) {
+        config.headers["Authorization"] = userStore.token
+    }
+    if (isJson) {
+        config.headers["Content-Type"] = "application/json"
+    }
+    return config
 }

@@ -16,16 +16,17 @@
 
 <template>
   <div class="p-5 ">
-    <AdminBreadcrumb :location="systemLog" :menu="menuSystem" />
+    <AdminBreadcrumb :location="systemLog" :menu="menuSystem"/>
     <n-h1>系统日志</n-h1>
-    <n-text>
+    <n-text class="mt-5">
       系统运行错误日志，包含最近500条。
     </n-text>
     <n-data-table
         :bordered="false"
         :columns="columns"
         :data="data"
-        :pagination="pagination"
+        :pagination="{pageSize: 20}"
+        class="mt-5"
     />
 
     <n-modal v-model:show="showModal" preset="card" size="huge"
@@ -47,9 +48,13 @@
           <n-text>时间</n-text>
           <n-text>{{ stacktraceInfo.time }}</n-text>
         </n-space>
-        <n-space>
+        <n-space vertical>
           <n-text>堆栈信息</n-text>
-          <n-code language="text">{{ stacktraceInfo.stacktrace }}</n-code>
+          <n-card embedded>
+            <n-code :code="stacktraceInfo.stacktrace"
+                    language="java"
+                    show-line-numbers/>
+          </n-card>
         </n-space>
       </n-space>
     </n-modal>
@@ -85,7 +90,8 @@ const columns = [
   },
   {
     title: "错误信息",
-    key: "message"
+    key: "message",
+    ellipsis: true
   },
   {
     title: "错误类",

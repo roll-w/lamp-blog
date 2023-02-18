@@ -25,6 +25,7 @@ export const registerActivate = "register-activate"
 export const registerTip = "register-tip"
 export const userPage = "user-page"
 export const articleEditorPage = "article-page"
+export const articleView = "article-details"
 export const admin = "admin-index"
 export const adminUsers = "admin-user-list"
 export const adminReviews = "admin-review-list"
@@ -127,12 +128,18 @@ const router = createRouter({
                         title: "用户主页"
                     }
                 },
+
                 {
-                    path: '/article/:id',
+                    path: '/:user/article/:id',
+                    name: articleView,
+                    component: () => import('@/views/article/ArticleViewer.vue'),
+                    meta: {
+                        title: "文章查看"
+                    }
                 },
 
                 {
-                    path: '/article/editor',
+                    path: '/article/editor/:id',
                     name: articleEditorPage,
                     component: () => import('@/views/article/ArticleEditor.vue'),
                     meta: {
@@ -201,6 +208,12 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/admin/reviews/:id',
+                    meta: {
+                        title: "审核详情"
+                    }
+                },
+                {
                     path: '/admin/system/logs',
                     name: systemLog,
                     component: () => import('@/views/admin/system/SystemLog.vue'),
@@ -224,8 +237,12 @@ const router = createRouter({
 
 const defaultTitle = "Lamp Blog";
 
+export const getTitleSuffix = () => {
+    return " | 灯客 - Lamp Blog"
+}
+
 router.beforeEach((to, from, next) => {
-    document.title = to.meta.title ? to.meta.title + " | 灯客_Lamp Blog" : defaultTitle
+    document.title = to.meta.title ? to.meta.title + getTitleSuffix() : defaultTitle
     next()
 })
 

@@ -44,7 +44,7 @@ import {h, ref} from "vue";
 import {NAvatar, NText} from "naive-ui";
 import LampLogo from "@/components/LampLogo.vue";
 import {useSiteStore} from "@/stores/site";
-import {admin, index, login, userPage} from "@/router";
+import {admin, articleEditorPage, index, login, userPage} from "@/router";
 
 const router = useRouter();
 
@@ -60,10 +60,6 @@ const userOptions = [
     key: "username",
   },
   {
-    label: "文章管理",
-    key: "article",
-  },
-  {
     label: () => h(
         RouterLink,
         {
@@ -76,7 +72,24 @@ const userOptions = [
         },
         {default: () => "个人主页"}
     ),
-    key: "center",
+    key: "space",
+  },
+  {
+    label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: articleEditorPage,
+          }
+        },
+        {default: () => "发布文章"}
+    ),
+    // TODO: temporary option
+    key: "publish",
+  },
+  {
+    label: "文章管理",
+    key: "article",
   },
   {
     key: 'header-divider',
@@ -110,7 +123,20 @@ const adminOptions = [
         },
         {default: () => "个人主页"}
     ),
-    key: "center",
+    key: "space",
+  },
+  {
+    label: () => h(
+        RouterLink,
+        {
+          to: {
+            name: articleEditorPage,
+          }
+        },
+        {default: () => "发布文章"}
+    ),
+    // TODO: temporary option
+    key: "publish",
   },
   {
     label: "文章管理",

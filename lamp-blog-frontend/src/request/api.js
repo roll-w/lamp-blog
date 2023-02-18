@@ -27,19 +27,21 @@ const emailLogin = `${prefix}/user/login/email`;
 const logout = `${prefix}/user/logout`;
 const register = `${prefix}/user/register`;
 
-const userInfo = (userId, admin) => {
+const userInfo = (userId, admin = false) => {
     return `${admin ? adminPrefix : prefix}/user/${userId}`;
 }
 
 const allReviews = `${adminPrefix}/reviews`;
+const reviews = `${adminPrefix}/reviews`;
 const currentReviews = `${prefix}/reviews`;
 
-const statusReviews = (userId, admin) =>
+const statusReviews = (userId, admin = false) =>
     `${admin ? adminPrefix : prefix}/${userId}/reviews`;
-const reviewContent = (jobId, admin) =>
+const reviewContent = (jobId, admin = false) =>
     `${admin ? adminPrefix : prefix}/review/${jobId}/content`;
-const reviewResource = (jobId, admin) =>
+const reviewResource = (jobId, admin = false) =>
     `${admin ? adminPrefix : prefix}/review/${jobId}`;
+
 
 const tokenRefresh = `${prefix}/auth/token/r`;
 
@@ -47,9 +49,12 @@ const articleDetails = (userId, articleId, admin) => {
     return `${admin ? adminPrefix : prefix}/${userId}/article/${articleId}`;
 }
 
-const articleCreate = (userId, admin) => {
+const articleCreate2 = (userId, admin) => {
     return `${admin ? adminPrefix : prefix}/${userId}/article`;
 }
+
+const articleCreate = `${prefix}/article`;
+
 
 const userList = `${adminPrefix}/users`;
 
@@ -76,4 +81,5 @@ export default {
     reviewResource,
     systemErrorLog,
     systemSettings,
+
 }
