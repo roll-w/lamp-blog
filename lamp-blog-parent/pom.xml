@@ -39,7 +39,7 @@
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <light.version>0.4.3</light.version>
+        <light.version>0.4.5</light.version>
         <fiesta.version>0.2.1</fiesta.version>
         <guava.version>31.1-jre</guava.version>
         <hikari.version>5.0.1</hikari.version>
