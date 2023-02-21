@@ -30,8 +30,8 @@ export default {
   setup(props) {
     const render = new NaiveUIRenderer()
     const val = ref('')
-    watch(() => props.value, () => {
-      marked(props.value.replace(/\\/g, '\\\\'), {
+    const renderMarkdown = (value) => {
+      marked(value.replace(/\\/g, '\\\\'), {
         renderer: render,
         gfm: true,
         pedantic: false,
@@ -45,7 +45,13 @@ export default {
         if (err) throw err
         val.value = content
       })
+    }
+
+    watch(() => props.value, () => {
+      renderMarkdown(props.value)
     })
+
+    renderMarkdown(props.value)
     return () => h(compile(val.value))
   }
 }
