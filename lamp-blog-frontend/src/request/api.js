@@ -49,6 +49,10 @@ const articleDetails = (userId, articleId, admin) => {
     return `${admin ? adminPrefix : prefix}/${userId}/article/${articleId}`;
 }
 
+const articles = (userId, admin) => {
+    return `${admin ? adminPrefix : prefix}/${userId}/articles`;
+}
+
 const articleCreate2 = (userId, admin) => {
     return `${admin ? adminPrefix : prefix}/${userId}/article`;
 }
@@ -71,7 +75,7 @@ export default {
 
     articleCreate,
     articleDetails,
-
+    articles,
     userList,
 
     allReviews,

@@ -25,7 +25,9 @@ export const registerActivate = "register-activate"
 export const registerTip = "register-tip"
 export const userPage = "user-page"
 export const articleEditorPage = "article-page"
+export const articleEditorPageUpdate = "article-page-update"
 export const articleView = "article-details"
+export const articleList = "article-list"
 export const admin = "admin-index"
 export const adminUsers = "admin-user-list"
 export const adminReviews = "admin-review-list"
@@ -121,11 +123,19 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/user/space/:id',
+                    path: '/user/:userId/space',
                     name: userPage,
                     component: () => import('@/views/user/UserPersonalPage.vue'),
                     meta: {
                         title: "用户主页"
+                    }
+                },
+                {
+                    path: '/user/:userId/manage/articles',
+                    name: articleList,
+                    component: () => import('@/views/article/ArticleList.vue'),
+                    meta: {
+                        title: "文章管理"
                     }
                 },
 
@@ -139,8 +149,16 @@ const router = createRouter({
                 },
 
                 {
-                    path: '/article/editor/:id',
+                    path: '/article/editor',
                     name: articleEditorPage,
+                    component: () => import('@/views/article/ArticleEditor.vue'),
+                    meta: {
+                        title: "文章编辑"
+                    }
+                },
+                {
+                    path: '/article/editor/:id',
+                    name: articleEditorPageUpdate,
                     component: () => import('@/views/article/ArticleEditor.vue'),
                     meta: {
                         title: "文章编辑"
