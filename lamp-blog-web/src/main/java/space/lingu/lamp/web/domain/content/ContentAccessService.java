@@ -46,6 +46,9 @@ public interface ContentAccessService {
     ContentDetails getContentDetails(String contentId, ContentType contentType)
             throws ContentException;
 
+    ContentMetadataDetails<?> getContentMetadataDetails(String contentId, ContentType contentType)
+            throws ContentException;
+
     /**
      * Get the status of the content.
      *

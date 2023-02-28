@@ -16,43 +16,13 @@
 
 package space.lingu.lamp.web.domain.content;
 
-import space.lingu.NonNull;
+import java.io.Serializable;
 
 /**
- * Basic infos of content.
- *
  * @author RollW
  */
-public interface Content extends ContentIdentity {
-    int INVALID_VERSION = -1;
-
-    /**
-     * Get the id of the user who created the content.
-     *
-     * @return user id
-     */
-    long getUserId();
-
-    /**
-     * Get the id of the content.
-     *
-     * @return content id
-     */
-    @NonNull
-    @Override
+public interface ContentIdentity extends Serializable {
     String getContentId();
 
-    /**
-     * Get the type of the content.
-     *
-     * @return content type
-     */
-    @NonNull
-    @Override
     ContentType getContentType();
-
-    // TODO: support history version
-    default int getVersion() {
-        return INVALID_VERSION;
-    }
 }

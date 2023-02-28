@@ -22,12 +22,13 @@ import space.lingu.lamp.web.domain.content.common.ContentException;
 /**
  * @author RollW
  */
-public interface ContentPublisher {
+public interface ContentPublisher extends ContentProvider {
     /**
      * @throws ContentException if the content create failed.
      */
     ContentDetails publish(@NonNull UncreatedContent uncreatedContent,
                            long timestamp) throws ContentException;
 
+    @Override
     boolean supports(ContentType contentType);
 }

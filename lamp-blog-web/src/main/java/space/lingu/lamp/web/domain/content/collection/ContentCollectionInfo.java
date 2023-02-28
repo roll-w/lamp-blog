@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.content;
+package space.lingu.lamp.web.domain.content.collection;
 
 /**
  * @author RollW
  */
-public interface ContentAccessor extends ContentProvider {
-    ContentDetails getContent(String contentId, ContentType contentType);
-
-    @Override
-    boolean supports(ContentType contentType);
+public record ContentCollectionInfo(
+        ContentCollectionType type,
+        String id
+) {
 }

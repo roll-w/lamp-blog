@@ -19,10 +19,7 @@ package space.lingu.lamp.web.database.dao;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
-import space.lingu.light.Insert;
-import space.lingu.light.OnConflictStrategy;
 import space.lingu.light.Query;
-import space.lingu.light.Update;
 
 import java.util.List;
 
@@ -30,30 +27,25 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public abstract class CommentDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(Comment... comments);
-
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(List<Comment> comments);
-
-    @Update(onConflict = OnConflictStrategy.ABORT)
-    public abstract void update(Comment... comments);
-
-    @Update(onConflict = OnConflictStrategy.ABORT)
-    public abstract void update(List<Comment> comments);
-
-    @Delete
-    protected abstract void delete(Comment Comment);
-
-    @Delete
-    protected abstract void delete(List<Comment> comments);
-
+public abstract class CommentDao implements BaseDao<Comment> {
     @Delete("DELETE FROM comment")
     protected abstract void clearTable();
 
     @Query("SELECT * FROM comment")
     public abstract List<Comment> get();
+
+    @Query("SELECT id, user_id, comment_on_id, parent_id, content, create_time, type, status " +
+            "FROM comment ORDER BY id " +
+            "LIMIT {limit} OFFSET {offset}")
+    public abstract List<Comment> get(int offset, int limit);
+
+    @Query("SELECT * FROM comment WHERE id = {id}")
+    public abstract Comment getById(long id);
+
+    @Query("SELECT * FROM comment WHERE comment_on_id = {contentId}")
+    public abstract List<Comment> getCommentsOn(String contentId);
+
+
 }
 
 

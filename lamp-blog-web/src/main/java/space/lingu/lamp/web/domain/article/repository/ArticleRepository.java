@@ -21,6 +21,8 @@ import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ArticleDao;
 import space.lingu.lamp.web.domain.article.Article;
 
+import java.util.List;
+
 /**
  * @author RollW
  */
@@ -52,5 +54,16 @@ public class ArticleRepository {
 
     public boolean isArticleExist(long articleId) {
         return articleDao.getUserIdByArticleId(articleId) != null;
+    }
+
+    public List<Article> getArticles(int offset,
+                                     int limit) {
+        return articleDao.get(limit, offset);
+    }
+
+    public List<Article> getArticlesByUser(long userId,
+                                     int offset,
+                                     int limit) {
+        return articleDao.getByUserId(userId, limit, offset);
     }
 }

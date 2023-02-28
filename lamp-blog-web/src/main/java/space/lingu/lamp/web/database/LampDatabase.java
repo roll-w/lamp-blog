@@ -29,6 +29,7 @@ import space.lingu.lamp.web.database.dao.UserPersonalDataDao;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.lamp.web.domain.content.ContentMetadata;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionMetadata;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
@@ -51,7 +52,7 @@ import space.lingu.light.LightDatabase;
         Article.class,
         ReviewJob.class,
         Comment.class,
-        ContentMetadata.class,
+        ContentMetadata.class, ContentCollectionMetadata.class,
 })
 @DataConverters({LampConverter.class})
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "255")

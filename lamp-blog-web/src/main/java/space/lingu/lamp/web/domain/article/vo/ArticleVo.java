@@ -17,7 +17,9 @@
 package space.lingu.lamp.web.domain.article.vo;
 
 import space.lingu.lamp.web.domain.article.Article;
+import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
 
 /**
  * @author RollW
@@ -31,8 +33,37 @@ public record ArticleVo(
         long updateTime
         // TODO: add more fields
 ) {
+
+    public static ArticleVo from(ContentMetadataDetails<?> contentMetadataDetails) {
+        if (!(contentMetadataDetails.getContentDetails() instanceof Article article)) {
+            return null;
+        }
+        return new ArticleVo(
+                article.getId(),
+                article.getTitle(),
+                article.getContent(),
+                article.getUserId(),
+                article.getCreateTime(),
+                article.getUpdateTime()
+        );
+    }
+
     public static ArticleVo from(ContentDetails contentDetails) {
         if (!(contentDetails instanceof Article article)) {
+            return null;
+        }
+        return new ArticleVo(
+                article.getId(),
+                article.getTitle(),
+                article.getContent(),
+                article.getUserId(),
+                article.getCreateTime(),
+                article.getUpdateTime()
+        );
+    }
+
+    public static ArticleVo from(Content content) {
+        if (!(content instanceof Article article)) {
             return null;
         }
         return new ArticleVo(

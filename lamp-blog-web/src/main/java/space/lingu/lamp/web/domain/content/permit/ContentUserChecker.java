@@ -63,7 +63,8 @@ public class ContentUserChecker implements ContentPermitChecker {
         return ContentPermitResult.deny(AuthErrorCode.ERROR_NOT_HAS_ROLE);
     }
 
-    private ContentPermitResult checkIfUserIdentity(Content content, UserIdentity user) {
+    private ContentPermitResult checkIfUserIdentity(Content content,
+                                                    UserIdentity user) {
         if (content.getUserId() == user.getUserId()) {
             return ContentPermitResult.permit();
         }

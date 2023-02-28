@@ -60,6 +60,9 @@ public abstract class StaffDao {
     @Query("SELECT * FROM staff")
     public abstract List<Staff> get();
 
+    @Query("SELECT * FROM staff ORDER BY id OFFSET {offset} LIMIT {limit}")
+    public abstract List<Staff> get(int offset, int limit);
+
     @Query("SELECT * FROM staff WHERE id = {id}")
     public abstract Staff getById(long id);
 

@@ -29,13 +29,18 @@ import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
 import space.lingu.lamp.web.domain.content.ContentAccessService;
 import space.lingu.lamp.web.domain.content.ContentAccessor;
 import space.lingu.lamp.web.domain.content.ContentDeleteService;
+import space.lingu.lamp.web.domain.content.ContentDeleter;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentMetadata;
 import space.lingu.lamp.web.domain.content.ContentPublishService;
 import space.lingu.lamp.web.domain.content.ContentPublisher;
-import space.lingu.lamp.web.domain.content.UncreatedContent;
 import space.lingu.lamp.web.domain.content.ContentStatus;
 import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.content.UncreatedContent;
+import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionProvider;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionService;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
 import space.lingu.lamp.web.domain.content.event.ContentStatusEvent;
@@ -47,6 +52,7 @@ import space.lingu.lamp.web.domain.review.common.NotReviewedException;
 import space.lingu.lamp.web.domain.review.service.ReviewService;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -55,24 +61,30 @@ import java.util.Set;
  */
 @Service
 public class ContentService implements ContentAccessService,
-        ContentPublishService, ContentDeleteService {
+        ContentPublishService, ContentDeleteService, ContentCollectionService {
     private static final Logger logger = LoggerFactory.getLogger(ContentService.class);
 
-    private final Set<ContentAccessor<?>> contentAccessors;
+    private final Set<ContentAccessor> contentAccessors;
     private final Set<ContentPublisher> contentPublishers;
+    private final Set<ContentDeleter> contentDeleters;
+    private final Set<ContentCollectionProvider> contentCollectionProviders;
     private final ContentPermitChecker contentPermitChecker;
     private final ContentMetadataRepository contentMetadataRepository;
     private final ReviewService reviewService;
     private final ApplicationEventPublisher eventPublisher;
 
-    public ContentService(Set<ContentAccessor<?>> contentAccessors,
+    public ContentService(Set<ContentAccessor> contentAccessors,
                           Set<ContentPublisher> contentPublishers,
+                          Set<ContentDeleter> contentDeleters,
+                          Set<ContentCollectionProvider> contentCollectionProviders,
                           ContentPermitChecker contentPermitChecker,
                           ContentMetadataRepository contentMetadataRepository,
                           ReviewService reviewService,
                           ApplicationEventPublisher eventPublisher) {
         this.contentAccessors = contentAccessors;
         this.contentPublishers = contentPublishers;
+        this.contentDeleters = contentDeleters;
+        this.contentCollectionProviders = contentCollectionProviders;
         this.contentPermitChecker = contentPermitChecker;
         this.contentMetadataRepository = contentMetadataRepository;
         this.reviewService = reviewService;
@@ -103,7 +115,7 @@ public class ContentService implements ContentAccessService,
                     selectFirst(permitResult.errors())
             );
         }
-        ContentAccessor<?> accessor = getFirstAvailableOf(contentType);
+        ContentAccessor accessor = getFirstAvailableOf(contentType);
         return accessor.getContent(contentId, contentType);
     }
 
@@ -111,14 +123,21 @@ public class ContentService implements ContentAccessService,
      * @inheritDoc
      */
     @Override
-    public ContentDetails getContentDetails(String contentId,
-                                            ContentType contentType) throws ContentException {
+    public ContentDetails getContentDetails(String contentId, ContentType contentType)
+            throws ContentException {
+        return getContentMetadataDetails(contentId, contentType);
+    }
+
+    @Override
+    public ContentMetadataDetails<?> getContentMetadataDetails(String contentId, ContentType contentType)
+            throws ContentException {
         ContentMetadata metadata = contentMetadataRepository.getById(contentId, contentType);
         if (metadata == null) {
             throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
         }
-        ContentAccessor<?> accessor = getFirstAvailableOf(contentType);
-        return accessor.getContent(contentId, contentType);
+        ContentAccessor accessor = getFirstAvailableOf(contentType);
+        ContentDetails contentDetails = accessor.getContent(contentId, contentType);
+        return new ContentMetadataDetails<>(contentDetails, metadata);
     }
 
     /**
@@ -149,7 +168,7 @@ public class ContentService implements ContentAccessService,
         return null;
     }
 
-    private ContentAccessor<?> getFirstAvailableOf(ContentType type) {
+    private ContentAccessor getFirstAvailableOf(ContentType type) {
         return contentAccessors
                 .stream()
                 .filter(accessor -> accessor.supports(type))
@@ -234,6 +253,7 @@ public class ContentService implements ContentAccessService,
         if (contentMetadata.getContentStatus() != ContentStatus.DELETED) {
             throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_DELETED);
         }
+        tryUpdateContentStatus(contentMetadata, ContentStatus.PUBLISHED);
     }
 
     private void tryUpdateContentStatus(String contentId,
@@ -255,6 +275,9 @@ public class ContentService implements ContentAccessService,
                 contentMetadata.getContentType(),
                 newStatus
         );
+        contentDeleters.forEach(deleter ->
+                callContentDeleter(deleter, contentMetadata, newStatus));
+
         BasicContentInfo contentInfo = new BasicContentInfo(
                 contentMetadata.getUserId(),
                 contentMetadata.getContentId(),
@@ -269,6 +292,25 @@ public class ContentService implements ContentAccessService,
         eventPublisher.publishEvent(event);
     }
 
+    private void callContentDeleter(ContentDeleter contentDeleter,
+                                    ContentMetadata contentMetadata,
+                                    ContentStatus newStatus) {
+        if (!contentDeleter.supports(contentMetadata.getContentType())) {
+            return;
+        }
+        switch (newStatus) {
+            case DELETED -> contentDeleter.deleteContent(
+                    contentMetadata.getContentType(),
+                    contentMetadata.getContentId());
+            case FORBIDDEN -> contentDeleter.forbiddenContent(
+                    contentMetadata.getContentType(),
+                    contentMetadata.getContentId());
+            case PUBLISHED -> contentDeleter.restoreContent(
+                    contentMetadata.getContentType(),
+                    contentMetadata.getContentId());
+        }
+    }
+
     private ContentMetadata tryGetContentMetadata(String contentId,
                                                   ContentType contentType) {
         ContentMetadata contentMetadata =
@@ -277,5 +319,57 @@ public class ContentService implements ContentAccessService,
             throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
         }
         return contentMetadata;
+    }
+
+    @Override
+    public List<? extends ContentDetails> accessContentsRelated(
+            ContentCollectionType collectionType,
+            String contentCollectionId,
+            ContentAccessCredentials contentAccessCredentials, int page, int size) {
+        // TODO: impl
+        return getContentsRelated(collectionType, contentCollectionId,
+                page, size);
+    }
+
+
+    @Override
+    public List<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
+            ContentCollectionType contentCollectionType,
+            String contentCollectionId,
+            int page, int size) {
+        ContentCollectionProvider contentCollectionProvider =
+                getFirstAvailableOf(contentCollectionType);
+        List<? extends ContentDetails> contents = contentCollectionProvider.getContentCollection(
+                contentCollectionType,
+                contentCollectionId,
+                page,
+                size);
+        List<ContentMetadata> contentMetadata =
+                contentMetadataRepository.getMetadataByIdentities(contents);
+        List<? extends ContentMetadataDetails<? extends ContentDetails>> contentCollectionDetails
+                = pairWith(contents, contentMetadata);
+        return Collections.unmodifiableList(contentCollectionDetails);
+    }
+
+    private <T extends ContentDetails> List<ContentMetadataDetails<T>> pairWith(
+            List<T> contentDetails,
+            List<ContentMetadata> contentMetadata) {
+        return contentDetails.stream().map(details -> {
+            ContentMetadata metadata = contentMetadata.stream()
+                    .filter(m -> m.getContentId().equals(details.getContentId()))
+                    .findFirst()
+                    .orElseThrow(() -> new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND));
+            return new ContentMetadataDetails<>(details, metadata);
+        }).toList();
+    }
+
+    private ContentCollectionProvider getFirstAvailableOf(ContentCollectionType type) {
+        return contentCollectionProviders
+                .stream()
+                .filter(provider -> provider.supportsCollection(type))
+                .findFirst()
+                .orElseThrow(() ->
+                        new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND,
+                                "Unsupported content collection type of " + type));
     }
 }

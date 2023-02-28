@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import space.lingu.Todo;
 import space.lingu.lamp.HttpResponseEntity;
+import space.lingu.lamp.data.page.PageRequest;
 import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.controller.WithAdminApi;
 import space.lingu.lamp.web.domain.article.dto.ArticleDetailsMetadata;
@@ -34,9 +34,13 @@ import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
 import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
 import space.lingu.lamp.web.domain.content.ContentAccessService;
 import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
 import space.lingu.lamp.web.domain.content.ContentPublishService;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.content.UncreatedContent;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionService;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
+import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
 
 import java.util.List;
@@ -46,20 +50,37 @@ import java.util.List;
  */
 @WithAdminApi
 public class ArticleController {
-    // TODO: article controller
+    // TODO: refactor article controller
     private final ContentPublishService contentPublishService;
     private final ContentAccessService contentAccessService;
+    private final ContentCollectionService contentCollectionService;
 
     public ArticleController(ContentPublishService contentPublishService,
-                             ContentAccessService contentAccessService) {
+                             ContentAccessService contentAccessService,
+                             ContentCollectionService contentCollectionService) {
         this.contentPublishService = contentPublishService;
         this.contentAccessService = contentAccessService;
+        this.contentCollectionService = contentCollectionService;
     }
 
     @GetMapping("/{userId}/articles")
     public HttpResponseEntity<List<ArticleVo>> getArticles(
-            @PathVariable String userId) {
-        return null;
+            @PathVariable String userId, PageRequest pageRequest) {
+        ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
+        // TODO: check if the user is the same as the current user
+
+        List<ContentMetadataDetails<?>> contents = contentCollectionService.getContentsRelated(
+                ContentCollectionType.USER_ARTICLES,
+                userId,
+                pageRequest.getPage(),
+                pageRequest.getSize()
+        );
+
+        return HttpResponseEntity.success(
+                contents.stream()
+                        .map(ArticleVo::from)
+                        .toList()
+        );
     }
 
     @PostMapping("/article")
@@ -111,17 +132,10 @@ public class ArticleController {
                 ContentType.ARTICLE,
                 ContentAccessCredentials.of(ContentAccessAuthType.USER, userInfo)
         );
+        if (details.getUserId() != userId) {
+            return HttpResponseEntity.of(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
+        }
 
         return HttpResponseEntity.success(ArticleVo.from(details));
     }
-
-    @GetMapping("/{userId}/article/{articleId}/info")
-    // TODO: replace with ArticleInfoVo.
-    @Todo(todo = "replace with ArticleInfoVo.")
-    public HttpResponseEntity<ArticleInfo> getArticleInfo(
-            @PathVariable(name = "userId") Long userId,
-            @PathVariable(name = "articleId") Long articleId) {
-       return null;
-    }
-    // TODO: get article
 }

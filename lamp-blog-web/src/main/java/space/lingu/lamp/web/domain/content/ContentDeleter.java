@@ -16,43 +16,19 @@
 
 package space.lingu.lamp.web.domain.content;
 
-import space.lingu.NonNull;
-
 /**
- * Basic infos of content.
- *
  * @author RollW
  */
-public interface Content extends ContentIdentity {
-    int INVALID_VERSION = -1;
+public interface ContentDeleter extends ContentProvider {
+    void deleteContent(ContentType contentType,
+                       String contentId);
 
-    /**
-     * Get the id of the user who created the content.
-     *
-     * @return user id
-     */
-    long getUserId();
+    void forbiddenContent(ContentType contentType,
+                          String contentId);
 
-    /**
-     * Get the id of the content.
-     *
-     * @return content id
-     */
-    @NonNull
+    void restoreContent(ContentType contentType,
+                        String contentId);
+
     @Override
-    String getContentId();
-
-    /**
-     * Get the type of the content.
-     *
-     * @return content type
-     */
-    @NonNull
-    @Override
-    ContentType getContentType();
-
-    // TODO: support history version
-    default int getVersion() {
-        return INVALID_VERSION;
-    }
+    boolean supports(ContentType contentType);
 }

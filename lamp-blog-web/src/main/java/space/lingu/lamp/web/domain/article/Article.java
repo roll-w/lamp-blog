@@ -32,7 +32,7 @@ import space.lingu.light.SQLDataType;
  * @author RollW
  */
 @SuppressWarnings("ClassCanBeRecord")
-@DataTable(tableName = "article", indices = {
+@DataTable(name = "article", indices = {
         @Index(value = {"user_id", "title"}, unique = true)
 })
 public class Article implements DataItem, ContentDetails {

@@ -19,6 +19,7 @@ package space.lingu.lamp.web.domain.content.repository;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ContentMetadataDao;
+import space.lingu.lamp.web.domain.content.ContentIdentity;
 import space.lingu.lamp.web.domain.content.ContentMetadata;
 import space.lingu.lamp.web.domain.content.ContentStatus;
 import space.lingu.lamp.web.domain.content.ContentType;
@@ -56,5 +57,9 @@ public class ContentMetadataRepository {
     public void updateStatus(String contentId, ContentType contentType,
                              ContentStatus status) {
         contentMetadataDao.updateStatus(contentId, contentType, status);
+    }
+
+    public List<ContentMetadata> getMetadataByIdentities(List<? extends ContentIdentity> contentIdentities) {
+        return contentMetadataDao.getByIdentities(contentIdentities);
     }
 }

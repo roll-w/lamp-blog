@@ -29,7 +29,7 @@ import space.lingu.light.PrimaryKey;
  */
 @DataTable(name = "content_metadata", indices =
 @Index(value = {"content_id", "type"}, unique = true))
-@SuppressWarnings({"ClassCanBeRecord", "unused"})
+@SuppressWarnings({"ClassCanBeRecord"})
 public class ContentMetadata implements DataItem {
     // only maintains the metadata of the content.
     @DataColumn(name = "id")
@@ -57,7 +57,8 @@ public class ContentMetadata implements DataItem {
 
     @Constructor
     public ContentMetadata(Long id, long userId,
-                           @NonNull String contentId, @NonNull ContentType contentType,
+                           @NonNull String contentId,
+                           @NonNull ContentType contentType,
                            @NonNull ContentStatus contentStatus,
                            @NonNull ContentAccessAuthType contentAccessAuthType) {
 
@@ -177,6 +178,4 @@ public class ContentMetadata implements DataItem {
                     contentType, contentStatus, contentAccessAuthType);
         }
     }
-
-
 }
