@@ -51,7 +51,7 @@ export default {
       renderMarkdown(props.value)
     })
 
-    renderMarkdown(props.value)
+    renderMarkdown(props.value || '')
     return () => h(compile(val.value))
   }
 }

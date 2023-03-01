@@ -41,7 +41,7 @@ import UserPageHeader from "@/components/user/UserPageHeader.vue";
 
 const router = useRouter()
 
-const id = router.currentRoute.value.params.id
+const id = router.currentRoute.value.params.userId
 
 const userInfo = ref(null)
 const message = ref(null)

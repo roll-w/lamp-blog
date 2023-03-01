@@ -24,14 +24,13 @@
           <component :is="Component"/>
         </transition>
       </router-view>
-      <n-back-top :right="100" />
       <Footer/>
     </n-layout>
+    <n-back-top :right="100" />
   </n-layout>
 </template>
 
 <script setup>
-import BlogNavBar from "@/components/BlogNavBar.vue";
 import Footer from "@/components/Footer.vue";
 </script>
 

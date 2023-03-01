@@ -66,7 +66,7 @@ const userOptions = [
           to: {
             name: userPage,
             params: {
-              id: userStore.user.id
+              userId: userStore.user.id
             }
           }
         },
@@ -117,7 +117,7 @@ const adminOptions = [
           to: {
             name: userPage,
             params: {
-              id: userStore.user.id
+              userId: userStore.user.id
             }
           }
         },
