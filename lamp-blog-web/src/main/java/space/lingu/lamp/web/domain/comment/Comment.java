@@ -18,17 +18,19 @@ package space.lingu.lamp.web.domain.comment;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
+import space.lingu.lamp.DataItem;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
+import space.lingu.light.SQLDataType;
 
 /**
  * @author RollW
  */
-@DataTable(tableName = "comment")
-public class Comment implements ContentDetails {
+@DataTable(name = "comment")
+public class Comment implements DataItem, ContentDetails {
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
     private final Long id;
@@ -43,18 +45,27 @@ public class Comment implements ContentDetails {
     @Nullable
     private final Long parentId;
 
-    @DataColumn(name = "content")
+    @DataColumn(name = "content",
+            dataType = SQLDataType.LONGTEXT)
     private final String content;
 
     @DataColumn(name = "create_time")
     private final long createTime;
 
+    /**
+     * Comment on which type of content.
+     */
     @DataColumn(name = "type")
-    private final CommentType type;
+    private final ContentType type;
+
+    @DataColumn(name = "status", nullable = false)
+    @NonNull
+    private final CommentStatus commentStatus;
 
     public Comment(Long id, long userId, String commentOn,
                    @Nullable Long parentId, String content, long createTime,
-                   CommentType type) {
+                   ContentType type,
+                   @NonNull CommentStatus commentStatus) {
         this.id = id;
         this.userId = userId;
         this.commentOn = commentOn;
@@ -62,6 +73,7 @@ public class Comment implements ContentDetails {
         this.content = content;
         this.createTime = createTime;
         this.type = type;
+        this.commentStatus = commentStatus;
     }
 
     public Long getId() {
@@ -81,11 +93,6 @@ public class Comment implements ContentDetails {
     @Override
     public ContentType getContentType() {
         return ContentType.COMMENT;
-    }
-
-    @Override
-    public int getVersion() {
-        return 0;
     }
 
     @Override
@@ -118,8 +125,13 @@ public class Comment implements ContentDetails {
         return createTime;
     }
 
-    public CommentType getType() {
+    public ContentType getType() {
         return type;
+    }
+
+    @NonNull
+    public CommentStatus getCommentStatus() {
+        return commentStatus;
     }
 
     public Builder toBuilder() {
@@ -137,7 +149,9 @@ public class Comment implements ContentDetails {
         private Long parentId;
         private String content;
         private long createTime;
-        private CommentType type;
+        private ContentType type;
+        @NonNull
+        private CommentStatus commentStatus;
 
         public Builder(Comment comment) {
             this.id = comment.id;
@@ -147,9 +161,11 @@ public class Comment implements ContentDetails {
             this.content = comment.content;
             this.createTime = comment.createTime;
             this.type = comment.type;
+            this.commentStatus = comment.commentStatus;
         }
 
         public Builder() {
+            commentStatus = CommentStatus.NONE;
         }
 
         public Builder setId(Long id) {
@@ -182,14 +198,14 @@ public class Comment implements ContentDetails {
             return this;
         }
 
-        public Builder setType(CommentType type) {
+        public Builder setType(ContentType type) {
             this.type = type;
             return this;
         }
 
         public Comment build() {
             return new Comment(id, userId, commentOn,
-                    parentId, content, createTime, type);
+                    parentId, content, createTime, type, commentStatus);
         }
     }
 
