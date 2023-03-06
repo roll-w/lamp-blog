@@ -31,47 +31,12 @@ export const articleList = "article-list"
 export const admin = "admin-index"
 export const adminUsers = "admin-user-list"
 export const adminReviews = "admin-review-list"
+export const adminArticles = "admin-article-list"
 export const reviewsQueue = "admin-review-queue"
 export const reviewerReviews = "admin-reviewer-review-list"
 export const systemLog = "admin-system-log"
 export const systemSettings = "admin-system-settings"
 export const page404 = "404"
-
-const adminRoutes = [
-    {
-        path: '/layout/admin',
-        name: 'admin-layout',
-        redirect: '/admin',
-        component: () => import('@/views/AdminLayout.vue'),
-        children: [
-            {
-                path: '/admin',
-                name: admin,
-                component: () => import('@/views/AdminIndex.vue'),
-                meta: {
-                    title: "系统管理 | Lamp Blog"
-                }
-            },
-            {
-                path: '/admin/user',
-                name: adminUsers,
-                component: () => import('@/views/admin/user/UsersList.vue'),
-                meta: {
-                    title: "用户管理 | Lamp Blog"
-                }
-            },
-            {
-                path: '/admin/system/logs',
-                name: systemLog,
-                component: () => import('@/views/admin/system/SystemLog.vue'),
-                meta: {
-                    title: "系统日志 | Lamp Blog"
-                }
-            }
-
-        ]
-    }
-]
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -131,9 +96,9 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/user/:userId/manage/articles',
+                    path: '/user/manage/articles',
                     name: articleList,
-                    component: () => import('@/views/article/ArticleList.vue'),
+                    component: () => import('@/views/article/PersonalArticleManageView.vue'),
                     meta: {
                         title: "文章管理"
                     }
@@ -169,7 +134,7 @@ const router = createRouter({
                     name: page404,
                     component: () => import('@/views/NotFound.vue'),
                     meta: {
-                        title: "404 | Lamp Blog"
+                        title: "404"
                     }
                 },
                 {
@@ -194,11 +159,11 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/admin/user',
+                    path: '/admin/users',
                     name: adminUsers,
                     component: () => import('@/views/admin/user/UsersList.vue'),
                     meta: {
-                        title: "用户管理"
+                        title: "用户列表"
                     }
                 },
                 {
@@ -207,6 +172,14 @@ const router = createRouter({
                     component: () => import('@/views/admin/review/ReviewJobs.vue'),
                     meta: {
                         title: "审核记录"
+                    }
+                },
+                {
+                    path: '/admin/articles',
+                    name: adminArticles,
+                    component: () => import('@/views/admin/article/ArticlesList.vue'),
+                    meta: {
+                        title: "文章列表"
                     }
                 },
                 {

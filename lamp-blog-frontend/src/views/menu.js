@@ -15,7 +15,7 @@
  */
 
 import {
-    admin,
+    admin, adminArticles,
     adminReviews,
     adminUsers,
     index,
@@ -33,6 +33,7 @@ export const menuComment = "comment-management"
 export const menuReview = "review-management"
 export const menuSystem = "system-management"
 
+// admin menus
 
 const menus = [
     {
@@ -66,7 +67,8 @@ const menus = [
         children: [
             {
                 name: "文章列表",
-                key: "article-management-list"
+                routerLink: adminArticles,
+                key: adminArticles
             },
             {
                 name: "文章分类",
