@@ -18,6 +18,8 @@ package space.lingu.lamp.web.domain.comment.service;
 
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
+import space.lingu.lamp.data.page.Offset;
+import space.lingu.lamp.data.page.PageHelper;
 import space.lingu.lamp.web.common.ParameterFailedException;
 import space.lingu.lamp.web.common.ParameterMissingException;
 import space.lingu.lamp.web.domain.comment.Comment;
@@ -29,7 +31,7 @@ import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
 import space.lingu.lamp.web.domain.content.ContentPublisher;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.content.UncreatedContent;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionProvider;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentException;
 
@@ -40,7 +42,7 @@ import java.util.List;
  */
 @Service
 public class CommentService implements ContentAccessor,
-        ContentPublisher, ContentCollectionProvider {
+        ContentPublisher, ContentCollectionAccessor {
     private final CommentRepository commentRepository;
 
     public CommentService(CommentRepository commentRepository) {
@@ -83,7 +85,18 @@ public class CommentService implements ContentAccessor,
             ContentCollectionType contentCollectionType,
             String collectionId, int page, int size) {
         // TODO: collection
-        return List.of();
+        return getComment(contentCollectionType, collectionId, page, size);
+    }
+
+    private List<Comment> getComment(ContentCollectionType contentCollectionType,
+                                     String collectionId, int page, int size) {
+        Offset offset = PageHelper.offset(page, size);
+
+        return switch (contentCollectionType) {
+            case COMMENTS -> commentRepository.get(offset);
+            case ARTICLE_COMMENTS -> commentRepository.getArticleComments(collectionId, offset);
+            default -> throw new UnsupportedOperationException("Unsupported collection type: " + contentCollectionType);
+        };
     }
 
     @Override

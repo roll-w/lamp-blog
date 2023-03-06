@@ -32,7 +32,7 @@ import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentPublisher;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.content.UncreatedContent;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionProvider;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
@@ -44,7 +44,7 @@ import java.util.List;
  */
 @Service
 public class ArticleService implements
-        ContentAccessor, ContentPublisher, ContentCollectionProvider {
+        ContentAccessor, ContentPublisher, ContentCollectionAccessor {
     private static final Logger logger = LoggerFactory.getLogger(ArticleService.class);
 
     private final ArticleRepository articleRepository;

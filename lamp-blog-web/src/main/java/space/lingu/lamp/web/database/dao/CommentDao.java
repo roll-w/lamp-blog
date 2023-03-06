@@ -16,7 +16,9 @@
 
 package space.lingu.lamp.web.database.dao;
 
+import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.domain.comment.Comment;
+import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
 import space.lingu.light.Query;
@@ -27,7 +29,7 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public abstract class CommentDao implements BaseDao<Comment> {
+public abstract class CommentDao implements LampDao<Comment> {
     @Delete("DELETE FROM comment")
     protected abstract void clearTable();
 
@@ -42,10 +44,12 @@ public abstract class CommentDao implements BaseDao<Comment> {
     @Query("SELECT * FROM comment WHERE id = {id}")
     public abstract Comment getById(long id);
 
-    @Query("SELECT * FROM comment WHERE comment_on_id = {contentId}")
-    public abstract List<Comment> getCommentsOn(String contentId);
+    @Query("SELECT * FROM comment WHERE comment_on_id = {contentId} AND type = {contentType}")
+    public abstract List<Comment> getCommentsOn(String contentId, ContentType contentType);
 
-
+    @Query("SELECT * FROM comment WHERE comment_on_id = {contentId} AND type = {contentType} " +
+            "LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    public abstract List<Comment> getCommentsOn(String contentId, ContentType contentType, Offset offset);
 }
 
 

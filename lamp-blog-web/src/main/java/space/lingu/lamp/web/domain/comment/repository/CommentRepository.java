@@ -17,9 +17,13 @@
 package space.lingu.lamp.web.domain.comment.repository;
 
 import org.springframework.stereotype.Repository;
+import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.CommentDao;
 import space.lingu.lamp.web.domain.comment.Comment;
+import space.lingu.lamp.web.domain.content.ContentType;
+
+import java.util.List;
 
 /**
  * @author RollW
@@ -42,5 +46,18 @@ public class CommentRepository {
 
     public Comment getById(long commentId) {
         return commentDao.getById(commentId);
+    }
+
+    public List<Comment> get(Offset offset) {
+        return commentDao.get(offset.offset(), offset.limit());
+    }
+
+    public List<Comment> getArticleComments(String collectionId,
+                                            Offset offset) {
+        return commentDao.getCommentsOn(
+                collectionId,
+                ContentType.ARTICLE,
+               offset
+        );
     }
 }

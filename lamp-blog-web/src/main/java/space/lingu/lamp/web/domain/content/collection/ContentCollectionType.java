@@ -26,18 +26,27 @@ public enum ContentCollectionType {
      * All articles.
      */
     ARTICLES(ContentType.ARTICLE),
+
     /**
      * User's articles.
      */
     USER_ARTICLES(ContentType.ARTICLE),
+
     /**
      * All comments.
      */
     COMMENTS(ContentType.COMMENT),
+
     /**
-     * Content comments.
+     * Article comments.
      */
-    CONTENT_COMMENTS(ContentType.COMMENT),
+    ARTICLE_COMMENTS(ContentType.COMMENT),
+
+    /**
+     * Post comments.
+     */
+    POST_COMMENTS(ContentType.COMMENT),
+
     /**
      * User's comments.
      */

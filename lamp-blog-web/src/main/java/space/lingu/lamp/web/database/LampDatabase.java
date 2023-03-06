@@ -18,6 +18,7 @@ package space.lingu.lamp.web.database;
 
 import space.lingu.lamp.web.database.dao.ArticleDao;
 import space.lingu.lamp.web.database.dao.CommentDao;
+import space.lingu.lamp.web.database.dao.ContentCollectionMetadataDao;
 import space.lingu.lamp.web.database.dao.ContentMetadataDao;
 import space.lingu.lamp.web.database.dao.MessageResourceDao;
 import space.lingu.lamp.web.database.dao.RegisterVerificationTokenDao;
@@ -25,6 +26,7 @@ import space.lingu.lamp.web.database.dao.ReviewJobDao;
 import space.lingu.lamp.web.database.dao.StaffDao;
 import space.lingu.lamp.web.database.dao.SystemSettingDao;
 import space.lingu.lamp.web.database.dao.UserDao;
+import space.lingu.lamp.web.database.dao.UserLikeDao;
 import space.lingu.lamp.web.database.dao.UserPersonalDataDao;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.comment.Comment;
@@ -74,6 +76,8 @@ public abstract class LampDatabase extends LightDatabase {
     public abstract StaffDao getStaffDao();
 
     public abstract ContentMetadataDao getContentMetadataDao();
+
+    public abstract ContentCollectionMetadataDao getContentCollectionMetadataDao();
 
     public abstract CommentDao getCommentDao();
 }

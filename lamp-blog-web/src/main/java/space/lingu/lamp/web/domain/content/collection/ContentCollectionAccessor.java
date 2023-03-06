@@ -16,19 +16,22 @@
 
 package space.lingu.lamp.web.domain.content.collection;
 
-import space.lingu.lamp.web.domain.content.ContentProvider;
+import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentType;
+
+import java.util.List;
 
 /**
  * @author RollW
  */
-public interface ContentCollectionProvider extends ContentProvider {
+public interface ContentCollectionAccessor extends ContentCollectionProvider {
+    List<? extends ContentDetails> getContentCollection(ContentCollectionType contentCollectionType, String collectionId, int page, int size);
 
     @Override
     boolean supports(ContentType contentType);
 
-    default boolean supportsCollection(
-            ContentCollectionType contentCollectionType) {
-        return supports(contentCollectionType.getContentType());
+    @Override
+    default boolean supportsCollection(ContentCollectionType contentCollectionType) {
+        return ContentCollectionProvider.super.supportsCollection(contentCollectionType);
     }
 }

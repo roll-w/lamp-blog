@@ -32,13 +32,13 @@ import space.lingu.lamp.web.domain.content.ContentDeleteService;
 import space.lingu.lamp.web.domain.content.ContentDeleter;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentMetadata;
+import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
 import space.lingu.lamp.web.domain.content.ContentPublishService;
 import space.lingu.lamp.web.domain.content.ContentPublisher;
 import space.lingu.lamp.web.domain.content.ContentStatus;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.content.UncreatedContent;
-import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionProvider;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionService;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
@@ -67,7 +67,7 @@ public class ContentService implements ContentAccessService,
     private final Set<ContentAccessor> contentAccessors;
     private final Set<ContentPublisher> contentPublishers;
     private final Set<ContentDeleter> contentDeleters;
-    private final Set<ContentCollectionProvider> contentCollectionProviders;
+    private final Set<ContentCollectionAccessor> contentCollectionAccessors;
     private final ContentPermitChecker contentPermitChecker;
     private final ContentMetadataRepository contentMetadataRepository;
     private final ReviewService reviewService;
@@ -76,7 +76,7 @@ public class ContentService implements ContentAccessService,
     public ContentService(Set<ContentAccessor> contentAccessors,
                           Set<ContentPublisher> contentPublishers,
                           Set<ContentDeleter> contentDeleters,
-                          Set<ContentCollectionProvider> contentCollectionProviders,
+                          Set<ContentCollectionAccessor> contentCollectionAccessors,
                           ContentPermitChecker contentPermitChecker,
                           ContentMetadataRepository contentMetadataRepository,
                           ReviewService reviewService,
@@ -84,7 +84,7 @@ public class ContentService implements ContentAccessService,
         this.contentAccessors = contentAccessors;
         this.contentPublishers = contentPublishers;
         this.contentDeleters = contentDeleters;
-        this.contentCollectionProviders = contentCollectionProviders;
+        this.contentCollectionAccessors = contentCollectionAccessors;
         this.contentPermitChecker = contentPermitChecker;
         this.contentMetadataRepository = contentMetadataRepository;
         this.reviewService = reviewService;
@@ -337,9 +337,9 @@ public class ContentService implements ContentAccessService,
             ContentCollectionType contentCollectionType,
             String contentCollectionId,
             int page, int size) {
-        ContentCollectionProvider contentCollectionProvider =
+        ContentCollectionAccessor contentCollectionAccessor =
                 getFirstAvailableOf(contentCollectionType);
-        List<? extends ContentDetails> contents = contentCollectionProvider.getContentCollection(
+        List<? extends ContentDetails> contents = contentCollectionAccessor.getContentCollection(
                 contentCollectionType,
                 contentCollectionId,
                 page,
@@ -363,8 +363,8 @@ public class ContentService implements ContentAccessService,
         }).toList();
     }
 
-    private ContentCollectionProvider getFirstAvailableOf(ContentCollectionType type) {
-        return contentCollectionProviders
+    private ContentCollectionAccessor getFirstAvailableOf(ContentCollectionType type) {
+        return contentCollectionAccessors
                 .stream()
                 .filter(provider -> provider.supportsCollection(type))
                 .findFirst()
