@@ -38,6 +38,10 @@ public class PageRequest {
         return size;
     }
 
+    public Offset toOffset() {
+        return PageHelper.offset(this);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

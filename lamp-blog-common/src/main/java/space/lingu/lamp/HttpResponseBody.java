@@ -17,19 +17,21 @@
 package space.lingu.lamp;
 
 
+import space.lingu.lamp.data.page.Page;
+
 /**
  * @author RollW
  */
 @SuppressWarnings("unchecked")
-public class HttpResponseBody<D> {
+public sealed class HttpResponseBody<D> permits PageableHttpResponseBody {
     private static final HttpResponseBody<?> SUCCESS = new HttpResponseBody<>(
             CommonErrorCode.SUCCESS, 200, "OK");
 
-    private final int status;
-    private String message;
-    private ErrorCode errorCode;
-    private String tip;
-    private D data;
+    protected final int status;
+    protected String message;
+    protected ErrorCode errorCode;
+    protected String tip;
+    protected D data;
 
     private HttpResponseBody() {
         this.status = 200;
@@ -90,7 +92,7 @@ public class HttpResponseBody<D> {
         return data;
     }
 
-    private HttpResponseBody<D> setData(D data) {
+    protected HttpResponseBody<D> setData(D data) {
         this.data = data;
         return this;
     }
@@ -203,6 +205,10 @@ public class HttpResponseBody<D> {
         return HttpResponseBody.<D>success()
                 .fork()
                 .setData(data);
+    }
+
+    public static <D> PageableHttpResponseBody<D> success(Page<D> page) {
+        return PageableHttpResponseBody.success(page);
     }
 
     public static <D> HttpResponseBody<D> of(ErrorCode errorCode,

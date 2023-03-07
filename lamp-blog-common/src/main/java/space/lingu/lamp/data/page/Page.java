@@ -17,6 +17,8 @@
 package space.lingu.lamp.data.page;
 
 import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Stream;
 
 /**
  * @author RollW
@@ -49,4 +51,42 @@ public class Page<T> {
     public List<T> getData() {
         return data;
     }
+
+    public Stream<T> stream() {
+        return data.stream();
+    }
+
+    public <R> Page<R> transform(Function<T, R> mapper) {
+        return new Page<>(
+                page, size,
+                total,
+                data.stream().map(mapper).toList()
+        );
+    }
+
+
+    public static <T> Page<T> of(int page, int size,
+                                 int total, List<T> data) {
+        return new Page<>(page, size, total, data);
+    }
+
+    public static <T> Page<T> of(Offset offset,
+                                 int total, List<T> data) {
+        return new Page<>(offset.page(), offset.size(), total, data);
+    }
+
+
+    public static <T> Page<T> of(Page<?> raw,
+                                 Stream<T> data) {
+        return new Page<>(
+                raw.getPage(), raw.getSize(),
+                raw.getTotal(), data.toList()
+        );
+    }
+
+    public static <T> Page<T> of() {
+        return (Page<T>) PAGE;
+    }
+
+    private static final Page<?> PAGE = new Page<>(0, 0, 0, List.of());
 }

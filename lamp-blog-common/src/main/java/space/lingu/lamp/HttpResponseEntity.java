@@ -19,6 +19,9 @@ package space.lingu.lamp;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MultiValueMap;
+import space.lingu.lamp.data.page.Page;
+
+import java.util.List;
 
 /**
  * @author RollW
@@ -36,7 +39,8 @@ public class HttpResponseEntity<D> extends ResponseEntity<HttpResponseBody<D>> {
         super(body, null, body.getStatus());
     }
 
-    public HttpResponseEntity(HttpResponseBody<D> body, MultiValueMap<String, String> headers) {
+    public HttpResponseEntity(HttpResponseBody<D> body,
+                              MultiValueMap<String, String> headers) {
         super(body, headers, body.getStatus());
     }
 
@@ -96,6 +100,11 @@ public class HttpResponseEntity<D> extends ResponseEntity<HttpResponseBody<D>> {
         return new HttpResponseEntity<>(body);
     }
 
+    public static <D> HttpResponseEntity<D> of(HttpResponseBody<D> body,
+                                               Page<D> page) {
+        return new HttpResponseEntity<>(body);
+    }
+
     public static <D> HttpResponseEntity<D> success() {
         return of(
                 HttpResponseBody.success()
@@ -114,6 +123,12 @@ public class HttpResponseEntity<D> extends ResponseEntity<HttpResponseBody<D>> {
         );
     }
 
+    public static <D> HttpResponseEntity<List<D>> success(Page<D> page) {
+        return of(
+                PageableHttpResponseBody.success(page)
+        );
+    }
+
 
     public static <D> HttpResponseEntity<D> of(ErrorCode errorCode,
                                                String message) {
@@ -123,7 +138,8 @@ public class HttpResponseEntity<D> extends ResponseEntity<HttpResponseBody<D>> {
     }
 
     public static <D> HttpResponseEntity<D> of(ErrorCode errorCode,
-                                               String message, String tip) {
+                                               String message,
+                                               String tip) {
         return of(
                 HttpResponseBody.<D>builder()
                         .errorCode(errorCode)
@@ -146,6 +162,13 @@ public class HttpResponseEntity<D> extends ResponseEntity<HttpResponseBody<D>> {
                 HttpResponseBody.builder(data)
                         .errorCode(errorCode)
                         .build()
+        );
+    }
+
+    public static <D> HttpResponseEntity<List<D>> of(ErrorCode errorCode,
+                                                     Page<D> page) {
+        return of(
+                PageableHttpResponseBody.of(errorCode, page)
         );
     }
 

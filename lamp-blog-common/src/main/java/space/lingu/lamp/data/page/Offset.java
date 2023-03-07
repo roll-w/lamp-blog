@@ -23,6 +23,13 @@ public record Offset(
         int limit,
         int offset
 ) {
+    public int page() {
+        return offset / limit;
+    }
+
+    public int size() {
+        return limit;
+    }
 
     public static final Offset DEFAULT = new Offset(10, 0);
 }
