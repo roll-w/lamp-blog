@@ -19,6 +19,7 @@ package space.lingu.lamp.web.domain.review.common;
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
+import space.lingu.lamp.ErrorCodeMessageProvider;
 
 import java.util.List;
 
@@ -27,7 +28,7 @@ import static space.lingu.lamp.CommonErrorCode.SUCCESS;
 /**
  * @author RollW
  */
-public enum ReviewErrorCode implements ErrorCode {
+public enum ReviewErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
     ERROR_REVIEW("A2100", 400),
     ERROR_REVIEWED("A2101", 400),
     ERROR_NOT_REVIEWED("A2102", 400),

@@ -19,6 +19,7 @@ package space.lingu.lamp.web.domain.authentication.common;
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
+import space.lingu.lamp.ErrorCodeMessageProvider;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ import java.util.List;
  *
  * @author RollW
  */
-public enum AuthErrorCode implements ErrorCode {
+public enum AuthErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
     SUCCESS(SUCCESS_CODE, 200),
 
     /**

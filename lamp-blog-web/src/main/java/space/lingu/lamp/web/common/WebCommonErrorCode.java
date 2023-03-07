@@ -21,13 +21,14 @@ import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.BusinessRuntimeException;
+import space.lingu.lamp.ErrorCodeMessageProvider;
 
 import java.util.List;
 
 /**
  * @author RollW
  */
-public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder {
+public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
     /**
      * Request parameter missing.
      */

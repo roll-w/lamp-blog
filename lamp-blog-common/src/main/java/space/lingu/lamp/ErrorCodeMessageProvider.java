@@ -21,7 +21,6 @@ import java.util.Locale;
 /**
  * @author RollW
  */
-@FunctionalInterface
 public interface ErrorCodeMessageProvider {
     default String getMessage(ErrorCode errorCode) {
         return getMessage(errorCode, Locale.CHINA);
@@ -40,5 +39,9 @@ public interface ErrorCodeMessageProvider {
     }
 
     // internal method
-    String apply(ErrorCode errorCode, Locale locale, Object... args);
+    default String apply(ErrorCode errorCode,
+                         Locale locale,
+                         Object... args) {
+        return errorCode.toString();
+    }
 }

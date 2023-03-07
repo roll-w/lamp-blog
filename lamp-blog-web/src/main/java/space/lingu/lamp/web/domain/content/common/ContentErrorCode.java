@@ -19,13 +19,14 @@ package space.lingu.lamp.web.domain.content.common;
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
+import space.lingu.lamp.ErrorCodeMessageProvider;
 
 import java.util.List;
 
 /**
  * @author RollW
  */
-public enum ContentErrorCode implements ErrorCode {
+public enum ContentErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
     SUCCESS(SUCCESS_CODE, 200),
     ERROR_CONTENT("A2000", 400),
     ERROR_CONTENT_NOT_FOUND("A2001", 404),

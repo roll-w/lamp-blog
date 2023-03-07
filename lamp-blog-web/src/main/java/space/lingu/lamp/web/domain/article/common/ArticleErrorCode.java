@@ -19,13 +19,14 @@ package space.lingu.lamp.web.domain.article.common;
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
+import space.lingu.lamp.ErrorCodeMessageProvider;
 
 import java.util.List;
 
 /**
  * @author RollW
  */
-public enum ArticleErrorCode implements ErrorCode {
+public enum ArticleErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
     ERROR_ARTICLE("A2300"),
     ERROR_TITLE_EMPTY("A2301", 400),
     ERROR_TITLE_TOO_LONG("A2302", 400),

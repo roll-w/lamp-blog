@@ -20,6 +20,7 @@ import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.BusinessRuntimeException;
+import space.lingu.lamp.ErrorCodeMessageProvider;
 import space.lingu.light.LightRuntimeException;
 
 import java.util.List;
@@ -28,7 +29,7 @@ import java.util.List;
  *
  * @author RollW
  */
-public enum DataErrorCode implements ErrorCode, ErrorCodeFinder {
+public enum DataErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
     ERROR_DATABASE("B0100", 500),
     ERROR_COLUMN_EXISTED("B0101", 500),
     ERROR_COLUMN_NOT_EXIST("B0102", 500),

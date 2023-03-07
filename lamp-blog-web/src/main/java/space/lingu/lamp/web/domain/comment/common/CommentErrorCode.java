@@ -19,13 +19,14 @@ package space.lingu.lamp.web.domain.comment.common;
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
+import space.lingu.lamp.ErrorCodeMessageProvider;
 
 import java.util.List;
 
 /**
  * @author RollW
  */
-public enum CommentErrorCode implements ErrorCode {
+public enum CommentErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
     ERROR_COMMENT("A2400"),
     ;
 

@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author RollW
  */
-public enum IoErrorCode implements ErrorCode, ErrorCodeFinder {
+public enum IoErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
     SUCCESS(SUCCESS_CODE, 200),
     ERROR_IO("A0700", 500),
     ERROR_FILE_NOT_FOUND("A0701", 404),

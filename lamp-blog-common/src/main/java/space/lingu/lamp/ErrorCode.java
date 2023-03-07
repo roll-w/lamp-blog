@@ -18,7 +18,7 @@ package space.lingu.lamp;
 
 import space.lingu.NonNull;
 
-import java.util.Locale;
+import java.io.Serializable;
 
 /**
  * <h2>Error Code</h2>
@@ -39,7 +39,7 @@ import java.util.Locale;
  *
  * @author RollW
  */
-public interface ErrorCode extends ErrorCodeFinder, ErrorCodeMessageProvider {
+public interface ErrorCode extends Serializable {
     String SUCCESS_CODE = "00000";
 
     @NonNull
@@ -57,9 +57,4 @@ public interface ErrorCode extends ErrorCodeFinder, ErrorCodeMessageProvider {
     int getStatus();
 
     String toString();
-
-    @Override
-    default String apply(ErrorCode errorCode, Locale locale, Object... args) {
-        return toString();
-    }
 }

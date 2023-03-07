@@ -24,7 +24,7 @@ import java.util.List;
 /**
  * @author RollW
  */
-public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder {
+public enum CommonErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
     SUCCESS(SUCCESS_CODE, 200),
     ERROR_EXCEPTION("B1000", 500),
     ERROR_NOT_FOUND("B1001", 404),

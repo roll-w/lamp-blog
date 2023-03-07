@@ -19,6 +19,7 @@ package space.lingu.lamp.web.domain.user.common;
 import space.lingu.NonNull;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinder;
+import space.lingu.lamp.ErrorCodeMessageProvider;
 
 import java.util.List;
 
@@ -29,60 +30,60 @@ import java.util.List;
  *
  * @author RollW
  */
-public enum UserErrorCode implements ErrorCode {
+public enum UserErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
     SUCCESS(SUCCESS_CODE, 200),
     /**
      * 注册错误
      */
-    ERROR_REGISTER("A0000"),
+    ERROR_REGISTER("A0000", 400),
     /**
      * 用户已存在
      */
-    ERROR_USER_EXISTED("A0001"),
+    ERROR_USER_EXISTED("A0001", 400),
     /**
      * 用户已登录
      */
-    ERROR_USER_ALREADY_LOGIN("A0002"),
+    ERROR_USER_ALREADY_LOGIN("A0002", 400),
     /**
      * 用户已激活
      */
-    ERROR_USER_ALREADY_ACTIVATED("A0003"),
+    ERROR_USER_ALREADY_ACTIVATED("A0003", 400),
     /**
      * 用户不存在
      */
-    ERROR_USER_NOT_EXIST("A0004"),
+    ERROR_USER_NOT_EXIST("A0004", 404),
     /**
      * 用户未登录
      */
     ERROR_USER_NOT_LOGIN("A0005", 401),
-    ERROR_USER_DISABLED("A0006", 401),
+    ERROR_USER_DISABLED("A0006", 403),
     /**
      * 用户已注销
      */
-    ERROR_USER_CANCELED("A0007", 401),
+    ERROR_USER_CANCELED("A0007", 403),
     /**
      * 登陆状态过期
      */
-    ERROR_LOGIN_EXPIRED("A0008"),
+    ERROR_LOGIN_EXPIRED("A0008", 401),
     /**
      * 密码错误
      */
-    ERROR_PASSWORD_NOT_CORRECT("A0010"),
+    ERROR_PASSWORD_NOT_CORRECT("A0010", 400),
     /**
      * 密码不合规，校验错误
      */
-    ERROR_PASSWORD_NON_COMPLIANCE("A0011"),
+    ERROR_PASSWORD_NON_COMPLIANCE("A0011", 400),
     /**
      * 用户名不合规
      */
-    ERROR_USERNAME_NON_COMPLIANCE("A0012"),
-    ERROR_USERNAME_SENSITIVE("A0013"),
+    ERROR_USERNAME_NON_COMPLIANCE("A0012", 400),
+    ERROR_USERNAME_SENSITIVE("A0013", 400),
     /**
      * 邮件名不合规
      */
-    ERROR_EMAIL_NON_COMPLIANCE("A0014"),
+    ERROR_EMAIL_NON_COMPLIANCE("A0014", 400),
 
-    ERROR_EMAIL_EXISTED("A0015"),
+    ERROR_EMAIL_EXISTED("A0015", 400),
 
     ;
 
