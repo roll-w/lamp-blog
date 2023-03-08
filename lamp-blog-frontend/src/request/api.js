@@ -16,6 +16,10 @@
 
 const base = 'localhost:5100';
 
+const frontBase = 'localhost:5101';
+
+export const frontBaseUrl = `http://${frontBase}`;
+
 export const baseUrl = `http://${base}`;
 export const wsBaseUrl = `ws://${base}`;
 
@@ -53,7 +57,7 @@ const userArticles = (userId, admin) =>
     `${admin ? adminPrefix : prefix}/${userId}/articles`
 
 
-const articles = `${adminPrefix}/articles`;
+const adminArticles = `${adminPrefix}/articles`;
 
 const articleCreate2 = (userId, admin) => {
     return `${admin ? adminPrefix : prefix}/${userId}/article`;
@@ -78,7 +82,7 @@ export default {
     articleCreate,
     articleDetails,
     userArticles,
-    articles,
+    adminArticles,
     userList,
 
     allReviews,

@@ -62,16 +62,17 @@
 </template>
 
 <script setup>
-
 import axios from "axios";
 import {NButton, useNotification} from "naive-ui";
 import {useUserStore} from "@/stores/user";
 import api from "@/request/api"
-import {ref, h} from "vue";
+import {ref, h, getCurrentInstance} from "vue";
 import {formatTimestamp} from "@/util/time";
 import {admin, index, systemLog} from "@/router";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import {menuSystem} from "@/views/menu";
+
+const {proxy} = getCurrentInstance()
 
 const notification = useNotification()
 const userStorage = useUserStore()
@@ -122,34 +123,40 @@ const columns = [
 
 const data = ref([])
 
-axios.get(api.systemErrorLog, {
-  headers: {
-    "Authorization": userStorage.getToken
-  }
-}).then((res) => {
-  data.value = []
-  res.data.data.forEach((item) => {
-    data.value.push({
-      code: item.errorCode,
-      message: item.message,
-      className: item.exceptionName,
-      time: formatTimestamp(item.timestamp),
-      stacktrace: item.stacktrace
+const getLogs = () => {
+  proxy.$axios.get(api.systemErrorLog, {
+    headers: {
+      "Authorization": userStorage.getToken
+    }
+  }).then((res) => {
+    data.value = []
+    res.data.forEach((item) => {
+      data.value.push({
+        code: item.errorCode,
+        message: item.message,
+        className: item.exceptionName,
+        time: formatTimestamp(item.timestamp),
+        stacktrace: item.stacktrace
+      })
+    })
+    console.log(res);
+  }).catch((err) => {
+    console.log(err);
+    const msg = err.tip +
+        "\n信息： " + err.message
+    notification.error({
+      title: "请求错误",
+      content: msg,
+      meta: "日志请求错误",
+      duration: 3000,
+      keepAliveOnHover: true
     })
   })
-  console.log(res);
-}).catch((err) => {
-  console.log(err);
-  const msg = err.response.data.tip +
-      "\n信息： " + err.response.data.message
-  notification.error({
-    title: "请求错误",
-    content: msg,
-    meta: "日志请求错误",
-    duration: 3000,
-    keepAliveOnHover: true
-  })
-})
+}
+
+getLogs()
+
+
 
 </script>
 

@@ -62,7 +62,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {getCurrentInstance, ref} from "vue";
 import {useRouter} from "vue-router";
 import axios from "axios";
 import api from "@/request/api";
@@ -71,6 +71,7 @@ import {login, registerTip} from "@/router";
 
 const router = useRouter();
 const message = useMessage()
+const {proxy} = getCurrentInstance()
 
 const formValue = ref({
   username: null,
@@ -138,12 +139,13 @@ const validateFormValue = (callback) => {
 
 const onRegisterClick = () => {
   validateFormValue(() => {
-    axios.post(api.register, formValue.value)
+    proxy.$axios.post(api.register, formValue.value)
         .then((response) => {
+          message.success('注册成功')
           router.push({name: registerTip})
         })
         .catch((error) => {
-          message.error(error.response.data.tip)
+          message.error(error.tip)
         })
   })
 };

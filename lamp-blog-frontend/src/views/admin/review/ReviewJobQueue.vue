@@ -77,10 +77,11 @@ import {createConfig} from "@/request/axios_config";
 import axios from "axios";
 import api from "@/request/api";
 import {formatTimestamp} from "@/util/time";
-import {ref, watch} from "vue";
+import {getCurrentInstance, ref, watch} from "vue";
 import {useNotification} from "naive-ui";
 import MarkdownRender from "@/components/markdown/MarkdownRender.vue";
 
+const {proxy} = getCurrentInstance()
 const notification = useNotification()
 
 const showModal = ref(false)
@@ -166,8 +167,8 @@ const requestForData = (page, size) => {
     size: size,
     status: "UNFINISHED"
   }
-  axios.get(api.currentReviews, config).then((res) => {
-    const recvData = res.data.data
+  proxy.$axios.get(api.currentReviews, config).then((res) => {
+    const recvData = res.data
     recvData.forEach((item) => {
       if (item.assignedTime)
         item.assignedTime = formatTimestamp(item.assignedTime)
@@ -180,8 +181,8 @@ const requestForData = (page, size) => {
     requestContent(recvData[0].id)
   }).catch((err) => {
     console.log(err)
-    const msg = err.response.data.tip +
-        "\n信息： " + err.response.data.message
+    const msg = err.tip +
+        "\n信息： " + err.message
     notification.error({
       title: "请求错误",
       content: msg,

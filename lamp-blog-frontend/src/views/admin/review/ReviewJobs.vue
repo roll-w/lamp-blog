@@ -39,13 +39,15 @@
 import {menuReview} from "@/views/menu";
 import {useRouter} from "vue-router";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
-import {h, ref} from "vue";
+import {getCurrentInstance, h, ref} from "vue";
 import {NButton, NButtonGroup} from "naive-ui";
 import axios from "axios";
 import api from "@/request/api";
 import {formatTimestamp} from "@/util/time";
 import {createConfig} from "@/request/axios_config";
 import {adminReviews} from "@/router";
+
+const {proxy} = getCurrentInstance()
 
 const page = ref(1)
 const router = useRouter()
@@ -172,8 +174,8 @@ const requestForData = (page, size) => {
     size: size
   }
 
-  axios.get(api.allReviews, config).then((res) => {
-    const recvData = res.data.data
+  proxy.$axios.get(api.allReviews, config).then((res) => {
+    const recvData = res.data
     recvData.forEach((item) => {
       if (item.assignedTime)
         item.assignedTime = formatTimestamp(item.assignedTime)
@@ -187,7 +189,6 @@ const requestForData = (page, size) => {
       item.type = contentTypeTransform(item.type)
     })
     data.value = recvData
-    console.log(res)
   }).catch((err) => {
     console.log(err)
   })

@@ -75,14 +75,14 @@ import {useNotification} from "naive-ui";
 import {createConfig} from "@/request/axios_config";
 import api from "@/request/api";
 import axios from "axios";
-import {ref} from "vue";
+import {getCurrentInstance, ref} from "vue";
 import {useRouter} from "vue-router";
 import MarkdownRender from "@/components/markdown/MarkdownRender.vue";
 import {formatTimestamp} from "@/util/time";
 import {getTitleSuffix, userPage} from "@/router";
 
 const router = useRouter()
-
+const {proxy} = getCurrentInstance()
 
 const userInfo = ref({})
 const notification = useNotification()
@@ -100,17 +100,17 @@ const route = {
 }
 
 const requestUserInfo = (id) => {
-  axios.get(api.userInfo(id, false), createConfig())
+  proxy.$axios.get(api.userInfo(id, false), createConfig())
       .then((res) => {
         console.log(res)
-        userInfo.value = res.data.data
+        userInfo.value = res.data
         route.params.userId = userInfo.value.userId
       })
       .catch((err) => {
         console.log(err)
         notification.error({
           title: "请求错误",
-          content: err.response.data.tip,
+          content: err.tip,
           meta: "作者请求错误",
           duration: 3000,
           keepAliveOnHover: true
@@ -122,11 +122,11 @@ const updateDocTitle = (title) => {
   document.title = title + "" + getTitleSuffix()
 }
 
+
 const requestArticle = (userId, articleId) => {
-  axios.get(api.articleDetails(userId, articleId, false), createConfig())
+  proxy.$axios.get(api.articleDetails(userId, articleId, false), createConfig())
       .then((res) => {
-        console.log(res)
-        article.value = res.data.data
+        article.value = res.data
         updateDocTitle(article.value.title)
         requestUserInfo(article.value.authorId)
       })
@@ -135,7 +135,7 @@ const requestArticle = (userId, articleId) => {
         userInfo.value = {}
         notification.error({
           title: "请求错误",
-          content: err.response.data.tip,
+          content: err.tip,
           meta: "文章请求错误",
           duration: 3000,
           keepAliveOnHover: true

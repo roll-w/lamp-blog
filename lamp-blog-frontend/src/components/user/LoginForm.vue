@@ -56,7 +56,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {getCurrentInstance, ref} from "vue";
 import axios from "axios";
 import api from "@/request/api";
 import {useNotification} from "naive-ui";
@@ -68,6 +68,7 @@ const userStore = useUserStore()
 const loginForm = ref(null)
 const router = useRouter()
 const notification = useNotification()
+const {proxy} = getCurrentInstance()
 
 const formValue = ref({
   identity: null,
@@ -105,7 +106,7 @@ const validateFormValue = (callback) => {
 const onLoginClick = (e) => {
   e.preventDefault()
   validateFormValue(() => {
-    axios.post(api.passwordLogin, formValue.value).then(res => {
+    proxy.$axios.post(api.passwordLogin, formValue.value).then(res => {
       /**
        * @type {{ user: {
        * username: string, id: number,
@@ -113,7 +114,7 @@ const onLoginClick = (e) => {
        * token: string
        * }}
        */
-      const recvData = res.data.data
+      const recvData = res.data
       let user = {
         id: recvData.user.id,
         username: recvData.user.username,
@@ -124,8 +125,7 @@ const onLoginClick = (e) => {
         name: index
       })
     }).catch(err => {
-      console.log(err)
-      const msg = err.response.data.tip
+      const msg = err.tip
       notification.error({
         title: "请求错误",
         content: msg,

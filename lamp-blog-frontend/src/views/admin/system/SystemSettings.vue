@@ -37,17 +37,17 @@
 </template>
 
 <script setup>
-
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import {NButton, NButtonGroup, useNotification} from "naive-ui";
 import {useUserStore} from "@/stores/user";
-import {h, ref} from "vue";
+import {getCurrentInstance, h, ref} from "vue";
 import axios from "axios";
 import api from "@/request/api";
 import {systemSettings} from "@/router";
 import {menuSystem} from "@/views/menu";
 import {createConfig} from "@/request/axios_config";
 
+const {proxy} = getCurrentInstance()
 const notification = useNotification()
 
 const columns = [
@@ -95,19 +95,22 @@ const page = ref(1)
 
 const config = createConfig()
 
-axios.get(api.systemSettings, config).then((res) => {
-  data.value = res.data.data
-  console.log(res);
-}).catch((err) => {
-  console.log(err);
-  const msg = err.response.data.tip +
-      "\n信息： " + err.response.data.message
-  notification.error({
-    title: "请求错误",
-    content: msg,
-    meta: "设置请求错误",
-    duration: 3000,
-    keepAliveOnHover: true
+const getSettings = () => {
+  proxy.$axios.get(api.systemSettings, config).then((res) => {
+    data.value = res.data
+  }).catch((err) => {
+    const msg = err.tip +
+        "\n信息： " + err.message
+    notification.error({
+      title: "请求错误",
+      content: msg,
+      meta: "设置请求错误",
+      duration: 3000,
+      keepAliveOnHover: true
+    })
   })
-})
+}
+
+getSettings()
+
 </script>

@@ -17,9 +17,13 @@
 import {createApp} from 'vue'
 import {createPinia} from 'pinia'
 import App from './App.vue'
-import router from './router'
+import router, {login} from './router'
 import './style.css'
 import naive from "naive-ui";
+import {createAxios} from "@/request/axios_config";
+import {useUserStore} from "@/stores/user";
+
+const debug = true
 
 const app = createApp(App)
 app.use(createPinia())
@@ -30,5 +34,24 @@ app.use(router)
 const meta = document.createElement('meta')
 meta.name = 'naive-ui-style'
 document.head.appendChild(meta)
+
+if (!debug) {
+    console.log = () => {
+    }
+}
+
+const onLoginExpired = () => {
+    console.log('登录已过期，请重新登录')
+    window.$message.error('登录已过期，请重新登录')
+    const userStore = useUserStore()
+    userStore.logout()
+
+    router.push({name: login}).then((failure) => {
+        console.log(failure)
+    })
+}
+
+const axios = createAxios(onLoginExpired)
+app.config.globalProperties.$axios = axios
 
 app.mount('#app')

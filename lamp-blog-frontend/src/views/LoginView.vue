@@ -44,6 +44,7 @@ import LoginForm from "@/components/user/LoginForm.vue";
 import {useRouter} from "vue-router";
 import {useUserStore} from "@/stores/user";
 import {index, login} from "@/router";
+import {getCurrentInstance} from "vue";
 
 const router = useRouter()
 const userStore = useUserStore()

@@ -39,17 +39,20 @@
 </template>
 
 <script setup>
-import {h, ref} from "vue";
+import {getCurrentInstance, h, ref} from "vue";
 import {NButton, NButtonGroup} from "naive-ui";
 import axios from "axios";
 import api from "@/request/api";
 import {useUserStore} from "@/stores/user";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
 import {formatTimestamp} from "@/util/time";
-import {adminUsers} from "@/router";
+import {adminUserDetails, adminUsers} from "@/router";
 import {menuUsers} from "@/views/menu";
+import {useRouter} from "vue-router";
+const {proxy} = getCurrentInstance()
 
 const userStore = useUserStore()
+const router = useRouter()
 
 const page = ref(1)
 
@@ -89,19 +92,16 @@ const columns = [
             h(NButton,
                 {
                   size: 'small',
-                  onClick: (row) => {
-                    console.log(row)
-                  }
-                },
-                {default: () => "查看"}),
-            h(NButton,
-                {
-                  size: 'small',
                   onClick: () => {
-                    console.log("lcl")
+                    router.push({
+                      name: adminUserDetails,
+                      params: {
+                        userId: row.userId
+                      }
+                    })
                   }
                 },
-                {default: () => "编辑"}),
+                {default: () => "查看/编辑"}),
             h(NButton,
                 {
                   size: 'small',
@@ -119,7 +119,7 @@ const columns = [
 const data = ref([]);
 
 const requestForData = (page, size) => {
-  axios.get(api.userList, {
+  proxy.$axios.get(api.userList, {
     params: {
       page: page,
       size: size
@@ -128,12 +128,11 @@ const requestForData = (page, size) => {
       "Authorization": userStore.getToken
     }
   }).then((res) => {
-    const recvData = res.data.data
+    const recvData = res.data
     recvData.forEach((item) => {
       item.createdAt = formatTimestamp(item.createdAt)
     })
     data.value = recvData
-    console.log(res)
   }).catch((err) => {
     console.log(err)
   })

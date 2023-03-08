@@ -30,6 +30,7 @@ export const articleView = "article-details"
 export const articleList = "article-list"
 export const admin = "admin-index"
 export const adminUsers = "admin-user-list"
+export const adminUserDetails = "admin-user-list-details"
 export const adminReviews = "admin-review-list"
 export const adminArticles = "admin-article-list"
 export const reviewsQueue = "admin-review-queue"
@@ -164,6 +165,14 @@ const router = createRouter({
                     component: () => import('@/views/admin/user/UsersList.vue'),
                     meta: {
                         title: "用户列表"
+                    }
+                },
+                {
+                    path: '/admin/users/:userId',
+                    name: adminUserDetails,
+                    component: () => import('@/views/admin/user/AdminUserDetails.vue'),
+                    meta: {
+                        title: "用户信息与编辑"
                     }
                 },
                 {

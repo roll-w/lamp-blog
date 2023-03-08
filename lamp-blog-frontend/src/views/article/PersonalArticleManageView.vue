@@ -48,7 +48,7 @@
 </template>
 
 <script setup>
-import {ref} from "vue";
+import {getCurrentInstance, ref} from "vue";
 import axios from "axios";
 import api from "@/request/api";
 import {useRouter} from "vue-router";
@@ -57,6 +57,7 @@ import MarkdownRender from "@/components/markdown/MarkdownRender.vue";
 import {useUserStore} from "@/stores/user";
 
 // TODO: user articles list
+const {proxy} = getCurrentInstance()
 
 const articles = ref([]);
 const router = useRouter();
@@ -71,9 +72,9 @@ const requestArticles = (page) => {
   config.params = {
     page: page,
   }
-  axios.get(api.userArticles(userId, false), config).then((res) => {
+  proxy.$axios.get(api.userArticles(userId, false), config).then((res) => {
     console.log(res)
-    res.data.data.forEach((article) => {
+    res.data.forEach((article) => {
       article.content = article.content.split('\n').slice(0, 5).join('\n') + "\n\n......"
     })
     articles.value = res.data.data;

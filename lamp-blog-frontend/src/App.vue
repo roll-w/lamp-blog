@@ -47,6 +47,7 @@ import go from 'highlight.js/lib/languages/go'
 import ini from 'highlight.js/lib/languages/ini'
 import javascript from 'highlight.js/lib/languages/javascript'
 import json from 'highlight.js/lib/languages/json'
+import MessageApi from "@/MessageApi.vue";
 
 hljs.registerLanguage('cpp', cpp)
 hljs.registerLanguage('css', css)
@@ -196,10 +197,11 @@ siteStore.$subscribe((mutation, state) => {
 </script>
 
 <template>
-  <n-config-provider :hljs="hljs" :locale="locale.locale" :katex="katex"
+  <n-config-provider :hljs="hljs" :katex="katex" :locale="locale.locale"
                      :theme="dark" :theme-overrides="themeOverrides" class="h-100">
     <n-loading-bar-provider>
       <n-message-provider>
+        <message-api/>
         <n-notification-provider :max="5">
           <n-dialog-provider>
             <n-layout position="absolute">

@@ -33,13 +33,14 @@
 
 <script setup>
 import {useRouter} from "vue-router";
-import {ref} from "vue";
+import {getCurrentInstance, ref} from "vue";
 import axios from "axios";
 import api from "@/request/api";
 import {createConfig} from "@/request/axios_config";
 import UserPageHeader from "@/components/user/UserPageHeader.vue";
 
 const router = useRouter()
+const {proxy} = getCurrentInstance()
 
 const id = router.currentRoute.value.params.userId
 
@@ -59,19 +60,16 @@ const getMessage = (status) => {
 
 const getUserInfo = () => {
   const config = createConfig()
-  axios.get(api.userInfo(id, false), config)
+  proxy.$axios.get(api.userInfo(id, false), config)
       .then(res => {
-        const userData = res.data.data
+        const userData = res.data
         if (userData.introduction === null) {
           userData.introduction = "这个人很懒，什么都没留下"
         }
-
-        userInfo.value = res.data.data
-        console.log(res)
+        userInfo.value = res.data
       })
       .catch(err => {
-        const resp = err.response.data
-        message.value = getMessage(resp.status)
+        message.value = getMessage(err.status)
       })
 }
 
