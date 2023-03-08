@@ -16,9 +16,8 @@
 
 package space.lingu.lamp.web.domain.authentication.login;
 
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.BusinessRuntimeException;
+import space.lingu.lamp.ErrorCode;
 
 /**
  * @author RollW
@@ -36,19 +35,7 @@ public class LoginTokenException extends BusinessRuntimeException {
         super(errorCode, message, cause, args);
     }
 
-    public LoginTokenException(Throwable cause) {
-        super(cause);
-    }
-
     public LoginTokenException(ErrorCode errorCode, Throwable cause) {
         super(errorCode, cause);
-    }
-
-    public LoginTokenException(ErrorCodeFinder errorCodeFinder, Throwable cause) {
-        super(errorCodeFinder, cause);
-    }
-
-    public LoginTokenException(ErrorCodeFinder codeFinderChain, Throwable cause, String message, Object... args) {
-        super(codeFinderChain, cause, message, args);
     }
 }

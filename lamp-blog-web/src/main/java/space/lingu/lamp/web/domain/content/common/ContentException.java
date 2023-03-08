@@ -18,7 +18,6 @@ package space.lingu.lamp.web.domain.content.common;
 
 import space.lingu.lamp.BusinessRuntimeException;
 import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinder;
 
 /**
  * @author RollW
@@ -34,18 +33,6 @@ public class ContentException extends BusinessRuntimeException {
 
     public ContentException(ErrorCode errorCode, String message, Throwable cause, Object... args) {
         super(errorCode, message, cause, args);
-    }
-
-    public ContentException(Throwable cause) {
-        super(cause);
-    }
-
-    public ContentException(ErrorCodeFinder errorCodeFinder, Throwable cause) {
-        super(errorCodeFinder, cause);
-    }
-
-    public ContentException(ErrorCodeFinder codeFinderChain, Throwable cause, String message, Object... args) {
-        super(codeFinderChain, cause, message, args);
     }
 
     public ContentException(ErrorCode errorCode, Throwable cause) {

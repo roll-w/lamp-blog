@@ -52,21 +52,6 @@ public class BusinessRuntimeException extends RuntimeException {
         this.args = args;
     }
 
-    public BusinessRuntimeException(Throwable cause) {
-        this(ErrorCodeFinderChain.start(), cause);
-    }
-
-    public BusinessRuntimeException(ErrorCodeFinder errorCodeFinder, Throwable cause) {
-        this(errorCodeFinder, cause, cause.toString());
-    }
-
-    public BusinessRuntimeException(ErrorCodeFinder codeFinderChain, Throwable cause, String message, Object... args) {
-        super(cause);
-        this.errorCode = codeFinderChain.fromThrowable(cause);
-        this.message = message;
-        this.args = args;
-    }
-
     public BusinessRuntimeException(ErrorCode errorCode, Throwable cause) {
         super(cause);
         this.errorCode = errorCode;

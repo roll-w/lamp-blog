@@ -96,11 +96,6 @@ public enum UserErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessag
         this.status = status;
     }
 
-    UserErrorCode(String value) {
-        this.value = value;
-        this.status = 403;
-    }
-
     @Override
     public String toString() {
         if (this == SUCCESS) {

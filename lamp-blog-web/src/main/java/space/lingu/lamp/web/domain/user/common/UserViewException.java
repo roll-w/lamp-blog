@@ -18,7 +18,6 @@ package space.lingu.lamp.web.domain.user.common;
 
 import space.lingu.lamp.BusinessRuntimeException;
 import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinder;
 
 /**
  * @author RollW
@@ -34,18 +33,6 @@ public class UserViewException extends BusinessRuntimeException {
 
     public UserViewException(ErrorCode errorCode, String message, Throwable cause, Object... args) {
         super(errorCode, message, cause, args);
-    }
-
-    public UserViewException(Throwable cause) {
-        super(cause);
-    }
-
-    public UserViewException(ErrorCodeFinder errorCodeFinder, Throwable cause) {
-        super(errorCodeFinder, cause);
-    }
-
-    public UserViewException(ErrorCodeFinder codeFinderChain, Throwable cause, String message, Object... args) {
-        super(codeFinderChain, cause, message, args);
     }
 
     public UserViewException(ErrorCode errorCode, Throwable cause) {

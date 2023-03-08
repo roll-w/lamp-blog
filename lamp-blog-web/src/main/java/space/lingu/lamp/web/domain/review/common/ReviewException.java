@@ -16,9 +16,8 @@
 
 package space.lingu.lamp.web.domain.review.common;
 
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.BusinessRuntimeException;
+import space.lingu.lamp.ErrorCode;
 
 /**
  * @author RollW
@@ -34,14 +33,6 @@ public class ReviewException extends BusinessRuntimeException {
 
     public ReviewException(ErrorCode errorCode, String message, Throwable cause, Object... args) {
         super(errorCode, message, cause, args);
-    }
-
-    public ReviewException(Throwable cause) {
-        super(cause);
-    }
-
-    public ReviewException(Throwable cause, ErrorCodeFinder codeFinderChain) {
-        super(codeFinderChain, cause);
     }
 
     public ReviewException(ErrorCode errorCode, Throwable cause) {
