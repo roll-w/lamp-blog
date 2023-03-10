@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.domain.staff.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
@@ -36,6 +38,8 @@ import java.util.TreeMap;
  */
 @Service
 public class ReviewerAllocateServiceImpl implements ReviewerAllocateService {
+   private static final Logger logger = LoggerFactory.getLogger(ReviewerAllocateServiceImpl.class);
+
     private final StaffRepository staffRepository;
     private final ReviewJobRepository reviewJobRepository;
     private final Map<Long, Integer> weights = new HashMap<>();
@@ -61,6 +65,13 @@ public class ReviewerAllocateServiceImpl implements ReviewerAllocateService {
         });
 
         List<Staff> staffs = staffRepository.getActiveStaffsByType(StaffType.REVIEWER);
+        staffs.forEach(staff -> {
+            if (weights.containsKey(staff.getUserId())) {
+                return;
+            }
+            weights.put(staff.getUserId(), 0);
+        });
+
         weights.forEach((staffId, weight) -> {
             List<Long> staffIds = staffReviewingCount.getOrDefault(weight,
                     new ArrayList<>());
@@ -68,12 +79,7 @@ public class ReviewerAllocateServiceImpl implements ReviewerAllocateService {
             staffReviewingCount.put(weight, staffIds);
         });
 
-        staffs.forEach(staff -> {
-            if (weights.containsKey(staff.getUserId())) {
-                return;
-            }
-            weights.put(staff.getUserId(), 0);
-        });
+        logger.info("Load staff reviewing count: {}", staffReviewingCount);
     }
 
     private void remappingReviewer(long reviewer, int original, int weight) {
@@ -95,6 +101,9 @@ public class ReviewerAllocateServiceImpl implements ReviewerAllocateService {
             return AUTO_REVIEWER;
         }
         Map.Entry<Integer, List<Long>> entry = staffReviewingCount.firstEntry();
+        if (entry == null) {
+            return AUTO_REVIEWER;
+        }
         List<Long> ids = entry.getValue();
         long reviewerId = ids.get(0);
         remappingReviewer(reviewerId, entry.getKey(), entry.getKey() + contentType.getWeight());

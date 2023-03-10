@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.domain.staff;
 
+import space.lingu.lamp.DataItem;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
@@ -28,8 +29,8 @@ import java.util.Set;
  * @author RollW
  */
 @SuppressWarnings({"ClassCanBeRecord", "unused"})
-@DataTable(tableName = "staff")
-public class Staff {
+@DataTable(name = "staff")
+public class Staff implements DataItem {
     // TODO: staff type
     @DataColumn(name = "id")
     @PrimaryKey
