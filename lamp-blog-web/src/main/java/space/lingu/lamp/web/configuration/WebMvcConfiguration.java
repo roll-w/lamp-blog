@@ -20,7 +20,6 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.ErrorCodeFinderChain;
@@ -32,12 +31,6 @@ import space.lingu.lamp.web.configuration.json.ErrorCodeSerializer;
  */
 @Configuration
 public class WebMvcConfiguration implements WebMvcConfigurer {
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/static/**")
-                .addResourceLocations("classpath:/static/");
-    }
-
     @Bean
     public Jackson2ObjectMapperBuilder jackson2ObjectMapperBuilder(ErrorCodeFinderChain finderChain) {
         ErrorCodeDeserializer errorCodeDeserializer = new ErrorCodeDeserializer(finderChain);
