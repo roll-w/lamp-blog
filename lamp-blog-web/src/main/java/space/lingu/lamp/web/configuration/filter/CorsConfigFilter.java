@@ -17,6 +17,8 @@
 package space.lingu.lamp.web.configuration.filter;
 
 import org.springframework.http.HttpMethod;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import space.lingu.lamp.BusinessRuntimeException;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -34,6 +36,13 @@ import java.util.StringJoiner;
  * @author RollW
  */
 public class CorsConfigFilter implements Filter {
+    private final HandlerExceptionResolver resolver;
+
+    public CorsConfigFilter(HandlerExceptionResolver resolver) {
+        this.resolver = resolver;
+    }
+
+
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
@@ -57,7 +66,11 @@ public class CorsConfigFilter implements Filter {
         response.setHeader("Access-Control-Allow-Methods", methods.toString());
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setHeader("Access-Control-Allow-Credentials", "true");
-        chain.doFilter(request, response);
+        try {
+            chain.doFilter(request, response);
+        } catch (BusinessRuntimeException e) {
+            resolver.resolveException(request, response, null, e);
+        }
     }
 
     @Override

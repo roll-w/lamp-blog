@@ -36,12 +36,14 @@ public class WebDelegateSecurityHandler implements AuthenticationEntryPoint, Acc
     }
 
     @Override
-    public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) {
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+                         AuthenticationException authException) {
         resolver.resolveException(request, response, null, authException);
     }
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) {
+    public void handle(HttpServletRequest request, HttpServletResponse response,
+                       AccessDeniedException accessDeniedException) {
         resolver.resolveException(request, response, null, accessDeniedException);
     }
 }

@@ -24,6 +24,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.filter.OncePerRequestFilter;
 import space.lingu.NonNull;
+import space.lingu.lamp.BusinessRuntimeException;
 import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
@@ -85,8 +86,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             TokenAuthResult result = authenticationTokenService.verifyToken(token,
                     userDetails.getPassword());
             if (!result.success()) {
-                nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
-                return;
+                // although there are anonymous api access that don't need provides token,
+                // but as long as it provides token here, we have to verify it.
+                // And throw exception when failed.
+                throw new BusinessRuntimeException(result.errorCode());
             }
 
             UserInfo userInfo = UserInfo.from(userDetails);
