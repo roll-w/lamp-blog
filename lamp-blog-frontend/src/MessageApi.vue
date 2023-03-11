@@ -14,6 +14,8 @@
   - limitations under the License.
   -->
 
+<template>
+</template>
 <script setup>
 import {useMessage} from "naive-ui";
 

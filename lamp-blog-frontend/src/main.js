@@ -46,7 +46,9 @@ const onLoginExpired = () => {
     const userStore = useUserStore()
     userStore.logout()
 
-    router.push({name: login}).then((failure) => {
+    router.push({
+        name: login
+    }).then((failure) => {
         console.log(failure)
     })
 }
