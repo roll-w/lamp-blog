@@ -19,17 +19,12 @@ package space.lingu.lamp.data.page;
 /**
  * @author RollW
  */
-public class PageHelper {
+public interface Pageable {
+    int getPage();
 
-    public static Offset offset(int page, int size) {
-        return new Offset(size, (page - 1) * size);
-    }
+    int getSize();
 
-    public static Offset offset(Pageable pageRequest) {
-        return offset(pageRequest.getPage(), pageRequest.getSize());
-    }
-
-
-    private PageHelper() {
+    default Offset toOffset() {
+        return PageHelper.offset(this);
     }
 }

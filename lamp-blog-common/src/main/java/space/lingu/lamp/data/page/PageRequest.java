@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * @author RollW
  */
-public class PageRequest {
+public class PageRequest implements Pageable {
     private final int page;
     private final int size;
 
@@ -30,16 +30,14 @@ public class PageRequest {
         this.size = size;
     }
 
+    @Override
     public int getPage() {
         return page;
     }
 
+    @Override
     public int getSize() {
         return size;
-    }
-
-    public Offset toOffset() {
-        return PageHelper.offset(this);
     }
 
     @Override
