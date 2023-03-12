@@ -32,13 +32,14 @@ import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.lamp.web.domain.content.ContentMetadata;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionMetadata;
+import space.lingu.lamp.web.domain.like.UserLike;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import space.lingu.lamp.web.system.MessageResource;
-import space.lingu.lamp.web.system.SystemSetting;
+import space.lingu.lamp.web.system.setting.SystemSetting;
 import space.lingu.light.DataConverters;
 import space.lingu.light.Database;
 import space.lingu.light.LightConfiguration;
@@ -49,6 +50,7 @@ import space.lingu.light.LightDatabase;
  */
 @Database(name = "lamp_blog_database", version = 1, tables = {
         User.class, UserPersonalData.class, Staff.class,
+        UserLike.class,
         RegisterVerificationToken.class,
         SystemSetting.class, MessageResource.class,
         Article.class,
@@ -80,4 +82,6 @@ public abstract class LampDatabase extends LightDatabase {
     public abstract ContentCollectionMetadataDao getContentCollectionMetadataDao();
 
     public abstract CommentDao getCommentDao();
+
+    public abstract UserLikeDao getUserLikeDao();
 }

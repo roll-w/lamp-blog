@@ -22,8 +22,8 @@ import org.springframework.stereotype.Component;
 import space.lingu.lamp.event.EventCallback;
 import space.lingu.lamp.event.EventRegistry;
 import space.lingu.lamp.web.common.keys.MailConfigKeys;
-import space.lingu.lamp.web.system.SettingLoader;
-import space.lingu.lamp.web.system.SystemSetting;
+import space.lingu.lamp.web.system.setting.SettingLoader;
+import space.lingu.lamp.web.system.setting.SystemSetting;
 
 import static space.lingu.lamp.web.configuration.MailConfiguration.applyProperties;
 import static space.lingu.lamp.web.configuration.MailConfiguration.setProperties;

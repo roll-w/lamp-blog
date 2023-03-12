@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.system;
+package space.lingu.lamp.web.system.setting;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
@@ -24,18 +24,29 @@ import java.util.List;
 /**
  * @author RollW
  */
-public interface SettingLoader {
+public interface SettingProvider extends SettingLoader {
     @Nullable
+    @Override
     SystemSetting getSetting(@NonNull String key);
 
     @Nullable
+    @Override
     SystemSetting getSetting(@NonNull String key, String defaultValue);
 
     @Nullable
+    @Override
     String getSettingValue(@NonNull String key);
 
     @Nullable
+    @Override
     String getSettingValue(@NonNull String key, String defaultValue);
 
+    @Override
     List<SystemSetting> getSettings(int page, int size);
+
+    void setSetting(String key, String value);
+
+    void setSetting(SystemSetting setting);
+
+    void deleteSetting(String key);
 }

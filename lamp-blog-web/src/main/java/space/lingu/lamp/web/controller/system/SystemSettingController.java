@@ -24,8 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.data.page.PageRequest;
 import space.lingu.lamp.web.controller.AdminApi;
-import space.lingu.lamp.web.system.SettingProvider;
-import space.lingu.lamp.web.system.SystemSetting;
+import space.lingu.lamp.web.system.setting.SettingProvider;
+import space.lingu.lamp.web.system.setting.SystemSetting;
 
 import java.util.List;
 

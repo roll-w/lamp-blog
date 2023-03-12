@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.system;
+package space.lingu.lamp.web.system.setting;
 
 import space.lingu.lamp.DataItem;
 import space.lingu.light.DataColumn;

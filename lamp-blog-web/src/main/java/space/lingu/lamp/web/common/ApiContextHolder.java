@@ -63,6 +63,14 @@ public final class ApiContextHolder {
             return userInfo.id();
         }
 
+        @Nullable
+        public Long rawId() {
+            if (userInfo == null) {
+                return null;
+            }
+            return userInfo.id();
+        }
+
         public String username() {
             Preconditions.checkNotNull(userInfo, "userInfo cannot be null");
             return userInfo.username();

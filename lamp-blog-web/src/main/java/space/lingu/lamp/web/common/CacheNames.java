@@ -32,6 +32,8 @@ public class CacheNames {
 
     public static final String STAFFS = "staffs";
 
+    public static final String PAGES = "pages";
+
     private CacheNames() {
     }
 }

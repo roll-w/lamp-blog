@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.database.dao;
 
-import space.lingu.lamp.web.system.SystemSetting;
+import space.lingu.lamp.web.system.setting.SystemSetting;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
 import space.lingu.light.Insert;

@@ -29,9 +29,9 @@ import space.lingu.lamp.event.EventCallback;
 import space.lingu.lamp.event.EventRegistry;
 import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.system.repository.SystemSettingRepository;
-import space.lingu.lamp.web.system.SystemSetting;
-import space.lingu.lamp.web.system.SettingLoader;
-import space.lingu.lamp.web.system.SettingProvider;
+import space.lingu.lamp.web.system.setting.SystemSetting;
+import space.lingu.lamp.web.system.setting.SettingLoader;
+import space.lingu.lamp.web.system.setting.SettingProvider;
 
 import java.util.List;
 import java.util.Set;
