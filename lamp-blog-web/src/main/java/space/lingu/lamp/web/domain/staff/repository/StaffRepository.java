@@ -60,6 +60,16 @@ public class StaffRepository {
         return staff;
     }
 
+
+    public Staff getByStaffId(String employeeId) {
+        Staff staff = staffCache.get(employeeId, Staff.class);
+        if (staff == null) {
+            staff = staffDao.getByStaffId(employeeId);
+            staffCache.put(employeeId, staff);
+        }
+        return staff;
+    }
+
     public List<Staff> getStaffs(Pageable pageable) {
         return staffDao.get(pageable.toOffset());
     }

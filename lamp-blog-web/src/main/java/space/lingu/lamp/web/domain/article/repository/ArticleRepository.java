@@ -17,9 +17,11 @@
 package space.lingu.lamp.web.domain.article.repository;
 
 import org.springframework.stereotype.Repository;
+import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ArticleDao;
 import space.lingu.lamp.web.domain.article.Article;
+import space.lingu.lamp.web.system.CountableDao;
 
 import java.util.List;
 
@@ -27,7 +29,7 @@ import java.util.List;
  * @author RollW
  */
 @Repository
-public class ArticleRepository {
+public class ArticleRepository implements CountableDao<Article> {
     private final ArticleDao articleDao;
 
     public ArticleRepository(LampDatabase lampDatabase) {
@@ -61,9 +63,32 @@ public class ArticleRepository {
         return articleDao.get(limit, offset);
     }
 
+    public List<Article> getArticles() {
+        return articleDao.get();
+    }
+
+    // TODO: process pages at repository layer
     public List<Article> getArticlesByUser(long userId,
-                                     int offset,
-                                     int limit) {
-        return articleDao.getByUserId(userId, limit, offset);
+                                           Offset offset) {
+        return articleDao.getByUserId(userId, offset);
+    }
+
+    public List<Article> getArticlesByUser(long userId) {
+        return articleDao.getByUserId(userId);
+    }
+
+    @Override
+    public long getCount() {
+        return articleDao.getCount();
+    }
+
+    @Override
+    public long getActiveCount() {
+        return articleDao.getCount();
+    }
+
+    @Override
+    public Class<Article> getCountableType() {
+        return Article.class;
     }
 }

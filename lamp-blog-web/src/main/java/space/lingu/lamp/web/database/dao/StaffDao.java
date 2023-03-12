@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.database.dao;
 
 import space.lingu.Dangerous;
+import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.light.Dao;
@@ -47,7 +48,7 @@ public abstract class StaffDao {
 
     @Delete
     @Dangerous(message = "This method will delete data completely in the table. Use with caution.")
-    protected abstract void delete(Staff Staff);
+    protected abstract void delete(Staff staff);
 
     @Delete
     @Dangerous(message = "This method will delete data completely in the table. Use with caution.")
@@ -60,11 +61,14 @@ public abstract class StaffDao {
     @Query("SELECT * FROM staff")
     public abstract List<Staff> get();
 
-    @Query("SELECT * FROM staff ORDER BY id OFFSET {offset} LIMIT {limit}")
-    public abstract List<Staff> get(int offset, int limit);
+    @Query("SELECT * FROM staff ORDER BY id LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    public abstract List<Staff> get(Offset offset);
 
     @Query("SELECT * FROM staff WHERE id = {id}")
     public abstract Staff getById(long id);
+
+    @Query("SELECT * FROM staff WHERE employee_id = {id}")
+    public abstract Staff getByStaffId(String id);
 
     @Delete("UPDATE staff SET deleted = {deleted} WHERE id = {id}")
     public abstract void setStaffDeleted(long id, boolean deleted);

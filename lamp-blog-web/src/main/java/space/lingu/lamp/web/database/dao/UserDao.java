@@ -93,4 +93,16 @@ public abstract class UserDao {
 
     @Query("SELECT 1 FROM user")
     public abstract Integer hasUsers();
+
+    @Query("SELECT * FROM user WHERE id IN ({ids})")
+    public abstract List<User> getUsersByIds(List<Long> ids);
+
+    @Query("SELECT COUNT(*) FROM user")
+    public abstract long getCount();
+
+    @Query("SELECT COUNT(*) FROM user WHERE enabled = {enabled}")
+    public abstract long getCountWithEnableState(boolean enabled);
+
+    @Query("SELECT COUNT(*) FROM user WHERE canceled = {canceled}")
+    public abstract long getCountWithCanceledState(boolean canceled);
 }

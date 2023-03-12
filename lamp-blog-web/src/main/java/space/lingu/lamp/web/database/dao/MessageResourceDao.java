@@ -19,8 +19,6 @@ package space.lingu.lamp.web.database.dao;
 import space.lingu.lamp.web.system.MessageResource;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
-import space.lingu.light.Insert;
-import space.lingu.light.OnConflictStrategy;
 import space.lingu.light.Query;
 
 import java.util.List;
@@ -30,16 +28,7 @@ import java.util.Locale;
  * @author RollW
  */
 @Dao
-public interface MessageResourceDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(MessageResource... messageResources);
-
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    void insert(List<MessageResource> messageResources);
-
-    @Delete
-    void delete(MessageResource messageResource);
-
+public interface MessageResourceDao extends LampDao<MessageResource> {
     @Delete("DELETE FROM message_resource WHERE `key` = {key}")
     void deleteByKey(String key);
 

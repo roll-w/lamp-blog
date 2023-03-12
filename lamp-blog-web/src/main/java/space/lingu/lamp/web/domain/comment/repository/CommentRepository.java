@@ -52,12 +52,23 @@ public class CommentRepository {
         return commentDao.get(offset.offset(), offset.limit());
     }
 
+    public List<Comment> get() {
+        return commentDao.get();
+    }
+
     public List<Comment> getArticleComments(String collectionId,
                                             Offset offset) {
         return commentDao.getCommentsOn(
                 collectionId,
                 ContentType.ARTICLE,
-               offset
+                offset
+        );
+    }
+
+    public List<Comment> getArticleComments(String collectionId) {
+        return commentDao.getCommentsOn(
+                collectionId,
+                ContentType.ARTICLE
         );
     }
 }

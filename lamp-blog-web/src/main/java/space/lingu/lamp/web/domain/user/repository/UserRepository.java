@@ -161,4 +161,8 @@ public class UserRepository {
         userCache.evictIfPresent(user.getUsername());
         userCache.evictIfPresent(user.getEmail());
     }
+
+    public List<User> getUsersByIds(List<Long> ids) {
+        return userDao.getUsersByIds(ids);
+    }
 }

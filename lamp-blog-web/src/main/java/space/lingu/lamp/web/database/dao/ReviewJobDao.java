@@ -46,7 +46,7 @@ public abstract class ReviewJobDao {
     public abstract void update(ReviewJob... reviewJobs);
 
     @Delete
-    public abstract void delete(ReviewJob ReviewJob);
+    public abstract void delete(ReviewJob reviewJob);
 
     @Delete
     public abstract void delete(List<ReviewJob> reviewJobs);

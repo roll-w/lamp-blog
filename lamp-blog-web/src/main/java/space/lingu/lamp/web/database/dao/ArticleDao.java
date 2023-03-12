@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.database.dao;
 
+import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
 import space.lingu.light.Dao;
@@ -70,8 +71,9 @@ public abstract class ArticleDao {
     @Query("SELECT * FROM article WHERE user_id = {userId}")
     public abstract List<Article> getByUserId(long userId);
 
-    @Query("SELECT * FROM article WHERE user_id = {userId} LIMIT {limit} OFFSET {offset}")
-    public abstract List<Article> getByUserId(long userId, int limit, int offset);
+    @Query("SELECT * FROM article WHERE user_id = {userId} " +
+            "LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    public abstract List<Article> getByUserId(long userId, Offset offset);
 
     @Query("SELECT `id`, `user_id`, `title`, `cover`, `create_time`, `update_time` " +
             "FROM article LIMIT {limit} OFFSET {offset}")
@@ -80,4 +82,7 @@ public abstract class ArticleDao {
     @Query("SELECT `id`, `user_id`, `title`, `cover`, `create_time`, `update_time` " +
             "FROM article WHERE user_id = {userId} LIMIT {limit} OFFSET {offset}")
     public abstract List<ArticleInfo> getArticleInfosByUser(long userId, int limit, int offset);
+
+    @Query("SELECT COUNT(*) FROM article")
+    public abstract int getCount();
 }
