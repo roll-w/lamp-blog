@@ -18,6 +18,7 @@
 import {NaiveUIRenderer} from "@/markdown/render";
 import {compile, h, ref, watch} from "vue";
 import {marked} from "marked";
+import api, {frontBaseUrl} from "@/request/api";
 
 export default {
   props: {
@@ -34,6 +35,7 @@ export default {
       marked(value.replace(/\\/g, '\\\\'), {
         renderer: render,
         gfm: true,
+        baseUrl: frontBaseUrl,
         pedantic: false,
         sanitize: false,
         tables: true,

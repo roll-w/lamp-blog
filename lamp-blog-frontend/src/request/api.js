@@ -16,7 +16,7 @@
 
 const base = 'localhost:5100';
 
-const frontBase = 'localhost:5101';
+const frontBase = 'localhost:5000';
 
 export const frontBaseUrl = `http://${frontBase}`;
 
@@ -30,13 +30,21 @@ const passwordLogin = `${prefix}/user/login/password`;
 const emailLogin = `${prefix}/user/login/email`;
 const logout = `${prefix}/user/logout`;
 const register = `${prefix}/user/register`;
+const registerActivate = (token) =>
+    `${prefix}/user/register/token/${token}`;
 
 const userInfo = (userId, admin = false) => {
     return `${admin ? adminPrefix : prefix}/user/${userId}`;
 }
 
+const staffs = `${adminPrefix}/staffs`;
+const staffInfo = (staffId, admin = false) =>
+    `${prefix}/staff/${staffId}`;
+
+const staffInfoByUser = (userId, admin = false) =>
+    `${prefix}/user/${userId}/staff`;
+
 const allReviews = `${adminPrefix}/reviews`;
-const reviews = `${adminPrefix}/reviews`;
 const currentReviews = `${prefix}/reviews`;
 
 const statusReviews = (userId, admin = false) =>
@@ -50,17 +58,17 @@ const reviewResource = (jobId, admin = false) =>
 const tokenRefresh = `${prefix}/auth/token/r`;
 
 const articleDetails = (userId, articleId, admin) => {
-    return `${admin ? adminPrefix : prefix}/${userId}/article/${articleId}`;
+    return `${admin ? adminPrefix : prefix}/user/${userId}/article/${articleId}`;
 }
 
 const userArticles = (userId, admin) =>
-    `${admin ? adminPrefix : prefix}/${userId}/articles`
+    `${admin ? adminPrefix : prefix}/user/${userId}/articles`
 
 
 const adminArticles = `${adminPrefix}/articles`;
 
 const articleCreate2 = (userId, admin) => {
-    return `${admin ? adminPrefix : prefix}/${userId}/article`;
+    return `${admin ? adminPrefix : prefix}/user/${userId}/article`;
 }
 
 const articleCreate = `${prefix}/article`;
@@ -76,6 +84,7 @@ export default {
     emailLogin,
     logout,
     register,
+    registerActivate,
     tokenRefresh,
     userInfo,
 
@@ -84,6 +93,10 @@ export default {
     userArticles,
     adminArticles,
     userList,
+
+    staffs,
+    staffInfo,
+    staffInfoByUser,
 
     allReviews,
     currentReviews,
