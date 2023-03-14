@@ -16,13 +16,15 @@
 
 package space.lingu.lamp.web.domain.userdetails;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Objects;
 
 /**
  * @author RollW
  */
-public class Birthday {
+public class Birthday implements Serializable,
+        Comparable<Birthday> {
     private final int year;
     private final int month;
     private final int day;
@@ -81,6 +83,9 @@ public class Birthday {
     }
 
     public static Birthday fromString(String birthday) {
+        if (birthday == null || birthday.isEmpty()) {
+            return null;
+        }
         // pattern: yyyyMMdd
         int year = Integer.parseInt(birthday.substring(0, 4));
         int month = Integer.parseInt(birthday.substring(4, 6));
@@ -89,7 +94,21 @@ public class Birthday {
     }
 
     public static Birthday fromLocalDate(LocalDate date) {
+        if (date == null) {
+            return null;
+        }
+
         return new Birthday(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
     }
 
+    @Override
+    public int compareTo(Birthday o) {
+        if (year != o.year) {
+            return year - o.year;
+        }
+        if (month != o.month) {
+            return month - o.month;
+        }
+        return day - o.day;
+    }
 }

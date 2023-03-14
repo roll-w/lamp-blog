@@ -16,6 +16,9 @@
 
 package space.lingu.lamp.web.domain.userdetails;
 
+import com.google.common.base.Preconditions;
+import space.lingu.NonNull;
+import space.lingu.lamp.DataItem;
 import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -28,9 +31,9 @@ import java.io.Serializable;
  *
  * @author RollW
  */
-@DataTable(tableName = "user_personal_data")
+@DataTable(name = "user_personal_data")
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
-public final class UserPersonalData implements Serializable {
+public final class UserPersonalData implements Serializable, DataItem {
     @PrimaryKey
     @DataColumn(name = "id")
     private final long userId;
@@ -40,6 +43,9 @@ public final class UserPersonalData implements Serializable {
 
     @DataColumn(name = "avatar")
     private final String avatar;
+
+    @DataColumn(name = "cover")
+    private final String cover;
 
     @DataColumn(name = "birthday")
     private final Birthday birthday;
@@ -57,11 +63,14 @@ public final class UserPersonalData implements Serializable {
     private final String website;
 
     public UserPersonalData(long userId, String nickname, String avatar,
-                            Birthday birthday, String introduction,
-                            Gender gender, String location, String website) {
+                            String cover, Birthday birthday,
+                            String introduction,
+                            Gender gender, String location,
+                            String website) {
         this.userId = userId;
         this.nickname = nickname;
         this.avatar = avatar;
+        this.cover = cover;
         this.birthday = birthday;
         this.introduction = introduction;
         this.gender = gender;
@@ -79,6 +88,10 @@ public final class UserPersonalData implements Serializable {
 
     public String getAvatar() {
         return avatar;
+    }
+
+    public String getCover() {
+        return cover;
     }
 
     public Birthday getBirthday() {
@@ -112,11 +125,32 @@ public final class UserPersonalData implements Serializable {
     public static UserPersonalData defaultOf(UserIdentity user) {
         return new Builder()
                 .setUserId(user.getUserId())
+                .setAvatar("http://localhost:5100/static/img/lamp_user.png")
                 .setBirthday(null)
                 .setIntroduction(null)
                 .setGender(Gender.PRIVATE)
                 .setNickname(user.getUsername())
                 .build();
+    }
+
+
+    public static boolean checkNecessaryFields(
+            @NonNull UserPersonalData userPersonalData) {
+        Preconditions.checkNotNull(userPersonalData);
+        return userPersonalData.getAvatar() != null
+                && userPersonalData.getNickname() != null;
+    }
+
+    public static UserPersonalData replaceWithDefault(UserIdentity userIdentity,
+                                                      UserPersonalData userPersonalData) {
+        Builder builder = userPersonalData.toBuilder();
+        if (userPersonalData.getAvatar() == null) {
+            builder.setAvatar("http://localhost:5100/static/img/lamp_user.png");
+        }
+        if (userPersonalData.getNickname() == null) {
+            builder.setNickname(userIdentity.getUsername());
+        }
+        return builder.build();
     }
 
     public static final class Builder {
@@ -128,6 +162,9 @@ public final class UserPersonalData implements Serializable {
 
         @DataColumn(name = "avatar")
         private String avatar;
+
+        @DataColumn(name = "cover")
+        private String cover;
 
         @DataColumn(name = "birthday")
         private Birthday birthday;
@@ -170,6 +207,11 @@ public final class UserPersonalData implements Serializable {
 
         public Builder setAvatar(String avatar) {
             this.avatar = avatar;
+            return this;
+        }
+
+        public Builder setCover(String cover) {
+            this.cover = cover;
             return this;
         }
 
@@ -232,7 +274,7 @@ public final class UserPersonalData implements Serializable {
 
         public UserPersonalData build() {
             return new UserPersonalData(userId, nickname, avatar,
-                    birthday, introduction, gender, location, website);
+                    cover, birthday, introduction, gender, location, website);
         }
     }
 }

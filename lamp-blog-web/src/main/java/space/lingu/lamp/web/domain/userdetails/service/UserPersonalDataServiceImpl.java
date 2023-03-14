@@ -51,7 +51,11 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
             UserInfo userInfo = userRepository.getUserInfoById(userId);
             return UserPersonalData.defaultOf(userInfo);
         }
-        return data;
+        if (UserPersonalData.checkNecessaryFields(data)) {
+            return data;
+        }
+        UserInfo userInfo = userRepository.getUserInfoById(userId);
+        return UserPersonalData.replaceWithDefault(userInfo, data);
     }
 
     @Override
@@ -60,7 +64,10 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
         if (data == null) {
             return UserPersonalData.defaultOf(userIdentity);
         }
-        return data;
+        if (UserPersonalData.checkNecessaryFields(data)) {
+            return data;
+        }
+        return UserPersonalData.replaceWithDefault(userIdentity, data);
     }
 
     @Override
@@ -68,7 +75,19 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
         Long[] ids = userIdentities.stream().map(UserIdentity::getUserId)
                 .toList()
                 .toArray(new Long[0]);
-        return getPersonalData(ids);
+        List<UserPersonalData> userPersonalData = getPersonalData(ids);
+        return userPersonalData.stream().map(data -> {
+            if (UserPersonalData.checkNecessaryFields(data)) {
+                return data;
+            }
+            return UserPersonalData.replaceWithDefault(
+                    userIdentities.stream()
+                            .filter(identity -> identity.getUserId() == data.getUserId())
+                            .findFirst()
+                            .orElseThrow(() -> new IllegalArgumentException("Get personal data error")),
+                    data
+            );
+        }).toList();
     }
 
     @Override
