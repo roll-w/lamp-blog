@@ -21,12 +21,12 @@
         即将激活你的账户，请确认你的账户名
       </n-h1>
 
-      <n-space vertical size="medium">
+      <n-space size="medium" vertical>
         <n-text>访问账号的最后一步。</n-text>
         <n-card embedded>激活确认码：<code>{{ token }}</code></n-card>
-        <n-divider />
+        <n-divider/>
         <div class="flex items-center justify-center">
-          <n-button class="w-100">确认激活</n-button>
+          <n-button class="w-100" @click="confirmActivate">确认激活</n-button>
         </div>
       </n-space>
     </div>
@@ -35,11 +35,25 @@
 </template>
 
 <script setup>
+import {useMessage} from "naive-ui";
+import {useRouter} from "vue-router";
+import {getCurrentInstance} from "vue";
+import api from "@/request/api";
 
-import { useRouter } from "vue-router";
-
+const {proxy} = getCurrentInstance()
+const message = useMessage();
 const router = useRouter()
 
 const token = router.currentRoute.value.params.token
+
+const confirmActivate = () => {
+  proxy.$axios.post(api.registerActivate(token))
+      .then((res) => {
+        message.success("激活成功，您现在可以登录账号。")
+      })
+      .catch((err) => {
+        message.error("激活失败：" + err.tip)
+      })
+}
 
 </script>

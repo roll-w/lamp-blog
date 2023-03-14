@@ -36,6 +36,8 @@ const registerActivate = (token) =>
 const userInfo = (userId, admin = false) => {
     return `${admin ? adminPrefix : prefix}/user/${userId}`;
 }
+const currentUser = `${prefix}/user`;
+
 
 const staffs = `${adminPrefix}/staffs`;
 const staffInfo = (staffId, admin = false) =>
@@ -87,6 +89,7 @@ export default {
     registerActivate,
     tokenRefresh,
     userInfo,
+    currentUser,
 
     articleCreate,
     articleDetails,
