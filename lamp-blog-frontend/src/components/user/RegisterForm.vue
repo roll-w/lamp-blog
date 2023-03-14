@@ -121,7 +121,9 @@ const formRules = ref({
   ],
   agree: [
     {
-      required: true,
+      validator(rule, value) {
+        return value === true;
+      },
       message: "请阅读并同意用户协议",
       trigger: ["input"]
     }

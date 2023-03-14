@@ -39,7 +39,7 @@
 import {menuReview} from "@/views/menu";
 import {useRouter} from "vue-router";
 import AdminBreadcrumb from "@/components/admin/AdminBreadcrumb.vue";
-import {getCurrentInstance, h, ref} from "vue";
+import {getCurrentInstance, h, ref, watch} from "vue";
 import {NButton, NButtonGroup} from "naive-ui";
 import axios from "axios";
 import api from "@/request/api";
@@ -53,10 +53,11 @@ const page = ref(1)
 const router = useRouter()
 
 const name = router.currentRoute.value.name
-const isAdmin = name === adminReviews
+const isAdmin = () => name === adminReviews
+
 
 const getTitle = (name) => {
-  if (isAdmin) {
+  if (isAdmin()) {
     return "管理审核列表"
   }
   return "审核列表"
@@ -167,14 +168,13 @@ const contentTypeTransform = (contentType) => {
   }
 }
 
-const requestForData = (page, size) => {
+const requestForData = (page, isFullReviews) => {
   const config = createConfig()
   config.params = {
-    page: page,
-    size: size
+    page: page
   }
-
-  proxy.$axios.get(api.allReviews, config).then((res) => {
+  const url = isFullReviews ? api.allReviews : api.currentReviews
+  proxy.$axios.get(url, config).then((res) => {
     const recvData = res.data
     recvData.forEach((item) => {
       if (item.assignedTime)
@@ -194,6 +194,6 @@ const requestForData = (page, size) => {
   })
 }
 
-requestForData(page.value, 10)
+requestForData(page.value, isAdmin())
 
 </script>

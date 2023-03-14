@@ -27,10 +27,14 @@ export const userPage = "user-page"
 export const articleEditorPage = "article-page"
 export const articleEditorPageUpdate = "article-page-update"
 export const articleView = "article-details"
+export const articleFocusView = "article-details-focus"
 export const articleList = "article-list"
+
+// admins
 export const admin = "admin-index"
 export const adminUsers = "admin-user-list"
 export const adminUserDetails = "admin-user-list-details"
+export const adminStaffs = "admin-staff-list"
 export const adminReviews = "admin-review-list"
 export const adminArticles = "admin-article-list"
 export const reviewsQueue = "admin-review-queue"
@@ -101,14 +105,23 @@ const router = createRouter({
                     name: articleList,
                     component: () => import('@/views/article/PersonalArticleManageView.vue'),
                     meta: {
-                        title: "文章管理"
+                        title: "文章管理",
+                        requireLogin: true,
                     }
                 },
 
                 {
-                    path: '/:user/article/:id',
+                    path: '/user/:user/article/:id',
                     name: articleView,
                     component: () => import('@/views/article/ArticleViewer.vue'),
+                    meta: {
+                        title: "文章查看"
+                    }
+                },
+                {
+                    path: '/user/:user/article/:id/focus',
+                    name: articleFocusView,
+                    component: () => import('@/views/article/ReadingView.vue'),
                     meta: {
                         title: "文章查看"
                     }
@@ -119,7 +132,8 @@ const router = createRouter({
                     name: articleEditorPage,
                     component: () => import('@/views/article/ArticleEditor.vue'),
                     meta: {
-                        title: "文章编辑"
+                        title: "文章编辑",
+                        requireLogin: true,
                     }
                 },
                 {
@@ -127,7 +141,8 @@ const router = createRouter({
                     name: articleEditorPageUpdate,
                     component: () => import('@/views/article/ArticleEditor.vue'),
                     meta: {
-                        title: "文章编辑"
+                        title: "文章编辑",
+                        requireLogin: true,
                     }
                 },
                 {
@@ -168,6 +183,14 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/admin/users/staffs',
+                    name: adminStaffs,
+                    component: () => import('@/views/admin/user/StaffList.vue'),
+                    meta: {
+                        title: "工作人员列表"
+                    }
+                },
+                {
                     path: '/admin/users/:userId',
                     name: adminUserDetails,
                     component: () => import('@/views/admin/user/AdminUserDetails.vue'),
@@ -176,27 +199,28 @@ const router = createRouter({
                     }
                 },
                 {
-                    path: '/admin/reviews/reviewer',
-                    name: reviewerReviews,
-                    component: () => import('@/views/admin/review/ReviewJobs.vue'),
-                    meta: {
-                        title: "审核记录"
-                    }
-                },
-                {
                     path: '/admin/articles',
                     name: adminArticles,
-                    component: () => import('@/views/admin/article/ArticlesList.vue'),
+                    component: () => import('@/views/admin/article/AdminArticlesList.vue'),
                     meta: {
                         title: "文章列表"
                     }
                 },
+
                 {
                     path: '/admin/reviews/manage',
                     name: adminReviews,
                     component: () => import('@/views/admin/review/ReviewJobs.vue'),
                     meta: {
                         title: "管理审核记录"
+                    }
+                },
+                {
+                    path: '/admin/reviews/reviewer',
+                    name: reviewerReviews,
+                    component: () => import('@/views/admin/review/ReviewJobs.vue'),
+                    meta: {
+                        title: "审核记录"
                     }
                 },
                 {
@@ -241,13 +265,20 @@ export const getTitleSuffix = () => {
     return " | 灯客 - Lamp Blog"
 }
 
-router.beforeEach((to, from, next) => {
+router.afterEach((to, from) => {
     document.title = to.meta.title ? to.meta.title + getTitleSuffix() : defaultTitle
-    next()
 })
+
 
 router.beforeEach((to, from, next) => {
     const userStore = useUserStore()
+
+    if (to.meta.requireLogin && !userStore.isLogin) {
+        return next({
+            name: login,
+        })
+    }
+
     if (!to.name.startsWith("admin")) {
         return next()
     }

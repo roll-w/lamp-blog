@@ -17,8 +17,9 @@
 <template>
   <div :style="{'background-image': 'url(' + userInfo.cover + ')'}"
        class="rounded-2xl bg-no-repeat bg-cover bg-center">
-    <div class="rounded-2xl p-7 pt-10 backdrop-brightness-75 ">
-      <div class="flex items-center mt-10 w-100">
+    <div class="rounded-2xl pt-10">
+      <div class="rounded-b-2xl p-7 pb-7 flex items-center mt-14 w-100
+        bg-gradient-to-b from-transparent to-neutral-900">
         <n-avatar :round="true" :size="80"
                   :src="userInfo.avatar"
                   class="mr-5"/>
@@ -27,11 +28,11 @@
             <div class="text-white text-2xl font-bold">
               {{ userInfo.nickname }}
             </div>
-            <div class="text-gray-300 text-xl font-light">
+            <div class="text-gray-200 text-xl font-light">
               @{{ userInfo.username }}
             </div>
           </div>
-          <div class="text-gray-300">
+          <div class="text-gray-200">
             {{ userInfo.introduction }}
           </div>
         </div>

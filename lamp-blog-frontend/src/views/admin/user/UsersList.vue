@@ -20,7 +20,7 @@
     <div class="flex items-baseline mt-5">
       <n-h1>用户列表</n-h1>
       <div class="flex flex-grow justify-end">
-        <n-button >创建新用户</n-button>
+        <n-button>创建新用户</n-button>
       </div>
     </div>
     <n-data-table
@@ -40,7 +40,7 @@
 
 <script setup>
 import {getCurrentInstance, h, ref} from "vue";
-import {NButton, NButtonGroup} from "naive-ui";
+import {NButton, NButtonGroup, useDialog} from "naive-ui";
 import axios from "axios";
 import api from "@/request/api";
 import {useUserStore} from "@/stores/user";
@@ -49,8 +49,9 @@ import {formatTimestamp} from "@/util/time";
 import {adminUserDetails, adminUsers} from "@/router";
 import {menuUsers} from "@/views/menu";
 import {useRouter} from "vue-router";
-const {proxy} = getCurrentInstance()
 
+const {proxy} = getCurrentInstance()
+const dialog = useDialog()
 const userStore = useUserStore()
 const router = useRouter()
 
@@ -82,6 +83,36 @@ const columns = [
     key: "createdAt"
   },
   {
+    title: "已启用",
+    key: "enabled",
+    render(row) {
+      if (row.enabled === true) {
+        return "是"
+      }
+      return "否"
+    }
+  },
+  {
+    title: "已锁定",
+    key: "locked",
+    render(row) {
+      if (row.locked === true) {
+        return "是"
+      }
+      return "否"
+    }
+  },
+  {
+    title: "已注销",
+    key: "canceled",
+    render(row) {
+      if (row.canceled === true) {
+        return "是"
+      }
+      return "否"
+    }
+  },
+  {
     title: "操作",
     key: "actions",
     render(row) {
@@ -106,7 +137,7 @@ const columns = [
                 {
                   size: 'small',
                   onClick: () => {
-                    console.log("lcl")
+                    handleDeleteUser(row)
                   }
                 },
                 {default: () => "删除"}),
@@ -117,6 +148,22 @@ const columns = [
 ]
 
 const data = ref([]);
+
+const handleDeleteUser = (user) => {
+  dialog.error({
+    title: "确认删除",
+    transformOrigin: "center",
+    content: `请确认是否删除用户名为'${user.username}'，id为'${user.userId}'的用户？\n删除后用户将转为注销状态。`,
+    negativeText: "取消",
+    positiveText: "确认",
+    onPositiveClick: () => {
+      console.log("delete user of " + user.userId)
+    },
+    onNegativeClick: () => {
+
+    }
+  })
+}
 
 const requestForData = (page, size) => {
   proxy.$axios.get(api.userList, {

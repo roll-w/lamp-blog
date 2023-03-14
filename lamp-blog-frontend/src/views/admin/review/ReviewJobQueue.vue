@@ -80,6 +80,7 @@ import {formatTimestamp} from "@/util/time";
 import {getCurrentInstance, ref, watch} from "vue";
 import {useNotification} from "naive-ui";
 import MarkdownRender from "@/components/markdown/MarkdownRender.vue";
+import {adminErrorTemplate} from "@/views/admin/error";
 
 const {proxy} = getCurrentInstance()
 const notification = useNotification()
@@ -178,42 +179,33 @@ const requestForData = (page, size) => {
       else item.reviewTime = "未审核"
     })
     data.value = recvData
-    requestContent(recvData[0].id)
+    if (recvData.length > 0) {
+      requestContent(recvData[0].id || undefined)
+    }
   }).catch((err) => {
-    console.log(err)
-    const msg = err.tip +
-        "\n信息： " + err.message
-    notification.error({
-      title: "请求错误",
-      content: msg,
-      meta: "审核任务请求错误",
-      duration: 3000,
-      keepAliveOnHover: true
-    })
+    adminErrorTemplate(notification, err,
+        "请求错误", "审核任务请求错误")
   })
 }
 
 const requestContent = (id) => {
+  if (id === undefined) {
+    return
+  }
+
   const config = createConfig()
-  axios.get(api.reviewContent(id), config).then((res) => {
-    content.value = res.data.data
+  proxy.$axios.get(api.reviewContent(id), config).then((res) => {
+    content.value = res.data
   }).catch((err) => {
     console.log(err)
-    const msg = err.response.data.tip +
-        "\n信息： " + err.response.data.message
-    notification.error({
-      title: "请求错误",
-      content: msg,
-      meta: "内容请求错误",
-      duration: 3000,
-      keepAliveOnHover: true
-    })
+    adminErrorTemplate(notification, err,
+        "请求错误", "内容请求错误")
   })
 }
 
 const passReview = (id, callback) => {
   const config = createConfig()
-  axios.put(api.reviewResource(id), {}, config).then((res) => {
+  proxy.$axios.put(api.reviewResource(id), {}, config).then((res) => {
     notification.success({
       title: "审核通过",
       content: "审核成功通过",
@@ -224,15 +216,8 @@ const passReview = (id, callback) => {
     callback()
   }).catch((err) => {
     console.log(err)
-    const msg = err.response.data.tip +
-        "\n信息： " + err.response.data.message
-    notification.error({
-      title: "审核通过请求错误",
-      content: msg,
-      meta: "审核请求错误",
-      duration: 3000,
-      keepAliveOnHover: true
-    })
+    adminErrorTemplate(notification, err,
+        "审核请求错误", "审核通过请求错误")
   })
 }
 
@@ -254,16 +239,9 @@ const rejectReview = (id, callback) => {
     callback()
   }).catch((err) => {
     console.log(err)
-    const msg = err.response.data.tip +
-        "\n信息： " + err.response.data.message
+    adminErrorTemplate(notification, err,
+        "审核请求错误", "审核拒绝请求错误")
     reason.value = null
-    notification.error({
-      title: "请求错误",
-      content: msg,
-      meta: "审核拒绝请求错误",
-      duration: 3000,
-      keepAliveOnHover: true
-    })
   })
 }
 
