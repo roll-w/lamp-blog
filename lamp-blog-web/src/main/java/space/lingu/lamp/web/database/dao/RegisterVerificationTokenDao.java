@@ -45,22 +45,22 @@ public abstract class RegisterVerificationTokenDao {
     public abstract void update(RegisterVerificationToken... tokens);
 
     @Transaction
-    @Delete("UPDATE verification_token SET used = {used} WHERE token = {token}")
+    @Delete("UPDATE register_verification_token SET used = {used} WHERE token = {token}")
     public abstract void updateUsedByToken(String token, boolean used);
 
     @Delete
     public abstract void delete(RegisterVerificationToken... tokens);
 
     @Transaction
-    @Delete("DELETE FROM verification_token WHERE token = {token.token()}")
+    @Delete("DELETE FROM register_verification_token WHERE token = {token.token()}")
     public abstract void delete(RegisterVerificationToken token);
 
     @Delete
     public abstract void delete(List<RegisterVerificationToken> users);
 
-    @Query("SELECT * FROM verification_token WHERE token = {token}")
+    @Query("SELECT * FROM register_verification_token WHERE token = {token}")
     public abstract RegisterVerificationToken findByToken(String token);
 
-    @Query("SELECT * FROM verification_token WHERE user_id = {userId} LIMIT 1")
+    @Query("SELECT * FROM register_verification_token WHERE user_id = {userId} LIMIT 1")
     public abstract RegisterVerificationToken findByUserId(long userId);
 }
