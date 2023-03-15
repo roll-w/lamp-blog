@@ -23,15 +23,15 @@
     <AdminNavBar/>
     <n-layout
         :native-scrollbar="false"
+        content-style="min-height: calc(100vh - var(--header-height)); display: flex; flex-direction: column;"
         position="absolute"
-        style="left: var(--sidebar-width);"
-        content-style="min-height: calc(100vh - var(--header-height)); display: flex; flex-direction: column;">
-      <router-view v-slot="{ Component }">
+        style="left: var(--sidebar-width);">
+      <router-view v-slot="{ Component }" v-model:name="name">
         <transition mode="out-in" name="fade">
-          <component :is="Component"/>
+          <component :is="Component" :key="$route.fullPath"/>
         </transition>
       </router-view>
-      <n-back-top :right="100" />
+      <n-back-top :right="100"/>
       <Footer/>
     </n-layout>
   </n-layout>
@@ -40,6 +40,14 @@
 <script setup>
 import AdminNavBar from "@/components/AdminNavBar.vue";
 import Footer from "@/components/Footer.vue";
+import {ref, watch} from "vue";
+
+const name = ref()
+
+watch(name, (newName) => {
+  console.log(newName)
+})
+
 </script>
 
 <style scoped>

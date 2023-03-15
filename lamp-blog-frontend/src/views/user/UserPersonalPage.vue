@@ -15,26 +15,30 @@
   -->
 
 <template>
-  <n-card :bordered="false" size="large">
-    <UserPageHeader v-if="userInfo"
-                    :avatar="userInfo.avatar"
-                    :introduction="userInfo.introduction"
-                    :nickname="userInfo.nickname"
-                    :username="userInfo.username"
-                    cover="https://naive-ui.oss-cn-beijing.aliyuncs.com/carousel-img/carousel1.jpeg"
-    />
+  <div>
+    <n-card :bordered="false" size="large">
+      <UserPageHeader v-if="userInfo"
+                      :avatar="userInfo.avatar || 'http://localhost:5100/static/img/lamp_user.png'"
+                      :introduction="userInfo.introduction"
+                      :nickname="userInfo.nickname"
+                      :username="userInfo.username"
+                      cover="http://localhost:5100/static/img/cover2.png"
+      />
+      <div v-else class="text-3xl p-10">
+        {{ message }}
+      </div>
+    </n-card>
+    <n-card>
+      <div>
 
-    <div v-else class="text-3xl p-10">
-      {{ message }}
-    </div>
-  </n-card>
-
+      </div>
+    </n-card>
+  </div>
 </template>
 
 <script setup>
 import {useRouter} from "vue-router";
 import {getCurrentInstance, ref} from "vue";
-import axios from "axios";
 import api from "@/request/api";
 import {createConfig} from "@/request/axios_config";
 import UserPageHeader from "@/components/user/UserPageHeader.vue";
@@ -46,7 +50,6 @@ const id = router.currentRoute.value.params.userId
 
 const userInfo = ref(null)
 const message = ref(null)
-
 
 const getMessage = (status) => {
   if (status >= 500) {

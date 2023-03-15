@@ -19,14 +19,14 @@
             style="top: var(--header-height);">
     <n-layout
         content-style="min-height: calc(100vh - var(--header-height)); display: flex; flex-direction: column;">
-      <router-view v-slot="{ Component }">
+      <router-view v-slot="{ Component } ">
         <transition mode="out-in" name="fade">
-          <component :is="Component"/>
+          <component :is="Component" :key="$route.fullPath"/>
         </transition>
       </router-view>
       <Footer/>
     </n-layout>
-    <n-back-top :right="100" />
+    <n-back-top :right="100"/>
   </n-layout>
 </template>
 
