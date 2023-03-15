@@ -17,6 +17,7 @@
 import {
     admin, adminArticles,
     adminReviews,
+    adminStaffs,
     adminUsers,
     index,
     reviewerReviews,
@@ -56,8 +57,9 @@ const menus = [
                 key: adminUsers
             },
             {
+                routerLink: adminStaffs,
                 name: "工作人员管理",
-                key: "user-management-staff"
+                key: adminStaffs
             }
         ]
     },

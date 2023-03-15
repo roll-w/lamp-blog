@@ -16,8 +16,9 @@
 
 import {defineStore} from 'pinia'
 
-export const tokenKey = "L2w9t0k3n"
+export const tokenKey = window.btoa("L2w9t0k3n")
 export const userKey = "user"
+export const userDataKey = "user_data"
 
 export const useUserStore = defineStore('user', {
     state: () => ({
@@ -25,7 +26,8 @@ export const useUserStore = defineStore('user', {
         user: {},
         /** @type {string} */
         token: "",
-
+        /** @type {{ avatar: string, nickname: string, setup: boolean }} */
+        userData: {},
         remember: false,
     }),
     getters: {
@@ -35,6 +37,8 @@ export const useUserStore = defineStore('user', {
         getUser: state => state.user,
         /** @return {string} */
         getToken: state => state.token,
+
+        getUserData: state => state.userData,
 
         canAccessAdmin: state => state.user.role && state.user.role !== "USER",
     },
@@ -53,10 +57,21 @@ export const useUserStore = defineStore('user', {
         logout() {
             this.user = {}
             this.token = ""
+            this.userData = {}
             localStorage.removeItem(tokenKey)
             localStorage.removeItem(userKey)
+            localStorage.removeItem(userDataKey)
+
             sessionStorage.removeItem(tokenKey)
             sessionStorage.removeItem(userKey)
+            sessionStorage.removeItem(userDataKey)
+        },
+
+        /**
+         * @param {{ avatar: string, nickname: string }} userData
+         */
+        setUserData(userData) {
+            this.userData = userData
         }
     }
 })

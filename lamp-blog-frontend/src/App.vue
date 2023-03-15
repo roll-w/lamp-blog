@@ -17,7 +17,7 @@
 <script setup>
 import {RouterView} from 'vue-router'
 import BlogNavBar from "@/components/BlogNavBar.vue";
-import {tokenKey, userKey, useUserStore} from "@/stores/user";
+import {tokenKey, userDataKey, userKey, useUserStore} from "@/stores/user";
 import router from "@/router";
 import {ref} from "vue";
 import {darkTheme, zhCN, enUS, lightTheme} from "naive-ui";
@@ -72,16 +72,38 @@ hljs.registerLanguage('json', javascript)
 
 const userStore = useUserStore()
 
+const prefix = "YWQ5ZWM0MGQ3N2FlNzA3OTE5OGUwZjMwNjNiNGJjNDNiZmM"
+
+const encodeToken = (token) => {
+  if (!token) {
+    return null
+  }
+
+  return prefix + window.btoa(token)
+}
+
+const restoreToken = (token) => {
+  if (!token) {
+    return null
+  }
+
+  const removePrefix = token.substring(prefix.length)
+  return window.atob(removePrefix)
+}
+
 const loadFromLocal = () => {
-  const token = localStorage.getItem("L2w9t0k3n")
-  const user = JSON.parse(localStorage.getItem("user"))
-  return {user, token}
+  const token = restoreToken(localStorage.getItem(tokenKey))
+  const user = JSON.parse(localStorage.getItem(userKey))
+  const userData = JSON.parse(localStorage.getItem(userDataKey))
+  return {user, token, userData}
 }
 
 const loadFromSession = () => {
-  const token = sessionStorage.getItem("L2w9t0k3n")
-  const user = JSON.parse(sessionStorage.getItem("user"))
-  return {user, token}
+  const token = restoreToken(sessionStorage.getItem(tokenKey))
+
+  const user = JSON.parse(sessionStorage.getItem(userKey))
+  const userData = JSON.parse(sessionStorage.getItem(userDataKey))
+  return {user, token, userData}
 }
 
 const local = loadFromLocal()
@@ -92,22 +114,30 @@ const tryLoginFromState = () => {
     userStore.loginUser(local.user, local.token, true)
     return
   }
+  if (local.userData) {
+    userStore.setUserData(local.userData)
+  }
+
   if (session.user && session.token) {
     userStore.loginUser(session.user, session.token, false)
+  }
+  if (session.userData) {
+    userStore.setUserData(session.userData)
   }
 }
 tryLoginFromState()
 
 userStore.$subscribe((mutation, state) => {
   if (!state.remember) {
-    sessionStorage.setItem(tokenKey, state.token)
+    sessionStorage.setItem(tokenKey, encodeToken(state.token))
     sessionStorage.setItem(userKey, JSON.stringify(state.user))
+    sessionStorage.setItem(userDataKey, JSON.stringify(state.userData))
     return
   }
-  localStorage.setItem(tokenKey, state.token)
+  localStorage.setItem(tokenKey, encodeToken(state.token))
   localStorage.setItem(userKey, JSON.stringify(state.user))
+  localStorage.setItem(userDataKey, JSON.stringify(state.userData))
 })
-
 
 /**
  * @type import('naive-ui').GlobalThemeOverrides
@@ -192,7 +222,6 @@ siteStore.$subscribe((mutation, state) => {
   setupSiteState(state.dark, state.locale)
   localStorage.setItem("site", JSON.stringify(state))
 })
-
 
 </script>
 

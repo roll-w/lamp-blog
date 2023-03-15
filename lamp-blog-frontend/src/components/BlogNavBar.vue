@@ -18,18 +18,23 @@
   <n-layout-header bordered style="height: var(--header-height)">
     <div class="p-5 flex">
       <n-text :depth="1" class="ui-logo flex justify-start" @click="handleLogoClick">
-        <img src="../assets/lamp.svg" alt="Logo">
+        <img alt="Logo" src="../assets/lamp.svg">
         <span>Lamp Blog</span>
       </n-text>
       <div class="flex justify-end justify-items-end flex-grow">
         <n-space>
           <n-button @click="handleThemeClick">切换主题</n-button>
           <div>
-          <n-button v-if="!userStore.isLogin" @click="handleLoginClick">登录</n-button>
-          <n-dropdown v-else :options="options" trigger="hover" @select="handleSelect">
-            <n-avatar>{{ username }}</n-avatar>
-          </n-dropdown>
-        </div>
+            <n-button v-if="!userStore.isLogin" @click="handleLoginClick">登录</n-button>
+            <n-dropdown v-else :options="options" trigger="hover" @select="handleSelect">
+              <n-avatar v-if="userStore.userData.setup"
+                        class="border"
+                        :src="userStore.userData.avatar" />
+              <n-avatar v-else>
+                {{ username }}
+              </n-avatar>
+            </n-dropdown>
+          </div>
         </n-space>
       </div>
     </div>
@@ -40,19 +45,47 @@
 <script setup>
 import {RouterLink, useRouter} from "vue-router";
 import {useUserStore} from "@/stores/user";
-import {h, ref} from "vue";
+import {getCurrentInstance, h, ref} from "vue";
 import {NAvatar, NText} from "naive-ui";
 import LampLogo from "@/components/LampLogo.vue";
 import {useSiteStore} from "@/stores/site";
 import {admin, articleEditorPage, index, login, userPage} from "@/router";
+import api from "@/request/api";
+import {createConfig} from "@/request/axios_config";
 
 const router = useRouter();
+const {proxy} = getCurrentInstance()
 
 const siteStore = useSiteStore()
 const userStore = useUserStore()
 
-const username = ref(userStore.user.username)
+const username = ref('')
 const role = ref(userStore.user.role)
+
+const requestPersonalData = () => {
+  const config = createConfig()
+  proxy.$axios.get(api.currentUser, config).then((response) => {
+    const userData = {
+      avatar: response.data.avatar,
+      nickname: response.data.nickname,
+      setup: true
+    }
+    userStore.setUserData(userData)
+  }).catch((error) => {
+    console.log(error)
+  })
+}
+
+const loadUsername = (newUsername, newRole) => {
+  username.value = newUsername
+  role.value = newRole
+}
+
+if (!userStore.userData.setup) {
+  requestPersonalData()
+}
+
+loadUsername(userStore.userData.nickname || userStore.user.username, userStore.user.role)
 
 const userOptions = [
   {
@@ -167,25 +200,49 @@ const adminOptions = [
     key: "logout",
   }
 ]
-
 const options = ref(userOptions)
 
-const chooseOptions = () => {
-  if (!role.value) {
+const updatesOption = (options, username, id) => {
+  options[0].label = username
+  options[1].label = () => h(
+      RouterLink,
+      {
+        to: {
+          name: userPage,
+          params: {
+            userId: id
+          }
+        }
+      },
+      {default: () => "个人主页"}
+  )
+  return options
+}
+
+const chooseOptions = (username, role, id) => {
+  if (!role) {
+    options.value = null
     return
   }
-  if (role.value !== "USER") {
-    options.value = adminOptions
+  if (role !== "USER") {
+    options.value = updatesOption(adminOptions, username, id)
   } else {
-    options.value = userOptions
+    options.value = updatesOption(userOptions, username, id)
   }
 }
 
-router.afterEach(() => {
-  username.value = userStore.user.username;
-  role.value = userStore.user.role;
-  chooseOptions()
+chooseOptions(userStore.user.username, userStore.user.role, userStore.user.id)
+
+userStore.$subscribe((mutation, state) => {
+  if (!state.user) {
+    loadUsername(null, 'USER')
+    chooseOptions(null, null, 0)
+    return
+  }
+  loadUsername(state.userData.nickname || state.user.username, state.user.role)
+  chooseOptions(state.user.username, state.user.role, state.user.id)
 })
+
 
 const handleLogoClick = () => {
   router.push({
@@ -204,17 +261,15 @@ const handleSelect = (key) => {
     case "logout":
       userStore.logout();
       router.push({
-        name: "index"
+        name: index
       })
       break;
   }
 }
 
-
 const handleThemeClick = () => {
   siteStore.toggleTheme()
 }
-
 
 </script>
 
