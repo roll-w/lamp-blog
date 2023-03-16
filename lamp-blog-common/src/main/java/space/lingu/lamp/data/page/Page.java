@@ -70,9 +70,13 @@ public class Page<T> {
         return new Page<>(page, size, total, data);
     }
 
-    public static <T> Page<T> of(Offset offset,
+    public static <T> Page<T> of(Pageable pageable,
                                  int total, List<T> data) {
-        return new Page<>(offset.page(), offset.size(), total, data);
+        return new Page<>(
+                pageable.getPage(),
+                pageable.getSize(),
+                total, data
+        );
     }
 
 

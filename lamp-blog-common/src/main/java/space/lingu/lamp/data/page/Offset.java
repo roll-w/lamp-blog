@@ -22,14 +22,16 @@ package space.lingu.lamp.data.page;
 public record Offset(
         int limit,
         int offset
-) {
-    public int page() {
+) implements Pageable {
+    public static final Offset DEFAULT = new Offset(10, 0);
+
+    @Override
+    public int getPage() {
         return offset / limit;
     }
 
-    public int size() {
+    @Override
+    public int getSize() {
         return limit;
     }
-
-    public static final Offset DEFAULT = new Offset(10, 0);
 }
