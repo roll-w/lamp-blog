@@ -23,9 +23,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import space.lingu.lamp.HttpResponseEntity;
+import space.lingu.lamp.data.page.Page;
 import space.lingu.lamp.data.page.PageRequest;
 import space.lingu.lamp.web.common.ApiContextHolder;
-import space.lingu.lamp.web.controller.WithAdminApi;
+import space.lingu.lamp.web.controller.Api;
 import space.lingu.lamp.web.domain.article.dto.ArticleDetailsMetadata;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
 import space.lingu.lamp.web.domain.article.dto.ArticleRequest;
@@ -48,9 +49,10 @@ import java.util.List;
 /**
  * @author RollW
  */
-@WithAdminApi
+@Api
 public class ArticleController {
-    // TODO: refactor article controller
+    // TODO: refactor article controller,
+    //  splits admin and common users into two controllers
     private final ContentPublishService contentPublishService;
     private final ContentAccessService contentAccessService;
     private final ContentCollectionService contentCollectionService;
@@ -63,23 +65,23 @@ public class ArticleController {
         this.contentCollectionService = contentCollectionService;
     }
 
-    @GetMapping("/{userId}/articles")
+
+    @GetMapping("/user/{userId}/articles")
     public HttpResponseEntity<List<ArticleVo>> getArticles(
             @PathVariable String userId, PageRequest pageRequest) {
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
         // TODO: check if the user is the same as the current user
+        ContentAccessCredentials contentAccessCredentials =
+                ContentAccessCredentials.of(ContentAccessAuthType.USER, apiContext.rawId());
 
-        List<ContentMetadataDetails<?>> contents = contentCollectionService.getContentsRelated(
+        Page<ContentMetadataDetails<?>> contents = contentCollectionService.accessContentsRelated(
                 ContentCollectionType.USER_ARTICLES,
                 userId,
-                pageRequest.getPage(),
-                pageRequest.getSize()
+                contentAccessCredentials,
+                pageRequest
         );
-
         return HttpResponseEntity.success(
-                contents.stream()
-                        .map(ArticleVo::from)
-                        .toList()
+                contents.transform(ArticleVo::from)
         );
     }
 
@@ -98,7 +100,7 @@ public class ArticleController {
         return HttpResponseEntity.success(articleInfo);
     }
 
-    @PutMapping("/{userId}/article/{articleId}")
+    @PutMapping("/user/{userId}/article/{articleId}")
     public HttpResponseEntity<ArticleInfo> updateArticle(
             @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId,
@@ -107,26 +109,19 @@ public class ArticleController {
     }
 
 
-    @DeleteMapping("/{userId}/article/{articleId}")
+    @DeleteMapping("/user/{userId}/article/{articleId}")
     public HttpResponseEntity<Void> deleteArticle(
             @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {
         return HttpResponseEntity.success();
     }
 
-    @GetMapping("/{userId}/article/{articleId}")
+    @GetMapping("/user/{userId}/article/{articleId}")
     public HttpResponseEntity<ArticleVo> getArticle(
             @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
         UserInfo userInfo = apiContext.userInfo();
-        if (apiContext.isAdminPass()) {
-            ContentDetails details = contentAccessService.getContentDetails(
-                    Long.toString(articleId),
-                    ContentType.ARTICLE
-            );
-            return HttpResponseEntity.success(ArticleVo.from(details));
-        }
         ContentDetails details = contentAccessService.openContent(
                 Long.toString(articleId),
                 ContentType.ARTICLE,

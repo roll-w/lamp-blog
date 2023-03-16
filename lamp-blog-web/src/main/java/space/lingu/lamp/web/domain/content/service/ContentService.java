@@ -22,6 +22,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCode;
+import space.lingu.lamp.data.page.Page;
+import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.domain.content.BasicContentInfo;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
@@ -322,33 +324,46 @@ public class ContentService implements ContentAccessService,
     }
 
     @Override
-    public List<? extends ContentDetails> accessContentsRelated(
+    public Page<ContentMetadataDetails<? extends ContentDetails>> accessContentsRelated(
             ContentCollectionType collectionType,
             String contentCollectionId,
-            ContentAccessCredentials contentAccessCredentials, int page, int size) {
+            ContentAccessCredentials contentAccessCredentials, Pageable pageable) {
         // TODO: impl
-        return getContentsRelated(collectionType, contentCollectionId,
-                page, size);
+        return getContentsRelated(
+                collectionType,
+                contentCollectionId,
+                pageable
+        );
     }
 
 
     @Override
-    public List<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
+    public Page<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
             ContentCollectionType contentCollectionType,
             String contentCollectionId,
-            int page, int size) {
+            Pageable pageable) {
         ContentCollectionAccessor contentCollectionAccessor =
                 getFirstAvailableOf(contentCollectionType);
-        List<? extends ContentDetails> contents = contentCollectionAccessor.getContentCollection(
+        Page<? extends ContentDetails> contentsPage = contentCollectionAccessor.getContentCollection(
                 contentCollectionType,
                 contentCollectionId,
-                page,
-                size);
+                pageable
+        );
         List<ContentMetadata> contentMetadata =
-                contentMetadataRepository.getMetadataByIdentities(contents);
+                contentMetadataRepository.getMetadataByIdentities(contentsPage.getData());
         List<? extends ContentMetadataDetails<? extends ContentDetails>> contentCollectionDetails
-                = pairWith(contents, contentMetadata);
-        return Collections.unmodifiableList(contentCollectionDetails);
+                = pairWith(contentsPage.getData(), contentMetadata);
+        List<ContentMetadataDetails<? extends ContentDetails>> details =
+                Collections.unmodifiableList(contentCollectionDetails);
+
+        return Page.of(pageable, 0, details);
+    }
+
+    @Override
+    public List<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
+            ContentCollectionType contentCollectionType,
+            String contentCollectionId) {
+        return null;
     }
 
     private <T extends ContentDetails> List<ContentMetadataDetails<T>> pairWith(

@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.domain.content.collection;
 
+import space.lingu.lamp.data.page.Page;
+import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentType;
 
@@ -25,7 +27,14 @@ import java.util.List;
  * @author RollW
  */
 public interface ContentCollectionAccessor extends ContentCollectionProvider {
-    List<? extends ContentDetails> getContentCollection(ContentCollectionType contentCollectionType, String collectionId, int page, int size);
+    Page<? extends ContentDetails> getContentCollection(
+            ContentCollectionType contentCollectionType,
+            String collectionId,
+            Pageable pageable);
+
+    List<? extends ContentDetails> getContentCollection(
+            ContentCollectionType contentCollectionType,
+            String collectionId);
 
     @Override
     boolean supports(ContentType contentType);

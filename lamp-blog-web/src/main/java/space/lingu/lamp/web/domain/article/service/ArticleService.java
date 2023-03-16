@@ -20,8 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
+import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.data.page.Offset;
+import space.lingu.lamp.data.page.Page;
 import space.lingu.lamp.data.page.PageHelper;
+import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.common.ParamValidate;
 import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.domain.article.Article;
@@ -61,7 +64,9 @@ public class ArticleService implements
         try {
             return articleRepository.get(Long.parseLong(contentId));
         } catch (NumberFormatException e) {
-            throw new ContentException(WebCommonErrorCode.ERROR_PARAM_FAILED, e);
+            throw new ContentException(
+                    (ErrorCode) WebCommonErrorCode.ERROR_PARAM_FAILED, e
+            );
         }
     }
 
@@ -99,16 +104,15 @@ public class ArticleService implements
     }
 
     @Override
-    public List<Article> getContentCollection(
+    public Page<Article> getContentCollection(
             ContentCollectionType contentCollectionType,
             String collectionId,
-            int page, int size) {
+            Pageable pageable) {
         if (!supportsCollection(contentCollectionType)) {
             throw new IllegalArgumentException("Content collection type not supported: " +
                     contentCollectionType);
         }
-
-        Offset offset = PageHelper.offset(page, size);
+        Offset offset = PageHelper.offset(pageable);
         switch (contentCollectionType) {
             case ARTICLES -> {
                 return getArticles(offset);
@@ -118,10 +122,30 @@ public class ArticleService implements
             }
         }
         // TODO: implement
+        return Page.of();
+    }
+
+
+    @Override
+    public List<Article> getContentCollection(
+            ContentCollectionType contentCollectionType,
+            String collectionId) {
+        if (!supportsCollection(contentCollectionType)) {
+            throw new IllegalArgumentException("Content collection type not supported: " +
+                    contentCollectionType);
+        }
+         switch (contentCollectionType) {
+             case ARTICLES -> {
+                 return getArticles();
+             }
+             case USER_ARTICLES -> {
+                 return getUserArticles(collectionId);
+             }
+         }
         return List.of();
     }
 
-    private List<Article> getUserArticles(String id,
+    private Page<Article> getUserArticles(String id,
                                           Offset offset) {
         long userId;
         try {
@@ -129,15 +153,38 @@ public class ArticleService implements
         } catch (NumberFormatException e) {
             throw new ContentException(WebCommonErrorCode.ERROR_PARAM_FAILED, e);
         }
-
-        return articleRepository.getArticlesByUser(
-                userId, offset.offset(), offset.limit());
+        return Page.of(
+                offset,
+                1,
+                articleRepository.getArticlesByUser(
+                        userId,
+                        offset
+                )
+        );
     }
 
-    private List<Article> getArticles(Offset offset) {
-        return articleRepository.getArticles(
-                offset.offset(),
-                offset.limit()
+
+    private List<Article> getUserArticles(String id) {
+        long userId;
+        try {
+            userId = Long.parseLong(id);
+        } catch (NumberFormatException e) {
+            throw new ContentException(WebCommonErrorCode.ERROR_PARAM_FAILED, e);
+        }
+        return articleRepository.getArticlesByUser(userId);
+    }
+
+    private Page<Article> getArticles(Offset offset) {
+        return Page.of(offset, 1,
+                articleRepository.getArticles(
+                        offset.offset(),
+                        offset.limit()
+                )
         );
+    }
+
+    private List<Article> getArticles() {
+        return articleRepository.getArticles();
+
     }
 }

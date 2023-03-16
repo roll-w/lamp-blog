@@ -16,9 +16,11 @@
 
 package space.lingu.lamp.web.domain.content.collection;
 
+import space.lingu.lamp.data.page.Page;
+import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
-import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
 import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
 
 import java.util.List;
 
@@ -26,14 +28,18 @@ import java.util.List;
  * @author RollW
  */
 public interface ContentCollectionService {
-    List<? extends ContentDetails> accessContentsRelated(
+    Page<ContentMetadataDetails<? extends ContentDetails>> accessContentsRelated(
             ContentCollectionType collectionType,
             String contentCollectionId,
             ContentAccessCredentials contentAccessCredentials,
-            int page, int size);
+            Pageable pageable);
+
+    Page<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
+            ContentCollectionType contentCollectionType,
+            String contentCollectionId,
+            Pageable pageable);
 
     List<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
             ContentCollectionType contentCollectionType,
-            String contentCollectionId,
-            int page, int size);
+            String contentCollectionId);
 }
