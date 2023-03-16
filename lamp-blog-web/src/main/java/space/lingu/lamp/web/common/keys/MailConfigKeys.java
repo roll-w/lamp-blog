@@ -30,6 +30,14 @@ public final class MailConfigKeys {
 
     public static final String PREFIX = "mail.";
 
+    public static final String[] KEYS = {
+            KEY_SMTP_SERVER_HOST,
+            KEY_SMTP_SERVER_PORT,
+            KEY_MAIL_USERNAME,
+            KEY_MAIL_PASSWORD,
+            KEY_MAIL_SENDER_NAME
+    };
+
     public static boolean isDisabled(String username) {
         return EMAIL_DISABLED.equals(username);
     }

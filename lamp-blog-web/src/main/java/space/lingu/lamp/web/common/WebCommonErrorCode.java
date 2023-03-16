@@ -32,7 +32,7 @@ public enum WebCommonErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeM
     /**
      * Request parameter missing.
      */
-    ERROR_PARAM_MISSING("A0201", 404),
+    ERROR_PARAM_MISSING("A0201", 400),
     /**
      * Request parameter validate failed.
      */
