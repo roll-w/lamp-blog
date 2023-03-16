@@ -17,10 +17,11 @@
 package space.lingu.lamp.web.controller;
 
 import com.google.common.base.Strings;
-import com.google.common.base.VerifyException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import space.lingu.lamp.data.page.PageRequest;
+import space.lingu.lamp.data.page.Pageable;
+import space.lingu.lamp.web.common.ParameterFailedException;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -40,7 +41,12 @@ public class PageRequestControllerAdvice {
             int sizeInt = Strings.isNullOrEmpty(size) ? 10 : Integer.parseInt(size);
             return new PageRequest(pageInt, sizeInt);
         } catch (NumberFormatException e) {
-            throw new VerifyException(e);
+            throw new ParameterFailedException(e.getMessage());
         }
+    }
+
+    @ModelAttribute
+    public Pageable pageableFromRequest(HttpServletRequest request) {
+        return fromRequest(request);
     }
 }
