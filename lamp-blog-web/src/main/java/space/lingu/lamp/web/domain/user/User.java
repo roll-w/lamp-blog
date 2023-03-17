@@ -18,6 +18,7 @@ package space.lingu.lamp.web.domain.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import space.lingu.lamp.DataItem;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -25,19 +26,18 @@ import space.lingu.light.Index;
 import space.lingu.light.LightConfiguration;
 import space.lingu.light.PrimaryKey;
 
-import java.io.Serializable;
 import java.util.Collection;
 import java.util.Objects;
 
 /**
  * @author RollW
  */
-@DataTable(tableName = "user", indices = {
+@DataTable(name = "user", indices = {
         @Index(value = "username", unique = true)
 })
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
 @SuppressWarnings({"ClassCanBeRecord"})
-public class User implements Serializable, UserDetails, UserIdentity {
+public class User implements DataItem, UserDetails, UserIdentity {
     @PrimaryKey(autoGenerate = true)
     @DataColumn(name = "id")
     private final Long id;

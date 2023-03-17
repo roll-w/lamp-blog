@@ -30,9 +30,9 @@ import space.lingu.lamp.event.EventCallback;
 import space.lingu.lamp.event.EventRegistry;
 import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.common.SimpleMailMessageBuilder;
-import space.lingu.lamp.web.system.SettingLoader;
+import space.lingu.lamp.web.system.setting.SettingLoader;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
-import space.lingu.lamp.web.system.SystemSetting;
+import space.lingu.lamp.web.system.setting.SystemSetting;
 import space.lingu.lamp.web.domain.user.service.RegisterTokenProvider;
 
 /**
@@ -60,7 +60,7 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
         this.settingLoader = settingLoader;
         this.mailProperties = mailProperties;
         this.mailSender = mailSender;
-        this.username = chooseUsername(mailProperties, settingLoader);
+        this.username = mailProperties.getUsername();
     }
 
 
@@ -111,6 +111,6 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
 
     @Override
     public void onEvent(SystemSetting event) {
-        this.username = chooseUsername(mailProperties, settingLoader);
+        // this.username = chooseUsername(mailProperties, settingLoader);
     }
 }

@@ -25,11 +25,11 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.CommonErrorCode;
 import space.lingu.lamp.ErrorCode;
+import space.lingu.lamp.RequestMetadata;
 import space.lingu.lamp.Result;
 import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.common.RequestInfo;
@@ -37,7 +37,6 @@ import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategy;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.domain.authentication.login.LoginVerifiableToken;
-import space.lingu.lamp.RequestMetadata;
 import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.User;
@@ -45,7 +44,6 @@ import space.lingu.lamp.web.domain.user.common.UserErrorCode;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.user.dto.UserInfoSignature;
 import space.lingu.lamp.web.domain.user.event.OnUserRegistrationEvent;
-import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
 import space.lingu.lamp.web.domain.user.repository.RegisterVerificationTokenRepository;
 import space.lingu.lamp.web.domain.user.repository.UserRepository;
 
@@ -67,7 +65,6 @@ public class LoginRegisterService implements RegisterTokenProvider {
     private final RegisterVerificationTokenRepository registerVerificationTokenRepository;
     private final UserManageService userManageService;
     private final ApplicationEventPublisher eventPublisher;
-    private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final Map<LoginStrategyType, LoginStrategy> loginStrategyMap =
             new EnumMap<>(LoginStrategyType.class);
@@ -75,16 +72,13 @@ public class LoginRegisterService implements RegisterTokenProvider {
     public LoginRegisterService(@NonNull List<LoginStrategy> strategies,
                                 UserRepository userRepository,
                                 RegisterVerificationTokenRepository registerVerificationTokenRepository,
-                                UserInfoFilter userInfoFilter,
                                 UserManageService userManageService,
                                 ApplicationEventPublisher eventPublisher,
-                                PasswordEncoder passwordEncoder,
                                 AuthenticationManager authenticationManager) {
         this.userRepository = userRepository;
         this.registerVerificationTokenRepository = registerVerificationTokenRepository;
         this.userManageService = userManageService;
         this.eventPublisher = eventPublisher;
-        this.passwordEncoder = passwordEncoder;
         this.authenticationManager = authenticationManager;
         strategies.forEach(strategy ->
                 loginStrategyMap.put(strategy.getStrategyType(), strategy));
@@ -163,7 +157,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
         if (!enabled) {
             OnUserRegistrationEvent event = new OnUserRegistrationEvent(
                     userInfoResult.data(), Locale.getDefault(),
-                    "http://localhost:5000/");
+                    "http://localhost:5000/user/register/activate/");
             // TODO: get url from config
             eventPublisher.publishEvent(event);
         }
@@ -186,7 +180,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
         String token = uuid.toString();
         long expiryTime = RegisterVerificationToken.calculateExpiryDate();
         RegisterVerificationToken registerVerificationToken = new RegisterVerificationToken(
-                token, userInfo.id(), expiryTime, false
+                null, token, userInfo.id(), expiryTime, false
         );
         registerVerificationTokenRepository.insert(registerVerificationToken);
         return uuid.toString();
@@ -226,7 +220,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
         }
         OnUserRegistrationEvent event = new OnUserRegistrationEvent(
                 UserInfo.from(user), ApiContextHolder.getContext().locale(),
-                "http://localhost:5000/");
+                "http://localhost:5000/user/register/activate/");
         eventPublisher.publishEvent(event);
 
         return CommonErrorCode.SUCCESS;

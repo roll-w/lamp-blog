@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.domain.user;
 
+import space.lingu.lamp.DataItem;
 import space.lingu.lamp.web.domain.authentication.VerifiableToken;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -30,12 +31,16 @@ import java.util.Date;
  *
  * @author RollW
  */
-@DataTable(tableName = "register_verification_token",
-        indices = @Index(value = "user_id"))
+@DataTable(name = "register_verification_token", indices = {
+        @Index(value = "token", unique = true)
+})
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
 public record RegisterVerificationToken(
+        @DataColumn(name = "id")
+        @PrimaryKey(autoGenerate = true)
+        Long id,
+
         @DataColumn(name = "token")
-        @PrimaryKey
         String token,
 
         @DataColumn(name = "user_id")
@@ -45,7 +50,7 @@ public record RegisterVerificationToken(
         long expiryTime,// timestamp
 
         @DataColumn(name = "used")
-        boolean used) implements VerifiableToken {
+        boolean used) implements VerifiableToken, DataItem {
 
     public boolean isExpired() {
         return System.currentTimeMillis() > expiryTime;

@@ -85,7 +85,6 @@ public class UserServiceImpl implements  UserSignatureProvider,
                 .setPassword(passwordEncoder.encode(password))
                 .setRole(role)
                 .setEnabled(enable)
-                .setEnabled(false)
                 .setAccountExpired(false)
                 .setRegisterTime(System.currentTimeMillis())
                 .setEmail(email)
@@ -95,8 +94,7 @@ public class UserServiceImpl implements  UserSignatureProvider,
         OnUserCreateEvent onUserCreateEvent =
                 new OnUserCreateEvent(userInfo);
         eventPublisher.publishEvent(onUserCreateEvent);
-
-        return null;
+        return Result.success(userInfo);
     }
 
     private ErrorCode validate(String username,
@@ -168,6 +166,11 @@ public class UserServiceImpl implements  UserSignatureProvider,
     public List<? extends UserIdentity> findUsers() {
         // TODO: filter canceled user
         return userRepository.getAll();
+    }
+
+    @Override
+    public List<? extends UserIdentity> findUsers(List<Long> ids) {
+        return userRepository.getUsersByIds(ids);
     }
 
     @Override

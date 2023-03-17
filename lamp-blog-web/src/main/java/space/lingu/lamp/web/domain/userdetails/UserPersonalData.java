@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.domain.userdetails;
 
 import com.google.common.base.Preconditions;
+import com.google.common.base.Strings;
 import space.lingu.NonNull;
 import space.lingu.lamp.DataItem;
 import space.lingu.lamp.web.domain.user.UserIdentity;
@@ -127,6 +128,7 @@ public final class UserPersonalData implements Serializable, DataItem {
                 .setUserId(user.getUserId())
                 .setAvatar("http://localhost:5100/static/img/lamp_user.png")
                 .setBirthday(null)
+                .setCover("http://localhost:5100/static/img/cover.png")
                 .setIntroduction(null)
                 .setGender(Gender.PRIVATE)
                 .setNickname(user.getUsername())
@@ -137,8 +139,9 @@ public final class UserPersonalData implements Serializable, DataItem {
     public static boolean checkNecessaryFields(
             @NonNull UserPersonalData userPersonalData) {
         Preconditions.checkNotNull(userPersonalData);
-        return userPersonalData.getAvatar() != null
-                && userPersonalData.getNickname() != null;
+        return !Strings.isNullOrEmpty(userPersonalData.getAvatar())
+                && !Strings.isNullOrEmpty(userPersonalData.getNickname())
+                && !Strings.isNullOrEmpty(userPersonalData.getCover());
     }
 
     public static UserPersonalData replaceWithDefault(UserIdentity userIdentity,
@@ -149,6 +152,9 @@ public final class UserPersonalData implements Serializable, DataItem {
         }
         if (userPersonalData.getNickname() == null) {
             builder.setNickname(userIdentity.getUsername());
+        }
+        if (userPersonalData.getCover() == null) {
+            builder.setCover("http://localhost:5100/static/img/cover.png");
         }
         return builder.build();
     }
