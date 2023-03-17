@@ -86,12 +86,12 @@ public class StaffRepository {
         return staffDao.getStaffsOfType(type, false);
     }
 
-    public void deleteById(long userId) {
-        staffDao.setStaffDeleted(userId, true);
+    public void deleteByUserId(long userId, long updateTime) {
+        staffDao.setStaffDeleted(userId, true, updateTime);
         staffCache.evict(userId);
     }
 
     public int countOfType(StaffType type) {
-        return staffDao.getStaffsCountOfType(type);
+        return staffDao.getStaffsCount();
     }
 }

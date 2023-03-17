@@ -26,33 +26,40 @@ import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
-import space.lingu.lamp.web.domain.user.event.OnUserCreateEvent;
+import space.lingu.lamp.web.domain.user.event.OnUserRoleChangeEvent;
 
 /**
  * @author RollW
  */
 @Component
-public class UserCreateEventListener implements ApplicationListener<OnUserCreateEvent> {
-    private final StaffRepository repository;
+public class UserRoleChangeListener
+        implements ApplicationListener<OnUserRoleChangeEvent> {
+    private final StaffRepository staffRepository;
     private final StaffSerialNumberGenerator serialNumberGenerator;
 
-    public UserCreateEventListener(StaffRepository repository,
-                                   StaffSerialNumberGenerator serialNumberGenerator) {
-        this.repository = repository;
+    public UserRoleChangeListener(StaffRepository staffRepository,
+                                  StaffSerialNumberGenerator serialNumberGenerator) {
+        this.staffRepository = staffRepository;
         this.serialNumberGenerator = serialNumberGenerator;
     }
 
     @Override
     @Async
-    public void onApplicationEvent(@NonNull OnUserCreateEvent event) {
+    public void onApplicationEvent(@NonNull OnUserRoleChangeEvent event) {
         UserInfo userInfo = event.getUserInfo();
-        if (userInfo.role() == Role.USER) {
+        Staff staff = staffRepository.getById(userInfo.getUserId());
+        if (event.getCurrentRole() == Role.USER) {
+            long time = System.currentTimeMillis();
+            disableStaff(staff, time);
             return;
         }
         StaffType type = StaffType.of(userInfo.role());
-        String employeeId = serialNumberGenerator.generate(userInfo.id(), type);
+        String employeeId = serialNumberGenerator.generate(
+                userInfo.id(),
+                type
+        );
         long time = System.currentTimeMillis();
-        Staff staff = Staff.builder()
+        Staff newStaff = Staff.builder()
                 .setUserId(userInfo.id())
                 .setTypes(type)
                 .setAllowUser(true)
@@ -61,7 +68,13 @@ public class UserCreateEventListener implements ApplicationListener<OnUserCreate
                 .setUpdateTime(time)
                 .setDeleted(false)
                 .build();
-        repository.insert(staff);
+        staffRepository.insert(newStaff);
     }
 
+    private void disableStaff(Staff staff, long time) {
+       if (staff == null) {
+           return;
+       }
+       staffRepository.deleteByUserId(staff.getUserId(), time);
+    }
 }

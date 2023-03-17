@@ -70,8 +70,8 @@ public abstract class StaffDao {
     @Query("SELECT * FROM staff WHERE employee_id = {id}")
     public abstract Staff getByStaffId(String id);
 
-    @Delete("UPDATE staff SET deleted = {deleted} WHERE id = {id}")
-    public abstract void setStaffDeleted(long id, boolean deleted);
+    @Delete("UPDATE staff SET deleted = {deleted}, update_time = {time} WHERE id = {id}")
+    public abstract void setStaffDeleted(long id, boolean deleted, long time);
 
     @Query("SELECT * FROM staff WHERE types LIKE CONCAT('%', {type}, '%')")
     public abstract List<Staff> getStaffsOfType(StaffType type);
@@ -81,6 +81,9 @@ public abstract class StaffDao {
 
     @Query("SELECT COUNT(*) FROM staff WHERE types LIKE CONCAT('%', {type}, '%')")
     public abstract int getStaffsCountOfType(StaffType type);
+
+    @Query("SELECT COUNT(*) FROM staff")
+    public abstract int getStaffsCount();
 
     @Query("SELECT * FROM staff WHERE types REGEXP CONCAT({type1}, '|', {type2})")
     public abstract List<Staff> getStaffsOfTypes(StaffType type1, StaffType type2);

@@ -35,8 +35,8 @@ public class StaffSerialNumberImpl implements StaffSerialNumberGenerator {
     @Override
     public String generate(long userId, StaffType staffType) {
         String prefix = prefix(staffType);
-        int count = count(staffType);
-        String to6Digit = String.format("%06d", count);
+        int serial = count(staffType) + 1;
+        String to6Digit = String.format("%06d", serial);
         return prefix + to6Digit;
     }
 

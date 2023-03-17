@@ -34,11 +34,13 @@ public interface StaffService {
 
     List<Staff> getStaffsByType(StaffType type, int page, int size);
 
-    Staff getStaff(long userId);
+    StaffInfo getStaffByUser(long userId);
+
+    StaffInfo getStaff(String staffId);
 
     Staff createStaff(Staff staff);
 
-    Staff updateStaff(Staff staff);
+    void updateStaff(Staff staff);
 
     void deleteStaff(String staffId);
 
