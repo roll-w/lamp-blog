@@ -74,8 +74,14 @@ public class UserManageController {
     }
 
     @GetMapping("/user/{userId}")
-    public void getUserDetails(@PathVariable String userId) {
-
+    public HttpResponseEntity<UserDetailsVo> getUserDetails(
+            @PathVariable Long userId) {
+        User user = userManageService.getUser(userId);
+        UserPersonalData userPersonalData =
+                userPersonalDataService.getPersonalData(user);
+        UserDetailsVo userDetailsVo =
+                UserDetailsVo.of(user, userPersonalData);
+        return HttpResponseEntity.success(userDetailsVo);
     }
 
     @DeleteMapping("/user/{userId}")

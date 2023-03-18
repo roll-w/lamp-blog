@@ -26,6 +26,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -46,6 +48,7 @@ import space.lingu.lamp.web.common.ParameterMissingException;
 import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.authentication.login.LoginTokenException;
+import space.lingu.lamp.web.domain.user.common.UserErrorCode;
 import space.lingu.lamp.web.system.ErrorRecord;
 import space.lingu.lamp.web.system.ErrorRecordVo;
 import space.lingu.light.LightRuntimeException;
@@ -215,8 +218,17 @@ public class LampSystemExceptionHandler {
         return HttpResponseEntity.of(AuthErrorCode.ERROR_UNAUTHORIZED_USE);
     }
 
+    @ExceptionHandler(DisabledException.class)
+    public HttpResponseEntity<Void> handleAuthException(DisabledException e) {
+        return HttpResponseEntity.of(UserErrorCode.ERROR_USER_DISABLED);
+    }
+
     @ExceptionHandler(AuthenticationException.class)
     public HttpResponseEntity<Void> handleAuthException(AuthenticationException e) {
+        if (e instanceof InsufficientAuthenticationException) {
+            return HttpResponseEntity.of(AuthErrorCode.ERROR_TOKEN_EXPIRED);
+        }
+        logger.error("Auth Error: %s, type: %s".formatted(e.toString(), e.getClass().getCanonicalName()), e);
         return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
     }
 

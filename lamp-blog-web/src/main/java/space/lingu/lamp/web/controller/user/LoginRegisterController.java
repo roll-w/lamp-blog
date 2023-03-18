@@ -57,7 +57,7 @@ public class LoginRegisterController {
 
     @PostMapping("/login/password")
     public HttpResponseEntity<LoginResponse> loginByPassword(
-            HttpServletRequest request,
+            RequestMetadata requestMetadata,
             @RequestBody UserLoginRequest loginRequest) {
         // account login, account maybe the username or email
         // needs to check the account type and get the user id
@@ -67,7 +67,7 @@ public class LoginRegisterController {
         Result<UserInfoSignature> res = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
-                null,
+                requestMetadata,
                 LoginStrategyType.PASSWORD);
         return loginResponse(res);
     }
@@ -75,21 +75,14 @@ public class LoginRegisterController {
     // TODO: login by email token
     @PostMapping("/login/token/email")
     public HttpResponseEntity<LoginResponse> loginByEmailToken(
-            HttpServletRequest request,
+            RequestMetadata requestMetadata,
             @RequestBody UserLoginRequest loginRequest) {
         Result<UserInfoSignature> res = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
-                null,
+                requestMetadata,
                 LoginStrategyType.EMAIL_TOKEN);
         return loginResponse(res);
-    }
-
-    private RequestMetadata getLoginMetadata(HttpServletRequest request) {
-        String ip = ApiContextHolder.getContext().ip();
-        String userAgent = request.getHeader("User-Agent");
-
-        return new RequestMetadata(ip, userAgent);
     }
 
     @PostMapping("/login/token")
