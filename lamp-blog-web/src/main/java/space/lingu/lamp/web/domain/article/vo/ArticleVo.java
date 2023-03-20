@@ -18,6 +18,7 @@ package space.lingu.lamp.web.domain.article.vo;
 
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.content.Content;
+import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
 
@@ -30,7 +31,8 @@ public record ArticleVo(
         String content,
         long authorId,
         long createTime,
-        long updateTime
+        long updateTime,
+        ContentAccessAuthType accessAuthType
         // TODO: add more fields
 ) {
 
@@ -44,7 +46,8 @@ public record ArticleVo(
                 article.getContent(),
                 article.getUserId(),
                 article.getCreateTime(),
-                article.getUpdateTime()
+                article.getUpdateTime(),
+                contentMetadataDetails.getContentAccessAuthType()
         );
     }
 
@@ -58,7 +61,8 @@ public record ArticleVo(
                 article.getContent(),
                 article.getUserId(),
                 article.getCreateTime(),
-                article.getUpdateTime()
+                article.getUpdateTime(),
+                ContentAccessAuthType.PUBLIC
         );
     }
 
@@ -72,7 +76,8 @@ public record ArticleVo(
                 article.getContent(),
                 article.getUserId(),
                 article.getCreateTime(),
-                article.getUpdateTime()
+                article.getUpdateTime(),
+                ContentAccessAuthType.PUBLIC
         );
     }
 }
