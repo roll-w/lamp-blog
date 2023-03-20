@@ -84,6 +84,10 @@ public abstract class ContentMetadataDao implements DaoConnectionGetter {
     // public abstract List<ContentMetadata> getByPair(List<ContentIdentity> contentIdentities);
 
     public List<ContentMetadata> getByIdentities(List<? extends ContentIdentity> contentIdentities) {
+        if (contentIdentities.isEmpty()) {
+            return List.of();
+        }
+
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT id, user_id, content_id, type, status, auth_type FROM content_metadata WHERE (content_id, type) IN (");
         for (int i = 0; i < contentIdentities.size(); i++) {

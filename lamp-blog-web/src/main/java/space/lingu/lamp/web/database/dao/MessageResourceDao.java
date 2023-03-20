@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.database.dao;
 
+import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.system.MessageResource;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
@@ -43,4 +44,7 @@ public interface MessageResourceDao extends LampDao<MessageResource> {
 
     @Query("SELECT * FROM message_resource")
     List<MessageResource> get();
+
+    @Query("SELECT * FROM message_resource LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    List<MessageResource> get(Offset offset);
 }
