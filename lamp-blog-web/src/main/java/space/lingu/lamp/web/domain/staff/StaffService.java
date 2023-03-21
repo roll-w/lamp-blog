@@ -20,8 +20,6 @@ import space.lingu.lamp.data.page.Page;
 import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.domain.staff.dto.StaffInfo;
 
-import java.util.List;
-
 /**
  * @author RollW
  */
@@ -30,9 +28,7 @@ public interface StaffService {
 
     Page<StaffInfo> getStaffs(Pageable pageable);
 
-    List<Staff> getStaffs();
-
-    List<Staff> getStaffsByType(StaffType type, int page, int size);
+    Page<StaffInfo> getStaffsByType(StaffType type, Pageable pageable);
 
     StaffInfo getStaffByUser(long userId);
 

@@ -78,13 +78,9 @@ public class StaffServiceImpl implements StaffService {
     }
 
     @Override
-    public List<Staff> getStaffs() {
-        return staffRepository.getStaffs();
-    }
+    public Page<StaffInfo> getStaffsByType(StaffType type, Pageable pageable) {
 
-    @Override
-    public List<Staff> getStaffsByType(StaffType type, int page, int size) {
-        return staffRepository.getStaffsByType(type);
+        return null;
     }
 
     @Override
