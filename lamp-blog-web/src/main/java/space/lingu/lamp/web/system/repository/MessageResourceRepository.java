@@ -17,6 +17,8 @@
 package space.lingu.lamp.web.system.repository;
 
 import org.springframework.stereotype.Repository;
+import space.lingu.lamp.data.page.Offset;
+import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.MessageResourceDao;
 import space.lingu.lamp.web.system.MessageResource;
@@ -48,7 +50,12 @@ public class MessageResourceRepository {
     }
 
     public List<MessageResource> getMessageResources(String key) {
-       return messageResourceDao.getByKey(key);
+        return messageResourceDao.getByKey(key);
+    }
+
+    public List<MessageResource> getMessageResources(Pageable pageable) {
+        Offset offset = pageable.toOffset();
+        return messageResourceDao.get(offset);
     }
 
     public void set(String key, String value, Locale locale) {
