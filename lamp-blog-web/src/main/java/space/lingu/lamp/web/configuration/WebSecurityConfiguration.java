@@ -76,10 +76,11 @@ public class WebSecurityConfiguration {
                 //.accessDecisionManager(accessDecisionManager())
                 .antMatchers("/api/{version}/auth/token/**").permitAll()
                 .antMatchers("/api/{version}/admin/**").hasRole("ADMIN")
-                .antMatchers("/api/{version}/*/review/**").hasRole("REVIEWER")
-                .antMatchers("/api/{version}/admin/*/review/**").hasRole("REVIEWER")
+                .antMatchers("/api/{version}/*/review/**").hasAnyRole("ADMIN", "REVIEWER")
                 .antMatchers("/api/{version}/common/**").permitAll()
-                .antMatchers(HttpMethod.GET,"/api/{version}/*/article/*").permitAll()
+                .antMatchers(HttpMethod.GET, "/api/{version}/admin/**").hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/api/{version}/{userId}/review").hasAnyRole("ADMIN", "REVIEWER")
+                .antMatchers(HttpMethod.GET).permitAll()
                 .antMatchers("/api/{version}/user/login/**").permitAll()
                 .antMatchers("/api/{version}/user/register/**").permitAll()
                 .antMatchers("/api/{version}/user/logout/**").permitAll()
@@ -106,6 +107,8 @@ public class WebSecurityConfiguration {
                 .antMatchers("/404.html")
                 .antMatchers("/500.html")
                 .antMatchers("/error.html")
+                .antMatchers("/static/img/**")
+                .antMatchers("/img/**")
                 .antMatchers("/html/**")
                 .antMatchers("/js/**")
                 ;
@@ -122,6 +125,7 @@ public class WebSecurityConfiguration {
         );
         return new AffirmativeBased(decisionVoters);
     }
+
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
@@ -133,8 +137,9 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    public CorsConfigFilter corsConfigFilter() {
-        return new CorsConfigFilter();
+    public CorsConfigFilter corsConfigFilter(
+            @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+        return new CorsConfigFilter(resolver);
     }
 
     @Bean

@@ -22,6 +22,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import space.lingu.NonNull;
 import space.lingu.lamp.BusinessRuntimeException;
@@ -30,6 +31,7 @@ import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
 import space.lingu.lamp.web.domain.user.UserDetailsService;
+import space.lingu.lamp.web.util.RequestUtils;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -43,6 +45,7 @@ import java.io.IOException;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationTokenService authenticationTokenService;
     private final UserDetailsService userDetailsService;
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     public TokenAuthenticationFilter(AuthenticationTokenService authenticationTokenService,
                                      UserDetailsService userDetailsService) {
@@ -58,7 +61,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String requestUri = request.getRequestURI();
         HttpMethod method = HttpMethod.resolve(request.getMethod());
         boolean isAdminApi = isAdminApi(requestUri);
-        String remoteIp = tryGetIpAddress(request);
+        String remoteIp = RequestUtils.getRemoteIpAddress(request);
 
         try {
             if (SecurityContextHolder.getContext().getAuthentication() != null) {
@@ -66,7 +69,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
 
-            String token = request.getHeader("Authorization");
+            String token = loadToken(request);
             if (token == null || token.isEmpty()) {
                 nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
                 return;
@@ -117,8 +120,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         if (requestUri == null || requestUri.length() <= 10) {
             return false;
         }
-        String adminStart = requestUri.substring(0, 10);
-        return adminStart.equalsIgnoreCase("/api/admin");
+
+        return antPathMatcher.match("/api/{version}/admin/**", requestUri);
     }
 
     private void nullNextFilter(boolean isAdminApi, String remoteIp, HttpMethod method,
@@ -128,40 +131,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private static final String[] HEADERS_TO_TRY = {
-            "X-Forwarded-For",
-            "Proxy-Client-IP",
-            "WL-Proxy-Client-IP",
-            "HTTP_X_FORWARDED_FOR",
-            "HTTP_X_FORWARDED",
-            "X-Real-IP",
-            "HTTP_X_CLUSTER_CLIENT_IP",
-            "HTTP_CLIENT_IP",
-            "HTTP_FORWARDED_FOR",
-            "HTTP_FORWARDED",
-            "HTTP_VIA",
-            "REMOTE_ADDR"
-    };
-
-    private static String tryGetIpAddress(HttpServletRequest request) {
-        String ip = null;
-        String ipAddresses = null;
-        for (String header : HEADERS_TO_TRY) {
-            ipAddresses = request.getHeader(header);
-            if (!isInvalidIp(ipAddresses)) {
-                break;
-            }
+    private String loadToken(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        if (token == null || token.isEmpty()) {
+            return request.getParameter("token");
         }
-        if (!isInvalidIp(ipAddresses)) {
-            ip = ipAddresses.split(",")[0];
-        }
-        if (isInvalidIp(ip)) {
-            ip = request.getRemoteAddr();
-        }
-        return ip;
-    }
-
-    private static boolean isInvalidIp(String ip) {
-        return ip == null || ip.length() == 0 || "unknown".equalsIgnoreCase(ip);
+        return token;
     }
 }
