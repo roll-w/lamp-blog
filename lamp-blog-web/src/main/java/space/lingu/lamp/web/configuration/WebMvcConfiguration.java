@@ -21,10 +21,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinderChain;
 import space.lingu.lamp.web.configuration.json.ErrorCodeDeserializer;
 import space.lingu.lamp.web.configuration.json.ErrorCodeSerializer;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.ErrorCodeFinderChain;
 
 /**
  * @author RollW

@@ -27,32 +27,29 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
-import space.lingu.lamp.CommonErrorCode;
-import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.RequestMetadata;
 import space.lingu.lamp.Result;
 import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.common.RequestInfo;
-import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategy;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.domain.authentication.login.LoginVerifiableToken;
 import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.user.common.UserErrorCode;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.user.dto.UserInfoSignature;
+import space.lingu.lamp.web.domain.user.event.OnUserLoginEvent;
 import space.lingu.lamp.web.domain.user.event.OnUserRegistrationEvent;
 import space.lingu.lamp.web.domain.user.repository.RegisterVerificationTokenRepository;
 import space.lingu.lamp.web.domain.user.repository.UserRepository;
+import tech.rollw.common.web.AuthErrorCode;
+import tech.rollw.common.web.CommonErrorCode;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.UserErrorCode;
 
 import java.io.IOException;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * @author RollW
@@ -137,6 +134,9 @@ public class LoginRegisterService implements RegisterTokenProvider {
                 new UsernamePasswordAuthenticationToken(user, token, user.getAuthorities());
         authentication = authenticationManager.authenticate(authentication);
         SecurityContextHolder.getContext().setAuthentication(authentication);
+
+        OnUserLoginEvent onUserLoginEvent = new OnUserLoginEvent(user, metadata);
+        eventPublisher.publishEvent(onUserLoginEvent);
 
         return Result.success(
                 UserInfoSignature.from(user)

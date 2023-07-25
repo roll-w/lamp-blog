@@ -18,22 +18,33 @@ package space.lingu.lamp.web.domain.user.event;
 
 import org.springframework.context.ApplicationEvent;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.RequestMetadata;
+import space.lingu.lamp.web.domain.user.UserIdentity;
 
 /**
  * @author RollW
  */
 public class OnUserLoginEvent extends ApplicationEvent {
     @NonNull
-    private final UserInfo userInfo;
+    private final UserIdentity userInfo;
 
-    public OnUserLoginEvent(@NonNull UserInfo userInfo) {
+    @NonNull
+    private final RequestMetadata requestMetadata;
+
+    public OnUserLoginEvent(@NonNull UserIdentity userInfo,
+                            @NonNull RequestMetadata requestMetadata) {
         super(userInfo);
         this.userInfo = userInfo;
+        this.requestMetadata = requestMetadata;
     }
 
     @NonNull
-    public UserInfo getUserInfo() {
+    public UserIdentity getUserInfo() {
         return userInfo;
+    }
+
+    @NonNull
+    public RequestMetadata getRequestMetadata() {
+        return requestMetadata;
     }
 }

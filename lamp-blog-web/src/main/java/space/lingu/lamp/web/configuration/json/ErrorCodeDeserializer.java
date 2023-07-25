@@ -20,8 +20,8 @@ import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinderChain;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.ErrorCodeFinderChain;
 
 import java.io.IOException;
 

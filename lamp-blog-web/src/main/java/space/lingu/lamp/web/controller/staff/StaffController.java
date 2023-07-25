@@ -18,11 +18,11 @@ package space.lingu.lamp.web.controller.staff;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.web.controller.Api;
 import space.lingu.lamp.web.domain.staff.StaffService;
 import space.lingu.lamp.web.domain.staff.dto.StaffInfo;
 import space.lingu.lamp.web.domain.staff.vo.StaffVo;
+import tech.rollw.common.web.HttpResponseEntity;
 
 /**
  * @author RollW

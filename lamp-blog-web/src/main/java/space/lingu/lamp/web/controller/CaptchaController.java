@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import space.lingu.lamp.HttpResponseEntity;
 import space.lingu.lamp.web.domain.captcha.CaptchaImage;
+import tech.rollw.common.web.HttpResponseEntity;
 
 /**
  * @author RollW
@@ -31,13 +31,11 @@ import space.lingu.lamp.web.domain.captcha.CaptchaImage;
 public class CaptchaController {
     @GetMapping("/captcha")
     public HttpResponseEntity<CaptchaImage> getCaptcha() {
-
         return null;
     }
 
-    @PostMapping(name = "/captcha/auth")
+    @PostMapping("/captcha/auth")
     public HttpResponseEntity<Void> authCaptcha(@RequestBody String trackId) {
-
         return null;
     }
 }

@@ -20,9 +20,9 @@ import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinder;
-import space.lingu.lamp.ErrorCodeMessageProvider;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.ErrorCodeFinder;
+import tech.rollw.common.web.ErrorCodeMessageProvider;
 
 import java.util.Locale;
 

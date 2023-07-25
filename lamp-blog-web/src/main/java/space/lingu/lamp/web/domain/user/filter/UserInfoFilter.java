@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.domain.user.filter;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.ErrorCode;
+import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW

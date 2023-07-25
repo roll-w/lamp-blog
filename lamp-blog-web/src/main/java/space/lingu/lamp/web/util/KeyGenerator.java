@@ -16,32 +16,16 @@
 
 package space.lingu.lamp.web.util;
 
-import space.lingu.lamp.CommonErrorCode;
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.IoErrorCode;
-import space.lingu.lamp.web.common.DataErrorCode;
-import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.domain.article.common.ArticleErrorCode;
-import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.comment.common.CommentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;
-import space.lingu.lamp.web.domain.user.common.UserErrorCode;
-import space.lingu.lamp.web.i18n.ErrorCodeKeyHelper;
+import tech.rollw.common.web.*;
+import tech.rollw.common.web.util.ErrorCodeKeyHelper;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.io.Reader;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Helper class for reading error codes and

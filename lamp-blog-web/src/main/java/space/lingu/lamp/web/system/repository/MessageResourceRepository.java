@@ -17,11 +17,11 @@
 package space.lingu.lamp.web.system.repository;
 
 import org.springframework.stereotype.Repository;
-import space.lingu.lamp.data.page.Offset;
-import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.MessageResourceDao;
 import space.lingu.lamp.web.system.MessageResource;
+import tech.rollw.common.web.page.Offset;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 import java.util.Locale;

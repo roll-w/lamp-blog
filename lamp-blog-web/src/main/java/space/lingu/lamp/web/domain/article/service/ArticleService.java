@@ -20,25 +20,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.data.page.Offset;
-import space.lingu.lamp.data.page.Page;
-import space.lingu.lamp.data.page.PageHelper;
-import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.common.ParamValidate;
-import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.article.common.ArticleErrorCode;
 import space.lingu.lamp.web.domain.article.repository.ArticleRepository;
-import space.lingu.lamp.web.domain.content.ContentAccessor;
-import space.lingu.lamp.web.domain.content.ContentDetails;
-import space.lingu.lamp.web.domain.content.ContentPublisher;
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.content.UncreatedContent;
+import space.lingu.lamp.web.domain.content.*;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
+import tech.rollw.common.web.WebCommonErrorCode;
+import tech.rollw.common.web.page.Offset;
+import tech.rollw.common.web.page.Page;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 
@@ -65,7 +59,7 @@ public class ArticleService implements
             return articleRepository.get(Long.parseLong(contentId));
         } catch (NumberFormatException e) {
             throw new ContentException(
-                    (ErrorCode) WebCommonErrorCode.ERROR_PARAM_FAILED, e
+                    WebCommonErrorCode.ERROR_PARAM_FAILED, e
             );
         }
     }
@@ -112,7 +106,7 @@ public class ArticleService implements
             throw new IllegalArgumentException("Content collection type not supported: " +
                     contentCollectionType);
         }
-        Offset offset = PageHelper.offset(pageable);
+        Offset offset = pageable.toOffset();
         switch (contentCollectionType) {
             case ARTICLES -> {
                 return getArticles(offset);

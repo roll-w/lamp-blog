@@ -32,9 +32,9 @@ import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import space.lingu.NonNull;
-import space.lingu.lamp.ErrorCodeMessageProvider;
-import space.lingu.lamp.HttpResponseBody;
-import space.lingu.lamp.HttpResponseEntity;
+import tech.rollw.common.web.ErrorCodeMessageProvider;
+import tech.rollw.common.web.HttpResponseBody;
+import tech.rollw.common.web.HttpResponseEntity;
 
 import java.util.Objects;
 

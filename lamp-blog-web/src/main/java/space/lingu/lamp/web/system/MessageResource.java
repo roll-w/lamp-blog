@@ -21,6 +21,7 @@ import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
 import space.lingu.light.SQLDataType;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.util.Locale;
 
@@ -43,4 +44,24 @@ public record MessageResource(
         @PrimaryKey
         Locale locale
 ) implements DataItem {
+    @Override
+    public Long getId() {
+        // TODO: id
+        return null;
+    }
+
+    @Override
+    public long getCreateTime() {
+        return 0;
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return 0;
+    }
+
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return null;
+    }
 }

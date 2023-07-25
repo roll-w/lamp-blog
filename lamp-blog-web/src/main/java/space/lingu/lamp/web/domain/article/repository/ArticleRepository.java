@@ -17,11 +17,11 @@
 package space.lingu.lamp.web.domain.article.repository;
 
 import org.springframework.stereotype.Repository;
-import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ArticleDao;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.system.CountableDao;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 

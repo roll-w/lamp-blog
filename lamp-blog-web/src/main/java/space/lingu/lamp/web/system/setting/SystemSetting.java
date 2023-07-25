@@ -20,6 +20,7 @@ import space.lingu.lamp.DataItem;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 /**
  * @author RollW
@@ -45,5 +46,25 @@ public class SystemSetting implements DataItem {
 
     public String getValue() {
         return value;
+    }
+
+    @Override
+    public Long getId() {
+        return null;
+    }
+
+    @Override
+    public long getCreateTime() {
+        return 0;
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return 0;
+    }
+
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return null;
     }
 }

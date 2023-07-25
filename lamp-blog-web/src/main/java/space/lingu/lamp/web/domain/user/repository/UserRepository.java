@@ -20,12 +20,12 @@ import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
-import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.UserDao;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;

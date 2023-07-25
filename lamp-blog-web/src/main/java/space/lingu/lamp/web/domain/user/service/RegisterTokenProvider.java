@@ -16,8 +16,8 @@
 
 package space.lingu.lamp.web.domain.user.service;
 
-import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW

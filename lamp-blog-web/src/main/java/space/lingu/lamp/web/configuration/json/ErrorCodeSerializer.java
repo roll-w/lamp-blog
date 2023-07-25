@@ -19,7 +19,7 @@ package space.lingu.lamp.web.configuration.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import space.lingu.lamp.ErrorCode;
+import tech.rollw.common.web.ErrorCode;
 
 import java.io.IOException;
 

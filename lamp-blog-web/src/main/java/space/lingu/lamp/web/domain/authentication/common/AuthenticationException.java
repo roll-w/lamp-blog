@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.common;
+package space.lingu.lamp.web.domain.authentication.common;
+
 
 import tech.rollw.common.web.BusinessRuntimeException;
 import tech.rollw.common.web.ErrorCode;
@@ -22,20 +23,20 @@ import tech.rollw.common.web.ErrorCode;
 /**
  * @author RollW
  */
-public class UserViewException extends BusinessRuntimeException {
-    public UserViewException(ErrorCode errorCode) {
+public class AuthenticationException extends BusinessRuntimeException {
+    public AuthenticationException(ErrorCode errorCode) {
         super(errorCode);
     }
 
-    public UserViewException(ErrorCode errorCode, String message, Object... args) {
+    public AuthenticationException(ErrorCode errorCode, String message, Object... args) {
         super(errorCode, message, args);
     }
 
-    public UserViewException(ErrorCode errorCode, String message, Throwable cause, Object... args) {
+    public AuthenticationException(ErrorCode errorCode, String message, Throwable cause, Object... args) {
         super(errorCode, message, cause, args);
     }
 
-    public UserViewException(ErrorCode errorCode, Throwable cause) {
+    public AuthenticationException(ErrorCode errorCode, Throwable cause) {
         super(errorCode, cause);
     }
 }

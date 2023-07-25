@@ -16,11 +16,11 @@
 
 package space.lingu.lamp.web.database.dao;
 
-import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.system.MessageResource;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
 import space.lingu.light.Query;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 import java.util.Locale;

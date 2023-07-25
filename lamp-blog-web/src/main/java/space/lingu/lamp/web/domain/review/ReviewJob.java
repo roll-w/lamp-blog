@@ -24,6 +24,7 @@ import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.util.Objects;
 
@@ -98,6 +99,21 @@ public class ReviewJob implements DataItem {
                      ReviewMark reviewMark) {
         this(null, reviewContentId, reviewerId, operatorId, status, type,
                 assignedTime, result, reviewTime, reviewMark);
+    }
+
+    @Override
+    public Long getId() {
+        return getJobId();
+    }
+
+    @Override
+    public long getCreateTime() {
+        return getAssignedTime();
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return getReviewTime();
     }
 
     public Long getJobId() {
@@ -201,6 +217,12 @@ public class ReviewJob implements DataItem {
                 result, reviewTime,
                 reviewMark);
     }
+
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return null;
+    }
+
 
     public final static class Builder {
         private Long jobId = null;

@@ -16,10 +16,10 @@
 
 package space.lingu.lamp.web.domain.content.collection;
 
-import space.lingu.lamp.data.page.Page;
-import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentType;
+import tech.rollw.common.web.page.Page;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 

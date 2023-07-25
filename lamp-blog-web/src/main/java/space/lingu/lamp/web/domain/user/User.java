@@ -25,6 +25,7 @@ import space.lingu.light.DataTable;
 import space.lingu.light.Index;
 import space.lingu.light.LightConfiguration;
 import space.lingu.light.PrimaryKey;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.util.Collection;
 import java.util.Objects;
@@ -102,6 +103,16 @@ public class User implements DataItem, UserDetails, UserIdentity {
 
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public long getCreateTime() {
+        return getRegisterTime();
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return 0;
     }
 
     @Override
@@ -229,6 +240,11 @@ public class User implements DataItem, UserDetails, UserIdentity {
         return userId <= 0;
     }
 
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return null;
+    }
+
     public static final class Builder {
         private Long id = null;
         private String username;
@@ -301,7 +317,9 @@ public class User implements DataItem, UserDetails, UserIdentity {
             return new User(
                     id, username, password,
                     role, registerTime,
-                    email, phone, enabled, locked, accountExpired, canceled);
+                    email, phone, enabled, locked,
+                    accountExpired, canceled
+            );
         }
     }
 }

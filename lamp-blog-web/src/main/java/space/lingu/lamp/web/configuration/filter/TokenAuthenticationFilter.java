@@ -25,13 +25,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import space.lingu.NonNull;
-import space.lingu.lamp.BusinessRuntimeException;
 import space.lingu.lamp.web.common.ApiContextHolder;
-import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
 import space.lingu.lamp.web.domain.user.UserDetailsService;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.util.RequestUtils;
+import tech.rollw.common.web.BusinessRuntimeException;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -64,8 +64,14 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         String remoteIp = RequestUtils.getRemoteIpAddress(request);
 
         try {
-            if (SecurityContextHolder.getContext().getAuthentication() != null) {
-                nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
+            Authentication existAuthentication =
+                    SecurityContextHolder.getContext().getAuthentication();
+            if (existAuthentication != null) {
+                UserDetails userDetails = (UserDetails)
+                        existAuthentication.getPrincipal();
+                UserInfo userInfo = UserInfo.from(userDetails);
+                setApiContext(isAdminApi, remoteIp, method, userInfo);
+                filterChain.doFilter(request, response);
                 return;
             }
 

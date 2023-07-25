@@ -18,22 +18,18 @@ package space.lingu.lamp.web.domain.comment.service;
 
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
-import space.lingu.lamp.data.page.Offset;
-import space.lingu.lamp.data.page.PageHelper;
 import space.lingu.lamp.web.common.ParameterFailedException;
 import space.lingu.lamp.web.common.ParameterMissingException;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.lamp.web.domain.comment.CommentDetailsMetadata;
 import space.lingu.lamp.web.domain.comment.repository.CommentRepository;
-import space.lingu.lamp.web.domain.content.ContentAccessor;
-import space.lingu.lamp.web.domain.content.ContentDetails;
-import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
-import space.lingu.lamp.web.domain.content.ContentPublisher;
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.content.UncreatedContent;
+import space.lingu.lamp.web.domain.content.*;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentException;
+import tech.rollw.common.web.page.Offset;
+import tech.rollw.common.web.page.Page;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 
@@ -81,20 +77,39 @@ public class CommentService implements ContentAccessor,
     }
 
     @Override
+    public Page<? extends ContentDetails> getContentCollection(
+            ContentCollectionType contentCollectionType,
+            String collectionId, Pageable pageable) {
+        // TODO: collection
+        return Page.of();
+        //return getComment(contentCollectionType, collectionId, page, size);
+    }
+
+    @Override
     public List<? extends ContentDetails> getContentCollection(
             ContentCollectionType contentCollectionType,
-            String collectionId, int page, int size) {
-        // TODO: collection
-        return getComment(contentCollectionType, collectionId, page, size);
+            String collectionId) {
+        return getComment(
+                contentCollectionType,
+                collectionId);
     }
 
     private List<Comment> getComment(ContentCollectionType contentCollectionType,
                                      String collectionId, int page, int size) {
-        Offset offset = PageHelper.offset(page, size);
+        Offset offset = Offset.of(page, size);
 
         return switch (contentCollectionType) {
             case COMMENTS -> commentRepository.get(offset);
             case ARTICLE_COMMENTS -> commentRepository.getArticleComments(collectionId, offset);
+            default -> throw new UnsupportedOperationException("Unsupported collection type: " + contentCollectionType);
+        };
+    }
+
+    private List<Comment> getComment(ContentCollectionType contentCollectionType,
+                                     String collectionId) {
+        return switch (contentCollectionType) {
+            case COMMENTS -> commentRepository.get();
+            case ARTICLE_COMMENTS -> commentRepository.getArticleComments(collectionId);
             default -> throw new UnsupportedOperationException("Unsupported collection type: " + contentCollectionType);
         };
     }

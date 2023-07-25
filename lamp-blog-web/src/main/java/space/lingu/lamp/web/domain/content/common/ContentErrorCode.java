@@ -17,9 +17,9 @@
 package space.lingu.lamp.web.domain.content.common;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinder;
-import space.lingu.lamp.ErrorCodeMessageProvider;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.ErrorCodeFinder;
+import tech.rollw.common.web.ErrorCodeMessageProvider;
 
 import java.util.List;
 
@@ -27,7 +27,6 @@ import java.util.List;
  * @author RollW
  */
 public enum ContentErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMessageProvider {
-    SUCCESS(SUCCESS_CODE, 200),
     ERROR_CONTENT("A2000", 400),
     ERROR_CONTENT_NOT_FOUND("A2001", 404),
     ERROR_CONTENT_FORBIDDEN("A2002", 401),
@@ -54,10 +53,6 @@ public enum ContentErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMes
 
     @Override
     public String toString() {
-        if (this == SUCCESS) {
-            return "SUCCESS";
-        }
-
         return "ContentError: %s, code: %s".formatted(name(), getCode());
     }
 
@@ -101,6 +96,6 @@ public enum ContentErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMes
     }
 
     public static ErrorCodeFinder getFinderInstance() {
-        return SUCCESS;
+        return ERROR_CONTENT;
     }
 }

@@ -16,6 +16,8 @@
 
 package space.lingu.lamp;
 
+import tech.rollw.common.web.system.SystemResource;
+
 import java.io.Serializable;
 
 /**
@@ -23,5 +25,20 @@ import java.io.Serializable;
  *
  * @author RollW
  */
-public interface DataItem extends Serializable {
+public interface DataItem extends Serializable, SystemResource {
+    /**
+     * Get the id of the entity.
+     *
+     * @return the id of the entity.
+     */
+    Long getId();
+
+    @Override
+    default long getResourceId() {
+        return getId();
+    }
+
+    long getCreateTime();
+
+    long getUpdateTime();
 }

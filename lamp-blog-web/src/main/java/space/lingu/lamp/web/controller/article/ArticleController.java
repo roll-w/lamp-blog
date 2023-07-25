@@ -16,33 +16,21 @@
 
 package space.lingu.lamp.web.controller.article;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import space.lingu.lamp.HttpResponseEntity;
-import space.lingu.lamp.data.page.Page;
-import space.lingu.lamp.data.page.PageRequest;
+import org.springframework.web.bind.annotation.*;
 import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.controller.Api;
 import space.lingu.lamp.web.domain.article.dto.ArticleDetailsMetadata;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
 import space.lingu.lamp.web.domain.article.dto.ArticleRequest;
 import space.lingu.lamp.web.domain.article.vo.ArticleVo;
-import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
-import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
-import space.lingu.lamp.web.domain.content.ContentAccessService;
-import space.lingu.lamp.web.domain.content.ContentDetails;
-import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
-import space.lingu.lamp.web.domain.content.ContentPublishService;
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.content.UncreatedContent;
+import space.lingu.lamp.web.domain.content.*;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionService;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import tech.rollw.common.web.HttpResponseEntity;
+import tech.rollw.common.web.page.Page;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 
@@ -68,7 +56,7 @@ public class ArticleController {
 
     @GetMapping("/user/{userId}/articles")
     public HttpResponseEntity<List<ArticleVo>> getArticles(
-            @PathVariable String userId, PageRequest pageRequest) {
+            @PathVariable String userId, Pageable pageRequest) {
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
         // TODO: check if the user is the same as the current user
         ContentAccessCredentials contentAccessCredentials =

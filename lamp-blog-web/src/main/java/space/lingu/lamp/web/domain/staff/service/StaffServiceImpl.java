@@ -18,10 +18,6 @@ package space.lingu.lamp.web.domain.staff.service;
 
 import org.apache.commons.lang3.Validate;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.BusinessRuntimeException;
-import space.lingu.lamp.data.page.Page;
-import space.lingu.lamp.data.page.Pageable;
-import space.lingu.lamp.web.common.DataErrorCode;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.staff.StaffService;
 import space.lingu.lamp.web.domain.staff.StaffType;
@@ -29,6 +25,10 @@ import space.lingu.lamp.web.domain.staff.dto.StaffInfo;
 import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
 import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.lamp.web.domain.user.service.UserSearchService;
+import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.DataErrorCode;
+import tech.rollw.common.web.page.Page;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;

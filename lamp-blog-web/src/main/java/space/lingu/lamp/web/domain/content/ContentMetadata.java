@@ -18,11 +18,8 @@ package space.lingu.lamp.web.domain.content;
 
 import space.lingu.NonNull;
 import space.lingu.lamp.DataItem;
-import space.lingu.light.Constructor;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.Index;
-import space.lingu.light.PrimaryKey;
+import space.lingu.light.*;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 /**
  * @author RollW
@@ -87,8 +84,19 @@ public class ContentMetadata implements DataItem {
         }
     }
 
+    @Override
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public long getCreateTime() {
+        return 0;
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return 0;
     }
 
     public long getUserId() {
@@ -121,6 +129,11 @@ public class ContentMetadata implements DataItem {
 
     public static Builder builder() {
         return new Builder();
+    }
+
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return null;
     }
 
     public static class Builder {

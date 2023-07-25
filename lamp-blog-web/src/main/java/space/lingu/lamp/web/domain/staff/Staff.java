@@ -20,6 +20,7 @@ import space.lingu.lamp.DataItem;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.util.EnumSet;
 import java.util.Objects;
@@ -32,12 +33,13 @@ import java.util.Set;
 @DataTable(name = "staff")
 public class Staff implements DataItem {
     // TODO: staff type
-    @DataColumn(name = "id")
-    @PrimaryKey
-    private final long userId;
 
-    @DataColumn(name = "employee_id")
-    private final String employeeId;
+    @DataColumn(name = "id")
+    @PrimaryKey(autoGenerate = true)
+    private final Long id;
+
+    @DataColumn(name = "user_id")
+    private final long userId;
 
     @DataColumn(name = "types")
     private final Set<StaffType> types;
@@ -54,12 +56,12 @@ public class Staff implements DataItem {
     @DataColumn(name = "deleted")
     private final boolean deleted;
 
-    public Staff(long userId, String employeeId,
+    public Staff(Long id, long userId,
                  Set<StaffType> types, long createTime,
                  long updateTime, boolean allowUser,
                  boolean deleted) {
+        this.id = id;
         this.userId = userId;
-        this.employeeId = employeeId;
         this.types = EnumSet.copyOf(types);
         this.createTime = createTime;
         this.updateTime = updateTime;
@@ -67,12 +69,13 @@ public class Staff implements DataItem {
         this.deleted = deleted;
     }
 
-    public long getUserId() {
-        return userId;
+    @Override
+    public Long getId() {
+        return id;
     }
 
-    public String getEmployeeId() {
-        return employeeId;
+    public long getUserId() {
+        return userId;
     }
 
     public Set<StaffType> getTypes() {
@@ -99,28 +102,23 @@ public class Staff implements DataItem {
         return types.contains(type);
     }
 
-    public Builder toBuilder() {
-        return new Builder(this);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Staff staff = (Staff) o;
-        return userId == staff.userId && createTime == staff.createTime && updateTime == staff.updateTime && allowUser == staff.allowUser && deleted == staff.deleted && Objects.equals(employeeId, staff.employeeId) && Objects.equals(types, staff.types);
+        if (!(o instanceof Staff staff)) return false;
+        return userId == staff.userId && createTime == staff.createTime && updateTime == staff.updateTime && allowUser == staff.allowUser && deleted == staff.deleted && Objects.equals(id, staff.id) && Objects.equals(types, staff.types);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(userId, employeeId, types, createTime, updateTime, allowUser, deleted);
+        return Objects.hash(id, userId, types, createTime, updateTime, allowUser, deleted);
     }
 
     @Override
     public String toString() {
         return "Staff{" +
-                "userId=" + userId +
-                ", employeeId='" + employeeId + '\'' +
+                "id=" + id +
+                ", userId=" + userId +
                 ", types=" + types +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
@@ -129,14 +127,23 @@ public class Staff implements DataItem {
                 '}';
     }
 
+    public Builder toBuilder() {
+        return new Builder(this);
+    }
 
     public static Builder builder() {
         return new Builder();
     }
 
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return null;
+    }
+
+
     public static class Builder {
+        private Long id;
         private long userId;
-        private String employeeId;
         private Set<StaffType> type;
         private long createTime;
         private long updateTime;
@@ -147,8 +154,8 @@ public class Staff implements DataItem {
         }
 
         public Builder(Staff staff) {
+            this.id = staff.id;
             this.userId = staff.userId;
-            this.employeeId = staff.employeeId;
             this.type = staff.types;
             this.createTime = staff.createTime;
             this.updateTime = staff.updateTime;
@@ -156,13 +163,13 @@ public class Staff implements DataItem {
             this.deleted = staff.deleted;
         }
 
-        public Builder setUserId(long userId) {
-            this.userId = userId;
+        public Builder setId(Long id) {
+            this.id = id;
             return this;
         }
 
-        public Builder setEmployeeId(String employeeId) {
-            this.employeeId = employeeId;
+        public Builder setUserId(long userId) {
+            this.userId = userId;
             return this;
         }
 
@@ -201,7 +208,7 @@ public class Staff implements DataItem {
         }
 
         public Staff build() {
-            return new Staff(userId, employeeId, type, createTime,
+            return new Staff(id, userId, type, createTime,
                     updateTime, allowUser, deleted);
         }
     }

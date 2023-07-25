@@ -17,10 +17,10 @@
 package space.lingu.lamp.web.domain.user.filter;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.CommonErrorCode;
-import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.web.domain.user.common.UserChecker;
-import space.lingu.lamp.web.domain.user.common.UserErrorCode;
+import tech.rollw.common.web.CommonErrorCode;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.UserErrorCode;
 
 /**
  * @author RollW

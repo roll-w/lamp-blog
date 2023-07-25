@@ -23,6 +23,7 @@ import space.lingu.light.DataTable;
 import space.lingu.light.Index;
 import space.lingu.light.LightConfiguration;
 import space.lingu.light.PrimaryKey;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.util.Date;
 
@@ -72,4 +73,23 @@ public record RegisterVerificationToken(
         return new Date(expiryTime);
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public long getCreateTime() {
+        return 0;
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return 0;
+    }
+
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return null;
+    }
 }

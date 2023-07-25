@@ -16,8 +16,8 @@
 
 package space.lingu.lamp.web.domain.content.common;
 
-import space.lingu.lamp.BusinessRuntimeException;
-import space.lingu.lamp.ErrorCode;
+import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW

@@ -16,16 +16,12 @@
 
 package space.lingu.lamp.web.controller.system;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import space.lingu.lamp.HttpResponseEntity;
-import space.lingu.lamp.data.page.PageRequest;
+import org.springframework.web.bind.annotation.*;
 import space.lingu.lamp.web.controller.AdminApi;
 import space.lingu.lamp.web.system.setting.SettingProvider;
 import space.lingu.lamp.web.system.setting.SystemSetting;
+import tech.rollw.common.web.HttpResponseEntity;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 
@@ -42,9 +38,9 @@ public class SystemSettingController {
 
     @GetMapping("/system/settings")
     public HttpResponseEntity<List<SystemSetting>> getSettings(
-            PageRequest pageRequest) {
+            Pageable pageable) {
         List<SystemSetting> systemSettings =
-                settingProvider.getSettings(pageRequest.getPage(), pageRequest.getSize());
+                settingProvider.getSettings(pageable.getPage(), pageable.getSize());
         return HttpResponseEntity.success(systemSettings);
     }
 

@@ -18,9 +18,9 @@ package space.lingu.lamp.web.system.resource;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.data.page.Page;
-import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.system.MessageResource;
+import tech.rollw.common.web.page.Page;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 import java.util.Locale;

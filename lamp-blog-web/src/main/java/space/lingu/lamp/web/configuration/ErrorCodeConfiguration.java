@@ -16,31 +16,19 @@
 
 package space.lingu.lamp.web.configuration;
 
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import space.lingu.lamp.ErrorCodeFinderChain;
-import space.lingu.lamp.ErrorCodeMessageProvider;
-import space.lingu.lamp.IoErrorCode;
-import space.lingu.lamp.web.common.DataErrorCode;
-import space.lingu.lamp.web.common.WebCommonErrorCode;
 import space.lingu.lamp.web.domain.article.common.ArticleErrorCode;
-import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.comment.common.CommentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;
-import space.lingu.lamp.web.domain.user.common.UserErrorCode;
+import tech.rollw.common.web.*;
 
 /**
  * @author RollW
  */
 @Configuration
 public class ErrorCodeConfiguration {
-
-    @Bean
-    public ErrorCodeMessageProvider errorCodeMessageProvider(MessageSource messageSource) {
-        return new ErrorCodeMessageProviderImpl(messageSource);
-    }
 
     @Bean
     public ErrorCodeFinderChain errorCodeFinderChain() {

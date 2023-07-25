@@ -54,16 +54,11 @@ public class UserRoleChangeListener
             return;
         }
         StaffType type = StaffType.of(userInfo.role());
-        String employeeId = serialNumberGenerator.generate(
-                userInfo.id(),
-                type
-        );
         long time = System.currentTimeMillis();
         Staff newStaff = Staff.builder()
                 .setUserId(userInfo.id())
                 .setTypes(type)
                 .setAllowUser(true)
-                .setEmployeeId(employeeId)
                 .setCreateTime(time)
                 .setUpdateTime(time)
                 .setDeleted(false)
@@ -72,9 +67,9 @@ public class UserRoleChangeListener
     }
 
     private void disableStaff(Staff staff, long time) {
-       if (staff == null) {
-           return;
-       }
-       staffRepository.deleteByUserId(staff.getUserId(), time);
+        if (staff == null) {
+            return;
+        }
+        staffRepository.deleteByUserId(staff.getUserId(), time);
     }
 }

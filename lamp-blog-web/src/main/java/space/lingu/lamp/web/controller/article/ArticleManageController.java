@@ -18,9 +18,6 @@ package space.lingu.lamp.web.controller.article;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import space.lingu.lamp.HttpResponseEntity;
-import space.lingu.lamp.data.page.Page;
-import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.controller.AdminApi;
 import space.lingu.lamp.web.domain.article.vo.ArticleMetaVo;
 import space.lingu.lamp.web.domain.content.ContentAccessService;
@@ -31,6 +28,9 @@ import space.lingu.lamp.web.domain.content.collection.ContentCollectionService;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
+import tech.rollw.common.web.HttpResponseEntity;
+import tech.rollw.common.web.page.Page;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 

@@ -17,11 +17,13 @@
 package space.lingu.lamp.web.domain.content;
 
 import com.google.common.base.Preconditions;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 /**
  * @author RollW
  */
-public enum ContentType {
+public enum ContentType implements SystemResourceKind.Kind {
     /**
      * Article.
      */
@@ -52,5 +54,15 @@ public enum ContentType {
 
     public int getWeight() {
         return weight;
+    }
+
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return switch (this) {
+            case ARTICLE -> LampSystemResourceKind.ARTICLE;
+            case COMMENT -> LampSystemResourceKind.COMMENT;
+            case POST -> LampSystemResourceKind.POST;
+            case IMAGE -> LampSystemResourceKind.IMAGE;
+        };
     }
 }

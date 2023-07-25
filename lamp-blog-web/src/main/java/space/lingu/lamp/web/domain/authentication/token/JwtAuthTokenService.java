@@ -16,16 +16,12 @@
 
 package space.lingu.lamp.web.domain.authentication.token;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Header;
-import io.jsonwebtoken.Jwt;
-import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
+import tech.rollw.common.web.AuthErrorCode;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -74,7 +70,7 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
         } catch (ExpiredJwtException e) {
             return TokenAuthResult.failure(AuthErrorCode.ERROR_TOKEN_EXPIRED);
         } catch (NumberFormatException e) {
-            logger.error("Invalid jwt token number format: " + rawToken);
+            logger.error("Invalid jwt token number format: {}", rawToken);
             return TokenAuthResult.failure(AuthErrorCode.ERROR_INVALID_TOKEN);
         } catch (Exception e) {
             e.printStackTrace();
@@ -134,6 +130,7 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
     }
 
     //
-    private static final long DAYS_7 = 60 * 60 * 24 * 7;
-    private static final long MINUTES_5 = 60 * 5;
+    private static final long DAYS_7 = 60 * 60 * 24 * 7L;
+    private static final long MINUTES_5 = 60 * 5L;
+    private static final long SECONDS_5 = 5L;
 }

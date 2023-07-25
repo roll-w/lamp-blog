@@ -17,13 +17,13 @@
 package space.lingu.lamp.web.domain.content.permit;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
 import space.lingu.lamp.web.domain.content.ContentAccessCredential;
 import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
 import space.lingu.lamp.web.domain.user.UserIdentity;
-import space.lingu.lamp.web.domain.user.common.UserErrorCode;
+import tech.rollw.common.web.AuthErrorCode;
+import tech.rollw.common.web.UserErrorCode;
 
 /**
  * @author RollW

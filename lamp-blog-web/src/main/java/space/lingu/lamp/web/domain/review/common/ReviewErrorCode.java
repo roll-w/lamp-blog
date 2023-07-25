@@ -17,13 +17,12 @@
 package space.lingu.lamp.web.domain.review.common;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinder;
-import space.lingu.lamp.ErrorCodeMessageProvider;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.ErrorCodeFinder;
+import tech.rollw.common.web.ErrorCodeMessageProvider;
 
 import java.util.List;
 
-import static space.lingu.lamp.CommonErrorCode.SUCCESS;
 
 /**
  * @author RollW
@@ -93,6 +92,6 @@ public enum ReviewErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMess
     }
 
     public static ErrorCodeFinder getFinderInstance() {
-        return SUCCESS;
+        return ERROR_REVIEW;
     }
 }

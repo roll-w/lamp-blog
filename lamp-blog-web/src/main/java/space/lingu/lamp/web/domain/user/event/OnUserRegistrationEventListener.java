@@ -26,14 +26,14 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
-import space.lingu.lamp.event.EventCallback;
-import space.lingu.lamp.event.EventRegistry;
-import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.common.SimpleMailMessageBuilder;
-import space.lingu.lamp.web.system.setting.SettingLoader;
+import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
-import space.lingu.lamp.web.system.setting.SystemSetting;
 import space.lingu.lamp.web.domain.user.service.RegisterTokenProvider;
+import space.lingu.lamp.web.system.setting.SettingLoader;
+import space.lingu.lamp.web.system.setting.SystemSetting;
+import tech.rollw.common.event.EventCallback;
+import tech.rollw.common.event.EventRegistry;
 
 /**
  * @author RollW
@@ -69,7 +69,7 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
         handleRegistration(event);
     }
 
-    @Async
+    @Async("LB-Main-Executor")
     void handleRegistration(OnUserRegistrationEvent event) {
         UserInfo userInfo = event.getUserInfo();
         String token = registerTokenProvider.createRegisterToken(userInfo);

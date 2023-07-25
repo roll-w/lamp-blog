@@ -19,9 +19,9 @@ package space.lingu.lamp.web.controller;
 import com.google.common.base.Strings;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import space.lingu.lamp.data.page.PageRequest;
-import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.common.ParameterFailedException;
+import tech.rollw.common.web.page.PageInfo;
+import tech.rollw.common.web.page.Pageable;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -32,21 +32,16 @@ import javax.servlet.http.HttpServletRequest;
 public class PageRequestControllerAdvice {
 
     @ModelAttribute
-    public PageRequest fromRequest(HttpServletRequest request) {
+    public Pageable fromRequest(HttpServletRequest request) {
         String page = request.getParameter("page");
         String size = request.getParameter("size");
 
         try {
             int pageInt = Strings.isNullOrEmpty(page) ? 1 : Integer.parseInt(page);
             int sizeInt = Strings.isNullOrEmpty(size) ? 10 : Integer.parseInt(size);
-            return new PageRequest(pageInt, sizeInt);
+            return new PageInfo(pageInt, sizeInt);
         } catch (NumberFormatException e) {
             throw new ParameterFailedException(e.getMessage());
         }
-    }
-
-    @ModelAttribute
-    public Pageable pageableFromRequest(HttpServletRequest request) {
-        return fromRequest(request);
     }
 }

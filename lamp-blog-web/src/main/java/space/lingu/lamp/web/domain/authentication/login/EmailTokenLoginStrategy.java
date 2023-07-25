@@ -31,13 +31,12 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinder;
 import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.common.MimeMailMessageBuilder;
 import space.lingu.lamp.web.common.RequestInfo;
-import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
 import space.lingu.lamp.web.domain.user.User;
+import tech.rollw.common.web.AuthErrorCode;
+import tech.rollw.common.web.ErrorCode;
 
 import javax.mail.internet.MimeMessage;
 import java.io.FileNotFoundException;
@@ -59,18 +58,15 @@ public class EmailTokenLoginStrategy implements LoginStrategy {
     private final MessageSource messageSource;
     private final MailProperties mailProperties;
     private final JavaMailSender mailSender;
-    private final ErrorCodeFinder errorCodeFinder;
 
     public EmailTokenLoginStrategy(CacheManager cacheManager,
                                    MessageSource messageSource,
                                    MailProperties mailProperties,
-                                   JavaMailSender mailSender,
-                                   ErrorCodeFinder errorCodeFinder) {
+                                   JavaMailSender mailSender) {
         this.cache = cacheManager.getCache(CacheNames.EMAIL_TOKEN);
         this.messageSource = messageSource;
         this.mailProperties = mailProperties;
         this.mailSender = mailSender;
-        this.errorCodeFinder = errorCodeFinder;
     }
 
     private static final String FULL_SEQUENCE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";

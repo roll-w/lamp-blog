@@ -17,9 +17,9 @@
 package space.lingu.lamp.web.domain.article.common;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.ErrorCode;
-import space.lingu.lamp.ErrorCodeFinder;
-import space.lingu.lamp.ErrorCodeMessageProvider;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.ErrorCodeFinder;
+import tech.rollw.common.web.ErrorCodeMessageProvider;
 
 import java.util.List;
 

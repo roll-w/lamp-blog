@@ -16,9 +16,9 @@
 
 package space.lingu.lamp.web.domain.staff;
 
-import space.lingu.lamp.data.page.Page;
-import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.domain.staff.dto.StaffInfo;
+import tech.rollw.common.web.page.Page;
+import tech.rollw.common.web.page.Pageable;
 
 /**
  * @author RollW

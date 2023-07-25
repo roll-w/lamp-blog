@@ -22,11 +22,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
-import space.lingu.lamp.web.domain.user.common.UserErrorCode;
+import tech.rollw.common.web.AuthErrorCode;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.UserErrorCode;
 
 /**
  * @author RollW

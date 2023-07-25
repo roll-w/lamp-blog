@@ -16,14 +16,10 @@
 
 package space.lingu.lamp.web.database.dao;
 
-import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
-import space.lingu.light.Dao;
-import space.lingu.light.Delete;
-import space.lingu.light.Insert;
-import space.lingu.light.OnConflictStrategy;
-import space.lingu.light.Query;
+import space.lingu.light.*;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 

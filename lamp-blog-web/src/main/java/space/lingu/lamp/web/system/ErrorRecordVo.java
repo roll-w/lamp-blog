@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.system;
 
-import space.lingu.lamp.ErrorCode;
+import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW

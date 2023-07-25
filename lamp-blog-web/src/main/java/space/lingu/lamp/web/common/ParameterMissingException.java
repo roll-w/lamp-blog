@@ -16,7 +16,8 @@
 
 package space.lingu.lamp.web.common;
 
-import space.lingu.lamp.BusinessRuntimeException;
+import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.WebCommonErrorCode;
 
 /**
  * @author RollW

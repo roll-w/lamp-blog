@@ -17,13 +17,13 @@
 package space.lingu.lamp.web.controller.staff;
 
 import org.springframework.web.bind.annotation.GetMapping;
-import space.lingu.lamp.HttpResponseEntity;
-import space.lingu.lamp.data.page.Page;
-import space.lingu.lamp.data.page.PageRequest;
 import space.lingu.lamp.web.controller.AdminApi;
 import space.lingu.lamp.web.domain.staff.StaffService;
 import space.lingu.lamp.web.domain.staff.dto.StaffInfo;
 import space.lingu.lamp.web.domain.staff.vo.StaffVo;
+import tech.rollw.common.web.HttpResponseEntity;
+import tech.rollw.common.web.page.Page;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 
@@ -40,9 +40,9 @@ public class StaffManageController {
 
     @GetMapping("/staffs")
     public HttpResponseEntity<List<StaffVo>> getStaffs(
-            PageRequest pageRequest) {
+            Pageable pageable) {
         Page<StaffInfo> staffPage =
-                staffService.getStaffs(pageRequest);
+                staffService.getStaffs(pageable);
 
         return HttpResponseEntity.success(
                 staffPage.transform(StaffVo::from));

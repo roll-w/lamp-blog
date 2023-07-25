@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.domain.authentication.token;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.authentication.common.AuthErrorCode;
+import tech.rollw.common.web.AuthErrorCode;
 
 /**
  * @author RollW

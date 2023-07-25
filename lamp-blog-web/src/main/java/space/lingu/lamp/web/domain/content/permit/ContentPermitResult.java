@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.domain.content.permit;
 
 import com.google.common.base.Preconditions;
-import space.lingu.lamp.ErrorCode;
+import tech.rollw.common.web.ErrorCode;
 
 import java.util.HashSet;
 import java.util.Set;

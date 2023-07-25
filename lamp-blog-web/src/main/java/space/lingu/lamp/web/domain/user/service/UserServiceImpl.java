@@ -19,14 +19,10 @@ package space.lingu.lamp.web.domain.user.service;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.CommonErrorCode;
-import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.Result;
-import space.lingu.lamp.data.page.PageHelper;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.UserIdentity;
-import space.lingu.lamp.web.domain.user.common.UserErrorCode;
 import space.lingu.lamp.web.domain.user.common.UserViewException;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.user.event.OnUserCreateEvent;
@@ -34,6 +30,10 @@ import space.lingu.lamp.web.domain.user.filter.UserFilteringInfo;
 import space.lingu.lamp.web.domain.user.filter.UserFilteringInfoType;
 import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
 import space.lingu.lamp.web.domain.user.repository.UserRepository;
+import tech.rollw.common.web.CommonErrorCode;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.UserErrorCode;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 
@@ -125,7 +125,7 @@ public class UserServiceImpl implements  UserSignatureProvider,
 
     @Override
     public List<User> getUsers(int page, int size) {
-        return userRepository.getUsers(PageHelper.offset(page, size));
+        return userRepository.getUsers(Offset.of(page, size));
     }
 
     @Override
@@ -159,7 +159,7 @@ public class UserServiceImpl implements  UserSignatureProvider,
     @Override
     public List<? extends UserIdentity> findUsers(int page, int size) {
         // TODO: filter canceled user
-        return userRepository.getUsers(PageHelper.offset(page, size));
+        return userRepository.getUsers(Offset.of(page, size));
     }
 
     @Override

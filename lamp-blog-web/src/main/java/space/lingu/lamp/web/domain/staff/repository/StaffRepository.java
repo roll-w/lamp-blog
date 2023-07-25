@@ -19,12 +19,12 @@ package space.lingu.lamp.web.domain.staff.repository;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Repository;
-import space.lingu.lamp.data.page.Pageable;
 import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.StaffDao;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.staff.StaffType;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 

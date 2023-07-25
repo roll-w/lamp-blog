@@ -19,9 +19,9 @@ package space.lingu.lamp.web.domain.authentication.login;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.ErrorCode;
 import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.domain.user.User;
+import tech.rollw.common.web.ErrorCode;
 
 import java.io.IOException;
 

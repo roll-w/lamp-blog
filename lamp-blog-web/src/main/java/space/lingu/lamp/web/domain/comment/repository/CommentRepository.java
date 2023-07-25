@@ -17,11 +17,11 @@
 package space.lingu.lamp.web.domain.comment.repository;
 
 import org.springframework.stereotype.Repository;
-import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.CommentDao;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.lamp.web.domain.content.ContentType;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 

@@ -21,7 +21,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.staff.Staff;
-import space.lingu.lamp.web.domain.staff.StaffSerialNumberGenerator;
 import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
 import space.lingu.lamp.web.domain.user.Role;
@@ -34,12 +33,9 @@ import space.lingu.lamp.web.domain.user.event.OnUserCreateEvent;
 @Component
 public class UserCreateEventListener implements ApplicationListener<OnUserCreateEvent> {
     private final StaffRepository repository;
-    private final StaffSerialNumberGenerator serialNumberGenerator;
 
-    public UserCreateEventListener(StaffRepository repository,
-                                   StaffSerialNumberGenerator serialNumberGenerator) {
+    public UserCreateEventListener(StaffRepository repository) {
         this.repository = repository;
-        this.serialNumberGenerator = serialNumberGenerator;
     }
 
     @Override
@@ -50,13 +46,11 @@ public class UserCreateEventListener implements ApplicationListener<OnUserCreate
             return;
         }
         StaffType type = StaffType.of(userInfo.role());
-        String employeeId = serialNumberGenerator.generate(userInfo.id(), type);
         long time = System.currentTimeMillis();
         Staff staff = Staff.builder()
                 .setUserId(userInfo.id())
                 .setTypes(type)
                 .setAllowUser(true)
-                .setEmployeeId(employeeId)
                 .setCreateTime(time)
                 .setUpdateTime(time)
                 .setDeleted(false)

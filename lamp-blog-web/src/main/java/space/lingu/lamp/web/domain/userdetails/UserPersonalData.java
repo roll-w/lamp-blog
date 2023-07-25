@@ -24,6 +24,7 @@ import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.io.Serializable;
 
@@ -148,15 +149,36 @@ public final class UserPersonalData implements Serializable, DataItem {
                                                       UserPersonalData userPersonalData) {
         Builder builder = userPersonalData.toBuilder();
         if (userPersonalData.getAvatar() == null) {
-            builder.setAvatar("http://localhost:5100/static/img/lamp_user.png");
+            // TODO
+            builder.setAvatar("/static/img/lamp_user.png");
         }
         if (userPersonalData.getNickname() == null) {
             builder.setNickname(userIdentity.getUsername());
         }
         if (userPersonalData.getCover() == null) {
-            builder.setCover("http://localhost:5100/static/img/cover.png");
+            builder.setCover("/static/img/cover.png");
         }
         return builder.build();
+    }
+
+    @Override
+    public Long getId() {
+        return getUserId();
+    }
+
+    @Override
+    public long getCreateTime() {
+        return 0;
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return 0;
+    }
+
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return null;
     }
 
     public static final class Builder {

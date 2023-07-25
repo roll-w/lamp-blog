@@ -16,12 +16,12 @@
 
 package space.lingu.lamp.web.database.dao;
 
-import space.lingu.lamp.data.page.Offset;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
 import space.lingu.light.Query;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 

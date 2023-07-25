@@ -16,19 +16,15 @@
 
 package space.lingu.lamp.web.controller.user;
 
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import space.lingu.lamp.HttpResponseEntity;
-import space.lingu.lamp.data.page.PageRequest;
+import org.springframework.web.bind.annotation.*;
 import space.lingu.lamp.web.controller.AdminApi;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.service.UserManageService;
 import space.lingu.lamp.web.domain.user.vo.UserDetailsVo;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalDataService;
+import tech.rollw.common.web.HttpResponseEntity;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,10 +44,10 @@ public class UserManageController {
     }
 
     @GetMapping("/users")
-    public HttpResponseEntity<List<UserDetailsVo>> getUserList(PageRequest pageRequest) {
+    public HttpResponseEntity<List<UserDetailsVo>> getUserList(Pageable pageable) {
         List<User> userIdentities = userManageService.getUsers(
-                pageRequest.getPage(),
-                pageRequest.getSize()
+                pageable.getPage(),
+                pageable.getSize()
         );
         List<UserPersonalData> personalDataList =
                 userPersonalDataService.getPersonalData(userIdentities);
