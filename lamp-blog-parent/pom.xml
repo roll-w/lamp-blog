@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.7</version>
+        <version>2.7.14</version>
         <relativePath/>
     </parent>
     <groupId>space.lingu.lamp-blog</groupId>
@@ -42,9 +42,12 @@
 
         <light.version>0.4.5</light.version>
         <fiesta.version>0.2.1</fiesta.version>
+        <web-common.version>0.1.0</web-common.version>
         <guava.version>31.1-jre</guava.version>
         <hikari.version>5.0.1</hikari.version>
         <jjwt.version>0.11.5</jjwt.version>
+        <mysql.version>8.0.32</mysql.version>
+        <elastic-search.version>8.8.2</elastic-search.version>
         <spring-shell.version>2.1.2</spring-shell.version>
         <tomcat-api.version>6.0.53</tomcat-api.version>
         <tomcat-ws.version>10.1.5</tomcat-ws.version>
@@ -68,6 +71,18 @@
                 <groupId>org.springframework.shell</groupId>
                 <artifactId>spring-shell-starter</artifactId>
                 <version>${spring-shell.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>tech.rollw.common</groupId>
+                <artifactId>web-common-spring-boot-starter</artifactId>
+                <version>${web-common.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>tech.rollw.common</groupId>
+                <artifactId>web-common-core</artifactId>
+                <version>${web-common.version}</version>
             </dependency>
 
             <dependency>
@@ -99,6 +114,12 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt-jackson</artifactId>
                 <version>${jjwt.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.mysql</groupId>
+                <artifactId>mysql-connector-j</artifactId>
+                <version>${mysql.version}</version>
             </dependency>
 
             <dependency>
