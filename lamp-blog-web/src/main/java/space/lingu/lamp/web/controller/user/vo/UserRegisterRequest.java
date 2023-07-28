@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.vo;
-
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
+package space.lingu.lamp.web.controller.user.vo;
 
 /**
  * @author RollW
  */
-public record LoginResponse(
-        String token,
-        UserInfo user
-) {
-    public static final LoginResponse NULL = new LoginResponse(null, null);
-
-    public static LoginResponse nullResponse() {
-        return NULL;
-    }
+public record UserRegisterRequest(
+        String username,
+        String password,
+        String email) {
 }

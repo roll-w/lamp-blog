@@ -16,11 +16,9 @@
 
 package space.lingu.lamp.web.domain.user.service;
 
-import space.lingu.lamp.Result;
+import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.common.UserViewException;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
 
 import java.util.List;
 
@@ -28,18 +26,12 @@ import java.util.List;
  * @author RollW
  */
 public interface UserManageService {
-    Result<UserInfo> createUser(String username, String password,
+    AttributedUser createUser(String username, String password,
                                 String email, Role role, boolean enable);
 
-    User getUser(long userId) throws UserViewException;
+    AttributedUser getUser(long userId) throws UserViewException;
 
-    List<User> getUsers(int page, int size);
+    List<AttributedUser> getUsers(int page, int size);
 
-    List<User> getUsers();
-
-    void deleteUser(long userId);
-
-    void setUserEnable(long userId, boolean enable);
-
-    void setBlockUser(long userId, boolean block);
+    List<AttributedUser> getUsers();
 }

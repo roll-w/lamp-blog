@@ -42,8 +42,6 @@ public interface UserSearchService {
      */
     UserIdentity findUser(UserIdentity userIdentity) throws UserViewException;
 
-    List<? extends UserIdentity> findUsers(int page, int size);
-
     List<? extends UserIdentity> findUsers();
 
     List<? extends UserIdentity> findUsers(List<Long> ids);

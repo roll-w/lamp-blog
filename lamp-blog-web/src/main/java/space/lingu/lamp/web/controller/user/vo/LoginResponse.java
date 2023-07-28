@@ -14,12 +14,26 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.controller.user;
+package space.lingu.lamp.web.controller.user.vo;
+
+import space.lingu.lamp.web.domain.user.AttributedUser;
+import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
 
 /**
  * @author RollW
  */
-public record LoginTokenSendRequest(
-        String identity
+public record LoginResponse(
+        String token,
+        UserInfo user
 ) {
+    public LoginResponse(String token, UserIdentity userIdentity) {
+        this(token, UserInfo.from(userIdentity));
+    }
+
+    public static final LoginResponse NULL = new LoginResponse(null, (AttributedUser) null);
+
+    public static LoginResponse nullResponse() {
+        return NULL;
+    }
 }

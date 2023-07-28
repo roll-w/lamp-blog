@@ -24,16 +24,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import space.lingu.lamp.RequestMetadata;
-import space.lingu.lamp.Result;
 import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.common.ParamValidate;
+import space.lingu.lamp.web.controller.user.vo.LoginTokenSendRequest;
+import space.lingu.lamp.web.controller.user.vo.UserLoginRequest;
+import space.lingu.lamp.web.controller.user.vo.UserRegisterRequest;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.dto.UserInfoSignature;
 import space.lingu.lamp.web.domain.user.service.LoginRegisterService;
-import space.lingu.lamp.web.domain.user.vo.LoginResponse;
-import tech.rollw.common.web.ErrorCode;
+import space.lingu.lamp.web.controller.user.vo.LoginResponse;
 import tech.rollw.common.web.HttpResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
@@ -64,12 +65,12 @@ public class LoginRegisterController {
         ParamValidate.notEmpty(loginRequest.identity(), "identity cannot be null or empty.");
         ParamValidate.notEmpty(loginRequest.token(), "token cannot be null or empty.");
 
-        Result<UserInfoSignature> res = loginRegisterService.loginUser(
+        UserInfoSignature userInfoSignature = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
                 requestMetadata,
                 LoginStrategyType.PASSWORD);
-        return loginResponse(res);
+        return loginResponse(userInfoSignature);
     }
 
     // TODO: login by email token
@@ -77,12 +78,12 @@ public class LoginRegisterController {
     public HttpResponseEntity<LoginResponse> loginByEmailToken(
             RequestMetadata requestMetadata,
             @RequestBody UserLoginRequest loginRequest) {
-        Result<UserInfoSignature> res = loginRegisterService.loginUser(
+        UserInfoSignature signature = loginRegisterService.loginUser(
                 loginRequest.identity(),
                 loginRequest.token(),
                 requestMetadata,
                 LoginStrategyType.EMAIL_TOKEN);
-        return loginResponse(res);
+        return loginResponse(signature);
     }
 
     @PostMapping("/login/token")
@@ -97,44 +98,42 @@ public class LoginRegisterController {
         return HttpResponseEntity.success();
     }
 
-    private HttpResponseEntity<LoginResponse> loginResponse(Result<UserInfoSignature> res) {
-        if (res.errorCode().failed()) {
-            return HttpResponseEntity.of(
-                    res.toResponseBody(LoginResponse::nullResponse)
-            );
-        }
-        UserInfoSignature infoSignature = res.data();
+    private HttpResponseEntity<LoginResponse> loginResponse(UserInfoSignature userInfoSignature) {
         String token = authenticationTokenService.generateAuthToken(
-                infoSignature.id(), infoSignature.signature()
+                userInfoSignature.id(), userInfoSignature.signature()
         );
-        LoginResponse response = new LoginResponse(token,
-                res.extract(UserInfoSignature::toUserInfo));
+        LoginResponse response = new LoginResponse(
+                token,
+                userInfoSignature
+        );
         return HttpResponseEntity.success(response);
     }
 
     @PostMapping("/register")
     public HttpResponseEntity<Void> registerUser(@RequestBody UserRegisterRequest request) {
-        Result<UserInfo> res = loginRegisterService.registerUser(
+        AttributedUser user = loginRegisterService.registerUser(
                 request.username(),
                 request.password(),
                 request.email()
         );
-        return HttpResponseEntity.of(res.toResponseBody(() -> null));
+        return HttpResponseEntity.success();
     }
 
     @PostMapping("/register/token/{token}")
     public HttpResponseEntity<Void> activateUser(@PathVariable String token) {
         ParamValidate.notEmpty(token, "Token cannot be null or empty.");
-        ErrorCode errorCode = loginRegisterService.verifyRegisterToken(token);
-        return HttpResponseEntity.of(errorCode);
+        loginRegisterService.verifyRegisterToken(token);
+        return HttpResponseEntity.success();
     }
 
     @PostMapping(value = "/register/token")
     public HttpResponseEntity<Void> resendRegisterToken(
             @RequestParam("username") String username) {
-        ParamValidate.notEmpty(username, "Username cannot be null or empty.");
-        ErrorCode errorCode = loginRegisterService.resendToken(username);
-        return HttpResponseEntity.of(errorCode);
+        ParamValidate.notEmpty(username,
+                "Username cannot be null or empty.");
+        loginRegisterService.resendToken(username);
+
+        return HttpResponseEntity.success();
     }
 
     @PostMapping("/logout")

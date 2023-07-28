@@ -16,16 +16,13 @@
 
 package space.lingu.lamp.web.domain.user.service;
 
-import space.lingu.lamp.Result;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.user.Role;
+import space.lingu.lamp.web.domain.user.dto.UserInfo;
 
 /**
  * @author RollW
  */
 public interface UserService {
-    Result<UserInfo> createUser(String username, String password,
-                                String email, Role role);
-
-    void deleteUser(long userId);
+    UserInfo createUser(String username, String password,
+                        String email, Role role);
 }

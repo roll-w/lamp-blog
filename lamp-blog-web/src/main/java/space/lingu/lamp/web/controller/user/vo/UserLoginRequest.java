@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.controller.user;
+package space.lingu.lamp.web.controller.user.vo;
 
 /**
+ * @param identity Identity, could be a username or email, etc.
+ * @param token    login token, could be the password or a code.
  * @author RollW
  */
-public record UserRegisterRequest(
-        String username,
-        String password,
-        String email) {
+public record UserLoginRequest(
+        String identity,
+        String token
+) {
 }

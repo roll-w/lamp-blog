@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.vo;
+package space.lingu.lamp.web.controller.user.vo;
 
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.UserIdentity;

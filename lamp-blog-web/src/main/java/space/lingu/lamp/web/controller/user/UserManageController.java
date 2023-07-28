@@ -18,9 +18,9 @@ package space.lingu.lamp.web.controller.user;
 
 import org.springframework.web.bind.annotation.*;
 import space.lingu.lamp.web.controller.AdminApi;
-import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.controller.user.vo.UserDetailsVo;
+import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.service.UserManageService;
-import space.lingu.lamp.web.domain.user.vo.UserDetailsVo;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalDataService;
 import tech.rollw.common.web.HttpResponseEntity;
@@ -45,21 +45,22 @@ public class UserManageController {
 
     @GetMapping("/users")
     public HttpResponseEntity<List<UserDetailsVo>> getUserList(Pageable pageable) {
-        List<User> userIdentities = userManageService.getUsers(
+        List<AttributedUser> userIdentities = userManageService.getUsers(
                 pageable.getPage(),
                 pageable.getSize()
         );
         List<UserPersonalData> personalDataList =
                 userPersonalDataService.getPersonalData(userIdentities);
         List<UserDetailsVo> userDetailsVos = new ArrayList<>();
-        for (User user : userIdentities) {
-            UserPersonalData personalData = getPersonalData(user, personalDataList);
+        for (AttributedUser user : userIdentities) {
+            UserPersonalData personalData = getPersonalData(
+                    user, personalDataList);
             userDetailsVos.add(UserDetailsVo.of(user, personalData));
         }
         return HttpResponseEntity.success(userDetailsVos);
     }
 
-    private UserPersonalData getPersonalData(User user,
+    private UserPersonalData getPersonalData(AttributedUser user,
                                              List<UserPersonalData> personalDataList) {
         for (UserPersonalData data : personalDataList) {
             if (data.getUserId() == user.getUserId()) {
@@ -72,7 +73,7 @@ public class UserManageController {
     @GetMapping("/user/{userId}")
     public HttpResponseEntity<UserDetailsVo> getUserDetails(
             @PathVariable Long userId) {
-        User user = userManageService.getUser(userId);
+        AttributedUser user = userManageService.getUser(userId);
         UserPersonalData userPersonalData =
                 userPersonalDataService.getPersonalData(user);
         UserDetailsVo userDetailsVo =

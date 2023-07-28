@@ -55,7 +55,7 @@ public class ArticleManageController {
     public HttpResponseEntity<List<ArticleMetaVo>> getArticles(Pageable pageable) {
         Page<ContentMetadataDetails<?>> contents = contentCollectionService.getContentsRelated(
                 ContentCollectionType.ARTICLES,
-                null,
+                0,
                 pageable
         );
 
@@ -71,7 +71,7 @@ public class ArticleManageController {
             Pageable pageable) {
         Page<ContentMetadataDetails<?>> contents = contentCollectionService.getContentsRelated(
                 ContentCollectionType.USER_ARTICLES,
-                String.valueOf(userId),
+                userId,
                 pageable
         );
 
@@ -87,7 +87,7 @@ public class ArticleManageController {
             @PathVariable("articleId") Long articleId) {
         ContentMetadataDetails<?> contentMetadataDetails =
                 contentAccessService.getContentMetadataDetails(
-                        String.valueOf(articleId),
+                        articleId,
                         ContentType.ARTICLE
                 );
         if (contentMetadataDetails.getUserId() != userId) {

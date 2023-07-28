@@ -28,25 +28,22 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.RequestMetadata;
-import space.lingu.lamp.Result;
 import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategy;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.domain.authentication.login.LoginVerifiableToken;
-import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
-import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.*;
+import space.lingu.lamp.web.domain.user.common.UserViewException;
 import space.lingu.lamp.web.domain.user.dto.UserInfoSignature;
 import space.lingu.lamp.web.domain.user.event.OnUserLoginEvent;
 import space.lingu.lamp.web.domain.user.event.OnUserRegistrationEvent;
 import space.lingu.lamp.web.domain.user.repository.RegisterVerificationTokenRepository;
 import space.lingu.lamp.web.domain.user.repository.UserRepository;
 import tech.rollw.common.web.AuthErrorCode;
-import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
+import tech.rollw.common.web.system.AuthenticationException;
 
 import java.io.IOException;
 import java.util.*;
@@ -87,7 +84,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
 
     public void sendToken(long userId, LoginStrategyType type) throws IOException {
         LoginStrategy strategy = getLoginStrategy(type);
-        User user = userRepository.getUserById(userId);
+        User user = userRepository.getById(userId);
         LoginVerifiableToken token = strategy.createToken(user);
         RequestInfo requestInfo = new RequestInfo(LocaleContextHolder.getLocale(), null);
         strategy.sendToken(token, user, requestInfo);
@@ -110,25 +107,25 @@ public class LoginRegisterService implements RegisterTokenProvider {
 
     private User tryGetUser(String identity) {
         if (identity.contains("@")) {
-            return userRepository.getUserByEmail(identity);
+            return userRepository.getByEmail(identity);
         }
-        return userRepository.getUserByName(identity);
+        return userRepository.getByUsername(identity);
     }
 
-    public Result<UserInfoSignature> loginUser(String identity,
-                                               String token,
-                                               RequestMetadata metadata,
-                                               LoginStrategyType type) {
+    public UserInfoSignature loginUser(String identity,
+                                       String token,
+                                       RequestMetadata metadata,
+                                       LoginStrategyType type) {
         Preconditions.checkNotNull(identity, "identity cannot be null");
         Preconditions.checkNotNull(token, "token cannot be null");
 
         User user = tryGetUser(identity);
         if (user == null) {
-            return Result.of(UserErrorCode.ERROR_USER_NOT_EXIST);
+            throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
         ErrorCode code = verifyToken(token, user, type);
         if (code.failed()) {
-            return Result.of(code);
+            throw new UserViewException(code);
         }
         Authentication authentication =
                 new UsernamePasswordAuthenticationToken(user, token, user.getAuthorities());
@@ -138,25 +135,20 @@ public class LoginRegisterService implements RegisterTokenProvider {
         OnUserLoginEvent onUserLoginEvent = new OnUserLoginEvent(user, metadata);
         eventPublisher.publishEvent(onUserLoginEvent);
 
-        return Result.success(
-                UserInfoSignature.from(user)
-        );
+        return UserInfoSignature.from(user);
     }
 
-    public Result<UserInfo> registerUser(String username, String password,
-                                         String email) {
+    public AttributedUser registerUser(String username, String password,
+                                       String email) {
         boolean hasUsers = userRepository.hasUsers();
         Role role = hasUsers ? Role.USER : Role.ADMIN;
         boolean enabled = !hasUsers;
-        Result<UserInfo> userInfoResult =
+        AttributedUser user =
                 userManageService.createUser(username, password, email, role, enabled);
-        if (userInfoResult.failed()) {
-            return userInfoResult;
-        }
 
         if (!enabled) {
             OnUserRegistrationEvent event = new OnUserRegistrationEvent(
-                    userInfoResult.data(), Locale.getDefault(),
+                    user, Locale.getDefault(),
                     "http://localhost:5000/user/register/activate/");
             // TODO: get url from config
             eventPublisher.publishEvent(event);
@@ -164,10 +156,10 @@ public class LoginRegisterService implements RegisterTokenProvider {
 
         logger.info("Register username: {}, email: {}, role: {}, id: {}",
                 username, email,
-                userInfoResult.data().getRole(),
-                userInfoResult.data().getUserId()
+                user.getRole(),
+                user.getUserId()
         );
-        return userInfoResult;
+        return user;
     }
 
     public void logout() {
@@ -175,55 +167,50 @@ public class LoginRegisterService implements RegisterTokenProvider {
     }
 
     @Override
-    public String createRegisterToken(UserInfo userInfo) {
+    public String createRegisterToken(UserIdentity userIdentity) {
         UUID uuid = UUID.randomUUID();
         String token = uuid.toString();
         long expiryTime = RegisterVerificationToken.calculateExpiryDate();
         RegisterVerificationToken registerVerificationToken = new RegisterVerificationToken(
-                null, token, userInfo.id(), expiryTime, false
+                null, token, userIdentity.getUserId(), expiryTime, false
         );
         registerVerificationTokenRepository.insert(registerVerificationToken);
         return uuid.toString();
-
     }
 
     @Override
-    public ErrorCode verifyRegisterToken(String token) {
+    public void verifyRegisterToken(String token) {
         RegisterVerificationToken verificationToken =
                 registerVerificationTokenRepository.findByToken(token);
         if (verificationToken == null) {
-            return AuthErrorCode.ERROR_TOKEN_NOT_EXIST;
+            throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_NOT_EXIST);
         }
         if (verificationToken.used()) {
-            return AuthErrorCode.ERROR_TOKEN_USED;
+            throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_USED);
         }
         if (verificationToken.isExpired()) {
-            return AuthErrorCode.ERROR_TOKEN_EXPIRED;
+            throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_EXPIRED);
         }
         registerVerificationTokenRepository.makeTokenVerified(verificationToken);
         User user = userRepository
-                .getUserById(verificationToken.userId());
+                .getById(verificationToken.userId());
         if (user.isCanceled()) {
-            return UserErrorCode.ERROR_USER_CANCELED;
+            throw new AuthenticationException(UserErrorCode.ERROR_USER_CANCELED);
         }
         if (user.isEnabled()) {
-            return UserErrorCode.ERROR_USER_ALREADY_ACTIVATED;
+            throw new AuthenticationException(UserErrorCode.ERROR_USER_ALREADY_ACTIVATED);
         }
-        userRepository.makeUserEnabled(user);
-        return CommonErrorCode.SUCCESS;
+        userRepository.enableUser(user);
     }
 
-    public ErrorCode resendToken(String username) {
-        User user = userRepository.getUserByName(username);
+    public void resendToken(String username) {
+        User user = userRepository.getByUsername(username);
         if (user == null) {
-            return UserErrorCode.ERROR_USER_NOT_EXIST;
+            throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
         OnUserRegistrationEvent event = new OnUserRegistrationEvent(
-                UserInfo.from(user), ApiContextHolder.getContext().locale(),
+                user, ApiContextHolder.getContext().locale(),
                 "http://localhost:5000/user/register/activate/");
         eventPublisher.publishEvent(event);
-
-        return CommonErrorCode.SUCCESS;
     }
-
 }

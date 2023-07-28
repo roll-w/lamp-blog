@@ -56,7 +56,7 @@ public class ArticleController {
 
     @GetMapping("/user/{userId}/articles")
     public HttpResponseEntity<List<ArticleVo>> getArticles(
-            @PathVariable String userId, Pageable pageRequest) {
+            @PathVariable Long userId, Pageable pageRequest) {
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
         // TODO: check if the user is the same as the current user
         ContentAccessCredentials contentAccessCredentials =
@@ -111,7 +111,7 @@ public class ArticleController {
         ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
         UserInfo userInfo = apiContext.userInfo();
         ContentDetails details = contentAccessService.openContent(
-                Long.toString(articleId),
+                articleId,
                 ContentType.ARTICLE,
                 ContentAccessCredentials.of(ContentAccessAuthType.USER, userInfo)
         );

@@ -26,7 +26,7 @@ import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.lamp.web.domain.user.common.UserViewException;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.user.service.UserSearchService;
-import space.lingu.lamp.web.domain.user.vo.UserCommonDetailsVo;
+import space.lingu.lamp.web.controller.user.vo.UserCommonDetailsVo;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalDataService;
 import tech.rollw.common.web.AuthErrorCode;

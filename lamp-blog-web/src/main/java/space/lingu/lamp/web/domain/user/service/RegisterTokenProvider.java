@@ -16,14 +16,14 @@
 
 package space.lingu.lamp.web.domain.user.service;
 
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
-import tech.rollw.common.web.ErrorCode;
+import space.lingu.lamp.web.domain.user.UserIdentity;
+import tech.rollw.common.web.BusinessRuntimeException;
 
 /**
  * @author RollW
  */
 public interface RegisterTokenProvider {
-    String createRegisterToken(UserInfo userInfo);
+    String createRegisterToken(UserIdentity userIdentity);
 
-    ErrorCode verifyRegisterToken(String token);
+    void verifyRegisterToken(String token) throws BusinessRuntimeException;
 }

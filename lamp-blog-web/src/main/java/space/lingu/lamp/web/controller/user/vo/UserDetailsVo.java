@@ -14,10 +14,10 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.vo;
+package space.lingu.lamp.web.controller.user.vo;
 
+import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.userdetails.Birthday;
 import space.lingu.lamp.web.domain.userdetails.Gender;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
@@ -48,7 +48,7 @@ public record UserDetailsVo(
 ) {
 
 
-    public static UserDetailsVo of(User user,
+    public static UserDetailsVo of(AttributedUser user,
                                    UserPersonalData data) {
         return new UserDetailsVo(
                 user.getUserId(),
@@ -58,7 +58,7 @@ public record UserDetailsVo(
                 user.isEnabled(),
                 user.isLocked(),
                 user.isCanceled(),
-                user.getRegisterTime(),
+                user.getCreateTime(),
                 data.getNickname(),
                 data.getAvatar(),
                 data.getIntroduction(),
