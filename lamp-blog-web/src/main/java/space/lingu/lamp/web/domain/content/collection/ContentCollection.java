@@ -16,23 +16,15 @@
 
 package space.lingu.lamp.web.domain.content.collection;
 
-import space.lingu.lamp.web.domain.content.Content;
-
-import java.util.List;
-
 /**
  * @author RollW
  */
-public class ContentCollection {
-    private final ContentCollectionType contentCollectionType;
-    private final String contentCollectionId;
-    private final List<? extends Content> contentCollection;
+public interface ContentCollection {
+    int SYSTEM = 0;
 
-    public ContentCollection(ContentCollectionType contentCollectionType,
-                             String contentCollectionId,
-                             List<? extends Content> contentCollection) {
-        this.contentCollectionType = contentCollectionType;
-        this.contentCollectionId = contentCollectionId;
-        this.contentCollection = contentCollection;
-    }
+    long getUserId();
+
+    long getContentCollectionId();
+
+    ContentCollectionType getContentCollectionType();
 }

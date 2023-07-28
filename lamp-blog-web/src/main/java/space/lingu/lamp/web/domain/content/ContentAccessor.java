@@ -20,7 +20,7 @@ package space.lingu.lamp.web.domain.content;
  * @author RollW
  */
 public interface ContentAccessor extends ContentProvider {
-    ContentDetails getContent(String contentId, ContentType contentType);
+    ContentDetails getContent(long contentId, ContentType contentType);
 
     @Override
     boolean supports(ContentType contentType);

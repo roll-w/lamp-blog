@@ -16,13 +16,26 @@
 
 package space.lingu.lamp.web.domain.content;
 
+import tech.rollw.common.web.system.SystemResource;
+import tech.rollw.common.web.system.SystemResourceKind;
+
 import java.io.Serializable;
 
 /**
  * @author RollW
  */
-public interface ContentIdentity extends Serializable {
-    String getContentId();
+public interface ContentIdentity extends SystemResource<Long>, Serializable {
+    long getContentId();
 
     ContentType getContentType();
+
+    @Override
+    default Long getResourceId() {
+        return getContentId();
+    }
+
+    @Override
+    default SystemResourceKind getSystemResourceKind() {
+        return getContentType().getSystemResourceKind();
+    }
 }

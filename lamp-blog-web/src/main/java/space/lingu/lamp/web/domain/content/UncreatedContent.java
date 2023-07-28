@@ -20,6 +20,8 @@ import space.lingu.NonNull;
 import space.lingu.Nullable;
 
 /**
+ * Represents a content that has not been created.
+ *
  * @author RollW
  */
 public interface UncreatedContent {

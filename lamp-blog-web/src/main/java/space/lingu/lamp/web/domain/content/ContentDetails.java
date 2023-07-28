@@ -28,9 +28,8 @@ public interface ContentDetails extends Content {
     /**
      * @inheritDoc
      */
-    @NonNull
     @Override
-    String getContentId();
+    long getContentId();
 
     /**
      * @inheritDoc

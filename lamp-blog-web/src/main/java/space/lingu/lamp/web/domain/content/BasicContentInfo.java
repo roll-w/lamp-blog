@@ -23,7 +23,7 @@ import space.lingu.NonNull;
  */
 public record BasicContentInfo(
         long userId,
-        String contentId,
+        long contentId,
         ContentType contentType
 ) implements Content {
     @Override
@@ -31,9 +31,8 @@ public record BasicContentInfo(
         return userId;
     }
 
-    @NonNull
     @Override
-    public String getContentId() {
+    public long getContentId() {
         return contentId;
     }
 

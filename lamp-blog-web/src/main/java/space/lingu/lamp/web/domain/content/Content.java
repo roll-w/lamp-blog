@@ -38,9 +38,8 @@ public interface Content extends ContentIdentity {
      *
      * @return content id
      */
-    @NonNull
     @Override
-    String getContentId();
+    long getContentId();
 
     /**
      * Get the type of the content.

@@ -30,16 +30,16 @@ import java.util.List;
 public interface ContentCollectionService {
     Page<ContentMetadataDetails<? extends ContentDetails>> accessContentsRelated(
             ContentCollectionType collectionType,
-            String contentCollectionId,
+            long contentCollectionId,
             ContentAccessCredentials contentAccessCredentials,
             Pageable pageable);
 
     Page<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
             ContentCollectionType contentCollectionType,
-            String contentCollectionId,
+            long contentCollectionId,
             Pageable pageable);
 
     List<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
             ContentCollectionType contentCollectionType,
-            String contentCollectionId);
+            long contentCollectionId);
 }

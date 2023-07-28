@@ -33,7 +33,7 @@ public interface ContentAccessService {
      * @return the details of the content, may need to convert to the specific type.
      * @throws ContentException if the content is not found or the passes are not valid.
      */
-    ContentDetails openContent(String contentId, ContentType contentType,
+    ContentDetails openContent(long contentId, ContentType contentType,
                                ContentAccessCredentials contentAccessCredentials)
             throws ContentException;
 
@@ -41,12 +41,12 @@ public interface ContentAccessService {
      * Get the details of the content with no access check.
      *
      * @throws ContentException if the content is not found.
-     * @see #openContent(String, ContentType, ContentAccessCredentials)
+     * @see #openContent(long, ContentType, ContentAccessCredentials)
      */
-    ContentDetails getContentDetails(String contentId, ContentType contentType)
+    ContentDetails getContentDetails(long contentId, ContentType contentType)
             throws ContentException;
 
-    ContentMetadataDetails<?> getContentMetadataDetails(String contentId, ContentType contentType)
+    ContentMetadataDetails<?> getContentMetadataDetails(long contentId, ContentType contentType)
             throws ContentException;
 
     /**
@@ -56,10 +56,10 @@ public interface ContentAccessService {
      * @param contentType the type of content
      * @throws ContentException if the content is not found.
      */
-    ContentStatus getContentStatus(String contentId, ContentType contentType)
+    ContentStatus getContentStatus(long contentId, ContentType contentType)
             throws ContentException;
 
-    List<ContentStatus> getContentStatuses(List<String> contentIds, ContentType contentType)
+    List<ContentStatus> getContentStatuses(List<Long> contentIds, ContentType contentType)
             throws ContentException;
 
     List<ContentStatus> getContentStatuses(List<? extends Content> contents)

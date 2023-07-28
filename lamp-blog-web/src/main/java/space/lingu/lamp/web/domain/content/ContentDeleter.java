@@ -21,13 +21,13 @@ package space.lingu.lamp.web.domain.content;
  */
 public interface ContentDeleter extends ContentProvider {
     void deleteContent(ContentType contentType,
-                       String contentId);
+                       long contentId);
 
     void forbiddenContent(ContentType contentType,
-                          String contentId);
+                          long contentId);
 
     void restoreContent(ContentType contentType,
-                        String contentId);
+                        long contentId);
 
     @Override
     boolean supports(ContentType contentType);

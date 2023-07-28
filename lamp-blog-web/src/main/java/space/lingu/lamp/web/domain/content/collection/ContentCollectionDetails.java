@@ -66,8 +66,7 @@ public class ContentCollectionDetails<T extends ContentDetails> implements Conte
     }
 
     @Override
-    @NonNull
-    public String getContentId() {
+    public long getContentId() {
         return contentMetadata.getContentId();
     }
 
@@ -110,7 +109,7 @@ public class ContentCollectionDetails<T extends ContentDetails> implements Conte
         return contentDetails.getMetadata();
     }
 
-    public String getCollectionId() {
+    public long getCollectionId() {
         return contentCollectionMetadata.getCollectionId();
     }
 

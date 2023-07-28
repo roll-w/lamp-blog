@@ -20,9 +20,9 @@ package space.lingu.lamp.web.domain.content;
  * @author RollW
  */
 public interface ContentDeleteService {
-    void deleteContent(ContentType contentType, String contentId);
+    void deleteContent(ContentType contentType, long contentId);
 
-    void forbiddenContent(ContentType contentType, String contentId);
+    void forbiddenContent(ContentType contentType, long contentId);
 
-    void restoreContent(ContentType contentType, String contentId);
+    void restoreContent(ContentType contentType, long contentId);
 }

@@ -17,18 +17,22 @@
 package space.lingu.lamp.web.domain.content.collection;
 
 import space.lingu.Nullable;
+import space.lingu.lamp.DataItem;
+import space.lingu.lamp.EntityBuilder;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 /**
  * @author RollW
  */
 @DataTable(name = "content_collection_metadata")
 @SuppressWarnings({"ClassCanBeRecord"})
-public class ContentCollectionMetadata {
+public class ContentCollectionMetadata implements DataItem<ContentCollectionMetadata> {
     /**
      * The order of the top content in the collection.
      */
@@ -40,13 +44,13 @@ public class ContentCollectionMetadata {
     private final Long id;
 
     @DataColumn(name = "collection_id")
-    private final String collectionId;
+    private final long collectionId;
 
     @DataColumn(name = "collection_type")
     private final ContentCollectionType type;
 
     @DataColumn(name = "content_id")
-    private final String contentId;
+    private final long contentId;
 
     @DataColumn(name = "content_type")
     @Nullable
@@ -57,9 +61,9 @@ public class ContentCollectionMetadata {
     private final Integer order;
 
     public ContentCollectionMetadata(@Nullable Long id,
-                                     String collectionId,
+                                     long collectionId,
                                      ContentCollectionType type,
-                                     String contentId,
+                                     long contentId,
                                      @Nullable ContentType contentType,
                                      @Nullable Integer order) {
         this.id = id;
@@ -75,7 +79,17 @@ public class ContentCollectionMetadata {
         return id;
     }
 
-    public String getCollectionId() {
+    @Override
+    public long getCreateTime() {
+        return 0;
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return 0;
+    }
+
+    public long getCollectionId() {
         return collectionId;
     }
 
@@ -83,7 +97,7 @@ public class ContentCollectionMetadata {
         return type;
     }
 
-    public String getContentId() {
+    public long getContentId() {
         return contentId;
     }
 
@@ -113,7 +127,7 @@ public class ContentCollectionMetadata {
     }
 
     public static ContentCollectionMetadata defaultOf(Content content,
-                                                      String collectionId,
+                                                      long collectionId,
                                                       ContentCollectionType type) {
         return builder()
                 .setId(-1L)
@@ -125,12 +139,17 @@ public class ContentCollectionMetadata {
                 .build();
     }
 
-    public static final class Builder {
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return LampSystemResourceKind.CONTENT_COLLECTION_METADATA;
+    }
+
+    public static final class Builder implements EntityBuilder<ContentCollectionMetadata> {
         @Nullable
         private Long id;
-        private String collectionId;
+        private long collectionId;
         private ContentCollectionType type;
-        private String contentId;
+        private long contentId;
         @Nullable
         private ContentType contentType;
         @Nullable
@@ -148,12 +167,13 @@ public class ContentCollectionMetadata {
             this.order = contentCollectionMetadata.order;
         }
 
+        @Override
         public Builder setId(@Nullable Long id) {
             this.id = id;
             return this;
         }
 
-        public Builder setCollectionId(String collectionId) {
+        public Builder setCollectionId(long collectionId) {
             this.collectionId = collectionId;
             return this;
         }
@@ -163,7 +183,7 @@ public class ContentCollectionMetadata {
             return this;
         }
 
-        public Builder setContentId(String contentId) {
+        public Builder setContentId(long contentId) {
             this.contentId = contentId;
             return this;
         }
@@ -178,6 +198,7 @@ public class ContentCollectionMetadata {
             return this;
         }
 
+        @Override
         public ContentCollectionMetadata build() {
             return new ContentCollectionMetadata(
                     id, collectionId, type, contentId,

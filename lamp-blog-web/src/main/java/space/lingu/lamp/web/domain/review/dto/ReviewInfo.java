@@ -29,7 +29,7 @@ public record ReviewInfo(
         ReviewStatus status,
         ContentType type,
         String result,
-        String contentId,
+        long contentId,
         ReviewMark reviewMark,
         Long reviewer,
         Long operator,

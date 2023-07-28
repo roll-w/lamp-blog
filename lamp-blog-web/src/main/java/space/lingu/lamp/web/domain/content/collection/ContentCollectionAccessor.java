@@ -29,12 +29,12 @@ import java.util.List;
 public interface ContentCollectionAccessor extends ContentCollectionProvider {
     Page<? extends ContentDetails> getContentCollection(
             ContentCollectionType contentCollectionType,
-            String collectionId,
+            long collectionId,
             Pageable pageable);
 
     List<? extends ContentDetails> getContentCollection(
             ContentCollectionType contentCollectionType,
-            String collectionId);
+            long collectionId);
 
     @Override
     boolean supports(ContentType contentType);
