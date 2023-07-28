@@ -18,10 +18,8 @@ package space.lingu.lamp.web.database.dao;
 
 import space.lingu.lamp.web.system.setting.SystemSetting;
 import space.lingu.light.Dao;
-import space.lingu.light.Delete;
-import space.lingu.light.Insert;
-import space.lingu.light.OnConflictStrategy;
 import space.lingu.light.Query;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 
@@ -29,25 +27,32 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public abstract class SystemSettingDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(SystemSetting... systemSettings);
+public interface SystemSettingDao extends AutoPrimaryBaseDao<SystemSetting> {
+    @Override
+    @Query("SELECT * FROM system_setting WHERE id = {id}")
+    SystemSetting getById(long id);
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    public abstract void insert(List<SystemSetting> systemSettings);
+    @Override
+    @Query("SELECT * FROM system_setting WHERE id IN ({ids})")
+    List<SystemSetting> getByIds(List<Long> ids);
 
-    @Delete
-    public abstract void delete(SystemSetting systemSetting);
+    @Override
+    @Query("SELECT * FROM system_setting ORDER BY id DESC")
+    List<SystemSetting> get();
 
-    @Delete("DELETE FROM system_setting WHERE `key` = {key}")
-    public abstract void deleteByKey(String key);
+    @Override
+    @Query("SELECT COUNT(*) FROM system_setting")
+    int count();
+
+    @Override
+    @Query("SELECT * FROM system_setting ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    List<SystemSetting> get(Offset offset);
+
+    @Override
+    default String getTableName() {
+        return "system_setting";
+    }
 
     @Query("SELECT `key`, `value` FROM system_setting WHERE `key` = {key}")
-    public abstract SystemSetting getByKey(String key);
-
-    @Query("SELECT `key`, `value` FROM system_setting")
-    public abstract List<SystemSetting> get();
-
-    @Query("SELECT `key`, `value` FROM system_setting ORDER BY `key` LIMIT {limit} OFFSET {offset}")
-    public abstract List<SystemSetting> get(int limit, int offset);
+    SystemSetting getByKey(String key);
 }

@@ -29,7 +29,6 @@ import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
-import tech.rollw.common.web.WebCommonErrorCode;
 import tech.rollw.common.web.page.Offset;
 import tech.rollw.common.web.page.Page;
 import tech.rollw.common.web.page.Pageable;
@@ -51,17 +50,11 @@ public class ArticleService implements
     }
 
     @Override
-    public Article getContent(String contentId, ContentType contentType) {
+    public Article getContent(long contentId, ContentType contentType) {
         if (contentType != ContentType.ARTICLE) {
             return null;
         }
-        try {
-            return articleRepository.get(Long.parseLong(contentId));
-        } catch (NumberFormatException e) {
-            throw new ContentException(
-                    WebCommonErrorCode.ERROR_PARAM_FAILED, e
-            );
-        }
+        return articleRepository.getById(contentId);
     }
 
     @Override
@@ -87,7 +80,7 @@ public class ArticleService implements
                 .setCreateTime(timestamp)
                 .setUpdateTime(timestamp)
                 .build();
-        Article created = articleRepository.createArticle(article);
+        Article created = articleRepository.insert(article);
         logger.trace("article created: {}.", created);
         return created;
     }
@@ -100,7 +93,7 @@ public class ArticleService implements
     @Override
     public Page<Article> getContentCollection(
             ContentCollectionType contentCollectionType,
-            String collectionId,
+            long collectionId,
             Pageable pageable) {
         if (!supportsCollection(contentCollectionType)) {
             throw new IllegalArgumentException("Content collection type not supported: " +
@@ -123,62 +116,46 @@ public class ArticleService implements
     @Override
     public List<Article> getContentCollection(
             ContentCollectionType contentCollectionType,
-            String collectionId) {
+            long collectionId) {
         if (!supportsCollection(contentCollectionType)) {
             throw new IllegalArgumentException("Content collection type not supported: " +
                     contentCollectionType);
         }
-         switch (contentCollectionType) {
-             case ARTICLES -> {
-                 return getArticles();
-             }
-             case USER_ARTICLES -> {
-                 return getUserArticles(collectionId);
-             }
-         }
+        switch (contentCollectionType) {
+            case ARTICLES -> {
+                return getArticles();
+            }
+            case USER_ARTICLES -> {
+                return getUserArticles(collectionId);
+            }
+        }
         return List.of();
     }
 
-    private Page<Article> getUserArticles(String id,
+    private Page<Article> getUserArticles(long id,
                                           Offset offset) {
-        long userId;
-        try {
-            userId = Long.parseLong(id);
-        } catch (NumberFormatException e) {
-            throw new ContentException(WebCommonErrorCode.ERROR_PARAM_FAILED, e);
-        }
         return Page.of(
                 offset,
                 1,
                 articleRepository.getArticlesByUser(
-                        userId,
+                        id,
                         offset
                 )
         );
     }
 
-
-    private List<Article> getUserArticles(String id) {
-        long userId;
-        try {
-            userId = Long.parseLong(id);
-        } catch (NumberFormatException e) {
-            throw new ContentException(WebCommonErrorCode.ERROR_PARAM_FAILED, e);
-        }
-        return articleRepository.getArticlesByUser(userId);
+    private List<Article> getUserArticles(long id) {
+        return articleRepository.getArticlesByUser(id);
     }
 
     private Page<Article> getArticles(Offset offset) {
-        return Page.of(offset, 1,
-                articleRepository.getArticles(
-                        offset.offset(),
-                        offset.limit()
-                )
+        return Page.of(
+                offset, 1,
+                articleRepository.get(offset)
         );
     }
 
     private List<Article> getArticles() {
-        return articleRepository.getArticles();
-
+        return articleRepository.get();
     }
 }

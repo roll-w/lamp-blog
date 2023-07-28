@@ -88,8 +88,7 @@ public class OnReviewStateChangeListener implements ApplicationListener<OnReview
         ContentStatus currentStatus = toContentStatus(event.getCurrentStatus());
         ContentStatus previousStatus = toContentStatus(event.getPreviousStatus());
         contentMetadataRepository.updateStatus(
-                contentInfo.getContentId(),
-                contentInfo.getContentType(),
+                metadata,
                 currentStatus
         );
         ContentStatusEvent<?> contentStatusEvent = new ContentStatusEvent<>(

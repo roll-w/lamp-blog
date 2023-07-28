@@ -17,8 +17,8 @@
 package space.lingu.lamp.web.database.dao;
 
 import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
-import space.lingu.light.*;
+import space.lingu.light.Dao;
+import space.lingu.light.Query;
 import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
@@ -27,58 +27,49 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public abstract class ArticleDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(Article... articles);
+public interface ArticleDao extends AutoPrimaryBaseDao<Article> {
+    @Override
+    @Query("SELECT * FROM article WHERE id = {id}")
+    Article getById(long id);
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract long insert(Article article);
+    @Override
+    @Query("SELECT * FROM article WHERE id IN ({ids})")
+    List<Article> getByIds(List<Long> ids);
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(List<Article> articles);
+    @Override
+    @Query("SELECT * FROM article ORDER BY id DESC")
+    List<Article> get();
 
-    @Delete
-    protected abstract void delete(Article Article);
+    @Override
+    @Query("SELECT COUNT(*) FROM article")
+    int count();
 
-    @Delete
-    protected abstract void delete(List<Article> articles);
+    @Override
+    @Query("SELECT * FROM article ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    List<Article> get(Offset offset);
 
-    @Delete("DELETE FROM article")
-    protected abstract void clearTable();
+    @Override
+    default String getTableName() {
+        return "article";
+    }
 
-    @Query("SELECT * FROM article")
-    public abstract List<Article> get();
-
-    @Query("SELECT * FROM article LIMIT {limit} OFFSET {offset}")
-    public abstract List<Article> get(int limit, int offset);
+    @Query("SELECT * FROM article WHERE title = {title} AND user_id = {userId}")
+    Article getByTitle(String title, long userId);
 
     @Query("SELECT title FROM article WHERE user_id = {userId} AND title = {title}")
-    public abstract String getArticleTitle(String title, long userId);
+    String getArticleTitle(String title, long userId);
 
     @Query("SELECT user_id FROM article WHERE id = {articleId}")
-    public abstract Long getUserIdByArticleId(long articleId);
+    Long getUserIdByArticleId(long articleId);
 
     @Query("SELECT title FROM article WHERE id = {articleId}")
-    public abstract String getArticleContent(long articleId);
-
-    @Query("SELECT * FROM article WHERE id = {id}")
-    public abstract Article getById(long id);
+    String getArticleContent(long articleId);
 
     @Query("SELECT * FROM article WHERE user_id = {userId}")
-    public abstract List<Article> getByUserId(long userId);
+    List<Article> getByUserId(long userId);
 
     @Query("SELECT * FROM article WHERE user_id = {userId} " +
             "LIMIT {offset.limit()} OFFSET {offset.offset()}")
-    public abstract List<Article> getByUserId(long userId, Offset offset);
-
-    @Query("SELECT `id`, `user_id`, `title`, `cover`, `create_time`, `update_time` " +
-            "FROM article LIMIT {limit} OFFSET {offset}")
-    public abstract List<ArticleInfo> getArticleInfos(int limit, int offset);
-
-    @Query("SELECT `id`, `user_id`, `title`, `cover`, `create_time`, `update_time` " +
-            "FROM article WHERE user_id = {userId} LIMIT {limit} OFFSET {offset}")
-    public abstract List<ArticleInfo> getArticleInfosByUser(long userId, int limit, int offset);
-
-    @Query("SELECT COUNT(*) FROM article")
-    public abstract int getCount();
+    List<Article> getByUserId(long userId, Offset offset);
 }
+

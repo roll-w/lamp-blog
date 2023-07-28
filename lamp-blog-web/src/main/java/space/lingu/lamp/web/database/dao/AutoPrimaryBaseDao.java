@@ -16,9 +16,9 @@
 
 package space.lingu.lamp.web.database.dao;
 
-import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
-import space.lingu.light.Dao;
-import space.lingu.light.Query;
+import space.lingu.lamp.DataItem;
+import space.lingu.light.Insert;
+import space.lingu.light.OnConflictStrategy;
 import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
@@ -26,30 +26,38 @@ import java.util.List;
 /**
  * @author RollW
  */
-@Dao
-public interface UserPersonalDataDao extends AutoPrimaryBaseDao<UserPersonalData> {
-    @Override
-    @Query("SELECT * FROM user_personal_data WHERE id = {id}")
-    UserPersonalData getById(long id);
+public interface AutoPrimaryBaseDao<T extends DataItem<T>> extends LampDao<T> {
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    long insertReturns(T t);
+
+    @Insert(onConflict = OnConflictStrategy.ABORT)
+    long[] insertReturns(List<T> ts);
+
+    default T getById(long id) {
+        return null;
+    }
+
+    default List<T> getByIds(List<Long> ids) {
+        return List.of();
+    }
 
     @Override
-    @Query("SELECT * FROM user_personal_data WHERE id IN ({ids})")
-    List<UserPersonalData> getByIds(List<Long> ids);
+    default List<T> get() {
+        return LampDao.super.get();
+    }
 
     @Override
-    @Query("SELECT * FROM user_personal_data ORDER BY id DESC")
-    List<UserPersonalData> get();
+    default int count() {
+        return LampDao.super.count();
+    }
 
     @Override
-    @Query("SELECT COUNT(*) FROM user_personal_data")
-    int count();
-
-    @Override
-    @Query("SELECT * FROM user_personal_data ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
-    List<UserPersonalData> get(Offset offset);
+    default List<T> get(Offset offset) {
+        return LampDao.super.get(offset);
+    }
 
     @Override
     default String getTableName() {
-        return "user_personal_data";
+        return LampDao.super.getTableName();
     }
 }

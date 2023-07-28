@@ -20,6 +20,8 @@ import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import space.lingu.NonNull;
 import space.lingu.lamp.DataItem;
+import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -35,7 +37,7 @@ import java.io.Serializable;
  */
 @DataTable(name = "user_personal_data")
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
-public final class UserPersonalData implements Serializable, DataItem {
+public final class UserPersonalData implements Serializable, DataItem<UserPersonalData> {
     @PrimaryKey
     @DataColumn(name = "id")
     private final long userId;
@@ -64,11 +66,14 @@ public final class UserPersonalData implements Serializable, DataItem {
     @DataColumn(name = "website")
     private final String website;
 
+    @DataColumn(name = "update_time")
+    private final long updateTime;
+
     public UserPersonalData(long userId, String nickname, String avatar,
                             String cover, Birthday birthday,
                             String introduction,
                             Gender gender, String location,
-                            String website) {
+                            String website, long updateTime) {
         this.userId = userId;
         this.nickname = nickname;
         this.avatar = avatar;
@@ -78,6 +83,7 @@ public final class UserPersonalData implements Serializable, DataItem {
         this.gender = gender;
         this.location = location;
         this.website = website;
+        this.updateTime = updateTime;
     }
 
     public long getUserId() {
@@ -116,6 +122,27 @@ public final class UserPersonalData implements Serializable, DataItem {
         return website;
     }
 
+    @Override
+    public Long getId() {
+        return getUserId();
+    }
+
+    @Override
+    public long getCreateTime() {
+        return 0;
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return updateTime;
+    }
+
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return LampSystemResourceKind.USER;
+    }
+
+    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -127,9 +154,9 @@ public final class UserPersonalData implements Serializable, DataItem {
     public static UserPersonalData defaultOf(UserIdentity user) {
         return new Builder()
                 .setUserId(user.getUserId())
-                .setAvatar("http://localhost:5100/static/img/lamp_user.png")
+                .setAvatar("user")
                 .setBirthday(null)
-                .setCover("http://localhost:5100/static/img/cover.png")
+                .setCover("cover")
                 .setIntroduction(null)
                 .setGender(Gender.PRIVATE)
                 .setNickname(user.getUsername())
@@ -150,38 +177,19 @@ public final class UserPersonalData implements Serializable, DataItem {
         Builder builder = userPersonalData.toBuilder();
         if (userPersonalData.getAvatar() == null) {
             // TODO
-            builder.setAvatar("/static/img/lamp_user.png");
+            builder.setAvatar("user");
         }
         if (userPersonalData.getNickname() == null) {
             builder.setNickname(userIdentity.getUsername());
         }
         if (userPersonalData.getCover() == null) {
-            builder.setCover("/static/img/cover.png");
+            builder.setCover("cover");
         }
         return builder.build();
     }
 
-    @Override
-    public Long getId() {
-        return getUserId();
-    }
 
-    @Override
-    public long getCreateTime() {
-        return 0;
-    }
-
-    @Override
-    public long getUpdateTime() {
-        return 0;
-    }
-
-    @Override
-    public SystemResourceKind getSystemResourceKind() {
-        return null;
-    }
-
-    public static final class Builder {
+    public static final class Builder implements EntityBuilder<UserPersonalData> {
         @DataColumn(name = "id")
         private long userId;
 
@@ -209,6 +217,9 @@ public final class UserPersonalData implements Serializable, DataItem {
         @DataColumn(name = "website")
         private String website;
 
+        @DataColumn(name = "update_time")
+        private long updateTime;
+
         public Builder() {
         }
 
@@ -221,6 +232,11 @@ public final class UserPersonalData implements Serializable, DataItem {
             this.introduction = userPersonalData.introduction;
             this.location = userPersonalData.location;
             this.website = userPersonalData.website;
+        }
+
+        @Override
+        public Builder setId(Long id) {
+            return this;
         }
 
         public Builder setUserId(long userId) {
@@ -268,6 +284,19 @@ public final class UserPersonalData implements Serializable, DataItem {
             return this;
         }
 
+        public String getCover() {
+            return cover;
+        }
+
+        public long getUpdateTime() {
+            return updateTime;
+        }
+
+        public Builder setUpdateTime(long updateTime) {
+            this.updateTime = updateTime;
+            return this;
+        }
+
         public long getUserId() {
             return userId;
         }
@@ -300,9 +329,11 @@ public final class UserPersonalData implements Serializable, DataItem {
             return website;
         }
 
+        @Override
         public UserPersonalData build() {
             return new UserPersonalData(userId, nickname, avatar,
-                    cover, birthday, introduction, gender, location, website);
+                    cover, birthday, introduction, gender,
+                    location, website, updateTime);
         }
     }
 }

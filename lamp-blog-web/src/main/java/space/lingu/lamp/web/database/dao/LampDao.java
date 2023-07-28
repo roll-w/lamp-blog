@@ -22,6 +22,7 @@ import space.lingu.light.Delete;
 import space.lingu.light.Insert;
 import space.lingu.light.OnConflictStrategy;
 import space.lingu.light.Update;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 
@@ -31,9 +32,6 @@ import java.util.List;
 public interface LampDao<T> {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     void insert(T t);
-
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    long insertWithReturn(T t);
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
     void insert(List<T> ts);
@@ -53,4 +51,20 @@ public interface LampDao<T> {
     @Dangerous(policy = InfoPolicy.CALLER,
             message = "This method is dangerous, please check the caller.")
     void delete(List<T> ts);
+
+    default List<T> get() {
+        return List.of();
+    }
+
+    default int count() {
+        return 0;
+    }
+
+    default List<T> get(Offset offset) {
+        return List.of();
+    }
+
+    default String getTableName() {
+        return null;
+    }
 }

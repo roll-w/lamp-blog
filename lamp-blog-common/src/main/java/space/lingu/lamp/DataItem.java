@@ -25,7 +25,7 @@ import java.io.Serializable;
  *
  * @author RollW
  */
-public interface DataItem extends Serializable, SystemResource {
+public interface DataItem<T extends DataItem<T>> extends Serializable, SystemResource<Long> {
     /**
      * Get the id of the entity.
      *
@@ -34,11 +34,13 @@ public interface DataItem extends Serializable, SystemResource {
     Long getId();
 
     @Override
-    default long getResourceId() {
+    default Long getResourceId() {
         return getId();
     }
 
     long getCreateTime();
 
     long getUpdateTime();
+
+    EntityBuilder<T> toBuilder();
 }

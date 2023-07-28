@@ -43,7 +43,7 @@ public class ReviewContentServiceImpl implements ReviewContentService {
     @NonNull
     @Override
     public ReviewContent getReviewContent(long jobId) {
-        ReviewJob job = reviewJobRepository.get(jobId);
+        ReviewJob job = reviewJobRepository.getById(jobId);
         Verify.verifyNotNull(job, "Review job not found");
         ContentDetails details = contentAccessService.getContentDetails(
                 job.getReviewContentId(), job.getType());

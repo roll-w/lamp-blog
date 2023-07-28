@@ -82,7 +82,7 @@ public class ContentService implements ContentAccessService,
      * @inheritDoc
      */
     @Override
-    public ContentDetails openContent(String contentId, ContentType contentType,
+    public ContentDetails openContent(long contentId, ContentType contentType,
                                       ContentAccessCredentials contentAccessCredentials) throws ContentException {
         ContentMetadata metadata = contentMetadataRepository.getById(contentId, contentType);
         if (metadata == null) {
@@ -110,13 +110,13 @@ public class ContentService implements ContentAccessService,
      * @inheritDoc
      */
     @Override
-    public ContentDetails getContentDetails(String contentId, ContentType contentType)
+    public ContentDetails getContentDetails(long contentId, ContentType contentType)
             throws ContentException {
         return getContentMetadataDetails(contentId, contentType);
     }
 
     @Override
-    public ContentMetadataDetails<?> getContentMetadataDetails(String contentId, ContentType contentType)
+    public ContentMetadataDetails<?> getContentMetadataDetails(long contentId, ContentType contentType)
             throws ContentException {
         ContentMetadata metadata = contentMetadataRepository.getById(contentId, contentType);
         if (metadata == null) {
@@ -131,7 +131,7 @@ public class ContentService implements ContentAccessService,
      * @inheritDoc
      */
     @Override
-    public ContentStatus getContentStatus(String contentId, ContentType contentType)
+    public ContentStatus getContentStatus(long contentId, ContentType contentType)
             throws ContentException {
         ContentMetadata metadata = contentMetadataRepository.getById(contentId, contentType);
         if (metadata == null) {
@@ -141,7 +141,7 @@ public class ContentService implements ContentAccessService,
     }
 
     @Override
-    public List<ContentStatus> getContentStatuses(List<String> contentIds,
+    public List<ContentStatus> getContentStatuses(List<Long> contentIds,
                                                   ContentType contentType)
             throws ContentException {
 
@@ -224,17 +224,17 @@ public class ContentService implements ContentAccessService,
     }
 
     @Override
-    public void deleteContent(ContentType contentType, String contentId) {
+    public void deleteContent(ContentType contentType, long contentId) {
         tryUpdateContentStatus(contentId, contentType, ContentStatus.DELETED);
     }
 
     @Override
-    public void forbiddenContent(ContentType contentType, String contentId) {
+    public void forbiddenContent(ContentType contentType, long contentId) {
         tryUpdateContentStatus(contentId, contentType, ContentStatus.FORBIDDEN);
     }
 
     @Override
-    public void restoreContent(ContentType contentType, String contentId) {
+    public void restoreContent(ContentType contentType, long contentId) {
         ContentMetadata contentMetadata =
                 tryGetContentMetadata(contentId, contentType);
         if (contentMetadata.getContentStatus() != ContentStatus.DELETED) {
@@ -243,7 +243,7 @@ public class ContentService implements ContentAccessService,
         tryUpdateContentStatus(contentMetadata, ContentStatus.PUBLISHED);
     }
 
-    private void tryUpdateContentStatus(String contentId,
+    private void tryUpdateContentStatus(long contentId,
                                         ContentType contentType,
                                         ContentStatus newStatus) {
         ContentMetadata contentMetadata =
@@ -258,8 +258,7 @@ public class ContentService implements ContentAccessService,
             return;
         }
         contentMetadataRepository.updateStatus(
-                contentMetadata.getContentId(),
-                contentMetadata.getContentType(),
+                contentMetadata,
                 newStatus
         );
         contentDeleters.forEach(deleter ->
@@ -298,7 +297,7 @@ public class ContentService implements ContentAccessService,
         }
     }
 
-    private ContentMetadata tryGetContentMetadata(String contentId,
+    private ContentMetadata tryGetContentMetadata(long contentId,
                                                   ContentType contentType) {
         ContentMetadata contentMetadata =
                 contentMetadataRepository.getById(contentId, contentType);
@@ -311,7 +310,7 @@ public class ContentService implements ContentAccessService,
     @Override
     public Page<ContentMetadataDetails<? extends ContentDetails>> accessContentsRelated(
             ContentCollectionType collectionType,
-            String contentCollectionId,
+            long contentCollectionId,
             ContentAccessCredentials contentAccessCredentials, Pageable pageable) {
         // TODO: impl
         return getContentsRelated(
@@ -325,7 +324,7 @@ public class ContentService implements ContentAccessService,
     @Override
     public Page<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
             ContentCollectionType contentCollectionType,
-            String contentCollectionId,
+            long contentCollectionId,
             Pageable pageable) {
         ContentCollectionAccessor contentCollectionAccessor =
                 getFirstAvailableOf(contentCollectionType);
@@ -347,7 +346,7 @@ public class ContentService implements ContentAccessService,
     @Override
     public List<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
             ContentCollectionType contentCollectionType,
-            String contentCollectionId) {
+            long contentCollectionId) {
         return null;
     }
 
@@ -356,7 +355,7 @@ public class ContentService implements ContentAccessService,
             List<ContentMetadata> contentMetadata) {
         return contentDetails.stream().map(details -> {
             ContentMetadata metadata = contentMetadata.stream()
-                    .filter(m -> m.getContentId().equals(details.getContentId()))
+                    .filter(m -> m.getContentId() == details.getContentId())
                     .findFirst()
                     .orElseThrow(() -> new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND));
             return new ContentMetadataDetails<>(details, metadata);

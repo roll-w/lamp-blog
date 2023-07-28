@@ -19,6 +19,7 @@ package space.lingu.lamp.web.database.dao;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionMetadata;
 import space.lingu.light.Dao;
 import space.lingu.light.Query;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 
@@ -26,17 +27,32 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public abstract class ContentCollectionMetadataDao implements
-        LampDao<ContentCollectionMetadata> {
-    @Query("SELECT * FROM content_collection_metadata")
-    public abstract List<ContentCollectionMetadata> get();
-
+public interface ContentCollectionMetadataDao extends AutoPrimaryBaseDao<ContentCollectionMetadata> {
+    @Override
     @Query("SELECT * FROM content_collection_metadata WHERE id = {id}")
-    public abstract ContentCollectionMetadata get(long id);
+    ContentCollectionMetadata getById(long id);
+
+    @Override
+    @Query("SELECT * FROM content_collection_metadata WHERE id IN ({ids})")
+    List<ContentCollectionMetadata> getByIds(List<Long> ids);
+
+    @Override
+    @Query("SELECT * FROM content_collection_metadata ORDER BY id DESC")
+    List<ContentCollectionMetadata> get();
+
+    @Override
+    @Query("SELECT COUNT(*) FROM content_collection_metadata")
+    int count();
+
+    @Override
+    @Query("SELECT * FROM content_collection_metadata ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    List<ContentCollectionMetadata> get(Offset offset);
+
+    @Override
+    default String getTableName() {
+        return "content_collection_metadata";
+    }
 
     @Query("SELECT * FROM content_collection_metadata WHERE user_id = {userId}")
-    public abstract List<ContentCollectionMetadata> getByUserId(long userId);
-
+    List<ContentCollectionMetadata> getByUserId(long userId);
 }
-
-

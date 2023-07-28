@@ -19,6 +19,7 @@ package space.lingu.lamp.web.domain.article;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.DataItem;
+import space.lingu.lamp.EntityBuilder;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
 import space.lingu.lamp.web.domain.content.ContentType;
@@ -35,7 +36,7 @@ import space.lingu.light.SQLDataType;
 @DataTable(name = "article", indices = {
         @Index(value = {"user_id", "title"}, unique = true)
 })
-public class Article implements DataItem, ContentDetails {
+public class Article implements DataItem<Article>, ContentDetails {
     // TODO: article
 
     @DataColumn(name = "id")
@@ -72,8 +73,14 @@ public class Article implements DataItem, ContentDetails {
         this.updateTime = updateTime;
     }
 
+    @Override
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public Long getResourceId() {
+        return getId();
     }
 
     @Override
@@ -98,10 +105,12 @@ public class Article implements DataItem, ContentDetails {
         return null;
     }
 
+    @Override
     public long getCreateTime() {
         return createTime;
     }
 
+    @Override
     public long getUpdateTime() {
         return updateTime;
     }
@@ -117,27 +126,16 @@ public class Article implements DataItem, ContentDetails {
     }
 
     public Builder toBuilder() {
-        return new Builder()
-                .setId(id)
-                .setUserId(userId)
-                .setTitle(title)
-                .setCover(cover)
-                .setContent(content)
-                .setCreateTime(createTime)
-                .setUpdateTime(updateTime);
+        return new Builder(this);
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    @NonNull
     @Override
-    public String getContentId() {
-        if (id == null) {
-            throw new IllegalStateException("The article has not been saved.");
-        }
-        return String.valueOf(id);
+    public long getContentId() {
+        return getId();
     }
 
     @NonNull
@@ -151,7 +149,7 @@ public class Article implements DataItem, ContentDetails {
         return 0;
     }
 
-    public final static class Builder {
+    public final static class Builder implements EntityBuilder<Article> {
         private Long id;
         private long userId;
         private String title;
@@ -160,6 +158,21 @@ public class Article implements DataItem, ContentDetails {
         private long createTime;
         private long updateTime;
 
+        public Builder() {
+
+        }
+
+        public Builder(Article article) {
+            this.id = article.id;
+            this.userId = article.userId;
+            this.title = article.title;
+            this.cover = article.cover;
+            this.content = article.content;
+            this.createTime = article.createTime;
+            this.updateTime = article.updateTime;
+        }
+
+        @Override
         public Builder setId(Long id) {
             this.id = id;
             return this;
@@ -195,6 +208,7 @@ public class Article implements DataItem, ContentDetails {
             return this;
         }
 
+        @Override
         public Article build() {
             return new Article(id, userId, title, cover, content,
                     createTime, updateTime);

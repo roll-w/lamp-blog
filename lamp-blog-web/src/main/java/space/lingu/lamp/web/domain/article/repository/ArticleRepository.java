@@ -16,12 +16,15 @@
 
 package space.lingu.lamp.web.domain.article.repository;
 
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ArticleDao;
+import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
 import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.system.CountableDao;
 import tech.rollw.common.web.page.Offset;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.paged.PageableContext;
 
 import java.util.List;
 
@@ -29,10 +32,13 @@ import java.util.List;
  * @author RollW
  */
 @Repository
-public class ArticleRepository implements CountableDao<Article> {
+public class ArticleRepository extends AutoPrimaryBaseRepository<Article> {
     private final ArticleDao articleDao;
 
-    public ArticleRepository(LampDatabase lampDatabase) {
+    public ArticleRepository(LampDatabase lampDatabase,
+                             ContextThreadAware<PageableContext> pageableContextThreadAware,
+                             CacheManager cacheManager) {
+        super(lampDatabase.getArticleDao(), pageableContextThreadAware, cacheManager);
         this.articleDao = lampDatabase.getArticleDao();
     }
 
@@ -41,30 +47,12 @@ public class ArticleRepository implements CountableDao<Article> {
         return s != null;
     }
 
-    public Article createArticle(Article article) {
-        long id = articleDao.insert(article);
-        return article.fork(id);
-    }
-
-    public Article get(long id) {
-        return articleDao.getById(id);
-    }
-
     public Long getUserIdByArticleId(long articleId) {
         return articleDao.getUserIdByArticleId(articleId);
     }
 
     public boolean isArticleExist(long articleId) {
         return articleDao.getUserIdByArticleId(articleId) != null;
-    }
-
-    public List<Article> getArticles(int offset,
-                                     int limit) {
-        return articleDao.get(limit, offset);
-    }
-
-    public List<Article> getArticles() {
-        return articleDao.get();
     }
 
     // TODO: process pages at repository layer
@@ -78,17 +66,7 @@ public class ArticleRepository implements CountableDao<Article> {
     }
 
     @Override
-    public long getCount() {
-        return articleDao.getCount();
-    }
-
-    @Override
-    public long getActiveCount() {
-        return articleDao.getCount();
-    }
-
-    @Override
-    public Class<Article> getCountableType() {
+    protected Class<Article> getEntityClass() {
         return Article.class;
     }
 }

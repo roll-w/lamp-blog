@@ -47,7 +47,7 @@ public class UserRoleChangeListener
     @Async
     public void onApplicationEvent(@NonNull OnUserRoleChangeEvent event) {
         UserInfo userInfo = event.getUserInfo();
-        Staff staff = staffRepository.getById(userInfo.getUserId());
+        Staff staff = staffRepository.getByUserId(userInfo.getUserId());
         if (event.getCurrentRole() == Role.USER) {
             long time = System.currentTimeMillis();
             disableStaff(staff, time);

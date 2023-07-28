@@ -16,21 +16,16 @@
 
 package space.lingu.lamp.web.domain.review.service;
 
-import com.google.common.base.Verify;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.data.page.Offset;
-import space.lingu.lamp.data.page.PageHelper;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewMark;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 import space.lingu.lamp.web.domain.review.common.NotReviewedException;
-import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;
-import space.lingu.lamp.web.domain.review.common.ReviewException;
 import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
-import space.lingu.lamp.web.domain.review.event.OnReviewStateChangeEvent;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
+import tech.rollw.common.web.page.Offset;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 
@@ -40,50 +35,17 @@ import java.util.List;
 @Service
 public class ReviewServiceImpl implements ReviewService {
     private final ReviewJobRepository reviewJobRepository;
-    private final ReviewerAllocateService reviewerAllocateService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final ReviewerAllocator reviewerAllocator;
 
     public ReviewServiceImpl(ReviewJobRepository reviewJobRepository,
-                             ReviewerAllocateService reviewerAllocateService,
-                             ApplicationEventPublisher eventPublisher) {
+                             ReviewerAllocator reviewerAllocator) {
         this.reviewJobRepository = reviewJobRepository;
-        this.reviewerAllocateService = reviewerAllocateService;
-        this.eventPublisher = eventPublisher;
+        this.reviewerAllocator = reviewerAllocator;
     }
 
     @Override
-    public ReviewInfo makeReview(long jobId, long operator,
-                                 boolean passed, String reason) {
-        ReviewJob job = reviewJobRepository.get(jobId);
-        Verify.verifyNotNull(job, "Review job not found");
-        if (job.getStatus().isReviewed()) {
-            throw new ReviewException(ReviewErrorCode.ERROR_REVIEWED);
-        }
-
-        ReviewJob reviewed = switchStatus(job, operator, passed, reason);
-        reviewJobRepository.update(reviewed);
-
-        OnReviewStateChangeEvent event = new OnReviewStateChangeEvent(reviewed,
-                job.getStatus(), reviewed.getStatus());
-        eventPublisher.publishEvent(event);
-        return ReviewInfo.of(job);
-    }
-
-    private ReviewJob switchStatus(ReviewJob job, long operator,
-                                   boolean passed, String reason) {
-        if (job == null) {
-            return null;
-        }
-        long time = System.currentTimeMillis();
-        reviewerAllocateService.releaseReviewer(job.getReviewerId(), job.getType());
-        if (passed) {
-            return job.reviewPass(operator, time);
-        }
-        return job.reviewReject(operator, reason, time);
-    }
-
-    @Override
-    public ReviewJob assignReviewer(String contentId, ContentType contentType,
+    public ReviewJob assignReviewer(long contentId,
+                                    ContentType contentType,
                                     boolean allowAutoReview) {
         long assignedTime = System.currentTimeMillis();
         ReviewJob old = reviewJobRepository.getBy(contentId, contentType);
@@ -91,7 +53,7 @@ public class ReviewServiceImpl implements ReviewService {
             throw new NotReviewedException(old);
         }
 
-        long reviewerId = reviewerAllocateService.allocateReviewer(
+        long reviewerId = reviewerAllocator.allocateReviewer(
                 contentType, allowAutoReview);
 
         ReviewJob.Builder builder = ReviewJob.builder()
@@ -114,27 +76,27 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewJob> getReviewJobs(long reviewerId, int page, int size) {
+    public List<ReviewJob> getReviewJobs(long reviewerId, Pageable pageable) {
         return reviewJobRepository.getReviewJobsByReviewer(reviewerId);
     }
 
     @Override
-    public List<ReviewJob> getReviewJobs(int page, int size) {
-        Offset offset = PageHelper.offset(page, size);
-        return reviewJobRepository.getAll(offset.offset(), offset.limit());
+    public List<ReviewJob> getReviewJobs(Pageable pageable) {
+        Offset offset = pageable.toOffset();
+        return reviewJobRepository.get(offset);
     }
 
     @Override
-    public List<ReviewJob> getUnfinishedReviewJobs(long reviewerId, int page, int size) {
-        Offset offset = PageHelper.offset(page, size);
+    public List<ReviewJob> getUnfinishedReviewJobs(long reviewerId, Pageable pageable) {
+        Offset offset = pageable.toOffset();
         return reviewJobRepository.getReviewJobsByReviewer(reviewerId,
                 offset.offset(), offset.limit(),
                 ReviewStatus.NOT_REVIEWED);
     }
 
     @Override
-    public List<ReviewJob> getFinishedReviewJobs(long reviewerId, int page, int size) {
-        Offset offset = PageHelper.offset(page, size);
+    public List<ReviewJob> getFinishedReviewJobs(long reviewerId, Pageable pageable) {
+        Offset offset = pageable.toOffset();
         return reviewJobRepository.getReviewJobsByStatuses(reviewerId,
                 offset.offset(), offset.limit(),
                 ReviewStatus.REVIEWED,
@@ -142,24 +104,24 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewJob> getRejectedReviewJobs(long reviewerId, int page, int size) {
+    public List<ReviewJob> getRejectedReviewJobs(long reviewerId, Pageable pageable) {
         // TODO: get review jobs
         return null;
     }
 
     @Override
-    public List<ReviewJob> getPassedReviewJobs(long reviewerId, int page, int size) {
+    public List<ReviewJob> getPassedReviewJobs(long reviewerId, Pageable pageable) {
         return null;
     }
 
     @Override
-    public ReviewInfo getReviewInfo(String reviewContentId, ContentType contentType) {
+    public ReviewInfo getReviewInfo(long reviewContentId, ContentType contentType) {
         ReviewJob reviewJob = reviewJobRepository.getBy(reviewContentId, contentType);
         return ReviewInfo.of(reviewJob);
     }
 
     @Override
     public ReviewInfo getReviewInfo(long jobId) {
-        return ReviewInfo.of(reviewJobRepository.get(jobId));
+        return ReviewInfo.of(reviewJobRepository.getById(jobId));
     }
 }

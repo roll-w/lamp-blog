@@ -17,6 +17,8 @@
 package space.lingu.lamp.web.domain.staff;
 
 import space.lingu.lamp.DataItem;
+import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
@@ -31,7 +33,7 @@ import java.util.Set;
  */
 @SuppressWarnings({"ClassCanBeRecord", "unused"})
 @DataTable(name = "staff")
-public class Staff implements DataItem {
+public class Staff implements DataItem<Staff> {
     // TODO: staff type
 
     @DataColumn(name = "id")
@@ -82,10 +84,12 @@ public class Staff implements DataItem {
         return types;
     }
 
+    @Override
     public long getCreateTime() {
         return createTime;
     }
 
+    @Override
     public long getUpdateTime() {
         return updateTime;
     }
@@ -100,6 +104,11 @@ public class Staff implements DataItem {
 
     public boolean hasType(StaffType type) {
         return types.contains(type);
+    }
+
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return LampSystemResourceKind.STAFF;
     }
 
     @Override
@@ -127,6 +136,7 @@ public class Staff implements DataItem {
                 '}';
     }
 
+    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -135,13 +145,7 @@ public class Staff implements DataItem {
         return new Builder();
     }
 
-    @Override
-    public SystemResourceKind getSystemResourceKind() {
-        return null;
-    }
-
-
-    public static class Builder {
+    public final static class Builder implements EntityBuilder<Staff> {
         private Long id;
         private long userId;
         private Set<StaffType> type;
@@ -163,6 +167,7 @@ public class Staff implements DataItem {
             this.deleted = staff.deleted;
         }
 
+        @Override
         public Builder setId(Long id) {
             this.id = id;
             return this;
@@ -207,6 +212,7 @@ public class Staff implements DataItem {
             return this;
         }
 
+        @Override
         public Staff build() {
             return new Staff(id, userId, type, createTime,
                     updateTime, allowUser, deleted);

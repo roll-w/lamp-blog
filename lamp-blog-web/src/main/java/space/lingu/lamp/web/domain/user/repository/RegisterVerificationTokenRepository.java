@@ -16,53 +16,58 @@
 
 package space.lingu.lamp.web.domain.user.repository;
 
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.RegisterVerificationTokenDao;
+import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
 import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
-import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.domain.user.UserIdentity;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.paged.PageableContext;
 
 /**
  * @author RollW
  */
 @Repository
-public class RegisterVerificationTokenRepository {
-    private final RegisterVerificationTokenDao dao;
+public class RegisterVerificationTokenRepository extends AutoPrimaryBaseRepository<RegisterVerificationToken> {
+    private final RegisterVerificationTokenDao registerVerificationTokenDao;
 
-    public RegisterVerificationTokenRepository(LampDatabase database) {
-        dao = database.getRegisterVerificationTokenDao();
+    public RegisterVerificationTokenRepository(LampDatabase lampDatabase,
+                                               ContextThreadAware<PageableContext> pageableContextThreadAware,
+                                               CacheManager cacheManager) {
+        super(lampDatabase.getRegisterVerificationTokenDao(), pageableContextThreadAware, cacheManager);
+        this.registerVerificationTokenDao = lampDatabase.getRegisterVerificationTokenDao();
+    }
+
+    @Override
+    protected Class<RegisterVerificationToken> getEntityClass() {
+        return RegisterVerificationToken.class;
     }
 
     public RegisterVerificationToken findByToken(String token) {
-        return dao.findByToken(token);
+        return cacheResult(
+                registerVerificationTokenDao.findByToken(token)
+        );
     }
 
-    public RegisterVerificationToken findByUser(User user) {
-        return dao.findByUserId(user.getId());
+    public RegisterVerificationToken findByUser(UserIdentity user) {
+        return findByUser(user.getUserId());
     }
 
     public RegisterVerificationToken findByUser(long id) {
-        return dao.findByUserId(id);
+        return cacheResult(
+                registerVerificationTokenDao.findByUserId(id)
+        );
     }
 
-    @Async
     public void makeTokenVerified(RegisterVerificationToken verificationToken) {
-        dao.updateUsedByToken(verificationToken.token(), true);
-    }
-
-    @Async
-    public void insert(RegisterVerificationToken verificationToken) {
-        dao.insert(verificationToken);
-    }
-
-    @Async
-    public void update(RegisterVerificationToken verificationToken) {
-        dao.update(verificationToken);
-    }
-
-    @Async
-    public void update(String token, boolean used) {
-        dao.update();
+        if (verificationToken == null) {
+            throw new NullPointerException("Null entity 'RegisterVerificationToken' in makeTokenVerified.");
+        }
+        RegisterVerificationToken updated = verificationToken.toBuilder()
+                .setUsed(true)
+                .build();
+        update(updated);
     }
 }

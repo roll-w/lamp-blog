@@ -70,10 +70,9 @@ public record ArticleInfo(
         return null;
     }
 
-    @NonNull
     @Override
-    public String getContentId() {
-        return String.valueOf(id);
+    public long getContentId() {
+        return id;
     }
 
     @NonNull

@@ -18,8 +18,6 @@ package space.lingu.lamp.web.domain.comment.service;
 
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.common.ParameterFailedException;
-import space.lingu.lamp.web.common.ParameterMissingException;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.lamp.web.domain.comment.CommentDetailsMetadata;
 import space.lingu.lamp.web.domain.comment.repository.CommentRepository;
@@ -46,10 +44,9 @@ public class CommentService implements ContentAccessor,
     }
 
     @Override
-    public Comment getContent(String contentId,
+    public Comment getContent(long contentId,
                               ContentType contentType) {
-        long id = fromString(contentId);
-        return commentRepository.getById(id);
+        return commentRepository.getById(contentId);
     }
 
     @Override
@@ -61,25 +58,22 @@ public class CommentService implements ContentAccessor,
         if (!(detailsMetadata instanceof CommentDetailsMetadata commentDetailsMetadata)) {
             throw new IllegalArgumentException("Metadata was not been serialized as comment metadata.");
         }
-        Comment.Builder builder = Comment
+        Comment comment = Comment
                 .builder()
                 .setType(commentDetailsMetadata.contentType())
                 .setContent(uncreatedContent.getContent())
                 .setUserId(uncreatedContent.getUserId())
                 .setParentId(commentDetailsMetadata.parentId())
                 .setCreateTime(timestamp)
-                .setCommentOn(commentDetailsMetadata.contentId());
-        Comment comment = builder.build();
-        long id = commentRepository.insert(comment);
-        builder.setId(id);
+                .setCommentOn(commentDetailsMetadata.contentId()).build();
 
-        return builder.build();
+        return commentRepository.insert(comment);
     }
 
     @Override
     public Page<? extends ContentDetails> getContentCollection(
             ContentCollectionType contentCollectionType,
-            String collectionId, Pageable pageable) {
+            long collectionId, Pageable pageable) {
         // TODO: collection
         return Page.of();
         //return getComment(contentCollectionType, collectionId, page, size);
@@ -88,28 +82,29 @@ public class CommentService implements ContentAccessor,
     @Override
     public List<? extends ContentDetails> getContentCollection(
             ContentCollectionType contentCollectionType,
-            String collectionId) {
+            long collectionId) {
         return getComment(
                 contentCollectionType,
                 collectionId);
     }
 
     private List<Comment> getComment(ContentCollectionType contentCollectionType,
-                                     String collectionId, int page, int size) {
+                                     long collectionId, int page, int size) {
         Offset offset = Offset.of(page, size);
 
         return switch (contentCollectionType) {
             case COMMENTS -> commentRepository.get(offset);
-            case ARTICLE_COMMENTS -> commentRepository.getArticleComments(collectionId, offset);
+            case ARTICLE_COMMENTS -> commentRepository.getComments(
+                    collectionId, ContentType.ARTICLE, offset);
             default -> throw new UnsupportedOperationException("Unsupported collection type: " + contentCollectionType);
         };
     }
 
     private List<Comment> getComment(ContentCollectionType contentCollectionType,
-                                     String collectionId) {
+                                     long collectionId) {
         return switch (contentCollectionType) {
             case COMMENTS -> commentRepository.get();
-            case ARTICLE_COMMENTS -> commentRepository.getArticleComments(collectionId);
+            case ARTICLE_COMMENTS -> commentRepository.getComments(collectionId, ContentType.ARTICLE);
             default -> throw new UnsupportedOperationException("Unsupported collection type: " + contentCollectionType);
         };
     }
@@ -117,17 +112,5 @@ public class CommentService implements ContentAccessor,
     @Override
     public boolean supports(ContentType contentType) {
         return contentType == ContentType.COMMENT;
-    }
-
-    @NonNull
-    private static Long fromString(String s) {
-        if (s == null) {
-            throw new ParameterMissingException("commentId");
-        }
-        try {
-            return Long.parseLong(s);
-        } catch (NumberFormatException e) {
-            throw new ParameterFailedException("Invalid comment id: {}", s);
-        }
     }
 }

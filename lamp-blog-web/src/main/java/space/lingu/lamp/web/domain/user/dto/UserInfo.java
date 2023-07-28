@@ -38,12 +38,12 @@ public record UserInfo(
         @DataColumn(name = "role")
         Role role
 ) implements UserIdentity {
-    public static UserInfo from(User user) {
+    public static UserInfo from(UserIdentity user) {
         if (user == null) {
             return null;
         }
         return new UserInfo(
-                user.getId(),
+                user.getUserId(),
                 user.getUsername(),
                 user.getEmail(),
                 user.getRole()

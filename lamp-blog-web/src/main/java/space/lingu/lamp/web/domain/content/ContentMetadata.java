@@ -18,6 +18,8 @@ package space.lingu.lamp.web.domain.content;
 
 import space.lingu.NonNull;
 import space.lingu.lamp.DataItem;
+import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.*;
 import tech.rollw.common.web.system.SystemResourceKind;
 
@@ -27,7 +29,7 @@ import tech.rollw.common.web.system.SystemResourceKind;
 @DataTable(name = "content_metadata", indices =
 @Index(value = {"content_id", "type"}, unique = true))
 @SuppressWarnings({"ClassCanBeRecord"})
-public class ContentMetadata implements DataItem {
+public class ContentMetadata implements DataItem<ContentMetadata> {
     // only maintains the metadata of the content.
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
@@ -37,8 +39,7 @@ public class ContentMetadata implements DataItem {
     private final long userId;
 
     @DataColumn(name = "content_id", nullable = false)
-    @NonNull
-    private final String contentId;
+    private final long contentId;
 
     @DataColumn(name = "type", nullable = false)
     @NonNull
@@ -54,7 +55,7 @@ public class ContentMetadata implements DataItem {
 
     @Constructor
     public ContentMetadata(Long id, long userId,
-                           @NonNull String contentId,
+                           long contentId,
                            @NonNull ContentType contentType,
                            @NonNull ContentStatus contentStatus,
                            @NonNull ContentAccessAuthType contentAccessAuthType) {
@@ -70,9 +71,6 @@ public class ContentMetadata implements DataItem {
 
     @SuppressWarnings("all")
     private void checkForNull() {
-        if (contentId == null) {
-            throw new NullPointerException("contentId is null");
-        }
         if (contentType == null) {
             throw new NullPointerException("contentType is null");
         }
@@ -103,8 +101,7 @@ public class ContentMetadata implements DataItem {
         return userId;
     }
 
-    @NonNull
-    public String getContentId() {
+    public long getContentId() {
         return contentId;
     }
 
@@ -133,13 +130,13 @@ public class ContentMetadata implements DataItem {
 
     @Override
     public SystemResourceKind getSystemResourceKind() {
-        return null;
+        return LampSystemResourceKind.CONTENT_METADATA;
     }
 
-    public static class Builder {
+    public static class Builder implements EntityBuilder<ContentMetadata> {
         private Long id;
         private long userId;
-        private String contentId;
+        private long contentId;
         private ContentType contentType;
         private ContentStatus contentStatus;
         private ContentAccessAuthType contentAccessAuthType;
@@ -156,6 +153,7 @@ public class ContentMetadata implements DataItem {
             this.contentAccessAuthType = contentMetadata.contentAccessAuthType;
         }
 
+        @Override
         public Builder setId(Long id) {
             this.id = id;
             return this;
@@ -166,7 +164,7 @@ public class ContentMetadata implements DataItem {
             return this;
         }
 
-        public Builder setContentId(@NonNull String contentId) {
+        public Builder setContentId(long contentId) {
             this.contentId = contentId;
             return this;
         }
@@ -186,6 +184,7 @@ public class ContentMetadata implements DataItem {
             return this;
         }
 
+        @Override
         public ContentMetadata build() {
             return new ContentMetadata(id, userId, contentId,
                     contentType, contentStatus, contentAccessAuthType);

@@ -19,7 +19,6 @@ package space.lingu.lamp.web.database.dao;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.light.Dao;
-import space.lingu.light.Delete;
 import space.lingu.light.Query;
 import tech.rollw.common.web.page.Offset;
 
@@ -29,27 +28,36 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public abstract class CommentDao implements LampDao<Comment> {
-    @Delete("DELETE FROM comment")
-    protected abstract void clearTable();
-
-    @Query("SELECT * FROM comment")
-    public abstract List<Comment> get();
-
-    @Query("SELECT id, user_id, comment_on_id, parent_id, content, create_time, type, status " +
-            "FROM comment ORDER BY id " +
-            "LIMIT {limit} OFFSET {offset}")
-    public abstract List<Comment> get(int offset, int limit);
-
+public interface CommentDao extends AutoPrimaryBaseDao<Comment> {
+    @Override
     @Query("SELECT * FROM comment WHERE id = {id}")
-    public abstract Comment getById(long id);
+    Comment getById(long id);
+
+    @Override
+    @Query("SELECT * FROM comment WHERE id IN ({ids})")
+    List<Comment> getByIds(List<Long> ids);
+
+    @Override
+    @Query("SELECT * FROM comment ORDER BY id DESC")
+    List<Comment> get();
+
+    @Override
+    @Query("SELECT COUNT(*) FROM comment")
+    int count();
+
+    @Override
+    @Query("SELECT * FROM comment ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    List<Comment> get(Offset offset);
+
+    @Override
+    default String getTableName() {
+        return "comment";
+    }
 
     @Query("SELECT * FROM comment WHERE comment_on_id = {contentId} AND type = {contentType}")
-    public abstract List<Comment> getCommentsOn(String contentId, ContentType contentType);
+    List<Comment> getCommentsOn(long contentId, ContentType contentType);
 
     @Query("SELECT * FROM comment WHERE comment_on_id = {contentId} AND type = {contentType} " +
             "LIMIT {offset.limit()} OFFSET {offset.offset()}")
-    public abstract List<Comment> getCommentsOn(String contentId, ContentType contentType, Offset offset);
+    List<Comment> getCommentsOn(long contentId, ContentType contentType, Offset offset);
 }
-
-

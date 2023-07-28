@@ -19,11 +19,9 @@ package space.lingu.lamp.web.database.dao;
 import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
-import space.lingu.light.Insert;
-import space.lingu.light.OnConflictStrategy;
 import space.lingu.light.Query;
 import space.lingu.light.Transaction;
-import space.lingu.light.Update;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 
@@ -31,36 +29,39 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public abstract class RegisterVerificationTokenDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(RegisterVerificationToken... tokens);
+public interface RegisterVerificationTokenDao extends AutoPrimaryBaseDao<RegisterVerificationToken> {
+    @Override
+    @Query("SELECT * FROM register_verification_token WHERE id = {id}")
+    RegisterVerificationToken getById(long id);
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(RegisterVerificationToken token);
+    @Override
+    @Query("SELECT * FROM register_verification_token WHERE id IN ({ids})")
+    List<RegisterVerificationToken> getByIds(List<Long> ids);
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(List<RegisterVerificationToken> tokens);
+    @Override
+    @Query("SELECT * FROM register_verification_token ORDER BY id DESC")
+    List<RegisterVerificationToken> get();
 
-    @Update(onConflict = OnConflictStrategy.ABORT)
-    public abstract void update(RegisterVerificationToken... tokens);
+    @Override
+    @Query("SELECT COUNT(*) FROM register_verification_token")
+    int count();
+
+    @Override
+    @Query("SELECT * FROM register_verification_token ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    List<RegisterVerificationToken> get(Offset offset);
+
+    @Override
+    default String getTableName() {
+        return "register_verification_token";
+    }
 
     @Transaction
     @Delete("UPDATE register_verification_token SET used = {used} WHERE token = {token}")
-    public abstract void updateUsedByToken(String token, boolean used);
-
-    @Delete
-    public abstract void delete(RegisterVerificationToken... tokens);
-
-    @Transaction
-    @Delete("DELETE FROM register_verification_token WHERE token = {token.token()}")
-    public abstract void delete(RegisterVerificationToken token);
-
-    @Delete
-    public abstract void delete(List<RegisterVerificationToken> users);
+    void updateUsedByToken(String token, boolean used);
 
     @Query("SELECT * FROM register_verification_token WHERE token = {token}")
-    public abstract RegisterVerificationToken findByToken(String token);
+    RegisterVerificationToken findByToken(String token);
 
     @Query("SELECT * FROM register_verification_token WHERE user_id = {userId} LIMIT 1")
-    public abstract RegisterVerificationToken findByUserId(long userId);
+    RegisterVerificationToken findByUserId(long userId);
 }

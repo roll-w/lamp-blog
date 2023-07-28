@@ -26,13 +26,21 @@ import java.util.List;
 public enum LampSystemResourceKind implements SystemResourceKind {
     USER,
     USER_GROUP("group"),
+    USER_GROUP_MEMBER,
+    STAFF,
+    REGISTER_CODE,
+    SYSTEM_MESSAGE_RESOURCE,
+    SYSTEM_SETTING,
     ARTICLE,
     COMMENT,
     POST,
     IMAGE,
+    USER_LIKE,
+    CONTENT_METADATA,
+    CONTENT_COLLECTION_METADATA,
+    REVIEW_JOB,
     TAG,
     TAG_GROUP,
-
     FAVORITE_GROUP,
     FAVORITE_ITEM,
     ;

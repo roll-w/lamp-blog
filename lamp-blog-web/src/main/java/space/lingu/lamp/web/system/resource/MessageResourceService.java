@@ -43,7 +43,7 @@ public class MessageResourceService implements MessageResourceProvider, MessageR
     public MessageResource getMessageResource(
             @NonNull String key,
             @NonNull Locale locale) {
-        return messageResourceRepository.get(key, locale);
+        return messageResourceRepository.getByKeyAndLocale(key, locale);
     }
 
     @Nullable
@@ -53,7 +53,7 @@ public class MessageResourceService implements MessageResourceProvider, MessageR
                                               String defaultValue) {
         MessageResource messageResource = getMessageResource(key, locale);
         if (messageResource == null) {
-            return new MessageResource(key, defaultValue, locale);
+            return MessageResource.of(key, defaultValue, locale);
         }
         return messageResource;
     }
@@ -65,10 +65,7 @@ public class MessageResourceService implements MessageResourceProvider, MessageR
                                               @NonNull Supplier<String> defaultValueProvider) {
         MessageResource messageResource = getMessageResource(key, locale);
         if (messageResource == null) {
-            return new MessageResource(
-                    key,
-                    defaultValueProvider.get(),
-                    locale);
+            return MessageResource.of(key, defaultValueProvider.get(), locale);
         }
         return messageResource;
     }
@@ -76,34 +73,34 @@ public class MessageResourceService implements MessageResourceProvider, MessageR
     @Override
     public Page<MessageResource> getMessageResources(Pageable pageable) {
         List<MessageResource> messageResources =
-                messageResourceRepository.getMessageResources(pageable);
+                messageResourceRepository.get(pageable.toOffset());
         return Page.of(pageable, 1, messageResources);
     }
 
     @Override
     public List<MessageResource> getMessageResources(String key) {
-        return messageResourceRepository.getMessageResources(key);
+        return messageResourceRepository.getByKey(key);
     }
 
     @Override
     public void setMessageResource(@NonNull String key,
                                    @NonNull String value,
                                    @NonNull Locale locale) {
-        messageResourceRepository.set(key, value, locale);
+
     }
 
     @Override
     public void setMessageResource(@NonNull MessageResource messageResource) {
-        messageResourceRepository.set(messageResource);
+
     }
 
     @Override
     public void deleteMessageResource(@NonNull String key) {
-        messageResourceRepository.delete(key);
+
     }
 
     @Override
     public void deleteMessageResource(@NonNull String key, @NonNull Locale locale) {
-        messageResourceRepository.delete(key, locale);
+
     }
 }

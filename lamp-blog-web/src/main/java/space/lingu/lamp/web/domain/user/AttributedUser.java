@@ -14,25 +14,19 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.event;
-
-import org.springframework.context.ApplicationEvent;
-import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.user.AttributedUser;
+package space.lingu.lamp.web.domain.user;
 
 /**
  * @author RollW
  */
-public class OnUserCreateEvent extends ApplicationEvent {
-    private final AttributedUser user;
+public interface AttributedUser extends UserIdentity {
+    boolean isEnabled();
 
-    public OnUserCreateEvent(@NonNull AttributedUser user) {
-        super(user);
-        this.user = user;
-    }
+    boolean isLocked();
 
-    @NonNull
-    public final AttributedUser getUser() {
-        return user;
-    }
+    boolean isCanceled();
+
+    long getCreateTime();
+
+    long getUpdateTime();
 }

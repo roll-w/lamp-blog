@@ -50,8 +50,7 @@ public class ContentMetadataDetails<T extends ContentDetails> implements Content
     }
 
     @Override
-    @NonNull
-    public String getContentId() {
+    public long getContentId() {
         return contentMetadata.getContentId();
     }
 

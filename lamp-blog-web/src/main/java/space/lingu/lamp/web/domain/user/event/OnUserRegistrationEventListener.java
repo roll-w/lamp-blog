@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.common.SimpleMailMessageBuilder;
 import space.lingu.lamp.web.common.keys.MailConfigKeys;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.service.RegisterTokenProvider;
 import space.lingu.lamp.web.system.setting.SettingLoader;
 import space.lingu.lamp.web.system.setting.SystemSetting;
@@ -71,8 +71,8 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
 
     @Async("LB-Main-Executor")
     void handleRegistration(OnUserRegistrationEvent event) {
-        UserInfo userInfo = event.getUserInfo();
-        String token = registerTokenProvider.createRegisterToken(userInfo);
+        AttributedUser user = event.getUser();
+        String token = registerTokenProvider.createRegisterToken(user);
         if (mailProperties == null || Strings.isNullOrEmpty(mailProperties.getHost())) {
             logger.debug("Not configure the mail, skip sending mail.");
             registerTokenProvider.verifyRegisterToken(token);
@@ -88,13 +88,13 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
         String subject = "[Lamp Blog] Registration Confirmation";
         String confirmUrl = event.getUrl() + token;
         SimpleMailMessage mailMessage = new SimpleMailMessageBuilder()
-                .setTo(userInfo.email())
+                .setTo(user.getEmail())
                 .setSubject(subject)
                 .setText(("Dear %s,\nYou are now registering a new account, " +
                         "click %s to confirm activate.\n" +
                         "If you are not registering for this account, please ignore this message.\n\n" +
                         "Sincerely, Lamp Blog Team.")
-                        .formatted(userInfo.username(), confirmUrl))
+                        .formatted(user.getUsername(), confirmUrl))
                 .setFrom(username)
                 .build();
         mailSender.send(mailMessage);

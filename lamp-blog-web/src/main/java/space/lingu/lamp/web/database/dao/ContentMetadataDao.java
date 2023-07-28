@@ -16,20 +16,9 @@
 
 package space.lingu.lamp.web.database.dao;
 
-import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
-import space.lingu.lamp.web.domain.content.ContentIdentity;
-import space.lingu.lamp.web.domain.content.ContentMetadata;
-import space.lingu.lamp.web.domain.content.ContentStatus;
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.light.Dao;
-import space.lingu.light.DaoConnectionGetter;
-import space.lingu.light.Delete;
-import space.lingu.light.Insert;
-import space.lingu.light.LightRuntimeException;
-import space.lingu.light.ManagedConnection;
-import space.lingu.light.OnConflictStrategy;
-import space.lingu.light.Query;
-import space.lingu.light.Update;
+import space.lingu.lamp.web.domain.content.*;
+import space.lingu.light.*;
+import tech.rollw.common.web.page.Offset;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -40,50 +29,48 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public abstract class ContentMetadataDao implements DaoConnectionGetter {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(ContentMetadata contentMetadata);
+public interface ContentMetadataDao extends AutoPrimaryBaseDao<ContentMetadata>, DaoConnectionGetter {
+    @Override
+    @Query("SELECT * FROM content_metadata WHERE id = {id}")
+    ContentMetadata getById(long id);
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(List<ContentMetadata> contentMetadata);
+    @Override
+    @Query("SELECT * FROM content_metadata WHERE id IN ({ids})")
+    List<ContentMetadata> getByIds(List<Long> ids);
 
-    @Update(onConflict = OnConflictStrategy.ABORT)
-    public abstract void update(ContentMetadata... contentMetadata);
+    @Override
+    @Query("SELECT * FROM content_metadata ORDER BY id DESC")
+    List<ContentMetadata> get();
 
-    @Update(onConflict = OnConflictStrategy.ABORT)
-    public abstract void update(List<ContentMetadata> contentMetadata);
+    @Override
+    @Query("SELECT COUNT(*) FROM content_metadata")
+    int count();
 
-    @Delete
-    protected abstract void delete(ContentMetadata ContentMetadata);
+    @Override
+    @Query("SELECT * FROM content_metadata ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    List<ContentMetadata> get(Offset offset);
 
-    @Delete
-    protected abstract void delete(List<ContentMetadata> contentMetadata);
-
-    @Delete("DELETE FROM content_metadata")
-    protected abstract void clearTable();
-
-    @Query("SELECT * FROM content_metadata")
-    public abstract List<ContentMetadata> get();
+    @Override
+    default String getTableName() {
+        return "content_metadata";
+    }
 
     @Delete("UPDATE content_metadata SET status = {status} WHERE content_id = {contentId} AND type = {contentType}")
-    public abstract void updateStatus(String contentId, ContentType contentType,
-                                      ContentStatus status);
+    void updateStatus(long contentId, ContentType contentType,
+                      ContentStatus status);
 
     @Query("SELECT * FROM content_metadata WHERE content_id = {contentId} AND type = {contentType}")
-    public abstract ContentMetadata getById(String contentId, ContentType contentType);
+    ContentMetadata getById(long contentId, ContentType contentType);
 
     @Query("SELECT status FROM content_metadata WHERE content_id IN ({contentIds}) AND type = {contentType}")
-    public abstract List<ContentStatus> getStatusByIds(
-            List<String> contentIds, ContentType contentType);
+    List<ContentStatus> getStatusByIds(
+            List<Long> contentIds, ContentType contentType);
 
     @Query("SELECT id, user_id, content_id, type, status, auth_type FROM content_metadata WHERE content_id IN ({contentIds}) AND type = {contentType}")
-    public abstract List<ContentStatus> getMetadataByIds(
-            List<String> contentIds, ContentType contentType);
+    List<ContentStatus> getMetadataByIds(
+            List<Long> contentIds, ContentType contentType);
 
-    // @Query("SELECT id, user_id, content_id, type, status, auth_type FROM content_metadata WHERE (content_id, type) IN ({contentIdentities}))")
-    // public abstract List<ContentMetadata> getByPair(List<ContentIdentity> contentIdentities);
-
-    public List<ContentMetadata> getByIdentities(List<? extends ContentIdentity> contentIdentities) {
+    default List<ContentMetadata> getByIdentities(List<? extends ContentIdentity> contentIdentities) {
         if (contentIdentities.isEmpty()) {
             return List.of();
         }
@@ -102,7 +89,7 @@ public abstract class ContentMetadataDao implements DaoConnectionGetter {
         int index = 1;
         for (ContentIdentity identity : contentIdentities) {
             try {
-                statement.setString(index++, identity.getContentId());
+                statement.setLong(index++, identity.getContentId());
                 statement.setString(index++, identity.getContentType().name());
             } catch (Exception e) {
                 throw new LightRuntimeException(e);
@@ -113,7 +100,7 @@ public abstract class ContentMetadataDao implements DaoConnectionGetter {
             while (resultSet.next()) {
                 long id = resultSet.getLong(1);
                 long userId = resultSet.getLong(2);
-                String contentId = resultSet.getString(3);
+                long contentId = resultSet.getLong(3);
                 ContentType type = ContentType.valueOf(resultSet.getString(4));
                 ContentStatus status = ContentStatus.valueOf(resultSet.getString(5));
                 ContentAccessAuthType authType = ContentAccessAuthType.valueOf(resultSet.getString(6));

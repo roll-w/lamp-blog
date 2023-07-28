@@ -19,7 +19,9 @@ package space.lingu.lamp.web.domain.review;
 import com.google.common.base.Preconditions;
 import space.lingu.Nullable;
 import space.lingu.lamp.DataItem;
+import space.lingu.lamp.EntityBuilder;
 import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -32,7 +34,7 @@ import java.util.Objects;
  * @author RollW
  */
 @DataTable(name = "review_job")
-public class ReviewJob implements DataItem {
+public class ReviewJob implements DataItem<ReviewJob> {
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
     private final Long jobId;
@@ -41,7 +43,7 @@ public class ReviewJob implements DataItem {
     // private String serialNumber;
 
     @DataColumn(name = "content_id")
-    private final String reviewContentId;
+    private final long reviewContentId;
 
     // TODO: may change to reviewer ids in the future
     @DataColumn(name = "reviewer_id")
@@ -70,13 +72,12 @@ public class ReviewJob implements DataItem {
     private final ReviewMark reviewMark;
 
     @Constructor
-    public ReviewJob(Long jobId, String reviewContentId,
+    public ReviewJob(Long jobId, long reviewContentId,
                      Long reviewerId,
                      @Nullable Long operatorId,
                      ReviewStatus status, ContentType type,
                      long assignedTime, String result, long reviewTime,
                      ReviewMark reviewMark) {
-        Preconditions.checkNotNull(reviewContentId);
         Preconditions.checkNotNull(status);
         Preconditions.checkNotNull(type);
         Preconditions.checkNotNull(reviewMark);
@@ -93,7 +94,7 @@ public class ReviewJob implements DataItem {
         this.reviewMark = reviewMark;
     }
 
-    public ReviewJob(String reviewContentId, long reviewerId,
+    public ReviewJob(long reviewContentId, long reviewerId,
                      long operatorId, ReviewStatus status, ContentType type,
                      long assignedTime, String result, long reviewTime,
                      ReviewMark reviewMark) {
@@ -120,7 +121,7 @@ public class ReviewJob implements DataItem {
         return jobId;
     }
 
-    public String getReviewContentId() {
+    public long getReviewContentId() {
         return reviewContentId;
     }
 
@@ -220,13 +221,13 @@ public class ReviewJob implements DataItem {
 
     @Override
     public SystemResourceKind getSystemResourceKind() {
-        return null;
+        return LampSystemResourceKind.REVIEW_JOB;
     }
 
 
-    public final static class Builder {
+    public final static class Builder implements EntityBuilder<ReviewJob> {
         private Long jobId = null;
-        private String reviewContentId;
+        private long reviewContentId;
         private Long reviewerId;
         private Long operatorId;
         private ReviewStatus status;
@@ -252,12 +253,17 @@ public class ReviewJob implements DataItem {
             this.reviewMark = job.reviewMark;
         }
 
+        @Override
+        public EntityBuilder<ReviewJob> setId(Long id) {
+            return setJobId(id);
+        }
+
         public Builder setJobId(Long jobId) {
             this.jobId = jobId;
             return this;
         }
 
-        public Builder setReviewContentId(String reviewContentId) {
+        public Builder setReviewContentId(long reviewContentId) {
             this.reviewContentId = reviewContentId;
             return this;
         }
@@ -302,6 +308,7 @@ public class ReviewJob implements DataItem {
             return this;
         }
 
+        @Override
         public ReviewJob build() {
             return new ReviewJob(
                     jobId, reviewContentId,
@@ -309,5 +316,6 @@ public class ReviewJob implements DataItem {
                     assignedTime, result, reviewTime,
                     reviewMark);
         }
+
     }
 }

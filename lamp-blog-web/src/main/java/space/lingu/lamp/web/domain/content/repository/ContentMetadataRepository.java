@@ -16,13 +16,17 @@
 
 package space.lingu.lamp.web.domain.content.repository;
 
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ContentMetadataDao;
+import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
 import space.lingu.lamp.web.domain.content.ContentIdentity;
 import space.lingu.lamp.web.domain.content.ContentMetadata;
 import space.lingu.lamp.web.domain.content.ContentStatus;
 import space.lingu.lamp.web.domain.content.ContentType;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.paged.PageableContext;
 
 import java.util.List;
 
@@ -30,33 +34,44 @@ import java.util.List;
  * @author RollW
  */
 @Repository
-public class ContentMetadataRepository {
+public class ContentMetadataRepository extends AutoPrimaryBaseRepository<ContentMetadata> {
     private final ContentMetadataDao contentMetadataDao;
 
-    public ContentMetadataRepository(LampDatabase database) {
-        this.contentMetadataDao = database.getContentMetadataDao();
+    public ContentMetadataRepository(LampDatabase lampDatabase,
+                                     ContextThreadAware<PageableContext> pageableContextThreadAware,
+                                     CacheManager cacheManager) {
+        super(lampDatabase.getContentMetadataDao(), pageableContextThreadAware, cacheManager);
+        this.contentMetadataDao = lampDatabase.getContentMetadataDao();
     }
 
-    public void insert(ContentMetadata contentMetadata) {
-        contentMetadataDao.insert(contentMetadata);
+    @Override
+    protected Class<ContentMetadata> getEntityClass() {
+        return ContentMetadata.class;
     }
 
-    public void update(ContentMetadata contentMetadata) {
-        contentMetadataDao.update(contentMetadata);
+    public ContentMetadata getById(long contentId, ContentType contentType) {
+        return cacheResult(
+                contentMetadataDao.getById(contentId, contentType)
+        );
     }
 
-    public ContentMetadata getById(String contentId, ContentType contentType) {
-        return contentMetadataDao.getById(contentId, contentType);
-    }
-
-    public List<ContentStatus> getStatusByIds(List<String> contentIds,
+    public List<ContentStatus> getStatusByIds(List<Long> contentIds,
                                               ContentType contentType) {
         return contentMetadataDao.getStatusByIds(contentIds, contentType);
     }
 
-    public void updateStatus(String contentId, ContentType contentType,
+    public void updateStatus(ContentMetadata contentMetadata,
                              ContentStatus status) {
-        contentMetadataDao.updateStatus(contentId, contentType, status);
+
+        contentMetadataDao.updateStatus(
+                contentMetadata.getContentId(),
+                contentMetadata.getContentType(),
+                status
+        );
+        cacheResult(contentMetadata.toBuilder()
+                .setContentStatus(status)
+                .build()
+        );
     }
 
     public List<ContentMetadata> getMetadataByIdentities(List<? extends ContentIdentity> contentIdentities) {

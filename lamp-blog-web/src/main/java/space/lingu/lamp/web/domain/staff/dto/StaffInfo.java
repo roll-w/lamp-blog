@@ -26,9 +26,9 @@ import java.util.Set;
  * @author RollW
  */
 public record StaffInfo(
+        long id,
         long userId,
         UserIdentity userIdentity,
-        String employeeId,
         Set<StaffType> types,
         long createTime,
         long updateTime,
@@ -40,9 +40,9 @@ public record StaffInfo(
             return null;
         }
         return new StaffInfo(
+                staff.getId(),
                 staff.getUserId(),
                 userIdentity,
-                staff.getEmployeeId(),
                 staff.getTypes(),
                 staff.getCreateTime(),
                 staff.getUpdateTime(),

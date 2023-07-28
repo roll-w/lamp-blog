@@ -24,7 +24,7 @@ import space.lingu.lamp.web.domain.content.ContentType;
  */
 public record CommentDetailsMetadata(
         ContentType contentType,
-        String contentId,
+        long contentId,
         Long parentId
 ) implements ContentDetailsMetadata {
 }

@@ -19,18 +19,21 @@ package space.lingu.lamp.web.domain.comment;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.DataItem;
+import space.lingu.lamp.EntityBuilder;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
 import space.lingu.light.SQLDataType;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 /**
  * @author RollW
  */
 @DataTable(name = "comment")
-public class Comment implements DataItem, ContentDetails {
+public class Comment implements DataItem<Comment>, ContentDetails {
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
     private final Long id;
@@ -39,7 +42,7 @@ public class Comment implements DataItem, ContentDetails {
     private final long userId;
 
     @DataColumn(name = "comment_on_id")
-    private final String commentOn;
+    private final long commentOn;
 
     @DataColumn(name = "parent_id")
     @Nullable
@@ -62,7 +65,7 @@ public class Comment implements DataItem, ContentDetails {
     @NonNull
     private final CommentStatus commentStatus;
 
-    public Comment(Long id, long userId, String commentOn,
+    public Comment(Long id, long userId, long commentOn,
                    @Nullable Long parentId, String content, long createTime,
                    ContentType type,
                    @NonNull CommentStatus commentStatus) {
@@ -80,13 +83,14 @@ public class Comment implements DataItem, ContentDetails {
         return id;
     }
 
-    @NonNull
     @Override
-    public String getContentId() {
-        if (id == null) {
-            throw new IllegalStateException("The comment has not been saved.");
-        }
-        return String.valueOf(id);
+    public Long getResourceId() {
+        return id;
+    }
+
+    @Override
+    public long getContentId() {
+        return id;
     }
 
     @NonNull
@@ -117,12 +121,18 @@ public class Comment implements DataItem, ContentDetails {
         return parentId;
     }
 
-    public String getCommentOn() {
+    public long getCommentOn() {
         return commentOn;
     }
 
+    @Override
     public long getCreateTime() {
         return createTime;
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return 0;
     }
 
     public ContentType getType() {
@@ -134,6 +144,7 @@ public class Comment implements DataItem, ContentDetails {
         return commentStatus;
     }
 
+    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -142,10 +153,15 @@ public class Comment implements DataItem, ContentDetails {
         return new Builder();
     }
 
-    public static class Builder {
+    @Override
+    public SystemResourceKind getSystemResourceKind() {
+        return LampSystemResourceKind.COMMENT;
+    }
+
+    public static class Builder implements EntityBuilder<Comment> {
         private Long id;
         private long userId;
-        private String commentOn;
+        private long commentOn;
         private Long parentId;
         private String content;
         private long createTime;
@@ -168,6 +184,7 @@ public class Comment implements DataItem, ContentDetails {
             commentStatus = CommentStatus.NONE;
         }
 
+        @Override
         public Builder setId(Long id) {
             this.id = id;
             return this;
@@ -178,7 +195,7 @@ public class Comment implements DataItem, ContentDetails {
             return this;
         }
 
-        public Builder setCommentOn(String commentOn) {
+        public Builder setCommentOn(long commentOn) {
             this.commentOn = commentOn;
             return this;
         }
@@ -203,6 +220,12 @@ public class Comment implements DataItem, ContentDetails {
             return this;
         }
 
+        public Builder setCommentStatus(@NonNull CommentStatus commentStatus) {
+            this.commentStatus = commentStatus;
+            return this;
+        }
+
+        @Override
         public Comment build() {
             return new Comment(id, userId, commentOn,
                     parentId, content, createTime, type, commentStatus);

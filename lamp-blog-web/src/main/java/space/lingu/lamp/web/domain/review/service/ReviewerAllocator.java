@@ -21,7 +21,7 @@ import space.lingu.lamp.web.domain.content.ContentType;
 /**
  * @author RollW
  */
-public interface ReviewerAllocateService {
+public interface ReviewerAllocator {
     /**
      * The reviewer id for auto-reviewer.
      * <p>

@@ -16,12 +16,16 @@
 
 package space.lingu.lamp.web.domain.review.repository;
 
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ReviewJobDao;
+import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.paged.PageableContext;
 
 import java.util.List;
 
@@ -29,35 +33,27 @@ import java.util.List;
  * @author RollW
  */
 @Repository
-public class ReviewJobRepository {
+public class ReviewJobRepository extends AutoPrimaryBaseRepository<ReviewJob> {
     private final ReviewJobDao reviewJobDao;
 
-    public ReviewJobRepository(LampDatabase database) {
-        reviewJobDao = database.getReviewJobDao();
+    public ReviewJobRepository(LampDatabase lampDatabase,
+                               ContextThreadAware<PageableContext> pageableContextThreadAware,
+                               CacheManager cacheManager) {
+        super(lampDatabase.getReviewJobDao(), pageableContextThreadAware, cacheManager);
+        this.reviewJobDao = lampDatabase.getReviewJobDao();
     }
 
-    public ReviewJob insert(ReviewJob reviewJob) {
-        long id = reviewJobDao.insert(reviewJob);
-        return reviewJob.fork(id);
-    }
-
-    public void update(ReviewJob reviewJob) {
-        reviewJobDao.update(reviewJob);
-    }
-
-    public ReviewJob get(long id) {
-        return reviewJobDao.get(id);
-    }
-
-    public List<ReviewJob> getAll(int offset, int limit) {
-        return reviewJobDao.getByPage(offset, limit);
+    @Override
+    protected Class<ReviewJob> getEntityClass() {
+        return ReviewJob.class;
     }
 
     public List<ReviewJob> getBy(ReviewStatus status) {
         return reviewJobDao.getReviewJobsByStatus(status);
     }
 
-    public ReviewJob getBy(String contentId, ContentType contentType) {
+    public ReviewJob getBy(long contentId,
+                           ContentType contentType) {
         return reviewJobDao.getReviewJobByContentId(contentId, contentType);
     }
 

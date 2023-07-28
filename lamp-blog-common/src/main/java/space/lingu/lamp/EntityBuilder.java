@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.event;
-
-import org.springframework.context.ApplicationEvent;
-import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.user.AttributedUser;
+package space.lingu.lamp;
 
 /**
  * @author RollW
  */
-public class OnUserCreateEvent extends ApplicationEvent {
-    private final AttributedUser user;
+public interface EntityBuilder<T> {
+    T build();
 
-    public OnUserCreateEvent(@NonNull AttributedUser user) {
-        super(user);
-        this.user = user;
-    }
-
-    @NonNull
-    public final AttributedUser getUser() {
-        return user;
-    }
+    EntityBuilder<T> setId(Long id);
 }

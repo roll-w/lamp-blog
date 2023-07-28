@@ -17,6 +17,8 @@
 package space.lingu.lamp.web.system.setting;
 
 import space.lingu.lamp.DataItem;
+import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
@@ -27,7 +29,7 @@ import tech.rollw.common.web.system.SystemResourceKind;
  */
 @DataTable(name = "system_setting")
 @SuppressWarnings("all")
-public class SystemSetting implements DataItem {
+public class SystemSetting implements DataItem<SystemSetting> {
     @DataColumn(name = "key")
     @PrimaryKey
     private final String key;
@@ -64,7 +66,44 @@ public class SystemSetting implements DataItem {
     }
 
     @Override
+    public Builder toBuilder() {
+        return new Builder(this);
+    }
+
+    @Override
     public SystemResourceKind getSystemResourceKind() {
-        return null;
+        return LampSystemResourceKind.SYSTEM_SETTING;
+    }
+
+    public static final class Builder implements EntityBuilder<SystemSetting> {
+        private String key;
+        private String value;
+
+        public Builder() {
+        }
+
+        public Builder(SystemSetting systemSetting) {
+            this.key = systemSetting.getKey();
+            this.value = systemSetting.getValue();
+        }
+
+        public Builder setKey(String key) {
+            this.key = key;
+            return this;
+        }
+
+        public Builder setValue(String value) {
+            this.value = value;
+            return this;
+        }
+
+        public SystemSetting build() {
+            return new SystemSetting(key, value);
+        }
+
+        @Override
+        public EntityBuilder<SystemSetting> setId(Long id) {
+            return this;
+        }
     }
 }

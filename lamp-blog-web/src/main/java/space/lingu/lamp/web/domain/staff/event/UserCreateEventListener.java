@@ -23,8 +23,8 @@ import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
+import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.user.event.OnUserCreateEvent;
 
 /**
@@ -41,14 +41,14 @@ public class UserCreateEventListener implements ApplicationListener<OnUserCreate
     @Override
     @Async
     public void onApplicationEvent(@NonNull OnUserCreateEvent event) {
-        UserInfo userInfo = event.getUserInfo();
-        if (userInfo.role() == Role.USER) {
+        AttributedUser attributedUser = event.getUser();
+        if (attributedUser.getRole() == Role.USER) {
             return;
         }
-        StaffType type = StaffType.of(userInfo.role());
+        StaffType type = StaffType.of(attributedUser.getRole());
         long time = System.currentTimeMillis();
         Staff staff = Staff.builder()
-                .setUserId(userInfo.id())
+                .setUserId(attributedUser.getUserId())
                 .setTypes(type)
                 .setAllowUser(true)
                 .setCreateTime(time)

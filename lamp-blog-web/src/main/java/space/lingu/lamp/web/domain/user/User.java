@@ -19,6 +19,8 @@ package space.lingu.lamp.web.domain.user;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import space.lingu.lamp.DataItem;
+import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -38,7 +40,7 @@ import java.util.Objects;
 })
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
 @SuppressWarnings({"ClassCanBeRecord"})
-public class User implements DataItem, UserDetails, UserIdentity {
+public class User implements DataItem<User>, UserDetails, AttributedUser {
     @PrimaryKey(autoGenerate = true)
     @DataColumn(name = "id")
     private final Long id;
@@ -55,6 +57,9 @@ public class User implements DataItem, UserDetails, UserIdentity {
 
     @DataColumn(name = "register_time")
     private final long registerTime;
+
+    @DataColumn(name = "update_time")
+    private final long updateTime;
 
     @DataColumn(name = "email")
     private final String email;
@@ -85,14 +90,16 @@ public class User implements DataItem, UserDetails, UserIdentity {
     @Constructor
     public User(Long id, String username, String password,
                 Role role, long registerTime,
-                String email, String phone,
-                boolean enabled, boolean locked, boolean accountExpired,
+                long updateTime, String email, String phone,
+                boolean enabled, boolean locked,
+                boolean accountExpired,
                 boolean canceled) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
         this.registerTime = registerTime;
+        this.updateTime = updateTime;
         this.email = email;
         this.phone = phone;
         this.enabled = enabled;
@@ -101,8 +108,14 @@ public class User implements DataItem, UserDetails, UserIdentity {
         this.canceled = canceled;
     }
 
+    @Override
     public Long getId() {
         return id;
+    }
+
+    @Override
+    public Long getResourceId() {
+        return getId();
     }
 
     @Override
@@ -112,7 +125,7 @@ public class User implements DataItem, UserDetails, UserIdentity {
 
     @Override
     public long getUpdateTime() {
-        return 0;
+        return updateTime;
     }
 
     @Override
@@ -188,19 +201,9 @@ public class User implements DataItem, UserDetails, UserIdentity {
         return new Builder();
     }
 
+    @Override
     public Builder toBuilder() {
-        return new Builder()
-                .setId(id)
-                .setUsername(username)
-                .setPassword(password)
-                .setRole(role)
-                .setRegisterTime(registerTime)
-                .setEmail(email)
-                .setPhone(phone)
-                .setEnabled(enabled)
-                .setLocked(locked)
-                .setAccountExpired(accountExpired)
-                .setCanceled(canceled);
+        return new Builder(this);
     }
 
     @Override
@@ -242,15 +245,16 @@ public class User implements DataItem, UserDetails, UserIdentity {
 
     @Override
     public SystemResourceKind getSystemResourceKind() {
-        return null;
+        return LampSystemResourceKind.USER;
     }
 
-    public static final class Builder {
+    public static final class Builder implements EntityBuilder<User> {
         private Long id = null;
         private String username;
         private String password;
         private Role role = Role.USER;
         private long registerTime;
+        private long updateTime;
         private String email;
         private String phone;
         private boolean enabled;
@@ -258,6 +262,25 @@ public class User implements DataItem, UserDetails, UserIdentity {
         private boolean accountExpired = false;
         private boolean canceled = false;
 
+        public Builder() {
+
+        }
+
+        public Builder(User user) {
+            this.id = user.id;
+            this.username = user.username;
+            this.password = user.password;
+            this.role = user.role;
+            this.registerTime = user.registerTime;
+            this.email = user.email;
+            this.phone = user.phone;
+            this.enabled = user.enabled;
+            this.locked = user.locked;
+            this.accountExpired = user.accountExpired;
+            this.canceled = user.canceled;
+        }
+
+        @Override
         public Builder setId(Long id) {
             this.id = id;
             return this;
@@ -280,6 +303,11 @@ public class User implements DataItem, UserDetails, UserIdentity {
 
         public Builder setRegisterTime(long registerTime) {
             this.registerTime = registerTime;
+            return this;
+        }
+
+        public Builder setUpdateTime(long updateTime) {
+            this.updateTime = updateTime;
             return this;
         }
 
@@ -313,11 +341,12 @@ public class User implements DataItem, UserDetails, UserIdentity {
             return this;
         }
 
+        @Override
         public User build() {
             return new User(
                     id, username, password,
                     role, registerTime,
-                    email, phone, enabled, locked,
+                    updateTime, email, phone, enabled, locked,
                     accountExpired, canceled
             );
         }

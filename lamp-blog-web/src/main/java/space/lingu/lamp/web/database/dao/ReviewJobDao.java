@@ -20,11 +20,8 @@ import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 import space.lingu.light.Dao;
-import space.lingu.light.Delete;
-import space.lingu.light.Insert;
-import space.lingu.light.OnConflictStrategy;
 import space.lingu.light.Query;
-import space.lingu.light.Update;
+import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
 
@@ -32,50 +29,44 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public abstract class ReviewJobDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(ReviewJob... reviewJobs);
-
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract long insert(ReviewJob reviewJob);
-
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(List<ReviewJob> reviewJobs);
-
-    @Update(onConflict = OnConflictStrategy.ABORT)
-    public abstract void update(ReviewJob... reviewJobs);
-
-    @Delete
-    public abstract void delete(ReviewJob reviewJob);
-
-    @Delete
-    public abstract void delete(List<ReviewJob> reviewJobs);
-
-    @Delete("DELETE FROM review_job")
-    public abstract void clearTable();
-
-    @Query("SELECT * FROM review_job")
-    public abstract List<ReviewJob> get();
-
+public interface ReviewJobDao extends AutoPrimaryBaseDao<ReviewJob> {
+    @Override
     @Query("SELECT * FROM review_job WHERE id = {id}")
-    public abstract ReviewJob get(long id);
+    ReviewJob getById(long id);
 
-    @Query("SELECT * FROM review_job ORDER BY id LIMIT {limit} OFFSET {offset}")
-    public abstract List<ReviewJob> getByPage(int offset, int limit);
+    @Override
+    @Query("SELECT * FROM review_job WHERE id IN ({ids})")
+    List<ReviewJob> getByIds(List<Long> ids);
+
+    @Override
+    @Query("SELECT * FROM review_job ORDER BY id DESC")
+    List<ReviewJob> get();
+
+    @Override
+    @Query("SELECT COUNT(*) FROM review_job")
+    int count();
+
+    @Override
+    @Query("SELECT * FROM review_job ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    List<ReviewJob> get(Offset offset);
+
+    @Override
+    default String getTableName() {
+        return "review_job";
+    }
 
     @Query("SELECT * FROM review_job WHERE reviewer_id = {userId}")
-    public abstract List<ReviewJob> getReviewJobsByUserId(long userId);
+    List<ReviewJob> getReviewJobsByUserId(long userId);
 
     @Query("SELECT * FROM review_job WHERE status = {status}")
-    public abstract List<ReviewJob> getReviewJobsByStatus(ReviewStatus status);
+    List<ReviewJob> getReviewJobsByStatus(ReviewStatus status);
 
     @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND `status` = {status} LIMIT {limit} OFFSET {offset}")
-    public abstract List<ReviewJob> getReviewJobsByStatus(long userId, int offset, int limit, ReviewStatus status);
+    List<ReviewJob> getReviewJobsByStatus(long userId, int offset, int limit, ReviewStatus status);
 
     @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND `status` IN ({statuses}) LIMIT {limit} OFFSET {offset}")
-    public abstract List<ReviewJob> getReviewJobsByStatuses(long userId, int offset, int limit,  ReviewStatus... statuses);
+    List<ReviewJob> getReviewJobsByStatuses(long userId, int offset, int limit, ReviewStatus... statuses);
 
     @Query("SELECT * FROM review_job WHERE content_id = {contentId} AND type = {type}")
-    public abstract ReviewJob getReviewJobByContentId(String contentId, ContentType type);
+    ReviewJob getReviewJobByContentId(long contentId, ContentType type);
 }
-

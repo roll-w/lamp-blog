@@ -32,7 +32,7 @@ public interface StaffService {
 
     StaffInfo getStaffByUser(long userId);
 
-    StaffInfo getStaff(String staffId);
+    StaffInfo getStaff(long staffId);
 
     Staff createStaff(Staff staff);
 

@@ -29,7 +29,32 @@ import java.util.Locale;
  * @author RollW
  */
 @Dao
-public interface MessageResourceDao extends LampDao<MessageResource> {
+public interface MessageResourceDao extends AutoPrimaryBaseDao<MessageResource> {
+    @Override
+    @Query("SELECT * FROM message_resource WHERE id = {id}")
+    MessageResource getById(long id);
+
+    @Override
+    @Query("SELECT * FROM message_resource WHERE id IN ({ids})")
+    List<MessageResource> getByIds(List<Long> ids);
+
+    @Override
+    @Query("SELECT * FROM message_resource ORDER BY id DESC")
+    List<MessageResource> get();
+
+    @Override
+    @Query("SELECT COUNT(*) FROM message_resource")
+    int count();
+
+    @Override
+    @Query("SELECT * FROM message_resource ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    List<MessageResource> get(Offset offset);
+
+    @Override
+    default String getTableName() {
+        return "message_resource";
+    }
+
     @Delete("DELETE FROM message_resource WHERE `key` = {key}")
     void deleteByKey(String key);
 
@@ -40,11 +65,5 @@ public interface MessageResourceDao extends LampDao<MessageResource> {
     List<MessageResource> getByKey(String key);
 
     @Query("SELECT * FROM message_resource WHERE `key` = {key} AND locale = {locale}")
-    MessageResource getByKey(String key, Locale locale);
-
-    @Query("SELECT * FROM message_resource")
-    List<MessageResource> get();
-
-    @Query("SELECT * FROM message_resource LIMIT {offset.limit()} OFFSET {offset.offset()}")
-    List<MessageResource> get(Offset offset);
+    MessageResource getByKeyAndLocale(String key, Locale locale);
 }

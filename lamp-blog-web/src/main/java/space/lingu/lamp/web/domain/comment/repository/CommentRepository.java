@@ -16,12 +16,16 @@
 
 package space.lingu.lamp.web.domain.comment.repository;
 
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.CommentDao;
+import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.lamp.web.domain.content.ContentType;
 import tech.rollw.common.web.page.Offset;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.paged.PageableContext;
 
 import java.util.List;
 
@@ -29,46 +33,33 @@ import java.util.List;
  * @author RollW
  */
 @Repository
-public class CommentRepository {
+public class CommentRepository extends AutoPrimaryBaseRepository<Comment> {
     private final CommentDao commentDao;
 
-    public CommentRepository(LampDatabase lampDatabase) {
-        commentDao = lampDatabase.getCommentDao();
+    public CommentRepository(LampDatabase lampDatabase,
+                             ContextThreadAware<PageableContext> pageableContextThreadAware,
+                             CacheManager cacheManager) {
+        super(lampDatabase.getCommentDao(), pageableContextThreadAware, cacheManager);
+        this.commentDao = lampDatabase.getCommentDao();
     }
 
-    public long insert(Comment comment) {
-        return commentDao.insertWithReturn(comment);
+    @Override
+    protected Class<Comment> getEntityClass() {
+        return Comment.class;
     }
 
-    public void update(Comment comment) {
-        commentDao.update(comment);
-    }
-
-    public Comment getById(long commentId) {
-        return commentDao.getById(commentId);
-    }
-
-    public List<Comment> get(Offset offset) {
-        return commentDao.get(offset.offset(), offset.limit());
-    }
-
-    public List<Comment> get() {
-        return commentDao.get();
-    }
-
-    public List<Comment> getArticleComments(String collectionId,
-                                            Offset offset) {
+    public List<Comment> getComments(long collectionId,
+                                     ContentType contentType,
+                                     Offset offset) {
         return commentDao.getCommentsOn(
                 collectionId,
-                ContentType.ARTICLE,
+                contentType,
                 offset
         );
     }
 
-    public List<Comment> getArticleComments(String collectionId) {
-        return commentDao.getCommentsOn(
-                collectionId,
-                ContentType.ARTICLE
-        );
+    public List<Comment> getComments(long collectionId,
+                                     ContentType contentType) {
+        return commentDao.getCommentsOn(collectionId, contentType);
     }
 }

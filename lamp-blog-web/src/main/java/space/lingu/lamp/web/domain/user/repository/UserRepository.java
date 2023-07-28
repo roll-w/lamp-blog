@@ -18,151 +18,97 @@ package space.lingu.lamp.web.domain.user.repository;
 
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
-import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.UserDao;
+import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
 import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
-import tech.rollw.common.web.page.Offset;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.paged.PageableContext;
 
-import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * @author RollW
  */
 @Repository
-public class UserRepository {
+public class UserRepository extends AutoPrimaryBaseRepository<User> {
     private final UserDao userDao;
-    private final Cache userCache;
 
-    public UserRepository(LampDatabase database,
+    public UserRepository(LampDatabase lampDatabase,
+                          ContextThreadAware<PageableContext> pageableContextThreadAware,
                           CacheManager cacheManager) {
-        this.userDao = database.getUserDao();
-        this.userCache = cacheManager.getCache(CacheNames.USERS);
+        super(lampDatabase.getUserDao(), pageableContextThreadAware, cacheManager);
+        this.userDao = lampDatabase.getUserDao();
     }
 
-    public long insertUser(User user) {
-        if (user == null) {
-            return -1;
+    @Override
+    protected Class<User> getEntityClass() {
+        return User.class;
+    }
+
+    @Override
+    protected void onInvalidatedCache(User user) {
+        cache.evictIfPresent(user.getUsername());
+        cache.evictIfPresent(user.getEmail());
+    }
+
+    @Override
+    protected void onCache(User user) {
+        hasUsers.set(true);
+        cache.put(user.getUsername(), user);
+        cache.put(user.getEmail(), user);
+    }
+
+    public User getByEmail(String email) {
+        Cache.ValueWrapper wrapper =
+                cache.get(email);
+        if (wrapper == null) {
+            return cacheResult(
+                    userDao.getByEmail(email)
+            );
         }
-        long id = userDao.insert(user);
-        User newUser = user
-                .toBuilder()
-                .setId(id)
-                .build();
-        updateCache(newUser);
-        return id;
+        return (User) wrapper.get();
     }
 
-    public void update(User user) {
-        userDao.update(user);
-        updateCache(user);
+    public User getByUsername(String username) {
+        Cache.ValueWrapper wrapper =
+                cache.get(username);
+        if (wrapper == null) {
+            return cacheResult(
+                    userDao.getByUsername(username)
+            );
+        }
+        return (User) wrapper.get();
     }
 
-    @Async
-    public void makeUserEnabled(User user) {
-        userDao.updateEnabledByUser(user.getId(), true);
-        User newUser = user.toBuilder()
+    public void enableUser(User user) {
+        User updated = user.toBuilder()
                 .setEnabled(true)
+                .setUpdateTime(System.currentTimeMillis())
                 .build();
-        updateCache(newUser);
+        update(updated);
     }
 
-    @Async
-    public void asyncInsertUser(User user) {
-        userDao.insert(user);
-        updateCache(user);
-    }
-
-    public User getUserById(long id) {
-        User cached = userCache.get(id, User.class);
-        if (cached != null) {
-            return cached;
-        }
-        User queried = userDao.getUserById(id);
-        updateCache(queried);
-        return queried;
-    }
-
-    public UserInfo getUserInfoById(long id) {
-        User cached = userCache.get(id, User.class);
-        if (cached != null) {
-            return UserInfo.from(cached);
-        }
-        return userDao.getUserInfoById(id);
-    }
-
-    public User getUserByName(String name) {
-        User cached = userCache.get(name, User.class);
-        if (cached != null) {
-            return cached;
-        }
-        User queried = userDao.getUserByName(name);
-        updateCache(queried);
-        return queried;
-    }
-
-    private Long getUserIdByName(String name) {
-        return userDao.getUserIdByName(name);
-    }
-
-    public boolean isExistByName(String name) {
-        return !User.isInvalidId(getUserIdByName(name));
-    }
-
-    public User getUserByEmail(String email) {
-        return userDao.getUserByEmail(email);
-    }
-
-    private Long getUserIdByEmail(String email) {
-        return userDao.getUserIdByEmail(email);
-    }
 
     public boolean isExistByEmail(String email) {
-        return !User.isInvalidId(getUserIdByEmail(email));
-    }
-
-    public List<User> getAll() {
-        return userDao.getAll();
-    }
-
-    public List<User> getUsers(Offset offset) {
-        if (offset == null) {
-            return getUsers(Offset.DEFAULT);
+        User cached = cache.get(email, User.class);
+        if (cached != null) {
+            return true;
         }
-        return userDao.get(offset.offset(), offset.limit());
+        return getByEmail(email) != null;
     }
 
     private final AtomicBoolean hasUsers = new AtomicBoolean(false);
 
     public boolean hasUsers() {
         if (hasUsers.get()) {
-            return hasUsers.get();
+            return true;
         }
-        boolean has = userDao.hasUsers() != null;
-        hasUsers.set(has);
+        Integer has = userDao.hasUsers();
+        if (has != null) {
+            hasUsers.set(has > 0);
+        }
         return hasUsers.get();
-    }
-
-    private void updateCache(User user) {
-        if (user == null) {
-            return;
-        }
-        userCache.put(user.getId(), user);
-        userCache.put(user.getUsername(), user);
-        userCache.put(user.getEmail(), user);
-    }
-
-    private void removeCache(User user) {
-        userCache.evictIfPresent(user.getId());
-        userCache.evictIfPresent(user.getUsername());
-        userCache.evictIfPresent(user.getEmail());
-    }
-
-    public List<User> getUsersByIds(List<Long> ids) {
-        return userDao.getUsersByIds(ids);
     }
 }

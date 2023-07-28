@@ -16,15 +16,15 @@
 
 package space.lingu.lamp.web.domain.staff.repository;
 
-import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Repository;
-import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.StaffDao;
+import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.staff.StaffType;
-import tech.rollw.common.web.page.Pageable;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.paged.PageableContext;
 
 import java.util.List;
 
@@ -32,66 +32,42 @@ import java.util.List;
  * @author RollW
  */
 @Repository
-public class StaffRepository {
+public class StaffRepository extends AutoPrimaryBaseRepository<Staff> {
     private final StaffDao staffDao;
-    private final Cache staffCache;
 
-    public StaffRepository(LampDatabase database, CacheManager cacheManager) {
-        staffDao = database.getStaffDao();
-        staffCache = cacheManager.getCache(CacheNames.STAFFS);
+    public StaffRepository(LampDatabase lampDatabase,
+                           ContextThreadAware<PageableContext> pageableContextThreadAware,
+                           CacheManager cacheManager) {
+        super(lampDatabase.getStaffDao(), pageableContextThreadAware, cacheManager);
+        this.staffDao = lampDatabase.getStaffDao();
     }
 
-    public void insert(Staff staff) {
-        staffDao.insert(staff);
-        staffCache.put(staff.getUserId(), staff);
-    }
-
-    public void update(Staff staff) {
-        staffDao.update(staff);
-        staffCache.put(staff.getUserId(), staff);
-    }
-
-    public Staff getById(long userId) {
-        Staff staff = staffCache.get(userId, Staff.class);
-        if (staff == null) {
-            staff = staffDao.getById(userId);
-            staffCache.put(userId, staff);
-        }
-        return staff;
-    }
-
-
-    public Staff getByStaffId(String employeeId) {
-        Staff staff = staffCache.get(employeeId, Staff.class);
-        if (staff == null) {
-            staff = staffDao.getByStaffId(employeeId);
-            staffCache.put(employeeId, staff);
-        }
-        return staff;
-    }
-
-    public List<Staff> getStaffs(Pageable pageable) {
-        return staffDao.get(pageable.toOffset());
-    }
-
-    public List<Staff> getStaffs() {
-        return staffDao.get();
+    @Override
+    protected Class<Staff> getEntityClass() {
+        return Staff.class;
     }
 
     public List<Staff> getStaffsByType(StaffType type) {
-        return staffDao.getStaffsOfType(type);
+        return cacheResult(
+                staffDao.getStaffsOfType(type)
+        );
     }
 
     public List<Staff> getActiveStaffsByType(StaffType type) {
-        return staffDao.getStaffsOfType(type, false);
+        return cacheResult(
+                staffDao.getStaffsOfType(type, false)
+        );
     }
 
     public void deleteByUserId(long userId, long updateTime) {
         staffDao.setStaffDeleted(userId, true, updateTime);
-        staffCache.evict(userId);
     }
 
     public int countOfType(StaffType type) {
         return staffDao.getStaffsCount();
+    }
+
+    public Staff getByUserId(long userId) {
+        return cacheResult(staffDao.getByUserId(userId));
     }
 }

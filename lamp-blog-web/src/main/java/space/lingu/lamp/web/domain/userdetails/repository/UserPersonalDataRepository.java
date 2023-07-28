@@ -16,41 +16,31 @@
 
 package space.lingu.lamp.web.domain.userdetails.repository;
 
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.UserPersonalDataDao;
+import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
-
-import java.util.List;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.paged.PageableContext;
 
 /**
  * @author RollW
  */
 @Repository
-public class UserPersonalDataRepository {
-    private final UserPersonalDataDao dao;
+public class UserPersonalDataRepository extends AutoPrimaryBaseRepository<UserPersonalData> {
+    private final UserPersonalDataDao userPersonalDataDao;
 
-    public UserPersonalDataRepository(LampDatabase database) {
-        this.dao = database.getUserPersonalDataDao();
+    public UserPersonalDataRepository(LampDatabase lampDatabase,
+                                      ContextThreadAware<PageableContext> pageableContextThreadAware,
+                                      CacheManager cacheManager) {
+        super(lampDatabase.getUserPersonalDataDao(), pageableContextThreadAware, cacheManager);
+        this.userPersonalDataDao = lampDatabase.getUserPersonalDataDao();
     }
 
-    public void insert(UserPersonalData userPersonalData) {
-        dao.insert(userPersonalData);
-    }
-
-    public void update(UserPersonalData userPersonalData) {
-        dao.update(userPersonalData);
-    }
-
-    public List<UserPersonalData> getAll() {
-        return dao.get();
-    }
-
-    public UserPersonalData getById(long userId) {
-        return dao.getById(userId);
-    }
-
-    public List<UserPersonalData> getByIds(Long[] ids) {
-        return dao.getInIds(ids);
+    @Override
+    protected Class<UserPersonalData> getEntityClass() {
+        return UserPersonalData.class;
     }
 }

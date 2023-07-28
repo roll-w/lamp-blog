@@ -16,10 +16,11 @@
 
 package space.lingu.lamp.web.database.dao;
 
-import space.lingu.Dangerous;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.staff.StaffType;
-import space.lingu.light.*;
+import space.lingu.light.Dao;
+import space.lingu.light.Delete;
+import space.lingu.light.Query;
 import tech.rollw.common.web.page.Offset;
 
 import java.util.List;
@@ -28,62 +29,45 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public abstract class StaffDao {
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(Staff... staffs);
-
-    @Insert(onConflict = OnConflictStrategy.ABORT)
-    public abstract void insert(List<Staff> staffs);
-
-    @Update(onConflict = OnConflictStrategy.ABORT)
-    public abstract void update(Staff... staffs);
-
-    @Update(onConflict = OnConflictStrategy.ABORT)
-    public abstract void update(List<Staff> staffs);
-
-    @Delete
-    @Dangerous(message = "This method will delete data completely in the table. Use with caution.")
-    protected abstract void delete(Staff staff);
-
-    @Delete
-    @Dangerous(message = "This method will delete data completely in the table. Use with caution.")
-    protected abstract void delete(List<Staff> staffs);
-
-    @Delete("DELETE FROM staff")
-    @Dangerous(message = "This method will delete all data in the table. Use with caution.")
-    protected abstract void clearTable();
-
-    @Query("SELECT * FROM staff")
-    public abstract List<Staff> get();
-
-    @Query("SELECT * FROM staff ORDER BY id LIMIT {offset.limit()} OFFSET {offset.offset()}")
-    public abstract List<Staff> get(Offset offset);
-
+public interface StaffDao extends AutoPrimaryBaseDao<Staff> {
+    @Override
     @Query("SELECT * FROM staff WHERE id = {id}")
-    public abstract Staff getById(long id);
+    Staff getById(long id);
 
-    @Query("SELECT * FROM staff WHERE employee_id = {id}")
-    public abstract Staff getByStaffId(String id);
+    @Override
+    @Query("SELECT * FROM staff WHERE id IN ({ids})")
+    List<Staff> getByIds(List<Long> ids);
+
+    @Override
+    @Query("SELECT * FROM staff ORDER BY id DESC")
+    List<Staff> get();
+
+    @Override
+    @Query("SELECT COUNT(*) FROM staff")
+    int count();
+
+    @Override
+    @Query("SELECT * FROM staff ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    List<Staff> get(Offset offset);
+
+    @Override
+    default String getTableName() {
+        return "staff";
+    }
+
+    @Query("SELECT * FROM staff WHERE user_id = {userId}")
+    Staff getByUserId(long userId);
 
     @Delete("UPDATE staff SET deleted = {deleted}, update_time = {time} WHERE id = {id}")
-    public abstract void setStaffDeleted(long id, boolean deleted, long time);
+    void setStaffDeleted(long id, boolean deleted, long time);
 
     @Query("SELECT * FROM staff WHERE types LIKE CONCAT('%', {type}, '%')")
-    public abstract List<Staff> getStaffsOfType(StaffType type);
+    List<Staff> getStaffsOfType(StaffType type);
 
     @Query("SELECT * FROM staff WHERE types LIKE CONCAT('%', {type}, '%')")
-    public abstract List<Staff> getStaffsOfType(StaffType type, boolean deleted);
-
-    @Query("SELECT COUNT(*) FROM staff WHERE types LIKE CONCAT('%', {type}, '%')")
-    public abstract int getStaffsCountOfType(StaffType type);
+    List<Staff> getStaffsOfType(StaffType type, boolean deleted);
 
     @Query("SELECT COUNT(*) FROM staff")
-    public abstract int getStaffsCount();
-
-    @Query("SELECT * FROM staff WHERE types REGEXP CONCAT({type1}, '|', {type2})")
-    public abstract List<Staff> getStaffsOfTypes(StaffType type1, StaffType type2);
-
-    @Query("SELECT COUNT(*) FROM staff WHERE types REGEXP CONCAT({type1}, '|', {type2})")
-    public abstract int getStaffsCountOfTypes(StaffType type1, StaffType type2);
+    int getStaffsCount();
 }
 
