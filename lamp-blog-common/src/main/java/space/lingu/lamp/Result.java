@@ -18,6 +18,10 @@ package space.lingu.lamp;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
+import tech.rollw.common.web.CommonErrorCode;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.ErrorCodeMessageProvider;
+import tech.rollw.common.web.HttpResponseBody;
 
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -26,6 +30,7 @@ import java.util.function.Supplier;
 /**
  * @author RollW
  */
+@Deprecated
 public record Result<D>(
         @NonNull
         ErrorCode errorCode,
