@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.database.dao;
 
-import space.lingu.lamp.DataItem;
+import space.lingu.lamp.LongDataItem;
 import space.lingu.light.Insert;
 import space.lingu.light.OnConflictStrategy;
 import tech.rollw.common.web.page.Offset;
@@ -26,7 +26,7 @@ import java.util.List;
 /**
  * @author RollW
  */
-public interface AutoPrimaryBaseDao<T extends DataItem<T>> extends LampDao<T> {
+public interface AutoPrimaryBaseDao<T extends LongDataItem<T>> extends LampDao<T, Long> {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     long insertReturns(T t);
 
@@ -39,6 +39,11 @@ public interface AutoPrimaryBaseDao<T extends DataItem<T>> extends LampDao<T> {
 
     default List<T> getByIds(List<Long> ids) {
         return List.of();
+    }
+
+    @Override
+    default T getById(Long aLong) {
+        return getById(aLong.longValue());
     }
 
     @Override

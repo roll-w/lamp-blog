@@ -19,8 +19,8 @@ package space.lingu.lamp;
 /**
  * @author RollW
  */
-public interface EntityBuilder<T, ID> {
+public interface LongEntityBuilder<T> extends EntityBuilder<T, Long> {
     T build();
 
-    EntityBuilder<T, ID> setId(ID id);
+    LongEntityBuilder<T> setId(Long id);
 }

@@ -16,54 +16,31 @@
 
 package space.lingu.lamp.web.system.repository;
 
+import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.SystemSettingDao;
+import space.lingu.lamp.web.database.repo.BaseRepository;
 import space.lingu.lamp.web.system.setting.SystemSetting;
-
-import java.util.List;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.paged.PageableContext;
 
 /**
  * @author RollW
  */
 @Repository
-public class SystemSettingRepository {
+public class SystemSettingRepository extends BaseRepository<SystemSetting, String> {
     private final SystemSettingDao systemSettingDao;
 
-    public SystemSettingRepository(LampDatabase database) {
-        this.systemSettingDao = database.getSystemSettingDao();
+    public SystemSettingRepository(LampDatabase lampDatabase,
+                                   ContextThreadAware<PageableContext> pageableContextThreadAware,
+                                   CacheManager cacheManager) {
+        super(lampDatabase.getSystemSettingDao(), pageableContextThreadAware, cacheManager);
+        this.systemSettingDao = lampDatabase.getSystemSettingDao();
     }
 
-    public String get(String key) {
-        SystemSetting setting = systemSettingDao.getByKey(key);
-        if (setting == null) {
-            return null;
-        }
-        return setting.getValue();
-    }
-
-    public SystemSetting getSystemSetting(String key) {
-       return systemSettingDao.getByKey(key);
-    }
-
-    public void set(String key, String value) {
-        SystemSetting setting = new SystemSetting(key, value);
-        systemSettingDao.insert(setting);
-    }
-
-    public void set(SystemSetting systemSetting) {
-        systemSettingDao.insert(systemSetting);
-    }
-
-    public void delete(String key) {
-        systemSettingDao.deleteByKey(key);
-    }
-
-    public List<SystemSetting> getAll() {
-        return systemSettingDao.get();
-    }
-
-    public List<SystemSetting> get(int offset, int limit) {
-        return systemSettingDao.get(limit, offset);
+    @Override
+    protected Class<SystemSetting> getEntityClass() {
+        return SystemSetting.class;
     }
 }

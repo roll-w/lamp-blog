@@ -18,8 +18,8 @@ package space.lingu.lamp.web.domain.article;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.DataItem;
-import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
 import space.lingu.lamp.web.domain.content.ContentType;
@@ -36,7 +36,7 @@ import space.lingu.light.SQLDataType;
 @DataTable(name = "article", indices = {
         @Index(value = {"user_id", "title"}, unique = true)
 })
-public class Article implements DataItem<Article>, ContentDetails {
+public class Article implements LongDataItem<Article>, ContentDetails {
     // TODO: article
 
     @DataColumn(name = "id")
@@ -149,7 +149,7 @@ public class Article implements DataItem<Article>, ContentDetails {
         return 0;
     }
 
-    public final static class Builder implements EntityBuilder<Article> {
+    public final static class Builder implements LongEntityBuilder<Article> {
         private Long id;
         private long userId;
         private String title;

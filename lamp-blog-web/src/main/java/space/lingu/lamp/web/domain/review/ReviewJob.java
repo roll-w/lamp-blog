@@ -18,8 +18,8 @@ package space.lingu.lamp.web.domain.review;
 
 import com.google.common.base.Preconditions;
 import space.lingu.Nullable;
-import space.lingu.lamp.DataItem;
-import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.Constructor;
@@ -34,7 +34,7 @@ import java.util.Objects;
  * @author RollW
  */
 @DataTable(name = "review_job")
-public class ReviewJob implements DataItem<ReviewJob> {
+public class ReviewJob implements LongDataItem<ReviewJob> {
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
     private final Long jobId;
@@ -225,7 +225,7 @@ public class ReviewJob implements DataItem<ReviewJob> {
     }
 
 
-    public final static class Builder implements EntityBuilder<ReviewJob> {
+    public final static class Builder implements LongEntityBuilder<ReviewJob> {
         private Long jobId = null;
         private long reviewContentId;
         private Long reviewerId;
@@ -254,7 +254,7 @@ public class ReviewJob implements DataItem<ReviewJob> {
         }
 
         @Override
-        public EntityBuilder<ReviewJob> setId(Long id) {
+        public LongEntityBuilder<ReviewJob> setId(Long id) {
             return setJobId(id);
         }
 

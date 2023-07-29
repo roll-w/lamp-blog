@@ -18,6 +18,7 @@ package space.lingu.lamp.web.database.dao;
 
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.light.Dao;
+import space.lingu.light.Delete;
 import space.lingu.light.Query;
 import tech.rollw.common.web.page.Offset;
 
@@ -47,6 +48,14 @@ public interface ArticleDao extends AutoPrimaryBaseDao<Article> {
     @Override
     @Query("SELECT * FROM article ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
     List<Article> get(Offset offset);
+
+    @Override
+    @Delete("DELETE FROM article WHERE id = {id}")
+    void deleteById(Long id);
+
+    @Override
+    @Delete("DELETE FROM article WHERE id IN ({ids})")
+    void deleteByIds(List<Long> ids);
 
     @Override
     default String getTableName() {

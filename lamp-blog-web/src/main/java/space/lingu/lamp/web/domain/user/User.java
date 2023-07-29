@@ -18,8 +18,8 @@ package space.lingu.lamp.web.domain.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import space.lingu.lamp.DataItem;
-import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
@@ -40,7 +40,7 @@ import java.util.Objects;
 })
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
 @SuppressWarnings({"ClassCanBeRecord"})
-public class User implements DataItem<User>, UserDetails, AttributedUser {
+public class User implements LongDataItem<User>, UserDetails, AttributedUser {
     @PrimaryKey(autoGenerate = true)
     @DataColumn(name = "id")
     private final Long id;
@@ -248,7 +248,7 @@ public class User implements DataItem<User>, UserDetails, AttributedUser {
         return LampSystemResourceKind.USER;
     }
 
-    public static final class Builder implements EntityBuilder<User> {
+    public static final class Builder implements LongEntityBuilder<User> {
         private Long id = null;
         private String username;
         private String password;

@@ -16,8 +16,8 @@
 
 package space.lingu.lamp.web.system;
 
-import space.lingu.lamp.DataItem;
-import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.*;
 import tech.rollw.common.web.system.SystemResourceKind;
@@ -46,7 +46,7 @@ public record MessageResource(
 
         @DataColumn(name = "locale")
         Locale locale
-) implements DataItem<MessageResource> {
+) implements LongDataItem<MessageResource> {
     @Override
     public Long getId() {
         return id;
@@ -63,7 +63,7 @@ public record MessageResource(
     }
 
     @Override
-    public EntityBuilder<MessageResource> toBuilder() {
+    public LongEntityBuilder<MessageResource> toBuilder() {
         return new Builder(this);
     }
 
@@ -84,7 +84,7 @@ public record MessageResource(
                 .build();
     }
 
-    public static final class Builder implements EntityBuilder<MessageResource> {
+    public static final class Builder implements LongEntityBuilder<MessageResource> {
         private Long id;
         private String key;
         private String value;

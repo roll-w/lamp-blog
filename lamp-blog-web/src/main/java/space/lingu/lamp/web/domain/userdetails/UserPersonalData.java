@@ -19,8 +19,8 @@ package space.lingu.lamp.web.domain.userdetails;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import space.lingu.NonNull;
-import space.lingu.lamp.DataItem;
-import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.light.DataColumn;
@@ -37,7 +37,7 @@ import java.io.Serializable;
  */
 @DataTable(name = "user_personal_data")
 @SuppressWarnings({"unused", "ClassCanBeRecord"})
-public final class UserPersonalData implements Serializable, DataItem<UserPersonalData> {
+public final class UserPersonalData implements Serializable, LongDataItem<UserPersonalData> {
     @PrimaryKey
     @DataColumn(name = "id")
     private final long userId;
@@ -189,7 +189,7 @@ public final class UserPersonalData implements Serializable, DataItem<UserPerson
     }
 
 
-    public static final class Builder implements EntityBuilder<UserPersonalData> {
+    public static final class Builder implements LongEntityBuilder<UserPersonalData> {
         @DataColumn(name = "id")
         private long userId;
 

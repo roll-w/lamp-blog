@@ -18,12 +18,9 @@ package space.lingu.lamp.web.system.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
-import org.springframework.cache.Cache;
-import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.system.repository.SystemSettingRepository;
 import space.lingu.lamp.web.system.setting.SettingLoader;
 import space.lingu.lamp.web.system.setting.SettingProvider;
@@ -44,12 +41,9 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
 
     public static final String ALL_SETTINGS = "AllSettingsCallback";
     private final SystemSettingRepository systemSettingRepository;
-    private final Cache cache;
 
-    public SystemSettingService(SystemSettingRepository systemSettingRepository,
-                                CacheManager cacheManager) {
+    public SystemSettingService(SystemSettingRepository systemSettingRepository) {
         this.systemSettingRepository = systemSettingRepository;
-        this.cache = cacheManager.getCache(CacheNames.SETTING);
     }
     // TODO: setting cache
 
@@ -59,13 +53,7 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         if (Strings.isNullOrEmpty(key)) {
             throw new IllegalStateException("Key is null or empty.");
         }
-        Cache.ValueWrapper old = cache.get(key);
-        if (old != null) {
-            return (SystemSetting) old.get();
-        }
-        SystemSetting setting = systemSettingRepository.getSystemSetting(key);
-        cache.put(key, setting);
-        return setting;
+        return systemSettingRepository.getById(key);
     }
 
     @Nullable
@@ -74,12 +62,7 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         if (Strings.isNullOrEmpty(key)) {
             throw new IllegalStateException("Key is null or empty.");
         }
-        Cache.ValueWrapper old = cache.get(key);
-        if (old != null) {
-            return tryGetSystemSetting((SystemSetting) old.get(), key, defaultValue);
-        }
-        SystemSetting setting = systemSettingRepository.getSystemSetting(key);
-        cache.put(key, setting);
+        SystemSetting setting = systemSettingRepository.getById(key);
         return tryGetSystemSetting(setting, key, defaultValue);
     }
 
@@ -95,19 +78,14 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         if (Strings.isNullOrEmpty(key)) {
             throw new IllegalStateException("Key is null or empty.");
         }
-        Cache.ValueWrapper old = cache.get(key);
-        if (old != null) {
-            return tryGetValue((SystemSetting) old.get(), defaultValue);
-        }
-        SystemSetting setting = systemSettingRepository.getSystemSetting(key);
-        cache.put(key, setting);
+        SystemSetting setting = systemSettingRepository.getById(key);
         return tryGetValue(setting, defaultValue);
     }
 
     @Override
     public List<SystemSetting> getSettings(int page, int size) {
         Offset offset = Offset.of(page, size);
-        return systemSettingRepository.get(offset.offset(), offset.limit());
+        return systemSettingRepository.get(offset);
     }
 
     private String tryGetValue(SystemSetting setting, String defaultValue) {
@@ -117,7 +95,8 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         return setting.getValue();
     }
 
-    private SystemSetting tryGetSystemSetting(SystemSetting setting, String key,
+    private SystemSetting tryGetSystemSetting(SystemSetting setting,
+                                              String key,
                                               String defaultValue) {
         if (setting == null || setting.getValue() == null) {
             return new SystemSetting(key, defaultValue);
@@ -133,8 +112,7 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         }
         SystemSetting setting = new SystemSetting(key, value);
         invokeCallback(setting);
-        cache.put(key, setting);
-        systemSettingRepository.set(setting);
+        systemSettingRepository.update(setting);
     }
 
     @Override
@@ -143,8 +121,7 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
             return;
         }
         invokeCallback(setting);
-        cache.put(setting.getKey(), setting);
-        systemSettingRepository.set(setting);
+        systemSettingRepository.update(setting);
     }
 
     @Override
@@ -153,9 +130,8 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
             return;
         }
         SystemSetting change = new SystemSetting(key, null);
-        cache.evictIfPresent(key);
         invokeCallback(change);
-        systemSettingRepository.delete(key);
+        systemSettingRepository.deleteById(key);
     }
 
     @Override
@@ -163,6 +139,10 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
                          String messagePattern) {
         Callback callback = new Callback(eventCallback, messagePattern);
         callbacks.add(callback);
+    }
+
+    private SystemSetting loadLocalSetting(String key) {
+        return null;
     }
 
     // TODO: callback method calls needs to be async.

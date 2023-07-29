@@ -29,7 +29,7 @@ import tech.rollw.common.web.system.SystemResourceKind;
  */
 @DataTable(name = "system_setting")
 @SuppressWarnings("all")
-public class SystemSetting implements DataItem<SystemSetting> {
+public class SystemSetting implements DataItem<SystemSetting, String> {
     @DataColumn(name = "key")
     @PrimaryKey
     private final String key;
@@ -51,8 +51,8 @@ public class SystemSetting implements DataItem<SystemSetting> {
     }
 
     @Override
-    public Long getId() {
-        return null;
+    public String getId() {
+        return key;
     }
 
     @Override
@@ -75,7 +75,7 @@ public class SystemSetting implements DataItem<SystemSetting> {
         return LampSystemResourceKind.SYSTEM_SETTING;
     }
 
-    public static final class Builder implements EntityBuilder<SystemSetting> {
+    public static final class Builder implements EntityBuilder<SystemSetting, String> {
         private String key;
         private String value;
 
@@ -102,8 +102,8 @@ public class SystemSetting implements DataItem<SystemSetting> {
         }
 
         @Override
-        public EntityBuilder<SystemSetting> setId(Long id) {
-            return this;
+        public Builder setId(String id) {
+            return setKey(id);
         }
     }
 }

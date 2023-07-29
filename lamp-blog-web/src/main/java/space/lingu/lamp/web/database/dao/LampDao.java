@@ -29,7 +29,7 @@ import java.util.List;
 /**
  * @author RollW
  */
-public interface LampDao<T> {
+public interface LampDao<T, ID> {
     @Insert(onConflict = OnConflictStrategy.ABORT)
     void insert(T t);
 
@@ -66,5 +66,23 @@ public interface LampDao<T> {
 
     default String getTableName() {
         return null;
+    }
+
+    default T getById(ID id) {
+        return null;
+    }
+
+    default List<T> getByIds(List<ID> list) {
+        return List.of();
+    }
+
+    @Dangerous(policy = InfoPolicy.CALLER,
+            message = "This method is dangerous, please check the caller.")
+    default void deleteById(ID id) {
+    }
+
+    @Dangerous(policy = InfoPolicy.CALLER,
+            message = "This method is dangerous, please check the caller.")
+    default void deleteByIds(List<ID> ids) {
     }
 }

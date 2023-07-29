@@ -18,8 +18,8 @@ package space.lingu.lamp.web.domain.comment;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.DataItem;
-import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
@@ -33,7 +33,7 @@ import tech.rollw.common.web.system.SystemResourceKind;
  * @author RollW
  */
 @DataTable(name = "comment")
-public class Comment implements DataItem<Comment>, ContentDetails {
+public class Comment implements LongDataItem<Comment>, ContentDetails {
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
     private final Long id;
@@ -158,7 +158,7 @@ public class Comment implements DataItem<Comment>, ContentDetails {
         return LampSystemResourceKind.COMMENT;
     }
 
-    public static class Builder implements EntityBuilder<Comment> {
+    public static class Builder implements LongEntityBuilder<Comment> {
         private Long id;
         private long userId;
         private long commentOn;

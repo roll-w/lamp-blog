@@ -16,8 +16,8 @@
 
 package space.lingu.lamp.web.domain.staff;
 
-import space.lingu.lamp.DataItem;
-import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -33,7 +33,7 @@ import java.util.Set;
  */
 @SuppressWarnings({"ClassCanBeRecord", "unused"})
 @DataTable(name = "staff")
-public class Staff implements DataItem<Staff> {
+public class Staff implements LongDataItem<Staff> {
     // TODO: staff type
 
     @DataColumn(name = "id")
@@ -145,7 +145,7 @@ public class Staff implements DataItem<Staff> {
         return new Builder();
     }
 
-    public final static class Builder implements EntityBuilder<Staff> {
+    public final static class Builder implements LongEntityBuilder<Staff> {
         private Long id;
         private long userId;
         private Set<StaffType> type;

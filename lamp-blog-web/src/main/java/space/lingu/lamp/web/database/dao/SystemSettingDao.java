@@ -27,17 +27,17 @@ import java.util.List;
  * @author RollW
  */
 @Dao
-public interface SystemSettingDao extends AutoPrimaryBaseDao<SystemSetting> {
+public interface SystemSettingDao extends LampDao<SystemSetting, String> {
     @Override
-    @Query("SELECT * FROM system_setting WHERE id = {id}")
-    SystemSetting getById(long id);
+    @Query("SELECT `key`, `value` FROM system_setting WHERE `key` = {id}")
+    SystemSetting getById(String id);
 
     @Override
-    @Query("SELECT * FROM system_setting WHERE id IN ({ids})")
-    List<SystemSetting> getByIds(List<Long> ids);
+    @Query("SELECT `key`, `value` FROM system_setting WHERE `key` IN ({ids})")
+    List<SystemSetting> getByIds(List<String> ids);
 
     @Override
-    @Query("SELECT * FROM system_setting ORDER BY id DESC")
+    @Query("SELECT `key`, `value` FROM system_setting ORDER BY id DESC")
     List<SystemSetting> get();
 
     @Override
@@ -45,7 +45,7 @@ public interface SystemSettingDao extends AutoPrimaryBaseDao<SystemSetting> {
     int count();
 
     @Override
-    @Query("SELECT * FROM system_setting ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    @Query("SELECT `key`, `value` FROM system_setting ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
     List<SystemSetting> get(Offset offset);
 
     @Override
