@@ -37,8 +37,6 @@ import space.lingu.light.SQLDataType;
         @Index(value = {"user_id", "title"}, unique = true)
 })
 public class Article implements LongDataItem<Article>, ContentDetails {
-    // TODO: article
-
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
     private final Long id;
@@ -62,8 +60,7 @@ public class Article implements LongDataItem<Article>, ContentDetails {
     private final long updateTime;
 
     public Article(Long id, long userId, String title, String cover,
-                   String content,
-                   long createTime, long updateTime) {
+                   String content, long createTime, long updateTime) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -142,11 +139,6 @@ public class Article implements LongDataItem<Article>, ContentDetails {
     @Override
     public ContentType getContentType() {
         return ContentType.ARTICLE;
-    }
-
-    @Override
-    public int getVersion() {
-        return 0;
     }
 
     public final static class Builder implements LongEntityBuilder<Article> {

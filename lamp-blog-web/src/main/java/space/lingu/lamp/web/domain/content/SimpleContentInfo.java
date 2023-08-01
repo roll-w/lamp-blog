@@ -17,51 +17,28 @@
 package space.lingu.lamp.web.domain.content;
 
 import space.lingu.NonNull;
-import space.lingu.Nullable;
 
 /**
- * Content details.
- *
  * @author RollW
  */
-public interface ContentDetails extends Content {
-    /**
-     * @inheritDoc
-     */
+public record SimpleContentInfo(
+        long userId,
+        long contentId,
+        ContentType contentType
+) implements Content {
     @Override
-    long getContentId();
+    public long getUserId() {
+        return userId;
+    }
 
-    /**
-     * @inheritDoc
-     */
+    @Override
+    public long getContentId() {
+        return contentId;
+    }
+
     @NonNull
     @Override
-    ContentType getContentType();
-
-    /**
-     * @inheritDoc
-     */
-    @Override
-    long getUserId();
-
-    /**
-     * Get the title of the content, if exists.
-     *
-     * @return title
-     */
-    @Nullable
-    String getTitle();
-
-    /**
-     * Get the content of the content, if exists.
-     *
-     * @return content
-     */
-    @Nullable
-    String getContent();
-
-    @Nullable
-    default ContentDetailsMetadata getMetadata() {
-        return null;
+    public ContentType getContentType() {
+        return contentType;
     }
 }

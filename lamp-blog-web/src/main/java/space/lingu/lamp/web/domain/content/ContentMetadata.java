@@ -17,8 +17,8 @@
 package space.lingu.lamp.web.domain.content;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.DataItem;
-import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.*;
 import tech.rollw.common.web.system.SystemResourceKind;
@@ -26,10 +26,11 @@ import tech.rollw.common.web.system.SystemResourceKind;
 /**
  * @author RollW
  */
-@DataTable(name = "content_metadata", indices =
-@Index(value = {"content_id", "type"}, unique = true))
+@DataTable(name = "content_metadata", indices = {
+        @Index(value = {"content_id", "type"}, unique = true)
+})
 @SuppressWarnings({"ClassCanBeRecord"})
-public class ContentMetadata implements DataItem<ContentMetadata> {
+public class ContentMetadata implements LongDataItem<ContentMetadata>, ContentTrait {
     // only maintains the metadata of the content.
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
@@ -59,7 +60,6 @@ public class ContentMetadata implements DataItem<ContentMetadata> {
                            @NonNull ContentType contentType,
                            @NonNull ContentStatus contentStatus,
                            @NonNull ContentAccessAuthType contentAccessAuthType) {
-
         this.id = id;
         this.userId = userId;
         this.contentId = contentId;
@@ -101,11 +101,13 @@ public class ContentMetadata implements DataItem<ContentMetadata> {
         return userId;
     }
 
+    @Override
     public long getContentId() {
         return contentId;
     }
 
     @NonNull
+    @Override
     public ContentType getContentType() {
         return contentType;
     }
@@ -120,6 +122,7 @@ public class ContentMetadata implements DataItem<ContentMetadata> {
         return contentAccessAuthType;
     }
 
+    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -128,12 +131,13 @@ public class ContentMetadata implements DataItem<ContentMetadata> {
         return new Builder();
     }
 
+    @NonNull
     @Override
     public SystemResourceKind getSystemResourceKind() {
         return LampSystemResourceKind.CONTENT_METADATA;
     }
 
-    public static class Builder implements EntityBuilder<ContentMetadata> {
+    public static class Builder implements LongEntityBuilder<ContentMetadata> {
         private Long id;
         private long userId;
         private long contentId;

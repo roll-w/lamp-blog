@@ -52,6 +52,9 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
             dataType = SQLDataType.LONGTEXT)
     private final String content;
 
+    @DataColumn(name = "deleted")
+    private final boolean deleted;
+
     @DataColumn(name = "create_time")
     private final long createTime;
 
@@ -66,14 +69,15 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
     private final CommentStatus commentStatus;
 
     public Comment(Long id, long userId, long commentOn,
-                   @Nullable Long parentId, String content, long createTime,
-                   ContentType type,
-                   @NonNull CommentStatus commentStatus) {
+                   @Nullable Long parentId, String content,
+                   boolean deleted, long createTime,
+                   ContentType type, @NonNull CommentStatus commentStatus) {
         this.id = id;
         this.userId = userId;
         this.commentOn = commentOn;
         this.parentId = parentId;
         this.content = content;
+        this.deleted = deleted;
         this.createTime = createTime;
         this.type = type;
         this.commentStatus = commentStatus;
@@ -135,6 +139,10 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
         return 0;
     }
 
+    public boolean isDeleted() {
+        return deleted;
+    }
+
     public ContentType getType() {
         return type;
     }
@@ -153,6 +161,7 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
         return new Builder();
     }
 
+    @NonNull
     @Override
     public SystemResourceKind getSystemResourceKind() {
         return LampSystemResourceKind.COMMENT;
@@ -164,6 +173,7 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
         private long commentOn;
         private Long parentId;
         private String content;
+        private boolean deleted;
         private long createTime;
         private ContentType type;
         @NonNull
@@ -175,6 +185,7 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
             this.commentOn = comment.commentOn;
             this.parentId = comment.parentId;
             this.content = comment.content;
+            this.deleted = comment.deleted;
             this.createTime = comment.createTime;
             this.type = comment.type;
             this.commentStatus = comment.commentStatus;
@@ -210,6 +221,11 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
             return this;
         }
 
+        public Builder setDeleted(boolean deleted) {
+            this.deleted = deleted;
+            return this;
+        }
+
         public Builder setCreateTime(long createTime) {
             this.createTime = createTime;
             return this;
@@ -228,7 +244,7 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
         @Override
         public Comment build() {
             return new Comment(id, userId, commentOn,
-                    parentId, content, createTime, type, commentStatus);
+                    parentId, content, deleted, createTime, type, commentStatus);
         }
     }
 

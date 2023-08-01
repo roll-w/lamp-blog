@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.domain.article.dto;
 
-import space.lingu.lamp.web.domain.content.BasicUncreatedContent;
+import space.lingu.lamp.web.domain.content.SimpleUncreatedContent;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.content.UncreatedContent;
 
@@ -29,7 +29,7 @@ public record ArticleRequest(
 ) {
     public UncreatedContent toUncreatedContent(long userId,
                                                ArticleDetailsMetadata articleDetailsMetadata) {
-        return new BasicUncreatedContent(
+        return new SimpleUncreatedContent(
                 ContentType.ARTICLE,
                 userId,
                 title, content,

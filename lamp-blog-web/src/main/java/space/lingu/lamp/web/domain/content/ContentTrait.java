@@ -16,34 +16,13 @@
 
 package space.lingu.lamp.web.domain.content;
 
-import space.lingu.NonNull;
-
 /**
+ * Content trait. Content has a unique id and a type.
+ *
  * @author RollW
  */
-public record BasicContentInfo(
-        long userId,
-        long contentId,
-        ContentType contentType
-) implements Content {
-    @Override
-    public long getUserId() {
-        return userId;
-    }
+public interface ContentTrait {
+    long getContentId();
 
-    @Override
-    public long getContentId() {
-        return contentId;
-    }
-
-    @NonNull
-    @Override
-    public ContentType getContentType() {
-        return contentType;
-    }
-
-    @Override
-    public int getVersion() {
-        return 0;
-    }
+    ContentType getContentType();
 }

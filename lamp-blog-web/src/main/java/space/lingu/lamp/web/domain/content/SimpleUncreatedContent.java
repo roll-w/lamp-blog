@@ -22,7 +22,7 @@ import space.lingu.Nullable;
 /**
  * @author RollW
  */
-public record BasicUncreatedContent(
+public record SimpleUncreatedContent(
         @NonNull ContentType contentType,
         long userId,
         @Nullable String title,

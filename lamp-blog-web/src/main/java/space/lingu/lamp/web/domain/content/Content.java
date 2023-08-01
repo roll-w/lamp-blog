@@ -24,8 +24,6 @@ import space.lingu.NonNull;
  * @author RollW
  */
 public interface Content extends ContentIdentity {
-    int INVALID_VERSION = -1;
-
     /**
      * Get the id of the user who created the content.
      *
@@ -49,9 +47,4 @@ public interface Content extends ContentIdentity {
     @NonNull
     @Override
     ContentType getContentType();
-
-    // TODO: support history version
-    default int getVersion() {
-        return INVALID_VERSION;
-    }
 }
