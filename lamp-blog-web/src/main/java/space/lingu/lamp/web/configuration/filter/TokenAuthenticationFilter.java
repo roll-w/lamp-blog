@@ -25,13 +25,15 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.common.ApiContextHolder;
+import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
 import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
 import space.lingu.lamp.web.domain.user.UserDetailsService;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.util.RequestUtils;
 import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.system.ContextThread;
+import tech.rollw.common.web.system.ContextThreadAware;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -45,23 +47,34 @@ import java.io.IOException;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationTokenService authenticationTokenService;
     private final UserDetailsService userDetailsService;
+    private final ContextThreadAware<ApiContext> apiContextThreadAware;
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     public TokenAuthenticationFilter(AuthenticationTokenService authenticationTokenService,
-                                     UserDetailsService userDetailsService) {
+                                     UserDetailsService userDetailsService,
+                                     ContextThreadAware<ApiContext> apiContextThreadAware) {
         this.authenticationTokenService = authenticationTokenService;
         this.userDetailsService = userDetailsService;
+        this.apiContextThreadAware = apiContextThreadAware;
     }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        ApiContextHolder.clearContext();
+        ContextThread<ApiContext> contextThread =
+                apiContextThreadAware.assambleContextThread(null);
+
         String requestUri = request.getRequestURI();
         HttpMethod method = HttpMethod.resolve(request.getMethod());
         boolean isAdminApi = isAdminApi(requestUri);
         String remoteIp = RequestUtils.getRemoteIpAddress(request);
+
+        ApiContext apiContext = new ApiContext(
+                isAdminApi, remoteIp,
+                LocaleContextHolder.getLocale(),
+                method, null
+        );
 
         try {
             Authentication existAuthentication =
@@ -70,26 +83,29 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 UserDetails userDetails = (UserDetails)
                         existAuthentication.getPrincipal();
                 UserInfo userInfo = UserInfo.from(userDetails);
-                setApiContext(isAdminApi, remoteIp, method, userInfo);
+                setApiContext(apiContext, userInfo, contextThread);
                 filterChain.doFilter(request, response);
                 return;
             }
 
             String token = loadToken(request);
             if (token == null || token.isEmpty()) {
-                nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
+                setApiContext(apiContext, null, contextThread);
+                filterChain.doFilter(request, response);
                 return;
             }
 
             Long userId = authenticationTokenService.getUserId(token);
             if (userId == null) {
-                nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
+                setApiContext(apiContext, null, contextThread);
+                filterChain.doFilter(request, response);
                 return;
             }
             UserDetails userDetails =
                     userDetailsService.loadUserByUserId(userId);
             if (userDetails == null) {
-                nullNextFilter(isAdminApi, remoteIp, method, request, response, filterChain);
+                setApiContext(apiContext, null, contextThread);
+                filterChain.doFilter(request, response);
                 return;
             }
             TokenAuthResult result = authenticationTokenService.verifyToken(token,
@@ -108,18 +124,19 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                     userDetails.getAuthorities()
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            setApiContext(isAdminApi, remoteIp, method, userInfo);
+
+            setApiContext(apiContext, userInfo, contextThread);
             filterChain.doFilter(request, response);
         } finally {
-            ApiContextHolder.clearContext();
+            apiContextThreadAware.clearContextThread();
         }
     }
 
-    private static void setApiContext(boolean isAdminApi, String remoteIp,
-                                      HttpMethod method, UserInfo userInfo) {
-        ApiContextHolder.ApiContext apiContext = new ApiContextHolder.ApiContext(
-                isAdminApi, remoteIp, LocaleContextHolder.getLocale(), method, userInfo);
-        ApiContextHolder.setContext(apiContext);
+    private static void setApiContext(ApiContext rawContext, UserInfo userInfo,
+                                      ContextThread<ApiContext> contextThread) {
+
+        ApiContext apiContext = rawContext.fork(userInfo);
+        contextThread.setContext(apiContext);
     }
 
     private boolean isAdminApi(String requestUri) {
@@ -127,14 +144,8 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             return false;
         }
 
-        return antPathMatcher.match("/api/{version}/admin/**", requestUri);
-    }
-
-    private void nullNextFilter(boolean isAdminApi, String remoteIp, HttpMethod method,
-                                HttpServletRequest request, HttpServletResponse response,
-                                FilterChain filterChain) throws IOException, ServletException {
-        setApiContext(isAdminApi, remoteIp, method, null);
-        filterChain.doFilter(request, response);
+        return antPathMatcher.match("/api/{version}/admin/**", requestUri) ||
+                antPathMatcher.match("/api/admin/**", requestUri);
     }
 
     private String loadToken(HttpServletRequest request) {

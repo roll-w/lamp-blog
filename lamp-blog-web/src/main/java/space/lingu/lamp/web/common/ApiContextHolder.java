@@ -27,6 +27,7 @@ import java.util.Locale;
 /**
  * @author RollW
  */
+@Deprecated(forRemoval = true)
 public final class ApiContextHolder {
     private static final ThreadLocal<ApiContext> contextHolder = new ThreadLocal<>();
 
@@ -50,6 +51,7 @@ public final class ApiContextHolder {
     private ApiContextHolder() {
     }
 
+    @Deprecated
     public record ApiContext(
             boolean admin,
             String ip,
