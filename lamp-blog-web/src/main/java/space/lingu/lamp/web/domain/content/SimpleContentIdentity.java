@@ -16,12 +16,23 @@
 
 package space.lingu.lamp.web.domain.content;
 
+import space.lingu.NonNull;
+
 /**
  * @author RollW
  */
-public interface ContentAccessor extends ContentSupportable {
-    ContentDetails getContent(long contentId, ContentType contentType);
+public record SimpleContentIdentity(
+        long contentId,
+        @NonNull ContentType contentType
+) implements ContentIdentity {
+    @Override
+    public long getContentId() {
+        return contentId;
+    }
 
     @Override
-    boolean supports(ContentType contentType);
+    @NonNull
+    public ContentType getContentType() {
+        return contentType;
+    }
 }

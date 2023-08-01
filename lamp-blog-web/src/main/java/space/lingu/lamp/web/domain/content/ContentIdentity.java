@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.domain.content;
 
+import space.lingu.NonNull;
 import tech.rollw.common.web.system.SystemResource;
 import tech.rollw.common.web.system.SystemResourceKind;
 
@@ -24,9 +25,11 @@ import java.io.Serializable;
 /**
  * @author RollW
  */
-public interface ContentIdentity extends SystemResource<Long>, Serializable {
+public interface ContentIdentity extends ContentTrait, SystemResource<Long>, Serializable {
+    @Override
     long getContentId();
 
+    @Override
     ContentType getContentType();
 
     @Override
@@ -34,6 +37,7 @@ public interface ContentIdentity extends SystemResource<Long>, Serializable {
         return getContentId();
     }
 
+    @NonNull
     @Override
     default SystemResourceKind getSystemResourceKind() {
         return getContentType().getSystemResourceKind();

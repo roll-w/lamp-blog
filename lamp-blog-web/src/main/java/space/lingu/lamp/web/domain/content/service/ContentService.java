@@ -93,7 +93,7 @@ public class ContentService implements ContentAccessService,
             throw new ContentException(errorCode);
         }
         ContentPermitResult permitResult = contentPermitChecker.checkAccessPermit(
-                new BasicContentInfo(metadata.getUserId(), contentId, contentType),
+                new SimpleContentInfo(metadata.getUserId(), contentId, contentType),
                 metadata.getContentAccessAuthType(),
                 contentAccessCredentials
         );
@@ -264,7 +264,7 @@ public class ContentService implements ContentAccessService,
         contentDeleters.forEach(deleter ->
                 callContentDeleter(deleter, contentMetadata, newStatus));
 
-        BasicContentInfo contentInfo = new BasicContentInfo(
+        SimpleContentInfo contentInfo = new SimpleContentInfo(
                 contentMetadata.getUserId(),
                 contentMetadata.getContentId(),
                 contentMetadata.getContentType()

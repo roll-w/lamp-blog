@@ -16,8 +16,6 @@
 
 package space.lingu.lamp.web.domain.content.event;
 
-import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,19 +23,13 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.content.BasicContentInfo;
 import space.lingu.lamp.web.domain.content.ContentMetadata;
-import space.lingu.lamp.web.domain.content.ContentNotifier;
 import space.lingu.lamp.web.domain.content.ContentStatus;
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.content.SimpleContentInfo;
 import space.lingu.lamp.web.domain.content.repository.ContentMetadataRepository;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 import space.lingu.lamp.web.domain.review.event.OnReviewStateChangeEvent;
-
-import java.util.EnumMap;
-import java.util.HashSet;
-import java.util.List;
 
 /**
  * Converts {@link OnReviewStateChangeEvent} to {@link ContentStatusEvent}.
@@ -48,22 +40,15 @@ import java.util.List;
 public class OnReviewStateChangeListener implements ApplicationListener<OnReviewStateChangeEvent> {
     private final ContentMetadataRepository contentMetadataRepository;
     private final ApplicationEventPublisher eventPublisher;
-    private final Multimap<ContentType, ContentNotifier> contentNotifiers =
-            Multimaps.newSetMultimap(new EnumMap<>(ContentType.class), HashSet::new);
 
     private static final Logger logger =
             LoggerFactory.getLogger(OnReviewStateChangeListener.class);
 
     public OnReviewStateChangeListener(
-            List<ContentNotifier> contentNotifiers,
             ContentMetadataRepository contentMetadataRepository,
             ApplicationEventPublisher eventPublisher) {
         this.contentMetadataRepository = contentMetadataRepository;
         this.eventPublisher = eventPublisher;
-        contentNotifiers.forEach(
-                notifier -> notifier.getSupportedContentTypes().forEach(
-                        type -> this.contentNotifiers.put(type, notifier)
-                ));
     }
 
     @Override
@@ -80,7 +65,7 @@ public class OnReviewStateChangeListener implements ApplicationListener<OnReview
                     reviewJob);
             return;
         }
-        BasicContentInfo contentInfo = new BasicContentInfo(
+        SimpleContentInfo contentInfo = new SimpleContentInfo(
                 metadata.getUserId(),
                 metadata.getContentId(),
                 metadata.getContentType()

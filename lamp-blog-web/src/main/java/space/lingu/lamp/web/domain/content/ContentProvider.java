@@ -17,8 +17,15 @@
 package space.lingu.lamp.web.domain.content;
 
 /**
+ * Content service internal interface.
+ *
  * @author RollW
  */
-public interface ContentProvider {
+public interface ContentProvider extends ContentSupportable {
+    @Override
     boolean supports(ContentType contentType);
+
+    ContentDetails getContentDetails(ContentTrait contentTrait);
+
+    ContentOperator getContentOperator(ContentTrait contentTrait);
 }

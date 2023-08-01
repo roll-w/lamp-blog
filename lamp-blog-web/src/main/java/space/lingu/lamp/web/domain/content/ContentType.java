@@ -65,4 +65,14 @@ public enum ContentType implements SystemResourceKind.Kind {
             case IMAGE -> LampSystemResourceKind.IMAGE;
         };
     }
+
+    public static ContentType from(LampSystemResourceKind kind) {
+        return switch (kind) {
+            case ARTICLE -> ARTICLE;
+            case COMMENT -> COMMENT;
+            case POST -> POST;
+            case IMAGE -> IMAGE;
+            default -> null;
+        };
+    }
 }

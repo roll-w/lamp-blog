@@ -19,9 +19,6 @@ package space.lingu.lamp.web.domain.content;
 /**
  * @author RollW
  */
-public interface ContentAccessor extends ContentSupportable {
-    ContentDetails getContent(long contentId, ContentType contentType);
-
-    @Override
+public interface ContentSupportable {
     boolean supports(ContentType contentType);
 }

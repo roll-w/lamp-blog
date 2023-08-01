@@ -22,7 +22,7 @@ import space.lingu.lamp.web.domain.content.common.ContentException;
 /**
  * @author RollW
  */
-public interface ContentPublisher extends ContentProvider {
+public interface ContentPublisher extends ContentSupportable {
     /**
      * @throws ContentException if the content create failed.
      */
