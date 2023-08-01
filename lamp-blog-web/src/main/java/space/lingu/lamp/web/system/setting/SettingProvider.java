@@ -18,6 +18,7 @@ package space.lingu.lamp.web.system.setting;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
+import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 
@@ -42,7 +43,7 @@ public interface SettingProvider extends SettingLoader {
     String getSettingValue(@NonNull String key, String defaultValue);
 
     @Override
-    List<SystemSetting> getSettings(int page, int size);
+    List<SystemSetting> getSettings(Pageable pageable);
 
     void setSetting(String key, String value);
 

@@ -18,17 +18,23 @@ package space.lingu.lamp.web.system.service;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Sets;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
+import space.lingu.lamp.web.LampBlogSystemApplication;
+import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.system.repository.SystemSettingRepository;
+import space.lingu.lamp.web.system.setting.LocalSettingLoader;
 import space.lingu.lamp.web.system.setting.SettingLoader;
 import space.lingu.lamp.web.system.setting.SettingProvider;
 import space.lingu.lamp.web.system.setting.SystemSetting;
 import tech.rollw.common.event.EventCallback;
 import tech.rollw.common.event.EventRegistry;
-import tech.rollw.common.web.page.Offset;
+import tech.rollw.common.web.page.Pageable;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
@@ -38,14 +44,22 @@ import java.util.Set;
 @Service
 public class SystemSettingService implements SettingProvider, SettingLoader,
         EventRegistry<SystemSetting, String> {
+    private static final Logger logger = LoggerFactory.getLogger(SystemSettingService.class);
 
     public static final String ALL_SETTINGS = "AllSettingsCallback";
+    private final LocalSettingLoader localSettingLoader;
     private final SystemSettingRepository systemSettingRepository;
 
-    public SystemSettingService(SystemSettingRepository systemSettingRepository) {
+    public SystemSettingService(SystemSettingRepository systemSettingRepository)
+            throws IOException {
         this.systemSettingRepository = systemSettingRepository;
+        this.localSettingLoader =
+                LocalSettingLoader.load(LampBlogSystemApplication.class);
+        logger.info("Loaded {} settings from local. Mail username: {}",
+                localSettingLoader.size(),
+                localSettingLoader.getSetting(MailConfigKeys.KEY_MAIL_USERNAME)
+        );
     }
-    // TODO: setting cache
 
     @Nullable
     @Override
@@ -53,7 +67,11 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         if (Strings.isNullOrEmpty(key)) {
             throw new IllegalStateException("Key is null or empty.");
         }
-        return systemSettingRepository.getById(key);
+        SystemSetting dbSetting = systemSettingRepository.getById(key);
+        if (dbSetting != null) {
+            return dbSetting;
+        }
+        return localSettingLoader.getSetting(key);
     }
 
     @Nullable
@@ -62,8 +80,11 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         if (Strings.isNullOrEmpty(key)) {
             throw new IllegalStateException("Key is null or empty.");
         }
-        SystemSetting setting = systemSettingRepository.getById(key);
-        return tryGetSystemSetting(setting, key, defaultValue);
+        SystemSetting dbSetting = systemSettingRepository.getById(key);
+        if (dbSetting != null) {
+            return dbSetting;
+        }
+        return localSettingLoader.getSetting(key, defaultValue);
     }
 
     @Nullable
@@ -78,30 +99,18 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         if (Strings.isNullOrEmpty(key)) {
             throw new IllegalStateException("Key is null or empty.");
         }
-        SystemSetting setting = systemSettingRepository.getById(key);
-        return tryGetValue(setting, defaultValue);
+        SystemSetting dbSetting = systemSettingRepository.getById(key);
+        if (dbSetting != null) {
+            return dbSetting.getValue() == null
+                    ? defaultValue
+                    : dbSetting.getValue();
+        }
+        return localSettingLoader.getSettingValue(key, defaultValue);
     }
 
     @Override
-    public List<SystemSetting> getSettings(int page, int size) {
-        Offset offset = Offset.of(page, size);
-        return systemSettingRepository.get(offset);
-    }
-
-    private String tryGetValue(SystemSetting setting, String defaultValue) {
-        if (setting == null || setting.getValue() == null) {
-            return defaultValue;
-        }
-        return setting.getValue();
-    }
-
-    private SystemSetting tryGetSystemSetting(SystemSetting setting,
-                                              String key,
-                                              String defaultValue) {
-        if (setting == null || setting.getValue() == null) {
-            return new SystemSetting(key, defaultValue);
-        }
-        return setting;
+    public List<SystemSetting> getSettings(Pageable pageable) {
+        return systemSettingRepository.get(pageable.toOffset());
     }
 
 
