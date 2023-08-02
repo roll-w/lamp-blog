@@ -60,6 +60,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
     private final UserManageService userManageService;
     private final ApplicationEventPublisher eventPublisher;
     private final AuthenticationManager authenticationManager;
+    private final UserSignatureProvider userSignatureProvider;
     private final Map<LoginStrategyType, LoginStrategy> loginStrategyMap =
             new EnumMap<>(LoginStrategyType.class);
 
@@ -68,12 +69,14 @@ public class LoginRegisterService implements RegisterTokenProvider {
                                 RegisterVerificationTokenRepository registerVerificationTokenRepository,
                                 UserManageService userManageService,
                                 ApplicationEventPublisher eventPublisher,
-                                AuthenticationManager authenticationManager) {
+                                AuthenticationManager authenticationManager,
+                                UserSignatureProvider userSignatureProvider) {
         this.userRepository = userRepository;
         this.registerVerificationTokenRepository = registerVerificationTokenRepository;
         this.userManageService = userManageService;
         this.eventPublisher = eventPublisher;
         this.authenticationManager = authenticationManager;
+        this.userSignatureProvider = userSignatureProvider;
         strategies.forEach(strategy ->
                 loginStrategyMap.put(strategy.getStrategyType(), strategy));
     }
@@ -134,8 +137,8 @@ public class LoginRegisterService implements RegisterTokenProvider {
 
         OnUserLoginEvent onUserLoginEvent = new OnUserLoginEvent(user, metadata);
         eventPublisher.publishEvent(onUserLoginEvent);
-
-        return UserInfoSignature.from(user);
+        String signature = userSignatureProvider.getSignature(user.getUserId());
+        return UserInfoSignature.from(user, signature);
     }
 
     public AttributedUser registerUser(String username, String password,

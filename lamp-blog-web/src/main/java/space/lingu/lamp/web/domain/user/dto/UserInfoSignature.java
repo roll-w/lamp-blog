@@ -31,27 +31,27 @@ public record UserInfoSignature(
         String email,
         Role role
 ) implements UserIdentity {
-    public static UserInfoSignature from(User user) {
+    public static UserInfoSignature from(User user, String signature) {
         if (user == null) {
             return null;
         }
         return new UserInfoSignature(
                 user.getId(),
                 user.getUsername(),
-                user.getPassword(),
+                signature,
                 user.getEmail(),
                 user.getRole()
         );
     }
 
-    public static UserInfoSignature from(UserDetails userDetails) {
+    public static UserInfoSignature from(UserDetails userDetails, String signature) {
         if (!(userDetails instanceof User user)) {
             return null;
         }
         return new UserInfoSignature(
                 user.getId(),
                 user.getUsername(),
-                user.getPassword(),
+                signature,
                 user.getEmail(),
                 user.getRole()
         );

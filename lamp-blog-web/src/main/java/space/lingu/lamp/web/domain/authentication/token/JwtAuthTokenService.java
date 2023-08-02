@@ -18,6 +18,7 @@ package space.lingu.lamp.web.domain.authentication.token;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
     private static final String TOKEN_HEAD = "Bearer ";
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthTokenService.class);
+
     public JwtAuthTokenService() {
     }
 
@@ -69,6 +71,8 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
             return TokenAuthResult.success(userId, token);
         } catch (ExpiredJwtException e) {
             return TokenAuthResult.failure(AuthErrorCode.ERROR_TOKEN_EXPIRED);
+        } catch (SecurityException e) {
+            return TokenAuthResult.failure(AuthErrorCode.ERROR_INVALID_TOKEN);
         } catch (NumberFormatException e) {
             logger.error("Invalid jwt token number format: {}", rawToken);
             return TokenAuthResult.failure(AuthErrorCode.ERROR_INVALID_TOKEN);
