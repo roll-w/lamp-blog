@@ -36,6 +36,10 @@ public enum MessageMimeType {
         return mimeType;
     }
 
+    public boolean isHtml() {
+        return this == HTML;
+    }
+
     public static MessageMimeType fromMimeType(String mimeType) {
         for (MessageMimeType value : values()) {
             if (value.getMimeType().equals(mimeType)) {
