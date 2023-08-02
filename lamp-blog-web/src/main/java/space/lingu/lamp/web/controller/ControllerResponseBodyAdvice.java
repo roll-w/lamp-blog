@@ -35,7 +35,13 @@ import space.lingu.NonNull;
 import tech.rollw.common.web.ErrorCodeMessageProvider;
 import tech.rollw.common.web.HttpResponseBody;
 import tech.rollw.common.web.HttpResponseEntity;
+import tech.rollw.common.web.PageableHttpResponseBody;
+import tech.rollw.common.web.page.Page;
+import tech.rollw.common.web.system.ContextThread;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.paged.PageableContext;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -43,14 +49,18 @@ import java.util.Objects;
  */
 @ControllerAdvice
 public class ControllerResponseBodyAdvice implements ResponseBodyAdvice<Object> {
-    private final ErrorCodeMessageProvider errorCodeMessageProvider;
-    private final MessageSource messageSource;
     private static final Logger logger = LoggerFactory.getLogger(ControllerResponseBodyAdvice.class);
 
+    private final ErrorCodeMessageProvider errorCodeMessageProvider;
+    private final MessageSource messageSource;
+    private final ContextThreadAware<PageableContext> contextThreadAware;
+
     public ControllerResponseBodyAdvice(ErrorCodeMessageProvider errorCodeMessageProvider,
-                                        MessageSource messageSource) {
+                                        MessageSource messageSource,
+                                        ContextThreadAware<PageableContext> contextThreadAware) {
         this.errorCodeMessageProvider = errorCodeMessageProvider;
         this.messageSource = messageSource;
+        this.contextThreadAware = contextThreadAware;
     }
 
     @Override
@@ -80,6 +90,20 @@ public class ControllerResponseBodyAdvice implements ResponseBodyAdvice<Object> 
         }
         if (!(obj instanceof HttpResponseBody<?> body)) {
             return obj;
+        }
+        Object data = body.getData();
+        if (data instanceof List<?> dataList &&
+                !(body instanceof PageableHttpResponseBody<?>)) {
+            ContextThread<PageableContext> contextThread =
+                    contextThreadAware.getContextThread();
+            if (contextThread.hasContext()) {
+                PageableContext pageableContext =
+                        contextThread.getContext();
+                @SuppressWarnings("unchecked")
+                Page<Object> objectPage = (Page<Object>)
+                        pageableContext.toPage(dataList);
+                body = body.fork(objectPage);
+            }
         }
         HttpMethod method = request.getMethod();
         String rawTip = tryGetRawTip(body);
