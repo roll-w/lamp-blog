@@ -86,10 +86,6 @@ public abstract class BaseRepository<T extends DataItem<T, ID>, ID> {
         if (valueWrapper != null) {
             return (T) valueWrapper.get();
         }
-        T t = (T) valueWrapper.get();
-        if (t != null) {
-            return t;
-        }
         T queried = lampDao.getById(id);
         return cacheResultWithId(queried, id);
     }
