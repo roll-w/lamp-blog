@@ -14,8 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.common;
-
+package space.lingu.lamp.web.domain.storage.common;
 
 import tech.rollw.common.web.BusinessRuntimeException;
 import tech.rollw.common.web.ErrorCode;
@@ -23,20 +22,20 @@ import tech.rollw.common.web.ErrorCode;
 /**
  * @author RollW
  */
-public class AuthenticationException extends BusinessRuntimeException {
-    public AuthenticationException(ErrorCode errorCode) {
+public class StorageException extends BusinessRuntimeException {
+    public StorageException(ErrorCode errorCode) {
         super(errorCode);
     }
 
-    public AuthenticationException(ErrorCode errorCode, String message, Object... args) {
+    public StorageException(ErrorCode errorCode, String message, Object... args) {
         super(errorCode, message, args);
     }
 
-    public AuthenticationException(ErrorCode errorCode, String message, Throwable cause, Object... args) {
+    public StorageException(ErrorCode errorCode, String message, Throwable cause, Object... args) {
         super(errorCode, message, cause, args);
     }
 
-    public AuthenticationException(ErrorCode errorCode, Throwable cause) {
+    public StorageException(ErrorCode errorCode, Throwable cause) {
         super(errorCode, cause);
     }
 }
