@@ -33,15 +33,20 @@ public class ApiContext implements SystemContext {
     private final Locale locale;
     private final HttpMethod method;
     private final UserIdentity user;
+    private final long timestamp;
+    private final String requestUri;
 
     public ApiContext(boolean admin, String ip,
                       Locale locale, HttpMethod method,
-                      UserIdentity user) {
+                      UserIdentity user,
+                      long timestamp, String requestUri) {
         this.admin = admin;
         this.ip = ip;
         this.locale = locale;
         this.method = method;
         this.user = user;
+        this.timestamp = timestamp;
+        this.requestUri = requestUri;
     }
 
     @Override
@@ -81,10 +86,32 @@ public class ApiContext implements SystemContext {
         return user;
     }
 
+    public long getTimestamp() {
+        return timestamp;
+    }
+
+    public String getRequestUri() {
+        return requestUri;
+    }
+
     public ApiContext fork(UserIdentity user) {
         if (user == this.user) {
             return this;
         }
-        return new ApiContext(admin, ip, locale, method, user);
+        return new ApiContext(admin, ip, locale, method, user, timestamp, requestUri);
+    }
+
+
+    @Override
+    public String toString() {
+        return "ApiContext{" +
+                "admin=" + admin +
+                ", ip='" + ip + '\'' +
+                ", locale=" + locale +
+                ", method=" + method +
+                ", user=" + user +
+                ", timestamp=" + timestamp +
+                ", requestUri='" + requestUri + '\'' +
+                '}';
     }
 }
