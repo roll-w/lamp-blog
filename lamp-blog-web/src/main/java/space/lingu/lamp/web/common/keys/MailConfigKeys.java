@@ -24,15 +24,17 @@ public final class MailConfigKeys {
 
     public static final String KEY_SMTP_SERVER_HOST = "mail.smtp.server.host";
     public static final String KEY_SMTP_SERVER_PORT = "mail.smtp.server.port";
+    public static final String KEY_SMTP_SSL_ENABLE = "mail.smtp.ssl.enable";
     public static final String KEY_MAIL_USERNAME = "mail.username";
     public static final String KEY_MAIL_PASSWORD = "mail.password";
-    public static final String KEY_MAIL_SENDER_NAME = "mail.sender.name";
+    public static final String KEY_MAIL_SENDER_NAME = "mail.nickname";
 
     public static final String PREFIX = "mail.";
 
     public static final String[] KEYS = {
             KEY_SMTP_SERVER_HOST,
             KEY_SMTP_SERVER_PORT,
+            KEY_SMTP_SSL_ENABLE,
             KEY_MAIL_USERNAME,
             KEY_MAIL_PASSWORD,
             KEY_MAIL_SENDER_NAME
