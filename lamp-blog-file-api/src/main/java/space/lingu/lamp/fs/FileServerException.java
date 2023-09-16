@@ -16,10 +16,12 @@
 
 package space.lingu.lamp.fs;
 
+import java.io.IOException;
+
 /**
  * @author RollW
  */
-public class FileServerException extends RuntimeException {
+public class FileServerException extends IOException {
     public FileServerException(String message) {
         super(message);
     }

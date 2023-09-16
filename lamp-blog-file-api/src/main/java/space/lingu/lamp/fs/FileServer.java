@@ -20,13 +20,23 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 /**
+ * Represents a file server that can upload and download files.
+ *
  * @author RollW
  */
 public interface FileServer {
-    ServerFile uploadFile(InputStream inputStream);
+    default ServerFile uploadFile(InputStream inputStream)
+            throws FileServerException {
+        throw new UnsupportedOperationException();
+    }
+
+    default ServerFile uploadFile(String qualifiedName, InputStream inputStream)
+            throws FileServerException {
+        throw new UnsupportedOperationException();
+    }
 
     void downloadFile(String qualifiedName, OutputStream outputStream,
-                      long startBytes, long endBytes);
+                      long startBytes, long endBytes) throws FileServerException;
 
-    void downloadFile(String qualifiedName, OutputStream outputStream);
+    void downloadFile(String qualifiedName, OutputStream outputStream) throws FileServerException;
 }
