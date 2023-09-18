@@ -20,44 +20,56 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
-import space.lingu.lamp.web.common.ApiContextHolder;
+import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.controller.Api;
+import space.lingu.lamp.web.controller.user.vo.UserCommonDetailsVo;
+import space.lingu.lamp.web.domain.storage.StorageUrlProvider;
 import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.lamp.web.domain.user.common.UserViewException;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
 import space.lingu.lamp.web.domain.user.service.UserSearchService;
-import space.lingu.lamp.web.controller.user.vo.UserCommonDetailsVo;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalDataService;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.HttpResponseEntity;
+import tech.rollw.common.web.system.ContextThreadAware;
 
 /**
  * @author RollW
  */
 @Api
 public class UserController {
+    private final ContextThreadAware<ApiContext> apiContextThreadAware;
     private final UserSearchService userSearchService;
     private final UserPersonalDataService userPersonalDataService;
+    private final StorageUrlProvider storageUrlProvider;
 
-    public UserController(UserSearchService userSearchService,
-                          UserPersonalDataService userPersonalDataService) {
+    public UserController(ContextThreadAware<ApiContext> apiContextThreadAware,
+                          UserSearchService userSearchService,
+                          UserPersonalDataService userPersonalDataService,
+                          StorageUrlProvider storageUrlProvider) {
+        this.apiContextThreadAware = apiContextThreadAware;
         this.userSearchService = userSearchService;
         this.userPersonalDataService = userPersonalDataService;
+        this.storageUrlProvider = storageUrlProvider;
     }
 
     @GetMapping("/user")
     public HttpResponseEntity<UserCommonDetailsVo> getAuthenticatedUser() {
-        ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
-        UserInfo userInfo = context.userInfo();
+        ApiContext context = apiContextThreadAware
+                .getContextThread().getContext();
+        UserIdentity userInfo = context.getUser();
         if (userInfo == null) {
             throw new UserViewException(AuthErrorCode.ERROR_UNAUTHORIZED_USE);
         }
         UserPersonalData userPersonalData =
                 userPersonalDataService.getPersonalData(userInfo);
-        return HttpResponseEntity.success(
-                UserCommonDetailsVo.of(userInfo, userPersonalData)
-        );
+        return HttpResponseEntity.success(UserCommonDetailsVo.of(
+                userInfo, userPersonalData,
+                storageUrlProvider.getUrlOfStorage(
+                        userPersonalData.getAvatar()),
+                storageUrlProvider.getUrlOfStorage(
+                        userPersonalData.getCover())
+        ));
     }
 
     @GetMapping("/user/{userId}")
@@ -66,9 +78,13 @@ public class UserController {
         UserIdentity userIdentity = userSearchService.findUser(userId);
         UserPersonalData userPersonalData =
                 userPersonalDataService.getPersonalData(userIdentity);
-        return HttpResponseEntity.success(
-                UserCommonDetailsVo.of(userIdentity, userPersonalData)
-        );
+        return HttpResponseEntity.success(UserCommonDetailsVo.of(
+                userIdentity, userPersonalData,
+                storageUrlProvider.getUrlOfStorage(
+                        userPersonalData.getAvatar()),
+                storageUrlProvider.getUrlOfStorage(
+                        userPersonalData.getCover())
+        ));
     }
 
     @PutMapping("/user/{userId}/blocks")

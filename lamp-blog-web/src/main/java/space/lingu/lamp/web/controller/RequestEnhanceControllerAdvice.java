@@ -19,8 +19,10 @@ package space.lingu.lamp.web.controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import space.lingu.lamp.RequestMetadata;
-import space.lingu.lamp.web.common.ApiContextHolder;
+import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.util.RequestUtils;
+import tech.rollw.common.web.system.ContextThread;
+import tech.rollw.common.web.system.ContextThreadAware;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -29,13 +31,20 @@ import javax.servlet.http.HttpServletRequest;
  */
 @ControllerAdvice
 public class RequestEnhanceControllerAdvice {
+    private final ContextThreadAware<ApiContext> apiContextThreadAware;
+
+    public RequestEnhanceControllerAdvice(
+            ContextThreadAware<ApiContext> apiContextThreadAware) {
+        this.apiContextThreadAware = apiContextThreadAware;
+    }
 
     @ModelAttribute
     public RequestMetadata requestMetadata(HttpServletRequest request) {
-        ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
-        if (apiContext != null && apiContext.ip() != null) {
+        ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
+        if (apiContextThread.hasContext()) {
+            ApiContext apiContext = apiContextThread.getContext();
             return new RequestMetadata(
-                    apiContext.ip(),
+                    apiContext.getIp(),
                     request.getHeader("User-Agent")
             );
         }

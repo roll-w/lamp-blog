@@ -20,7 +20,7 @@ import com.google.common.base.Verify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
-import space.lingu.lamp.web.common.ApiContextHolder;
+import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.controller.WithAdminApi;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.dto.ReviewContent;
@@ -29,10 +29,11 @@ import space.lingu.lamp.web.domain.review.service.ReviewContentService;
 import space.lingu.lamp.web.domain.review.service.ReviewService;
 import space.lingu.lamp.web.domain.review.service.ReviewStatusService;
 import space.lingu.lamp.web.domain.review.vo.ReviewStatues;
-import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.HttpResponseEntity;
 import tech.rollw.common.web.page.Pageable;
+import tech.rollw.common.web.system.ContextThread;
+import tech.rollw.common.web.system.ContextThreadAware;
 
 import java.util.List;
 
@@ -46,13 +47,17 @@ public class ReviewController {
     private final ReviewService reviewService;
     private final ReviewStatusService reviewStatusService;
     private final ReviewContentService reviewContentService;
+    private final ContextThreadAware<ApiContext> apiContextThreadAware;
+
 
     public ReviewController(ReviewService reviewService,
                             ReviewStatusService reviewStatusService,
-                            ReviewContentService reviewContentService) {
+                            ReviewContentService reviewContentService,
+                            ContextThreadAware<ApiContext> apiContextThreadAware) {
         this.reviewService = reviewService;
         this.reviewStatusService = reviewStatusService;
         this.reviewContentService = reviewContentService;
+        this.apiContextThreadAware = apiContextThreadAware;
     }
 
     // TODO: verify user
@@ -60,14 +65,13 @@ public class ReviewController {
     public HttpResponseEntity<ReviewInfo> getReviewInfo(
             @PathVariable(name = "jobId") Long jobId) {
         ReviewInfo reviewInfo = reviewService.getReviewInfo(jobId);
-        ApiContextHolder.ApiContext apiContext = ApiContextHolder.getContext();
+        ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
+        ApiContext apiContext = apiContextThread.getContext();
         if (reviewInfo == null) {
             return HttpResponseEntity.of(CommonErrorCode.ERROR_NOT_FOUND,
                     "Not found review job.");
         }
-        if (apiContext.allowAccessResource(reviewInfo.reviewer())) {
-            return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
-        }
+
         return HttpResponseEntity.success(reviewInfo);
     }
 
@@ -77,11 +81,13 @@ public class ReviewController {
                     defaultValue = "ALL")
             ReviewStatues statues,
             Pageable pageable) {
-        if (ApiContextHolder.getContext().isAdminPass()) {
+        ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
+        ApiContext apiContext = apiContextThread.getContext();
+        if (apiContext.isAdmin()) {
             return adminGetReviewInfos(pageable);
         }
         List<ReviewInfo> reviewInfos = getReviewJobs(
-                ApiContextHolder.getContext().id(),
+                apiContext.getUser().getUserId(),
                 pageable,
                 statues
         ).stream()
@@ -106,11 +112,9 @@ public class ReviewController {
                     defaultValue = "ALL")
             ReviewStatues statues,
             Pageable pageable) {
-        ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
-        Verify.verifyNotNull(context.userInfo());
-        if (!context.allowAccessResource(userId)) {
-            return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
-        }
+        ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
+        ApiContext apiContext = apiContextThread.getContext();
+        Verify.verifyNotNull(apiContext.getUser());
 
         List<ReviewInfo> reviewInfos = getReviewJobs(userId,
                 pageable,
@@ -133,19 +137,12 @@ public class ReviewController {
         };
     }
 
+    // TODO: auth
     @GetMapping("/review/{jobId}/content")
     public HttpResponseEntity<ReviewContent> getReviewContent(
             @PathVariable(name = "jobId") Long jobId) {
-        ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
-        if (context.isAdminPass()) {
-            ReviewContent reviewContent = reviewContentService.getReviewContent(jobId);
-            return HttpResponseEntity.success(reviewContent);
-        }
-        ReviewInfo reviewInfo = reviewService.getReviewInfo(jobId);
-        if (!context.allowAccessResource(reviewInfo.reviewer())) {
-            return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
-        }
-        ReviewContent reviewContent = reviewContentService.getReviewContent(jobId);
+        ReviewContent reviewContent = reviewContentService
+                .getReviewContent(jobId);
         return HttpResponseEntity.success(reviewContent);
     }
 
@@ -156,10 +153,14 @@ public class ReviewController {
     public HttpResponseEntity<ReviewInfo> rejectReview(
             @PathVariable(name = "jobId") Long jobId,
             @RequestBody ReviewRejectedRequest reviewRejectedRequest) {
-        ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
-        Verify.verifyNotNull(context.userInfo());
-        ReviewInfo info = reviewStatusService.makeReview(jobId, context.id(),
-                false, reviewRejectedRequest.reason());
+        ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
+        ApiContext apiContext = apiContextThread.getContext();
+        Verify.verifyNotNull(apiContext.getUser());
+        ReviewInfo info = reviewStatusService.makeReview(
+                jobId,
+                apiContext.getUser().getOperatorId(),
+                false, reviewRejectedRequest.reason()
+        );
         return HttpResponseEntity.success(info);
     }
 
@@ -167,10 +168,14 @@ public class ReviewController {
     @PutMapping("/review/{jobId}")
     public HttpResponseEntity<ReviewInfo> passReview(
             @PathVariable(name = "jobId") Long jobId) {
-        ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
-        Verify.verifyNotNull(context.userInfo());
-        ReviewInfo reviewInfo = reviewStatusService.makeReview(jobId,
-                context.id(), true, null);
+        ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
+        ApiContext apiContext = apiContextThread.getContext();
+        Verify.verifyNotNull(apiContext.getUser());
+        ReviewInfo reviewInfo = reviewStatusService.makeReview(
+                jobId,
+                apiContext.getUser().getOperatorId(),
+                true, null
+        );
         return HttpResponseEntity.success(reviewInfo);
     }
 }

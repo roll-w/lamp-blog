@@ -16,7 +16,6 @@
 
 package space.lingu.lamp.web.controller.user;
 
-import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,8 +23,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import space.lingu.lamp.RequestMetadata;
-import space.lingu.lamp.web.common.ApiContextHolder;
 import space.lingu.lamp.web.common.ParamValidate;
+import space.lingu.lamp.web.controller.user.vo.LoginResponse;
 import space.lingu.lamp.web.controller.user.vo.LoginTokenSendRequest;
 import space.lingu.lamp.web.controller.user.vo.UserLoginRequest;
 import space.lingu.lamp.web.controller.user.vo.UserRegisterRequest;
@@ -34,7 +33,6 @@ import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenServi
 import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.dto.UserInfoSignature;
 import space.lingu.lamp.web.domain.user.service.LoginRegisterService;
-import space.lingu.lamp.web.controller.user.vo.LoginResponse;
 import tech.rollw.common.web.HttpResponseEntity;
 
 import javax.servlet.http.HttpServletRequest;
@@ -100,7 +98,8 @@ public class LoginRegisterController {
 
     private HttpResponseEntity<LoginResponse> loginResponse(UserInfoSignature userInfoSignature) {
         String token = authenticationTokenService.generateAuthToken(
-                userInfoSignature.id(), userInfoSignature.signature()
+                userInfoSignature.id(),
+                userInfoSignature.signature()
         );
         LoginResponse response = new LoginResponse(
                 token,
@@ -138,15 +137,6 @@ public class LoginRegisterController {
 
     @PostMapping("/logout")
     public HttpResponseEntity<Void> logout(HttpServletRequest request) {
-        String auth = request.getHeader("Authorization");
-        if (Strings.isNullOrEmpty(auth)) {
-            return HttpResponseEntity.success();
-        }
-        ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
-        if (context == null || context.userInfo() == null) {
-            return HttpResponseEntity.success();
-        }
-        loginRegisterService.logout();
         return HttpResponseEntity.success();
     }
 }
