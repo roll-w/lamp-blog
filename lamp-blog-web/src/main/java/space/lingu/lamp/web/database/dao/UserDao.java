@@ -68,4 +68,12 @@ public interface UserDao extends AutoPrimaryBaseDao<User> {
     @Query("SELECT 1 FROM user")
     Integer hasUsers();
 
+
+    @Query("SELECT * FROM user WHERE username = {name}")
+    User getUserByName(String name);
+
+
+    @Query("SELECT * FROM user WHERE username LIKE CONCAT('%', {username}, '%')")
+    List<User> getUsersLikeUsername(String username);
+
 }

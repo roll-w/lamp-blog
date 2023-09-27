@@ -23,10 +23,16 @@ import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.UserDao;
 import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
 import space.lingu.lamp.web.domain.user.User;
+import tech.rollw.common.web.system.ContextThread;
 import tech.rollw.common.web.system.ContextThreadAware;
 import tech.rollw.common.web.system.paged.PageableContext;
 
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 /**
  * @author RollW
@@ -110,5 +116,48 @@ public class UserRepository extends AutoPrimaryBaseRepository<User> {
             hasUsers.set(has > 0);
         }
         return hasUsers.get();
+    }
+
+    public List<User> searchBy(String keyword) {
+        List<User> searchByUsername = userDao.getUsersLikeUsername(keyword);
+        List<User> res = new ArrayList<>(searchByUsername);
+        //List<User> searchByNickname = userDao.getUsersLikeNickname(keyword);
+        //res.addAll(searchByNickname);
+
+        res = deduplicateById(res);
+
+        ContextThread<PageableContext> contextThread =
+                pageableContextThreadAware.getContextThread();
+        if (contextThread.hasContext()) {
+            PageableContext context = contextThread.getContext();
+            if (context.isIncludeDeleted()) {
+                return res;
+            }
+        }
+        return filterUsers(res);
+    }
+
+    private List<User> filterUsers(List<User> users) {
+        if (users == null || users.isEmpty()) {
+            return users;
+        }
+        return users.stream()
+                .filter(user -> !user.isCanceled())
+                .toList();
+    }
+
+    private List<User> deduplicateById(List<User> users) {
+        if (users == null || users.isEmpty()) {
+            return users;
+        }
+
+        return users.stream().collect(
+                Collectors.collectingAndThen(
+                        Collectors.toCollection(
+                                () -> new TreeSet<>(Comparator.comparing(User::getId))
+                        ),
+                        ArrayList::new
+                )
+        );
     }
 }
