@@ -16,27 +16,12 @@
 
 package space.lingu.lamp.web.domain.message;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 /**
  * @author RollW
  */
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = StringMessageContent.class, name = "plain"),
-        @JsonSubTypes.Type(value = ErrorMessageContent.class, name = "error"),
-})
-public interface MessageContent {
-
-    String getContent();
-
-    @Override
-    String toString();
-
-    static MessageContent of(String content) {
-        return new StringMessageContent(content);
-    }
+public enum ChatType {
+    USER,
+    SYSTEM,
+    GROUP,
+    ;
 }

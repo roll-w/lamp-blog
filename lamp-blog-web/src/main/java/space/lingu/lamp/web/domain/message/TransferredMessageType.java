@@ -16,27 +16,42 @@
 
 package space.lingu.lamp.web.domain.message;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 /**
  * @author RollW
  */
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = StringMessageContent.class, name = "plain"),
-        @JsonSubTypes.Type(value = ErrorMessageContent.class, name = "error"),
-})
-public interface MessageContent {
+public enum TransferredMessageType {
+    /**
+     * Normal message.
+     */
+    NORMAL,
 
-    String getContent();
+    /**
+     * Heartbeat message.
+     * Could be used to keep the connection alive.
+     */
+    HEARTBEAT,
 
-    @Override
-    String toString();
+    /**
+     * Error message.
+     */
+    ERROR,
 
-    static MessageContent of(String content) {
-        return new StringMessageContent(content);
+    /**
+     * Control message.
+     * Could be used to control the client.
+     */
+    CONTROL,
+    ;
+
+    public boolean isNormal() {
+        return this == NORMAL;
+    }
+
+    public boolean isError() {
+        return this == ERROR;
+    }
+
+    public boolean canRecord() {
+        return this == NORMAL || this == CONTROL;
     }
 }

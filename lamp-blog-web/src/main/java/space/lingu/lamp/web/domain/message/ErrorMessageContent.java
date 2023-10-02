@@ -31,4 +31,10 @@ public record ErrorMessageContent(
     public String getContent() {
         return tip;
     }
+
+    public static ErrorMessageContent of(ErrorCode errorCode,
+                                         String message,
+                                         String tip) {
+        return new ErrorMessageContent(errorCode, message, tip);
+    }
 }

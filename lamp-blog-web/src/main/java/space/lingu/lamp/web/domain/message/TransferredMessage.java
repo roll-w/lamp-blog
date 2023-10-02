@@ -16,27 +16,30 @@
 
 package space.lingu.lamp.web.domain.message;
 
-import com.fasterxml.jackson.annotation.JsonSubTypes;
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-
 /**
  * @author RollW
  */
-@JsonTypeInfo(
-        use = JsonTypeInfo.Id.NAME,
-        property = "type")
-@JsonSubTypes({
-        @JsonSubTypes.Type(value = StringMessageContent.class, name = "plain"),
-        @JsonSubTypes.Type(value = ErrorMessageContent.class, name = "error"),
-})
-public interface MessageContent {
+public interface TransferredMessage {
+    TransferredMessageType getMessageType();
 
-    String getContent();
+    long getSenderId();
 
-    @Override
-    String toString();
+    long getReceiverId();
 
-    static MessageContent of(String content) {
-        return new StringMessageContent(content);
-    }
+    ChatType getChatType();
+
+    MessageContent getContent();
+
+    long getTimestamp();
+
+    TransferredMessage fork();
+
+    TransferredMessage fork(long time);
+
+    TransferredMessage fork(TransferredMessageType type,
+                            long time);
+
+    TransferredMessage fork(TransferredMessageType type,
+                            MessageContent messageContent,
+                            long time);
 }
