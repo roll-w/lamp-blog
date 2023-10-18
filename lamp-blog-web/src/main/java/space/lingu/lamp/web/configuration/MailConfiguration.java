@@ -56,15 +56,19 @@ public class MailConfiguration {
         conf.put("mail.smtp.auth", "true");
         conf.put("mail.smtp.starttls.enable", "false");
         conf.put("mail.smtp.starttls.required", "false");
-        conf.put("mail.smtp.ssl.enable", "false");
+        String sslEnable = settingLoader.getSettingValue(MailConfigKeys.KEY_SMTP_SSL_ENABLE);
+        conf.put("mail.smtp.ssl.enable", String.valueOf(Boolean.parseBoolean(sslEnable)));
 
         String host = settingLoader.getSettingValue(MailConfigKeys.KEY_SMTP_SERVER_HOST);
         String port = settingLoader.getSettingValue(MailConfigKeys.KEY_SMTP_SERVER_PORT);
         String username = settingLoader.getSettingValue(MailConfigKeys.KEY_MAIL_USERNAME);
         String password = settingLoader.getSettingValue(MailConfigKeys.KEY_MAIL_PASSWORD);
         properties.setHost(host);
-        if (Strings.isNullOrEmpty(port)) properties.setPort(25);
-        else properties.setPort(Integer.parseInt(port));
+        if (Strings.isNullOrEmpty(port)) {
+            properties.setPort(25);
+        } else {
+            properties.setPort(Integer.parseInt(port));
+        }
         String senderName = chooseUsername(username, settingLoader);
         properties.setUsername(senderName);
         properties.setPassword(password);
@@ -72,6 +76,7 @@ public class MailConfiguration {
 
     // from springboot
     @Bean
+    @Primary
     public JavaMailSenderImpl javaMailSender(MailProperties mailProperties) {
         JavaMailSenderImpl javaMailSender = new JavaMailSenderImpl();
         applyProperties(mailProperties, javaMailSender);
