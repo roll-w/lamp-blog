@@ -21,6 +21,11 @@ package space.lingu.lamp.web.domain.content;
  */
 public enum ContentStatus {
     /**
+     * Draft, invisible to the public. If the user deletes
+     * draft content, it will be recycled for next use.
+     */
+    DRAFT,
+    /**
      * Under reviewing.
      */
     REVIEWING,
@@ -41,7 +46,7 @@ public enum ContentStatus {
      */
     FORBIDDEN,
     /**
-     * Hide, but visible to author.
+     * Hide, but visible to the author.
      */
     HIDE,
     ;
