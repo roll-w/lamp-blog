@@ -18,13 +18,27 @@ package space.lingu.lamp.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.ConfigurableApplicationContext;
 import space.lingu.fiesta.Fiesta;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @SpringBootApplication
 @Fiesta
 public class LampBlogSystemApplication {
+    private static ConfigurableApplicationContext sContext;
 
     public static void main(String[] args) {
-        SpringApplication.run(LampBlogSystemApplication.class, args);
+        Map<String, Object> overrideProperties = new HashMap<>();
+        overrideProperties.put("spring.mvc.throw-exception-if-no-handler-found", true);
+        overrideProperties.put("spring.application.name", "Lamp Blog");
+        overrideProperties.put("spring.web.resources.add-mappings", false);
+        overrideProperties.put("spring.jackson.mapper.ACCEPT_CASE_INSENSITIVE_ENUMS", true);
+
+        SpringApplication application =
+                new SpringApplication(LampBlogSystemApplication.class);
+        application.setDefaultProperties(overrideProperties);
+        sContext = application.run(args);
     }
 }
