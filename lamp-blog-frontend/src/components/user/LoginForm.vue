@@ -15,43 +15,43 @@
   -->
 
 <template>
-  <div class="flex flex-grow-1 flex-fill">
-    <n-h2>
-      <n-text type="primary">登录</n-text>
-    </n-h2>
-    <div class="flex flex-fill justify-end">
-      <n-h3>
-        <n-text type="info">尚未拥有账号？
-          <n-a @click="handleToRegister">点此注册</n-a>
-        </n-text>
-      </n-h3>
+    <div class="flex flex-grow-1 flex-fill">
+        <n-h2>
+            <n-text type="primary">登录</n-text>
+        </n-h2>
+        <div class="flex flex-fill justify-end">
+            <n-h3>
+                <n-text type="info">尚未拥有账号？
+                    <n-a @click="handleToRegister">点此注册</n-a>
+                </n-text>
+            </n-h3>
+        </div>
     </div>
-  </div>
-  <n-form ref="loginForm" :model="formValue" :rules="formRules">
-    <n-form-item label="用户名/电子邮箱" path="identity">
-      <n-input v-model:value="formValue.identity" placeholder="请输入用户名或电子邮箱"
-               @keydown.enter.prevent/>
-    </n-form-item>
-    <n-form-item label="密码" path="token">
-      <n-input v-model:value="formValue.token" placeholder="请输入密码" type="password"
-               show-password-on="click"
-               @keydown.enter.prevent/>
-    </n-form-item>
-    <n-form-item path="rememberMe">
-      <n-checkbox v-model:checked="formValue.rememberMe">
-        记住我
-      </n-checkbox>
-    </n-form-item>
-    <n-button-group class="w-full">
-      <n-button class="w-full flex-grow-0" type="primary" @click="onLoginClick">
-        登录
-      </n-button>
-      <n-button class="w-full" type="tertiary" @click="onResetClick">
-        重置
-      </n-button>
-    </n-button-group>
-    <n-a>忘记密码</n-a>
-  </n-form>
+    <n-form ref="loginForm" :model="formValue" :rules="formRules">
+        <n-form-item label="用户名/电子邮箱" path="identity">
+            <n-input v-model:value="formValue.identity" placeholder="请输入用户名或电子邮箱"
+                     @keydown.enter.prevent/>
+        </n-form-item>
+        <n-form-item label="密码" path="token">
+            <n-input v-model:value="formValue.token" placeholder="请输入密码" show-password-on="click"
+                     type="password"
+                     @keydown.enter.prevent/>
+        </n-form-item>
+        <n-form-item path="rememberMe">
+            <n-checkbox v-model:checked="formValue.rememberMe">
+                记住我
+            </n-checkbox>
+        </n-form-item>
+        <n-button-group class="w-full">
+            <n-button class="w-full flex-grow-0" type="primary" @click="onLoginClick">
+                登录
+            </n-button>
+            <n-button class="w-full" type="tertiary" @click="onResetClick">
+                重置
+            </n-button>
+        </n-button-group>
+        <n-a>忘记密码</n-a>
+    </n-form>
 
 </template>
 
@@ -71,84 +71,92 @@ const notification = useNotification()
 const {proxy} = getCurrentInstance()
 
 const formValue = ref({
-  identity: null,
-  token: null,
-  rememberMe: false
-})
-
-const formRules = {
-  identity: [{
-    required: true,
-    validator(rule, value) {
-      if (!value) {
-        return new Error("需要填写用户名或电子邮箱地址")
-      }
-      return true
-    },
-    trigger: ['input']
-  }],
-  token: [{
-    required: true,
-    message: "请输入密码",
-    trigger: ['input']
-  }],
-}
-
-const validateFormValue = (callback) => {
-  loginForm.value?.validate((errors) => {
-    if (errors) {
-      return
-    }
-    callback()
-  });
-}
-
-const onLoginClick = (e) => {
-  e.preventDefault()
-  validateFormValue(() => {
-    proxy.$axios.post(api.passwordLogin, formValue.value).then(res => {
-      /**
-       * @type {{ user: {
-       * username: string, id: number,
-       * role: string, email: string },
-       * token: string
-       * }}
-       */
-      const recvData = res.data
-      let user = {
-        id: recvData.user.id,
-        username: recvData.user.username,
-        role: recvData.user.role,
-      }
-      userStore.loginUser(user, recvData.token, formValue.value.rememberMe)
-      router.push({
-        name: index
-      })
-    }).catch(err => {
-      const msg = err.tip
-      notification.error({
-        title: "请求错误",
-        content: msg,
-        meta: "登录错误",
-        duration: 3000,
-        keepAliveOnHover: true
-      })
-    })
-  })
-}
-
-const onResetClick = () => {
-  formValue.value = {
     identity: null,
     token: null,
     rememberMe: false
-  }
-  loginForm.value?.restoreValidation()
+})
+
+const formRules = {
+    identity: [{
+        required: true,
+        validator(rule, value) {
+            if (!value) {
+                return new Error("需要填写用户名或电子邮箱地址")
+            }
+            return true
+        },
+        trigger: ['input']
+    }],
+    token: [{
+        required: true,
+        message: "请输入密码",
+        trigger: ['input']
+    }],
+}
+
+const validateFormValue = (callback) => {
+    loginForm.value?.validate((errors) => {
+        if (errors) {
+            return
+        }
+        callback()
+    });
+}
+
+const source = router.currentRoute.value.query.source
+
+const onLoginClick = (e) => {
+    e.preventDefault()
+    validateFormValue(() => {
+        proxy.$axios.post(api.passwordLogin, formValue.value).then(res => {
+            /**
+             * @type {{ user: {
+             * username: string, id: number,
+             * role: string, email: string },
+             * token: string
+             * }}
+             */
+            const recvData = res.data
+            let user = {
+                id: recvData.user.id,
+                username: recvData.user.username,
+                role: recvData.user.role,
+            }
+            userStore.loginUser(user, recvData.token, formValue.value.rememberMe)
+
+            // check url
+            if (!source) {
+                router.push({
+                    name: index
+                })
+                return
+            }
+            router.push(source.toString())
+        }).catch(err => {
+            const msg = err.tip
+            notification.error({
+                title: "请求错误",
+                content: msg,
+                meta: "登录错误",
+                duration: 3000,
+                keepAliveOnHover: true
+            })
+        })
+    })
+}
+
+const onResetClick = () => {
+    formValue.value = {
+        identity: null,
+        token: null,
+        rememberMe: false
+    }
+    loginForm.value?.restoreValidation()
 }
 
 const handleToRegister = () => {
-  router.push({
-    name: register
-  })
+    router.push({
+        name: register
+    })
 }
 </script>

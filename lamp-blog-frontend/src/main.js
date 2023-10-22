@@ -47,7 +47,10 @@ const onLoginExpired = () => {
     userStore.logout()
 
     router.push({
-        name: login
+        name: login,
+        query: {
+            source: router.currentRoute.value.fullPath
+        }
     }).then((failure) => {
         console.log(failure)
     })
