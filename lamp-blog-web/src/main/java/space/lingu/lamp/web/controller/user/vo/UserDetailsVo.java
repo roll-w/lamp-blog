@@ -40,6 +40,7 @@ public record UserDetailsVo(
         long createdAt,
         String nickname,
         String avatar,
+        String cover,
         String introduction,
         Gender gender,
         Birthday birthday,
@@ -49,7 +50,9 @@ public record UserDetailsVo(
 
 
     public static UserDetailsVo of(AttributedUser user,
-                                   UserPersonalData data) {
+                                   UserPersonalData data,
+                                   String avatar,
+                                   String cover) {
         return new UserDetailsVo(
                 user.getUserId(),
                 user.getRole(),
@@ -60,7 +63,8 @@ public record UserDetailsVo(
                 user.isCanceled(),
                 user.getCreateTime(),
                 data.getNickname(),
-                data.getAvatar(),
+                avatar,
+                cover,
                 data.getIntroduction(),
                 data.getGender(),
                 data.getBirthday(),

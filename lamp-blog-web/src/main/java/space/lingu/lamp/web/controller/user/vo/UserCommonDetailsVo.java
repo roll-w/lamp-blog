@@ -34,6 +34,7 @@ public record UserCommonDetailsVo(
         String email,
         String nickname,
         String avatar,
+        String cover,
         String introduction,
         Gender gender,
         Birthday birthday,
@@ -43,14 +44,16 @@ public record UserCommonDetailsVo(
     // TODO: add followers/following count
 
     public static UserCommonDetailsVo of(UserIdentity userIdentity,
-                                         UserPersonalData data) {
+                                         UserPersonalData data,
+                                         String avatar, String cover) {
         return new UserCommonDetailsVo(
                 userIdentity.getUserId(),
                 userIdentity.getRole(),
                 userIdentity.getUsername(),
                 userIdentity.getEmail(),
                 data.getNickname(),
-                data.getAvatar(),
+                avatar,
+                cover,
                 data.getIntroduction(),
                 data.getGender(),
                 data.getBirthday(),
