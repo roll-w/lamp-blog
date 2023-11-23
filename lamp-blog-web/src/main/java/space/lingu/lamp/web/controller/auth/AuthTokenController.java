@@ -24,6 +24,7 @@ import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
 import space.lingu.lamp.web.domain.user.service.UserSignatureProvider;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.HttpResponseEntity;
+import tech.rollw.common.web.system.AuthenticationException;
 
 /**
  * @author RollW
@@ -47,14 +48,17 @@ public class AuthTokenController {
             return HttpResponseEntity.of(AuthErrorCode.ERROR_INVALID_TOKEN);
         }
         String sig = userSignatureProvider.getSignature(userId);
-        TokenAuthResult result = tokenService.verifyToken(oldToken, sig);
-        if (result.success()) {
-            return HttpResponseEntity.success(oldToken);
-        }
-        if (result.errorCode() == AuthErrorCode.ERROR_TOKEN_EXPIRED) {
+        try {
+            tokenService.verifyToken(oldToken, sig);
             return HttpResponseEntity.success(
-                    tokenService.generateAuthToken(result.userId(), sig)
+                    tokenService.generateAuthToken(userId, sig)
             );
+        } catch (AuthenticationException e) {
+            if (e.getErrorCode() == AuthErrorCode.ERROR_TOKEN_EXPIRED) {
+                return HttpResponseEntity.success(
+                        tokenService.generateAuthToken(userId, sig)
+                );
+            }
         }
         return HttpResponseEntity.of(AuthErrorCode.ERROR_INVALID_TOKEN);
     }
@@ -68,7 +72,6 @@ public class AuthTokenController {
         }
         String sig = userSignatureProvider.getSignature(userId);
         TokenAuthResult authResult = tokenService.verifyToken(token, sig);
-        return HttpResponseEntity.of(
-                        authResult.errorCode(), authResult);
+        return HttpResponseEntity.success(authResult);
     }
 }

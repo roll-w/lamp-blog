@@ -16,22 +16,25 @@
 
 package space.lingu.lamp.web.domain.authentication.token;
 
+import tech.rollw.common.web.system.AuthenticationException;
+
 /**
- * 认证令牌服务
- * <p>
- * 只负责生成Token和验证Token的合法性。不负责确认用户状态。
+ * Authentication token service.
  *
  * @author RollW
  */
 public interface AuthenticationTokenService {
     String generateAuthToken(long userId, String signature);
 
+    String generateAuthToken(long userId, String signature,
+                             long expireTimeInSecond);
+
     /**
-     * 只验证Token的合法性，不负责确认用户状态。
+     * Only verifies the legality of the token
+     * does not take responsibility for confirming user status.
      */
-    TokenAuthResult verifyToken(String token, String signature);
+    TokenAuthResult verifyToken(String token, String signature)
+            throws AuthenticationException;
 
     Long getUserId(String token);
-
-    void setTokenExpireTime(long expireTimeInSecond);
 }

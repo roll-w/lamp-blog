@@ -22,16 +22,18 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
 import space.lingu.lamp.web.domain.user.UserDetailsService;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.service.UserSignatureProvider;
 import space.lingu.lamp.web.util.RequestUtils;
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.AuthErrorCode;
+import tech.rollw.common.web.system.AuthenticationException;
 import tech.rollw.common.web.system.ContextThread;
 import tech.rollw.common.web.system.ContextThreadAware;
 
@@ -47,14 +49,17 @@ import java.io.IOException;
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final AuthenticationTokenService authenticationTokenService;
     private final UserDetailsService userDetailsService;
+    private final UserSignatureProvider userSignatureProvider;
     private final ContextThreadAware<ApiContext> apiContextThreadAware;
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     public TokenAuthenticationFilter(AuthenticationTokenService authenticationTokenService,
                                      UserDetailsService userDetailsService,
+                                     UserSignatureProvider userSignatureProvider,
                                      ContextThreadAware<ApiContext> apiContextThreadAware) {
         this.authenticationTokenService = authenticationTokenService;
         this.userDetailsService = userDetailsService;
+        this.userSignatureProvider = userSignatureProvider;
         this.apiContextThreadAware = apiContextThreadAware;
     }
 
@@ -69,11 +74,13 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         HttpMethod method = HttpMethod.resolve(request.getMethod());
         boolean isAdminApi = isAdminApi(requestUri);
         String remoteIp = RequestUtils.getRemoteIpAddress(request);
+        long timestamp = System.currentTimeMillis();
 
         ApiContext apiContext = new ApiContext(
                 isAdminApi, remoteIp,
                 LocaleContextHolder.getLocale(),
-                method, null
+                method, null,
+                timestamp, requestUri
         );
 
         try {
@@ -101,21 +108,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
-            UserDetails userDetails =
-                    userDetailsService.loadUserByUserId(userId);
-            if (userDetails == null) {
-                setApiContext(apiContext, null, contextThread);
-                filterChain.doFilter(request, response);
-                return;
-            }
-            TokenAuthResult result = authenticationTokenService.verifyToken(token,
-                    userDetails.getPassword());
-            if (!result.success()) {
-                // although there are anonymous api access that don't need provides token,
-                // but as long as it provides token here, we have to verify it.
-                // And throw exception when failed.
-                throw new BusinessRuntimeException(result.errorCode());
-            }
+            UserDetails userDetails = tryGetUserDetails(userId);
+            String signature = userSignatureProvider.getSignature(userId);
+
+            authenticationTokenService.verifyToken(token, signature);
+            // Although there is anonymous api access that doesn't need provides token,
+            // but as long as it provides token here, we have to verify it.
 
             UserInfo userInfo = UserInfo.from(userDetails);
             Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(
@@ -129,6 +127,17 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } finally {
             apiContextThreadAware.clearContextThread();
+        }
+    }
+
+    @NonNull
+    private UserDetails tryGetUserDetails(long id) {
+        try {
+            return userDetailsService.loadUserByUserId(id);
+        } catch (UsernameNotFoundException e) {
+            throw new AuthenticationException(
+                    AuthErrorCode.ERROR_INVALID_TOKEN
+            );
         }
     }
 

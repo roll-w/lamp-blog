@@ -16,27 +16,15 @@
 
 package space.lingu.lamp.web.domain.authentication.token;
 
-import space.lingu.NonNull;
-import tech.rollw.common.web.AuthErrorCode;
-
 /**
  * @author RollW
  */
 public record TokenAuthResult(
         long userId,
-        String token,
-
-        @NonNull
-        AuthErrorCode errorCode) {
-    public boolean success() {
-        return errorCode.success();
-    }
+        String token
+) {
 
     public static TokenAuthResult success(long userId, String token) {
-        return new TokenAuthResult(userId, token, AuthErrorCode.SUCCESS);
-    }
-
-    public static TokenAuthResult failure(AuthErrorCode errorCode) {
-        return new TokenAuthResult(-1, null, errorCode);
+        return new TokenAuthResult(userId, token);
     }
 }

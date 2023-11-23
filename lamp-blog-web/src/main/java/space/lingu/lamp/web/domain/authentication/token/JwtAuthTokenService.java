@@ -16,13 +16,19 @@
 
 package space.lingu.lamp.web.domain.authentication.token;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.Header;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import tech.rollw.common.web.AuthErrorCode;
+import tech.rollw.common.web.system.AuthenticationException;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
@@ -42,10 +48,16 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
 
     @Override
     public String generateAuthToken(long userId, String signature) {
+        return generateAuthToken(userId, signature, DAYS_7);
+    }
+
+    @Override
+    public String generateAuthToken(long userId, String signature,
+                                    long expireTimeInSecond) {
         Key key = Keys.hmacShaKeyFor(signature.getBytes(StandardCharsets.UTF_8));
         String rawToken = Jwts.builder()
                 .setSubject(String.valueOf(userId))
-                .setExpiration(getExpirationDateFromNow())
+                .setExpiration(getExpirationDateFromNow(expireTimeInSecond))
                 .setIssuer("Lingu Inc.")
                 .signWith(key)
                 .compact();
@@ -55,10 +67,10 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
     @Override
     public TokenAuthResult verifyToken(String token, String signature) {
         if (token == null) {
-            return TokenAuthResult.failure(AuthErrorCode.ERROR_INVALID_TOKEN);
+            throw new AuthenticationException(AuthErrorCode.ERROR_INVALID_TOKEN);
         }
         if (!token.startsWith(TOKEN_HEAD)) {
-            return TokenAuthResult.failure(AuthErrorCode.ERROR_INVALID_TOKEN);
+            throw new AuthenticationException(AuthErrorCode.ERROR_INVALID_TOKEN);
         }
         String rawToken = token.substring(TOKEN_HEAD.length());
         try {
@@ -70,15 +82,14 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
             long userId = Long.parseLong(claims.getSubject());
             return TokenAuthResult.success(userId, token);
         } catch (ExpiredJwtException e) {
-            return TokenAuthResult.failure(AuthErrorCode.ERROR_TOKEN_EXPIRED);
+            throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_EXPIRED);
         } catch (SecurityException e) {
-            return TokenAuthResult.failure(AuthErrorCode.ERROR_INVALID_TOKEN);
+            throw new AuthenticationException(AuthErrorCode.ERROR_INVALID_TOKEN);
         } catch (NumberFormatException e) {
             logger.error("Invalid jwt token number format: {}", rawToken);
-            return TokenAuthResult.failure(AuthErrorCode.ERROR_INVALID_TOKEN);
+            throw new AuthenticationException(AuthErrorCode.ERROR_INVALID_TOKEN);
         } catch (Exception e) {
-            e.printStackTrace();
-            return TokenAuthResult.failure(AuthErrorCode.ERROR_INVALID_TOKEN);
+            throw new AuthenticationException(AuthErrorCode.ERROR_INVALID_TOKEN, e);
         }
     }
 
@@ -91,8 +102,7 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
             String rawToken = token.substring(TOKEN_HEAD.length());
             Claims claims = tryParseClaims(rawToken);
             return Long.parseLong(claims.getSubject());
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (JwtException e) {
             return null;
         }
     }
@@ -112,25 +122,16 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
         return untrusted.getBody();
     }
 
-    private long expireTimeInSecond = DAYS_7;
-
-    @Override
-    public void setTokenExpireTime(long expireTimeInSecond) {
-        this.expireTimeInSecond = expireTimeInSecond;
-    }
-
-
     private static final Date VERIFYDATE = new Date(1);
 
     private static Date getVerifydate() {
         return VERIFYDATE;
     }
 
-    private Date getExpirationDateFromNow() {
+    private Date getExpirationDateFromNow(long expireTimeInSecond) {
         long now = System.currentTimeMillis();
         long exp = now + expireTimeInSecond * 1000;
         return new Date(exp);
-        // TODO: allow set expiration date.
     }
 
     //
