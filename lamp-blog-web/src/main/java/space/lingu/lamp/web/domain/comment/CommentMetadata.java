@@ -51,18 +51,18 @@ public class CommentMetadata {
     private final ContentType contentType;
 
     @DataColumn(name = "permission")
-    private final CommentPermission commentPermission;
+    private final ContentCommentPermission contentCommentPermission;
 
     public CommentMetadata(@Nullable Long id,
                            long userId,
                            @NonNull String contentId,
                            @NonNull ContentType contentType,
-                           CommentPermission commentPermission) {
+                           ContentCommentPermission contentCommentPermission) {
         this.id = id;
         this.userId = userId;
         this.contentId = contentId;
         this.contentType = contentType;
-        this.commentPermission = commentPermission;
+        this.contentCommentPermission = contentCommentPermission;
     }
 
     @Nullable
@@ -84,8 +84,8 @@ public class CommentMetadata {
         return contentType;
     }
 
-    public CommentPermission getCommentPermission() {
-        return commentPermission;
+    public ContentCommentPermission getCommentPermission() {
+        return contentCommentPermission;
     }
 
     public Builder toBuilder() {
@@ -97,7 +97,7 @@ public class CommentMetadata {
                 .setUserId(content.getUserId())
                 .setId(-1L)
                 .setContentType(content.getContentType())
-                .setCommentPermission(CommentPermission.PUBLIC)
+                .setCommentPermission(ContentCommentPermission.PUBLIC)
                 .build();
     }
 
@@ -110,7 +110,7 @@ public class CommentMetadata {
         private long userId;
         private String contentId;
         private ContentType contentType;
-        private CommentPermission commentPermission;
+        private ContentCommentPermission contentCommentPermission;
 
         public Builder() {
         }
@@ -120,7 +120,7 @@ public class CommentMetadata {
             this.userId = commentMetadata.userId;
             this.contentId = commentMetadata.contentId;
             this.contentType = commentMetadata.contentType;
-            this.commentPermission = commentMetadata.commentPermission;
+            this.contentCommentPermission = commentMetadata.contentCommentPermission;
         }
 
         public Builder setId(@Nullable Long id) {
@@ -143,14 +143,14 @@ public class CommentMetadata {
             return this;
         }
 
-        public Builder setCommentPermission(CommentPermission commentPermission) {
-            this.commentPermission = commentPermission;
+        public Builder setCommentPermission(ContentCommentPermission contentCommentPermission) {
+            this.contentCommentPermission = contentCommentPermission;
             return this;
         }
 
         public CommentMetadata build() {
             return new CommentMetadata(id, userId, contentId,
-                    contentType, commentPermission);
+                    contentType, contentCommentPermission);
         }
     }
 }

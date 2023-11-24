@@ -19,7 +19,7 @@ package space.lingu.lamp.web.domain.comment;
 /**
  * @author RollW
  */
-public enum CommentPermission {
+public enum ContentCommentPermission {
     /**
      * Public, unlimited access.
      */
@@ -29,7 +29,7 @@ public enum CommentPermission {
      */
     DISALLOWED,
     /**
-     * Comments needs to be screened by content owner.
+     * Comments need to be screened by content owner.
      */
     NEED_SCREENED,
     ;
