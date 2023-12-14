@@ -5,6 +5,11 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+!logs
+!tmp
+!data
+!dfs
+
 ### STS ###
 .apt_generated
 .classpath
