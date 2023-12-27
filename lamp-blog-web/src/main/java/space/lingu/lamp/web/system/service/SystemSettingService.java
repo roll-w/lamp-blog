@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.web.LampBlogSystemApplication;
-import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.system.repository.SystemSettingRepository;
 import space.lingu.lamp.web.system.setting.LocalSettingLoader;
 import space.lingu.lamp.web.system.setting.SettingLoader;
@@ -55,10 +54,6 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
         this.systemSettingRepository = systemSettingRepository;
         this.localSettingLoader =
                 LocalSettingLoader.load(LampBlogSystemApplication.class);
-        logger.info("Loaded {} settings from local. Mail username: {}",
-                localSettingLoader.size(),
-                localSettingLoader.getSetting(MailConfigKeys.KEY_MAIL_USERNAME)
-        );
     }
 
     @Nullable
@@ -151,7 +146,7 @@ public class SystemSettingService implements SettingProvider, SettingLoader,
     }
 
     private SystemSetting loadLocalSetting(String key) {
-        return null;
+        return localSettingLoader.getSetting(key);
     }
 
     // TODO: callback method calls needs to be async.
