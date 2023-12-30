@@ -21,56 +21,41 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.context.ApplicationListener;
-import org.springframework.mail.SimpleMailMessage;
-import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.common.SimpleMailMessageBuilder;
 import space.lingu.lamp.web.common.keys.MailConfigKeys;
+import space.lingu.lamp.web.domain.push.*;
+import space.lingu.lamp.web.domain.push.mail.MailPushUser;
 import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.service.RegisterTokenProvider;
-import space.lingu.lamp.web.system.setting.SettingLoader;
-import space.lingu.lamp.web.system.setting.SystemSetting;
-import tech.rollw.common.event.EventCallback;
-import tech.rollw.common.event.EventRegistry;
 
 /**
  * @author RollW
  */
 @Component
-public class OnUserRegistrationEventListener implements ApplicationListener<OnUserRegistrationEvent>,
-        EventCallback<SystemSetting> {
+public class OnUserRegistrationEventListener implements ApplicationListener<OnUserRegistrationEvent> {
     private static final Logger logger = LoggerFactory.getLogger(OnUserRegistrationEventListener.class);
 
     private final RegisterTokenProvider registerTokenProvider;
-    private final SettingLoader settingLoader;
+    private final PushMessageStrategyProvider pushMessageStrategyProvider;
     private final MailProperties mailProperties;
-    private final JavaMailSender mailSender;
-
-    private String username;
 
     public OnUserRegistrationEventListener(RegisterTokenProvider registerTokenProvider,
-                                           SettingLoader settingLoader,
                                            MailProperties mailProperties,
-                                           JavaMailSender mailSender,
-                                           EventRegistry<SystemSetting, String> registry) {
-        registry.register(this, MailConfigKeys.PREFIX);
+                                           PushMessageStrategyProvider pushMessageStrategyProvider) {
+        this.pushMessageStrategyProvider = pushMessageStrategyProvider;
         this.registerTokenProvider = registerTokenProvider;
-        this.settingLoader = settingLoader;
         this.mailProperties = mailProperties;
-        this.mailSender = mailSender;
-        this.username = mailProperties.getUsername();
     }
 
-
     @Override
+    @Async
     public void onApplicationEvent(@NonNull OnUserRegistrationEvent event) {
         handleRegistration(event);
     }
 
-    @Async("LB-Main-Executor")
-    void handleRegistration(OnUserRegistrationEvent event) {
+    private void handleRegistration(@NonNull OnUserRegistrationEvent event) {
         AttributedUser user = event.getUser();
         String token = registerTokenProvider.createRegisterToken(user);
         if (mailProperties == null || Strings.isNullOrEmpty(mailProperties.getHost())) {
@@ -83,34 +68,26 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
             registerTokenProvider.verifyRegisterToken(token);
             return;
         }
-        // TODO: move to email service
-        // TODO: make configurable
-        String subject = "[Lamp Blog] Registration Confirmation";
+        // TODO: read email template
         String confirmUrl = event.getUrl() + token;
-        SimpleMailMessage mailMessage = new SimpleMailMessageBuilder()
-                .setTo(user.getEmail())
-                .setSubject(subject)
-                .setText(("Dear %s,\nYou are now registering a new account, " +
-                        "click %s to confirm activate.\n" +
-                        "If you are not registering for this account, please ignore this message.\n\n" +
-                        "Sincerely, Lamp Blog Team.")
-                        .formatted(user.getUsername(), confirmUrl))
-                .setFrom(username)
+        PushMessageBody messageBody = new HtmlMessageBuilder()
+                .setTitle("[Lamp Blog] Registration Confirmation")
+                .appendParagraph("Dear " + user.getUsername() + ",")
+                .breakLine()
+                .appendParagraph("You are now registering a new account, click the link below to confirm activate.")
+                .breakLine().breakLine()
+                .appendLink("Confirm Activate", confirmUrl)
+                .breakLine().breakLine()
+                .appendParagraph("If you are not registering for this account, please ignore this message.")
+                .breakLine()
+                .appendParagraph("Sincerely, Lamp Blog Team.")
                 .build();
-        mailSender.send(mailMessage);
-    }
-
-
-    private static String chooseUsername(MailProperties mailProperties, SettingLoader settingLoader) {
-        String sender = settingLoader.getSettingValue(MailConfigKeys.KEY_MAIL_SENDER_NAME);
-        if (sender == null) {
-            return mailProperties.getUsername();
-        }
-        return sender + " <" + mailProperties.getUsername() + ">";
-    }
-
-    @Override
-    public void onEvent(SystemSetting event) {
-        // this.username = chooseUsername(mailProperties, settingLoader);
+        PushMessageStrategy emailStrategy =
+                pushMessageStrategyProvider.getPushMessageStrategy(PushType.EMAIL);
+        emailStrategy.push(
+                new MailPushUser(mailProperties.getUsername(), null),
+                user,
+                messageBody
+        );
     }
 }
