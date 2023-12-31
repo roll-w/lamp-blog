@@ -24,26 +24,38 @@ import java.util.List;
  * @author RollW
  */
 public enum LampSystemResourceKind implements SystemResourceKind {
+    // system
     USER,
     USER_GROUP("group"),
     USER_GROUP_MEMBER,
     STAFF,
     REGISTER_CODE,
+    SYSTEM_NOTICE_BOARD,
     SYSTEM_MESSAGE_RESOURCE,
     SYSTEM_SETTING,
+    STORAGE,
+
+    // content
     ARTICLE,
     COMMENT,
     POST,
     IMAGE,
     USER_LIKE,
     CONTENT_METADATA,
+    CONTENT_PASSWORD,
     CONTENT_COLLECTION_METADATA,
     REVIEW_JOB,
     TAG,
     TAG_GROUP,
     FAVORITE_GROUP,
     FAVORITE_ITEM,
-    ;
+    BLOCKLIST,
+
+    EMOJI,
+
+    CHAT_MESSAGE,
+    CHAT_GROUP,
+    CHAT_GROUP_MEMBER;
 
     private final List<String> aliases;
 
