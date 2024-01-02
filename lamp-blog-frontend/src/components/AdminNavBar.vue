@@ -15,35 +15,35 @@
   -->
 
 <template>
-<!--  <n-watermark-->
-<!--      :content="username  + ' ID:' + userId + ' ' + role"-->
-<!--      :font-size="16"-->
-<!--      :height="384"-->
-<!--      :line-height="16"-->
-<!--      :rotate="-15"-->
-<!--      :width="384"-->
-<!--      :x-offset="12"-->
-<!--      :y-offset="60"-->
-<!--      cross-->
-<!--      fullscreen-->
-<!--  />-->
-  <!--  TODO: collapse sidebar -->
-  <n-layout-sider :collapsed-width="0"
-                  :native-scrollbar="false"
-                  bordered
-                  position="absolute"
-                  width="var(--sidebar-width)">
-    <div>
-      <n-menu :options="menuOptions" :value="chooseOn"/>
-    </div>
-  </n-layout-sider>
+    <!--  <n-watermark-->
+    <!--      :content="username  + ' ID:' + userId + ' ' + role"-->
+    <!--      :font-size="16"-->
+    <!--      :height="384"-->
+    <!--      :line-height="16"-->
+    <!--      :rotate="-15"-->
+    <!--      :width="384"-->
+    <!--      :x-offset="12"-->
+    <!--      :y-offset="60"-->
+    <!--      cross-->
+    <!--      fullscreen-->
+    <!--  />-->
+    <!--  TODO: collapse sidebar -->
+    <n-layout-sider :collapsed-width="0"
+                    :native-scrollbar="false"
+                    bordered
+                    position="absolute"
+                    width="var(--sidebar-width)">
+        <div>
+            <n-menu :options="menuOptions" :value="chooseOn"/>
+        </div>
+    </n-layout-sider>
 </template>
 
 <script setup>
 
 import {RouterLink, useRouter} from "vue-router";
 import {h, onBeforeMount, ref} from "vue";
-import {admin, adminUsers, index, systemLog, systemSettings} from "@/router";
+import {index} from "@/router";
 import {useUserStore} from "@/stores/user";
 import {useMessage} from "naive-ui";
 import {convertsToMenuOptions, requestFullMenu} from "@/views/menu";
@@ -56,29 +56,29 @@ const role = ref(userStore.user.role)
 
 const router = useRouter()
 const checkAdminRole = () => {
-  if (!userStore.isLogin || !role || role.value === "USER") {
-    message.error("无权限访问该页面")
-    router.push({name: index})
-    return false
-  }
-  return true
+    if (!userStore.isLogin || !role || role.value === "USER") {
+        message.error("无权限访问该页面")
+        router.push({name: index})
+        return false
+    }
+    return true
 }
 
 onBeforeMount(() => {
-  checkAdminRole()
+    checkAdminRole()
 })
 
 let routerName = router.currentRoute.value.name
 const chooseOn = ref()
 const calcChooseOption = () => {
-  return routerName
+    return routerName
 }
 
 chooseOn.value = calcChooseOption()
 
 router.afterEach(() => {
-  routerName = router.currentRoute.value.name
-  chooseOn.value = calcChooseOption()
+    routerName = router.currentRoute.value.name
+    chooseOn.value = calcChooseOption()
 })
 
 const menuOptions = convertsToMenuOptions(requestFullMenu())

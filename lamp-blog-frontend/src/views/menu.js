@@ -23,6 +23,7 @@ import {
     reviewerReviews,
     reviewsQueue,
     systemLog,
+    systemMessageResource,
     systemSettings
 } from "@/router";
 import {h} from "vue";
@@ -52,12 +53,12 @@ const menus = [
         key: menuUsers,
         children: [
             {
-                routerLink: adminUsers,
+                linked: true,
                 name: "用户列表",
                 key: adminUsers
             },
             {
-                routerLink: adminStaffs,
+                linked: true,
                 name: "工作人员管理",
                 key: adminStaffs
             }
@@ -69,7 +70,7 @@ const menus = [
         children: [
             {
                 name: "文章列表",
-                routerLink: adminArticles,
+                linked: true,
                 key: adminArticles
             },
             {
@@ -99,18 +100,18 @@ const menus = [
             {
                 name: "管理审核列表",
                 key: adminReviews,
-                routerLink: adminReviews
+                linked: true,
             },
             {
                 name: "审核列表",
                 key: reviewerReviews,
-                routerLink: reviewerReviews
+                linked: true,
             },
 
             {
                 name: "审核任务",
                 key: reviewsQueue,
-                routerLink: reviewsQueue
+                linked: true,
             }
         ]
     },
@@ -119,14 +120,19 @@ const menus = [
         key: menuSystem,
         children: [
             {
-                routerLink: systemSettings,
+                linked: true,
                 name: "系统设置",
                 key: systemSettings
             },
             {
-                routerLink: systemLog,
+                linked: true,
                 name: "系统日志",
                 key: systemLog
+            },
+            {
+                linked: true,
+                name: "消息资源",
+                key: systemMessageResource
             },
             {
                 name: "系统监控",
@@ -141,7 +147,7 @@ export const requestChildrenMenus = (name) => {
 }
 
 export const requestFullMenu = () => {
-    return menus
+    return [...menus]
 }
 
 export const requestFullMenuByNames = (names) => {
@@ -157,7 +163,7 @@ export const convertsToMenuOptions = (menus) => {
         } else {
             children = undefined
         }
-        if (!menu.routerLink) {
+        if (!menu.linked) {
             return {
                 key: menu.key,
                 label: menu.name,
@@ -170,7 +176,7 @@ export const convertsToMenuOptions = (menus) => {
                 RouterLink,
                 {
                     to: {
-                        name: menu.routerLink,
+                        name: menu.key,
                     }
                 },
                 {default: () => menu.name}
