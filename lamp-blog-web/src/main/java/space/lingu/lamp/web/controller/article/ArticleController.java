@@ -60,7 +60,7 @@ public class ArticleController {
     }
 
 
-    @GetMapping("/user/{userId}/articles")
+    @GetMapping("/users/{userId}/articles")
     public HttpResponseEntity<List<ArticleVo>> getArticles(
             @PathVariable Long userId, Pageable pageRequest) {
         ContextThread<ApiContext> apiContextThread =
@@ -85,7 +85,7 @@ public class ArticleController {
         );
     }
 
-    @PostMapping("/article")
+    @PostMapping("/articles")
     public HttpResponseEntity<ArticleInfo> createArticle(
             @RequestBody ArticleRequest articleRequest) {
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
@@ -104,7 +104,7 @@ public class ArticleController {
         return HttpResponseEntity.success(articleInfo);
     }
 
-    @PutMapping("/user/{userId}/article/{articleId}")
+    @PutMapping("/users/{userId}/articles/{articleId}")
     public HttpResponseEntity<ArticleInfo> updateArticle(
             @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId,
@@ -113,14 +113,14 @@ public class ArticleController {
     }
 
 
-    @DeleteMapping("/user/{userId}/article/{articleId}")
+    @DeleteMapping("/users/{userId}/articles/{articleId}")
     public HttpResponseEntity<Void> deleteArticle(
             @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {
         return HttpResponseEntity.success();
     }
 
-    @GetMapping("/user/{userId}/article/{articleId}")
+    @GetMapping("/users/{userId}/articles/{articleId}")
     public HttpResponseEntity<ArticleVo> getArticle(
             @PathVariable(name = "userId") Long userId,
             @PathVariable(name = "articleId") Long articleId) {

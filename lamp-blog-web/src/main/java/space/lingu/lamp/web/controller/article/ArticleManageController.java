@@ -65,7 +65,7 @@ public class ArticleManageController {
     }
 
 
-    @GetMapping("/{userId}/articles")
+    @GetMapping("/users/{userId}/articles")
     public HttpResponseEntity<List<ArticleMetaVo>> getArticlesByUser(
             @PathVariable("userId") Long userId,
             Pageable pageable) {
@@ -81,7 +81,7 @@ public class ArticleManageController {
     }
 
 
-    @GetMapping("/{userId}/article/{articleId}")
+    @GetMapping("/users/{userId}/articles/{articleId}")
     public HttpResponseEntity<ArticleMetaVo> getArticle(
             @PathVariable("userId") Long userId,
             @PathVariable("articleId") Long articleId) {
