@@ -70,7 +70,7 @@ public class UserManageController {
         return UserPersonalData.defaultOf(user);
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/users/{userId}")
     public HttpResponseEntity<UserDetailsVo> getUserDetails(
             @PathVariable Long userId) {
         AttributedUser user = userManageService.getUser(userId);
@@ -81,32 +81,40 @@ public class UserManageController {
         return HttpResponseEntity.success(userDetailsVo);
     }
 
-    @DeleteMapping("/user/{userId}")
+    @DeleteMapping("/users/{userId}")
     public void deleteUser(@PathVariable String userId) {
 
     }
 
-    @PutMapping("/user/{userId}")
+    @PutMapping("/users/{userId}")
     public void updateUser(@PathVariable String userId) {
 
     }
 
-    @PostMapping("/user")
-    public void createUser() {
+    @PostMapping("/users")
+    public HttpResponseEntity<Long> createUser(@RequestBody UserCreateRequest userCreateRequest) {
+        AttributedUser user = userManageService.createUser(
+                userCreateRequest.username(),
+                userCreateRequest.password(),
+                userCreateRequest.email(),
+                userCreateRequest.role(),
+                true
+        );
 
+        return HttpResponseEntity.success(user.getUserId());
     }
 
-    @PutMapping("/user/{userId}/blocks")
+    @PutMapping("/users/{userId}/blocks")
     public void blockUser(@PathVariable String userId) {
 
     }
 
-    @DeleteMapping("/user/{userId}/blocks")
+    @DeleteMapping("/users/{userId}/blocks")
     public void unblockUser(@PathVariable String userId) {
 
     }
 
-    @GetMapping("/user/{userId}/blocks")
+    @GetMapping("/users/{userId}/blocks")
     public void getBlockedUserList(@PathVariable String userId) {
 
     }
