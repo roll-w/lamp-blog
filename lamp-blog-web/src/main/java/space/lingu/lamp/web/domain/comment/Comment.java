@@ -45,18 +45,16 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
     private final long commentOn;
 
     @DataColumn(name = "parent_id")
-    @Nullable
-    private final Long parentId;
+    private final long parentId;
 
-    @DataColumn(name = "content",
-            dataType = SQLDataType.LONGTEXT)
+    @DataColumn(name = "content", dataType = SQLDataType.LONGTEXT)
     private final String content;
-
-    @DataColumn(name = "deleted")
-    private final boolean deleted;
 
     @DataColumn(name = "create_time")
     private final long createTime;
+
+    @DataColumn(name = "update_time")
+    private final long updateTime;
 
     /**
      * Comment on which type of content.
@@ -69,16 +67,16 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
     private final CommentStatus commentStatus;
 
     public Comment(Long id, long userId, long commentOn,
-                   @Nullable Long parentId, String content,
-                   boolean deleted, long createTime,
+                   long parentId, String content,
+                   long createTime, long updateTime,
                    ContentType type, @NonNull CommentStatus commentStatus) {
         this.id = id;
         this.userId = userId;
         this.commentOn = commentOn;
         this.parentId = parentId;
         this.content = content;
-        this.deleted = deleted;
         this.createTime = createTime;
+        this.updateTime = updateTime;
         this.type = type;
         this.commentStatus = commentStatus;
     }
@@ -120,8 +118,7 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
         return content;
     }
 
-    @Nullable
-    public Long getParentId() {
+    public long getParentId() {
         return parentId;
     }
 
@@ -136,11 +133,7 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
 
     @Override
     public long getUpdateTime() {
-        return 0;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
+        return updateTime;
     }
 
     public ContentType getType() {
@@ -171,10 +164,10 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
         private Long id;
         private long userId;
         private long commentOn;
-        private Long parentId;
+        private long parentId;
         private String content;
-        private boolean deleted;
         private long createTime;
+        private long updateTime;
         private ContentType type;
         @NonNull
         private CommentStatus commentStatus;
@@ -185,8 +178,8 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
             this.commentOn = comment.commentOn;
             this.parentId = comment.parentId;
             this.content = comment.content;
-            this.deleted = comment.deleted;
             this.createTime = comment.createTime;
+            this.updateTime = comment.updateTime;
             this.type = comment.type;
             this.commentStatus = comment.commentStatus;
         }
@@ -211,7 +204,7 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
             return this;
         }
 
-        public Builder setParentId(Long parentId) {
+        public Builder setParentId(long parentId) {
             this.parentId = parentId;
             return this;
         }
@@ -221,13 +214,13 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
             return this;
         }
 
-        public Builder setDeleted(boolean deleted) {
-            this.deleted = deleted;
+        public Builder setCreateTime(long createTime) {
+            this.createTime = createTime;
             return this;
         }
 
-        public Builder setCreateTime(long createTime) {
-            this.createTime = createTime;
+        public Builder setUpdateTime(long updateTime) {
+            this.updateTime = updateTime;
             return this;
         }
 
@@ -243,8 +236,11 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
 
         @Override
         public Comment build() {
-            return new Comment(id, userId, commentOn,
-                    parentId, content, deleted, createTime, type, commentStatus);
+            return new Comment(
+                    id, userId, commentOn,
+                    parentId, content,
+                    createTime, updateTime, type, commentStatus
+            );
         }
     }
 
