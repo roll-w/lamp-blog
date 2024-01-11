@@ -37,7 +37,7 @@ public interface SystemSettingDao extends LampDao<SystemSetting, String> {
     List<SystemSetting> getByIds(List<String> ids);
 
     @Override
-    @Query("SELECT `key`, `value` FROM system_setting ORDER BY id DESC")
+    @Query("SELECT `key`, `value` FROM system_setting ORDER BY `key` DESC")
     List<SystemSetting> get();
 
     @Override
@@ -45,7 +45,7 @@ public interface SystemSettingDao extends LampDao<SystemSetting, String> {
     int count();
 
     @Override
-    @Query("SELECT `key`, `value` FROM system_setting ORDER BY id DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
+    @Query("SELECT `key`, `value` FROM system_setting ORDER BY `key` DESC LIMIT {offset.limit()} OFFSET {offset.offset()}")
     List<SystemSetting> get(Offset offset);
 
     @Override
