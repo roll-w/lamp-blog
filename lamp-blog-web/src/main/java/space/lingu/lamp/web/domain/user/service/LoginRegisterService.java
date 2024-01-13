@@ -28,7 +28,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.RequestMetadata;
-import space.lingu.lamp.web.common.ApiContextHolder;
+import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategy;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
@@ -44,6 +44,7 @@ import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 import tech.rollw.common.web.system.AuthenticationException;
+import tech.rollw.common.web.system.ContextThreadAware;
 
 import java.io.IOException;
 import java.util.*;
@@ -61,6 +62,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
     private final ApplicationEventPublisher eventPublisher;
     private final AuthenticationManager authenticationManager;
     private final UserSignatureProvider userSignatureProvider;
+    private final ContextThreadAware<ApiContext> apiContextThreadAware;
     private final Map<LoginStrategyType, LoginStrategy> loginStrategyMap =
             new EnumMap<>(LoginStrategyType.class);
 
@@ -70,13 +72,15 @@ public class LoginRegisterService implements RegisterTokenProvider {
                                 UserManageService userManageService,
                                 ApplicationEventPublisher eventPublisher,
                                 AuthenticationManager authenticationManager,
-                                UserSignatureProvider userSignatureProvider) {
+                                UserSignatureProvider userSignatureProvider,
+                                ContextThreadAware<ApiContext> apiContextThreadAware) {
         this.userRepository = userRepository;
         this.registerVerificationTokenRepository = registerVerificationTokenRepository;
         this.userManageService = userManageService;
         this.eventPublisher = eventPublisher;
         this.authenticationManager = authenticationManager;
         this.userSignatureProvider = userSignatureProvider;
+        this.apiContextThreadAware = apiContextThreadAware;
         strategies.forEach(strategy ->
                 loginStrategyMap.put(strategy.getStrategyType(), strategy));
     }
@@ -211,9 +215,16 @@ public class LoginRegisterService implements RegisterTokenProvider {
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
+        ApiContext apiContext = apiContextThreadAware.getContextThread()
+                .getContext();
+        Locale locale = apiContext == null
+                ? Locale.getDefault()
+                : apiContext.getLocale();
         OnUserRegistrationEvent event = new OnUserRegistrationEvent(
-                user, ApiContextHolder.getContext().locale(),
-                "http://localhost:5000/user/register/activate/");
+                user, locale,
+                // TODO: get url from config
+                "http://localhost:5000/user/register/activate/"
+        );
         eventPublisher.publishEvent(event);
     }
 }
