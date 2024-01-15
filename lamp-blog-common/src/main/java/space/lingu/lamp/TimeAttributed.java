@@ -16,34 +16,11 @@
 
 package space.lingu.lamp;
 
-import tech.rollw.common.web.system.SystemResource;
-
-import java.io.Serializable;
-
 /**
- * Indicates a database entity.
- *
  * @author RollW
  */
-public interface DataItem<T extends DataItem<T, ID>, ID> extends
-        Serializable, SystemResource<ID>, TimeAttributed {
-    /**
-     * Get the id of the entity.
-     *
-     * @return the id of the entity.
-     */
-    ID getId();
-
-    @Override
-    default ID getResourceId() {
-        return getId();
-    }
-
-    @Override
+public interface TimeAttributed {
     long getCreateTime();
 
-    @Override
     long getUpdateTime();
-
-    EntityBuilder<T, ID> toBuilder();
 }
