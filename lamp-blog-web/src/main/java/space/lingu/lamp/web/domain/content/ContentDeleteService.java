@@ -17,12 +17,10 @@
 package space.lingu.lamp.web.domain.content;
 
 /**
+ *
+ * @deprecated moved to {@link ContentOperator}
  * @author RollW
  */
+@Deprecated(forRemoval = true)
 public interface ContentDeleteService {
-    void deleteContent(ContentType contentType, long contentId);
-
-    void forbiddenContent(ContentType contentType, long contentId);
-
-    void restoreContent(ContentType contentType, long contentId);
 }

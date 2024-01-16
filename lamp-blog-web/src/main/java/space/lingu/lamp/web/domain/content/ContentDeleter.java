@@ -16,10 +16,15 @@
 
 package space.lingu.lamp.web.domain.content;
 
+import space.lingu.NonNull;
+
 /**
+ *
+ * @deprecated moved to {@link ContentOperator}
  * @author RollW
  */
-public interface ContentDeleter extends ContentProvider {
+@Deprecated(forRemoval = true)
+public interface ContentDeleter extends ContentSupportable {
     void deleteContent(ContentType contentType,
                        long contentId);
 
@@ -30,5 +35,5 @@ public interface ContentDeleter extends ContentProvider {
                         long contentId);
 
     @Override
-    boolean supports(ContentType contentType);
+    boolean supports(@NonNull ContentType contentType);
 }
