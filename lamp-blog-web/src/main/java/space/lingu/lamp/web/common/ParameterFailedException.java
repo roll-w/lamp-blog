@@ -22,6 +22,7 @@ import tech.rollw.common.web.WebCommonErrorCode;
 /**
  * @author RollW
  */
+@Deprecated
 public class ParameterFailedException extends BusinessRuntimeException {
     private static final String DEFAULT_TEMPLATE = "Parameter '{}' validate failed.";
 
