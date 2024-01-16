@@ -25,10 +25,10 @@ public record RequestInfo(
         Locale locale,
         String ip
 ) {
-    public static RequestInfo fromApiContext(ApiContextHolder.ApiContext apiContext) {
+    public static RequestInfo fromApiContext(ApiContext apiContext) {
         if (apiContext == null) {
             return null;
         }
-        return new RequestInfo(apiContext.locale(), apiContext.ip());
+        return new RequestInfo(apiContext.getLocale(), apiContext.getIp());
     }
 }
