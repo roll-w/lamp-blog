@@ -29,6 +29,7 @@ import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
+import tech.rollw.common.web.page.ImmutablePage;
 import tech.rollw.common.web.page.Offset;
 import tech.rollw.common.web.page.Page;
 import tech.rollw.common.web.page.Pageable;
@@ -86,7 +87,7 @@ public class ArticleService implements
     }
 
     @Override
-    public boolean supports(ContentType contentType) {
+    public boolean supports(@NonNull ContentType contentType) {
         return contentType == ContentType.ARTICLE;
     }
 
@@ -109,7 +110,7 @@ public class ArticleService implements
             }
         }
         // TODO: implement
-        return Page.of();
+        return ImmutablePage.of();
     }
 
 
@@ -134,7 +135,7 @@ public class ArticleService implements
 
     private Page<Article> getUserArticles(long id,
                                           Offset offset) {
-        return Page.of(
+        return ImmutablePage.of(
                 offset,
                 1,
                 articleRepository.getArticlesByUser(
@@ -149,7 +150,7 @@ public class ArticleService implements
     }
 
     private Page<Article> getArticles(Offset offset) {
-        return Page.of(
+        return ImmutablePage.of(
                 offset, 1,
                 articleRepository.get(offset)
         );

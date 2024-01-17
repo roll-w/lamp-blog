@@ -25,6 +25,7 @@ import space.lingu.lamp.web.domain.content.*;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentException;
+import tech.rollw.common.web.page.ImmutablePage;
 import tech.rollw.common.web.page.Offset;
 import tech.rollw.common.web.page.Page;
 import tech.rollw.common.web.page.Pageable;
@@ -37,6 +38,8 @@ import java.util.List;
 @Service
 public class CommentService implements ContentAccessor,
         ContentPublisher, ContentCollectionAccessor {
+    public static final int COMMENT_ROOT_ID = 0;
+
     private final CommentRepository commentRepository;
 
     public CommentService(CommentRepository commentRepository) {
@@ -58,6 +61,9 @@ public class CommentService implements ContentAccessor,
         if (!(detailsMetadata instanceof CommentDetailsMetadata commentDetailsMetadata)) {
             throw new IllegalArgumentException("Metadata was not been serialized as comment metadata.");
         }
+
+        // TODO: check parent id
+
         Comment comment = Comment
                 .builder()
                 .setType(commentDetailsMetadata.contentType())
@@ -75,8 +81,10 @@ public class CommentService implements ContentAccessor,
             ContentCollectionType contentCollectionType,
             long collectionId, Pageable pageable) {
         // TODO: collection
-        return Page.of();
-        //return getComment(contentCollectionType, collectionId, page, size);
+        return ImmutablePage.of(0, 0, 0, getComment(
+                contentCollectionType, collectionId,
+                pageable.getPage(),
+                pageable.getSize()));
     }
 
     @Override
@@ -110,7 +118,7 @@ public class CommentService implements ContentAccessor,
     }
 
     @Override
-    public boolean supports(ContentType contentType) {
+    public boolean supports(@NonNull ContentType contentType) {
         return contentType == ContentType.COMMENT;
     }
 }
