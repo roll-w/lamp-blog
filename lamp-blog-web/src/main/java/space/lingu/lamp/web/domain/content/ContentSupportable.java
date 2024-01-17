@@ -16,9 +16,11 @@
 
 package space.lingu.lamp.web.domain.content;
 
+import space.lingu.NonNull;
+
 /**
  * @author RollW
  */
 public interface ContentSupportable {
-    boolean supports(ContentType contentType);
+    boolean supports(@NonNull ContentType contentType);
 }

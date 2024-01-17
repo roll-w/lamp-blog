@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.domain.content;
 
+import space.lingu.NonNull;
+
 /**
  * Content service internal interface.
  *
@@ -23,9 +25,14 @@ package space.lingu.lamp.web.domain.content;
  */
 public interface ContentProvider extends ContentSupportable {
     @Override
-    boolean supports(ContentType contentType);
+    boolean supports(@NonNull ContentType contentType);
 
-    ContentDetails getContentDetails(ContentTrait contentTrait);
+    @NonNull
+    default ContentDetails getContentDetails(@NonNull ContentTrait contentTrait) {
+        return getContentOperator(contentTrait, false);
+    }
 
-    ContentOperator getContentOperator(ContentTrait contentTrait);
+    @NonNull
+    ContentOperator getContentOperator(@NonNull ContentTrait contentTrait,
+                                       boolean checkDelete);
 }
