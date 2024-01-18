@@ -39,12 +39,12 @@ export const menuSystem = "system-management"
 
 const menus = [
     {
-        routerLink: admin,
+        linked: true,
         name: "系统首页",
         key: admin
     },
     {
-        routerLink: index,
+        linked: true,
         name: "返回博客",
         key: index
     },
