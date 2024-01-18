@@ -18,6 +18,8 @@ package space.lingu.lamp.web.domain.push;
 
 import com.google.common.io.BaseEncoding;
 
+import java.text.MessageFormat;
+
 /**
  * @author RollW
  */
@@ -30,26 +32,26 @@ public class MarkdownMessageBuilder implements PushMessageBuilder {
     }
     
     @Override
-    public PushMessageBuilder setTitle(String title) {
+    public MarkdownMessageBuilder setTitle(String title) {
         this.title = title;
         return this;
     }
 
     @Override
-    public PushMessageBuilder clearContent() {
+    public MarkdownMessageBuilder clearContent() {
         this.content = new StringBuilder();
         return this;
     }
 
     @Override
-    public PushMessageBuilder appendParagraph(String paragraph) {
+    public MarkdownMessageBuilder appendParagraph(String paragraph) {
         breakLine();
         content.append(paragraph);
         return this;
     }
 
     @Override
-    public PushMessageBuilder appendParagraphTitle(String paragraphTitle,
+    public MarkdownMessageBuilder appendParagraphTitle(String paragraphTitle,
                                                    ParagraphTitleLevel level) {
         breakLine();
         content.append("#".repeat(level.getLevel()))
@@ -59,25 +61,41 @@ public class MarkdownMessageBuilder implements PushMessageBuilder {
     }
 
     @Override
-    public PushMessageBuilder appendContent(String content) {
+    public MarkdownMessageBuilder appendContent(String content) {
+        return appendContent(content, false);
+    }
+
+    @Override
+    public MarkdownMessageBuilder appendContent(String content,
+                                                boolean escape) {
+        if (escape) {
+            content = escapeMarkdown(content);
+        }
         this.content.append(content);
         return this;
     }
 
     @Override
-    public PushMessageBuilder breakLine() {
+    public MarkdownMessageBuilder appendContent(String content,
+                                                Object... args) {
+        this.content.append(MessageFormat.format(content, args));
+        return this;
+    }
+
+    @Override
+    public MarkdownMessageBuilder breakLine() {
         content.append("\n\n");
         return this;
     }
 
     @Override
-    public PushMessageBuilder appendLink(String link, String linkText) {
+    public MarkdownMessageBuilder appendLink(String link, String linkText) {
         content.append("[").append(linkText).append("](").append(link).append(")");
         return this;
     }
 
     @Override
-    public PushMessageBuilder appendImage(byte[] image, String imageText) {
+    public MarkdownMessageBuilder appendImage(byte[] image, String imageText) {
         content.append("![")
                 .append(imageText)
                 .append("](")
@@ -88,7 +106,7 @@ public class MarkdownMessageBuilder implements PushMessageBuilder {
     }
 
     @Override
-    public PushMessageBuilder appendImage(String imageUrl, String imageText) {
+    public MarkdownMessageBuilder appendImage(String imageUrl, String imageText) {
         content.append("![")
                 .append(imageText)
                 .append("](")
@@ -101,5 +119,9 @@ public class MarkdownMessageBuilder implements PushMessageBuilder {
     public PushMessageBody build() {
         return new SimplePushMessageBody(
                 title, content.toString(), MessageMimeType.MARKDOWN);
+    }
+
+    private static String escapeMarkdown(String content) {
+        return content;
     }
 }

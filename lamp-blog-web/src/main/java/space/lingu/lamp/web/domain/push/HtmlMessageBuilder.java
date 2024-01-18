@@ -16,9 +16,11 @@
 
 package space.lingu.lamp.web.domain.push;
 
+import com.google.common.html.HtmlEscapers;
 import com.google.common.io.BaseEncoding;
 import org.apache.commons.lang3.tuple.Pair;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 /**
@@ -61,7 +63,26 @@ public class HtmlMessageBuilder implements PushMessageBuilder {
 
     @Override
     public HtmlMessageBuilder appendContent(String content) {
+        return appendContent(content, false);
+    }
+
+    private HtmlMessageBuilder append(String content) {
         this.content.append(content);
+        return this;
+    }
+
+    @Override
+    public HtmlMessageBuilder appendContent(String content, boolean escape) {
+        if (escape) {
+            content = escapeHtml(content);
+        }
+        return append(content);
+    }
+
+
+    @Override
+    public HtmlMessageBuilder appendContent(String content, Object... args) {
+        this.content.append(MessageFormat.format(content, args));
         return this;
     }
 
@@ -142,6 +163,9 @@ public class HtmlMessageBuilder implements PushMessageBuilder {
         }
     }
 
+    private static String escapeHtml(String content) {
+        return HtmlEscapers.htmlEscaper().escape(content);
+    }
 
     public record Node(
             String tag,

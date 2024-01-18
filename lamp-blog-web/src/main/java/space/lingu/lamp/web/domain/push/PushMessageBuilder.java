@@ -29,7 +29,13 @@ public interface PushMessageBuilder {
     PushMessageBuilder appendParagraphTitle(String paragraphTitle,
                                             ParagraphTitleLevel level);
 
-    PushMessageBuilder appendContent(String content);
+    default PushMessageBuilder appendContent(String content) {
+        return appendContent(content, false);
+    }
+
+    PushMessageBuilder appendContent(String content, boolean escape);
+
+    PushMessageBuilder appendContent(String content, Object... args);
 
     PushMessageBuilder breakLine();
 
