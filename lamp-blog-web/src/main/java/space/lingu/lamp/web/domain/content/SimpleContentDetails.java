@@ -28,6 +28,8 @@ public record SimpleContentDetails(
         long userId,
         @Nullable String title,
         @Nullable String content,
+        long createTime,
+        long updateTime,
         @Nullable ContentDetailsMetadata contentDetailsMetadata
 ) implements ContentDetails {
     @Override
@@ -62,5 +64,15 @@ public record SimpleContentDetails(
     @Nullable
     public ContentDetailsMetadata getMetadata() {
         return contentDetailsMetadata;
+    }
+
+    @Override
+    public long getCreateTime() {
+        return createTime;
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return updateTime;
     }
 }

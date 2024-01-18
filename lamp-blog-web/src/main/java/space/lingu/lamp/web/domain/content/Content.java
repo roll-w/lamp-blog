@@ -47,4 +47,14 @@ public interface Content extends ContentIdentity {
     @NonNull
     @Override
     ContentType getContentType();
+
+    static Content of(long userId, long contentId,
+                      @NonNull ContentType contentType) {
+        return new SimpleContentInfo(userId, contentId, contentType);
+    }
+
+    static Content of(long userId,
+                      @NonNull ContentTrait content) {
+        return new SimpleContentInfo(userId, content);
+    }
 }

@@ -18,13 +18,14 @@ package space.lingu.lamp.web.domain.content;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
+import space.lingu.lamp.TimeAttributed;
 
 /**
  * Content details.
  *
  * @author RollW
  */
-public interface ContentDetails extends Content {
+public interface ContentDetails extends Content, TimeAttributed {
     /**
      * @inheritDoc
      */

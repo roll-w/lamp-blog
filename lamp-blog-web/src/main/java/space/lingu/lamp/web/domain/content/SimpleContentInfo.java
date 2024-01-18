@@ -26,6 +26,13 @@ public record SimpleContentInfo(
         long contentId,
         ContentType contentType
 ) implements Content {
+
+    public SimpleContentInfo(long userId,
+                             @NonNull ContentTrait content) {
+        this(userId, content.getContentId(),
+                content.getContentType());
+    }
+
     @Override
     public long getUserId() {
         return userId;

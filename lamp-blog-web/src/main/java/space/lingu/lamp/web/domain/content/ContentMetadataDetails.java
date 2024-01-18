@@ -87,4 +87,14 @@ public class ContentMetadataDetails<T extends ContentDetails> implements Content
     public ContentDetailsMetadata getMetadata() {
         return contentDetails.getMetadata();
     }
+
+    @Override
+    public long getCreateTime() {
+        return contentDetails.getCreateTime();
+    }
+
+    @Override
+    public long getUpdateTime() {
+       return contentDetails.getUpdateTime();
+    }
 }

@@ -42,4 +42,8 @@ public interface ContentIdentity extends ContentTrait, SystemResource<Long>, Ser
     default SystemResourceKind getSystemResourceKind() {
         return getContentType().getSystemResourceKind();
     }
+
+    static ContentIdentity of(long contentId, @NonNull ContentType contentType) {
+        return new SimpleContentIdentity(contentId, contentType);
+    }
 }
