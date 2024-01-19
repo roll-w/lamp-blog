@@ -48,7 +48,7 @@ import java.util.Set;
  */
 @Service
 public class ContentService implements ContentAccessService,
-        ContentPublishService, ContentDeleteService, ContentCollectionService {
+        ContentPublishProvider, ContentCollectionService {
     private static final Logger logger = LoggerFactory.getLogger(ContentService.class);
 
     private final Set<ContentAccessor> contentAccessors;

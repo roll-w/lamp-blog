@@ -44,16 +44,16 @@ import java.util.List;
 public class ArticleController {
     // TODO: refactor article controller,
     //  splits admin and common users into two controllers
-    private final ContentPublishService contentPublishService;
+    private final ContentPublishProvider contentPublishProvider;
     private final ContentAccessService contentAccessService;
     private final ContentCollectionService contentCollectionService;
     private final ContextThreadAware<ApiContext> apiContextThreadAware;
 
-    public ArticleController(ContentPublishService contentPublishService,
+    public ArticleController(ContentPublishProvider contentPublishProvider,
                              ContentAccessService contentAccessService,
                              ContentCollectionService contentCollectionService,
                              ContextThreadAware<ApiContext> apiContextThreadAware) {
-        this.contentPublishService = contentPublishService;
+        this.contentPublishProvider = contentPublishProvider;
         this.contentAccessService = contentAccessService;
         this.contentCollectionService = contentCollectionService;
         this.apiContextThreadAware = apiContextThreadAware;
@@ -99,7 +99,7 @@ public class ArticleController {
                 ArticleDetailsMetadata.EMPTY
         );
         ContentDetails articleDetails =
-                contentPublishService.publishContent(uncreatedContent);
+                contentPublishProvider.publishContent(uncreatedContent);
         ArticleInfo articleInfo = ArticleInfo.from(articleDetails);
         return HttpResponseEntity.success(articleInfo);
     }

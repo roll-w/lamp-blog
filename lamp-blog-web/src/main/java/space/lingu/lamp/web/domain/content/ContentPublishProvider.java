@@ -21,6 +21,7 @@ import space.lingu.lamp.web.domain.content.common.ContentException;
 /**
  * @author RollW
  */
-public interface ContentPublishService {
-    ContentDetails publishContent(UncreatedContent uncreatedContent) throws ContentException;
+public interface ContentPublishProvider {
+    ContentDetails publishContent(UncreatedContent uncreatedContent)
+            throws ContentException;
 }

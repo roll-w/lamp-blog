@@ -39,14 +39,14 @@ import java.util.List;
  */
 @AdminApi
 public class ArticleManageController {
-    private final ContentPublishService contentPublishService;
+    private final ContentPublishProvider contentPublishProvider;
     private final ContentAccessService contentAccessService;
     private final ContentCollectionService contentCollectionService;
 
-    public ArticleManageController(ContentPublishService contentPublishService,
+    public ArticleManageController(ContentPublishProvider contentPublishProvider,
                                    ContentAccessService contentAccessService,
                                    ContentCollectionService contentCollectionService) {
-        this.contentPublishService = contentPublishService;
+        this.contentPublishProvider = contentPublishProvider;
         this.contentAccessService = contentAccessService;
         this.contentCollectionService = contentCollectionService;
     }
