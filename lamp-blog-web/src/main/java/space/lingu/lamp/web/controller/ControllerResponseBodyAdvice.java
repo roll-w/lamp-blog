@@ -124,7 +124,7 @@ public class ControllerResponseBodyAdvice implements ResponseBodyAdvice<Object> 
         }
         if (method == HttpMethod.POST || method == HttpMethod.PUT ||
                 method == HttpMethod.PATCH) {
-            return 204;
+            return 201;
         }
         if (method == HttpMethod.DELETE) {
             return 204;
