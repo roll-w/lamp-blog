@@ -24,9 +24,11 @@ import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.lamp.web.domain.staff.dto.StaffInfo;
 import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
 import space.lingu.lamp.web.domain.user.UserIdentity;
-import space.lingu.lamp.web.domain.user.service.UserSearchService;
+import space.lingu.lamp.web.domain.user.UserProvider;
+import space.lingu.lamp.web.domain.user.UserSearchService;
 import tech.rollw.common.web.BusinessRuntimeException;
 import tech.rollw.common.web.DataErrorCode;
+import tech.rollw.common.web.page.ImmutablePage;
 import tech.rollw.common.web.page.Page;
 import tech.rollw.common.web.page.Pageable;
 
@@ -40,23 +42,26 @@ import java.util.List;
 public class StaffServiceImpl implements StaffService {
     private final StaffRepository staffRepository;
     private final UserSearchService userSearchService;
+    private final UserProvider userProvider;
 
     public StaffServiceImpl(StaffRepository staffRepository,
-                            UserSearchService userSearchService) {
+                            UserSearchService userSearchService,
+                            UserProvider userProvider) {
         this.staffRepository = staffRepository;
         this.userSearchService = userSearchService;
+        this.userProvider = userProvider;
     }
 
     @Override
     public Page<StaffInfo> getStaffs(Pageable pageable) {
-        List<Staff> staffs = staffRepository.getStaffs(pageable);
+        List<Staff> staffs = staffRepository.get(pageable.toOffset());
         List<Long> ids = staffs.stream()
                 .map(Staff::getUserId)
                 .toList();
         List<? extends UserIdentity> userIdentities = userSearchService
                 .findUsers(ids);
         List<StaffInfo> staffInfos = pairByUserId(staffs, userIdentities);
-        return new Page<>(
+        return ImmutablePage.of(
                 pageable.getPage(),
                 pageable.getSize(),
                 1, // TODO: get total page
@@ -85,21 +90,21 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public StaffInfo getStaffByUser(long userId) {
-        Staff staff = staffRepository.getById(userId);
+        Staff staff = staffRepository.getByUserId(userId);
         if (staff == null) {
             throw new BusinessRuntimeException(DataErrorCode.ERROR_DATA_NOT_EXIST);
         }
-        UserIdentity userIdentity = userSearchService.findUser(userId);
+        UserIdentity userIdentity = userProvider.getUser(userId);
         return StaffInfo.from(staff, userIdentity);
     }
 
     @Override
-    public StaffInfo getStaff(String staffId) {
-        Staff staff = staffRepository.getByStaffId(staffId);
+    public StaffInfo getStaff(long staffId) {
+        Staff staff = staffRepository.getById(staffId);
         if (staff == null) {
             throw new BusinessRuntimeException(DataErrorCode.ERROR_DATA_NOT_EXIST);
         }
-        UserIdentity userIdentity = userSearchService.findUser(staff.getUserId());
+        UserIdentity userIdentity = userProvider.getUser(staff.getUserId());
         return StaffInfo.from(staff, userIdentity);
     }
 

@@ -16,25 +16,35 @@
 
 package space.lingu.lamp.web.domain.user;
 
-import space.lingu.lamp.TimeAttributed;
+import space.lingu.NonNull;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
+import tech.rollw.common.web.system.Operator;
+import tech.rollw.common.web.system.SystemResource;
+import tech.rollw.common.web.system.SystemResourceKind;
 
 /**
  * @author RollW
  */
-public interface AttributedUser extends UserIdentity, TimeAttributed {
-    boolean isEnabled();
-
-    boolean isLocked();
-
-    boolean isCanceled();
+public interface UserTrait extends Operator, SystemResource<Long> {
+    long getUserId();
 
     @Override
-    long getCreateTime();
+    default long getOperatorId() {
+        return getUserId();
+    }
 
     @Override
-    long getUpdateTime();
+    default Long getResourceId() {
+        return getUserId();
+    }
 
-    default boolean isNormal() {
-        return isEnabled() && !isLocked() && !isCanceled();
+    @NonNull
+    @Override
+    default SystemResourceKind getSystemResourceKind() {
+        return LampSystemResourceKind.USER;
+    }
+
+    static UserTrait of(long userId) {
+        return SimpleUserTrait.of(userId);
     }
 }

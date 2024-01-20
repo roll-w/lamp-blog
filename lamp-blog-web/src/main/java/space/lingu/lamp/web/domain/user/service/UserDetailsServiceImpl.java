@@ -36,7 +36,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.getUserByName(username);
+        User user = userRepository.getByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("Username " + username + " not exist");
         }
@@ -45,7 +45,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUserId(long userId) throws UsernameNotFoundException {
-        User user = userRepository.getUserById(userId);
+        User user = userRepository.getById(userId);
         if (user == null) {
             throw new UsernameNotFoundException("User ID " + userId + " not exist");
         }

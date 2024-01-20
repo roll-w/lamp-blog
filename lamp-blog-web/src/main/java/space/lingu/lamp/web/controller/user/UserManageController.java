@@ -18,13 +18,15 @@ package space.lingu.lamp.web.controller.user;
 
 import org.springframework.web.bind.annotation.*;
 import space.lingu.lamp.web.controller.AdminApi;
+import space.lingu.lamp.web.controller.user.vo.UserCreateRequest;
 import space.lingu.lamp.web.controller.user.vo.UserDetailsVo;
+import space.lingu.lamp.web.domain.storage.StorageUrlProvider;
 import space.lingu.lamp.web.domain.user.AttributedUser;
-import space.lingu.lamp.web.domain.user.service.UserManageService;
+import space.lingu.lamp.web.domain.user.UserManageService;
+import space.lingu.lamp.web.domain.user.UserProvider;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalDataService;
 import tech.rollw.common.web.HttpResponseEntity;
-import tech.rollw.common.web.page.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,27 +37,34 @@ import java.util.List;
 @AdminApi
 public class UserManageController {
     private final UserManageService userManageService;
+    private final UserProvider userProvider;
     private final UserPersonalDataService userPersonalDataService;
+    private final StorageUrlProvider storageUrlProvider;
 
     public UserManageController(UserManageService userManageService,
-                                UserPersonalDataService userPersonalDataService) {
+                                UserProvider userProvider,
+                                UserPersonalDataService userPersonalDataService,
+                                StorageUrlProvider storageUrlProvider) {
         this.userManageService = userManageService;
+        this.userProvider = userProvider;
         this.userPersonalDataService = userPersonalDataService;
+        this.storageUrlProvider = storageUrlProvider;
     }
 
     @GetMapping("/users")
-    public HttpResponseEntity<List<UserDetailsVo>> getUserList(Pageable pageable) {
-        List<AttributedUser> userIdentities = userManageService.getUsers(
-                pageable.getPage(),
-                pageable.getSize()
-        );
+    public HttpResponseEntity<List<UserDetailsVo>> getUserList() {
+        List<AttributedUser> userIdentities = userProvider.getUsers();
         List<UserPersonalData> personalDataList =
                 userPersonalDataService.getPersonalData(userIdentities);
         List<UserDetailsVo> userDetailsVos = new ArrayList<>();
         for (AttributedUser user : userIdentities) {
             UserPersonalData personalData = getPersonalData(
                     user, personalDataList);
-            userDetailsVos.add(UserDetailsVo.of(user, personalData));
+            userDetailsVos.add(UserDetailsVo.of(
+                    user, personalData,
+                    storageUrlProvider.getUrlOfStorage(personalData.getAvatar()),
+                    storageUrlProvider.getUrlOfStorage(personalData.getCover())
+            ));
         }
         return HttpResponseEntity.success(userDetailsVos);
     }
@@ -73,11 +82,14 @@ public class UserManageController {
     @GetMapping("/users/{userId}")
     public HttpResponseEntity<UserDetailsVo> getUserDetails(
             @PathVariable Long userId) {
-        AttributedUser user = userManageService.getUser(userId);
+        AttributedUser user = userProvider.getUser(userId);
         UserPersonalData userPersonalData =
                 userPersonalDataService.getPersonalData(user);
-        UserDetailsVo userDetailsVo =
-                UserDetailsVo.of(user, userPersonalData);
+        UserDetailsVo userDetailsVo = UserDetailsVo.of(
+                user, userPersonalData,
+                storageUrlProvider.getUrlOfStorage(userPersonalData.getAvatar()),
+                storageUrlProvider.getUrlOfStorage(userPersonalData.getCover())
+        );
         return HttpResponseEntity.success(userDetailsVo);
     }
 

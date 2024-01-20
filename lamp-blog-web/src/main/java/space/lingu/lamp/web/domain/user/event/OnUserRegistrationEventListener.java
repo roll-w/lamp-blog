@@ -28,7 +28,7 @@ import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.domain.push.*;
 import space.lingu.lamp.web.domain.push.mail.MailPushUser;
 import space.lingu.lamp.web.domain.user.AttributedUser;
-import space.lingu.lamp.web.domain.user.service.RegisterTokenProvider;
+import space.lingu.lamp.web.domain.user.RegisterTokenProvider;
 
 /**
  * @author RollW

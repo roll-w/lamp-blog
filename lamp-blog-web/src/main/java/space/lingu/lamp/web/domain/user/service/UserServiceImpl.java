@@ -19,10 +19,8 @@ package space.lingu.lamp.web.domain.user.service;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.domain.user.AttributedUser;
-import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.NonNull;
+import space.lingu.lamp.web.domain.user.*;
 import space.lingu.lamp.web.domain.user.common.UserViewException;
 import space.lingu.lamp.web.domain.user.event.OnUserCreateEvent;
 import space.lingu.lamp.web.domain.user.filter.UserFilteringInfo;
@@ -31,8 +29,8 @@ import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
 import space.lingu.lamp.web.domain.user.repository.UserRepository;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
-import tech.rollw.common.web.page.Offset;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -41,7 +39,7 @@ import java.util.List;
  */
 @Service
 public class UserServiceImpl implements UserSignatureProvider,
-        UserManageService, UserSearchService {
+        UserManageService, UserSearchService, UserProvider {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserInfoFilter userInfoFilter;
@@ -121,10 +119,9 @@ public class UserServiceImpl implements UserSignatureProvider,
     }
 
     @Override
-    public List<AttributedUser> getUsers(int page, int size) {
-        return Collections.unmodifiableList(
-                userRepository.get(Offset.of(page, size))
-        );
+    public AttributedUser getUser(UserIdentity userIdentity)
+            throws UserViewException {
+        return getUser(userIdentity.getUserId());
     }
 
     @Override
@@ -135,36 +132,31 @@ public class UserServiceImpl implements UserSignatureProvider,
     }
 
     @Override
-    public UserIdentity findUser(long userId) throws UserViewException {
-        User user = userRepository.getById(userId);
-        if (user == null) {
-            throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
+    public List<AttributedUser> findUsers(@NonNull String keyword) {
+        List<AttributedUser> res = new ArrayList<>();
+        AttributedUser user = tryGetUserById(keyword);
+        if (user != null) {
+            res.add(user);
         }
-        if (!user.isEnabled()) {
-            throw new UserViewException(UserErrorCode.ERROR_USER_DISABLED);
+        res.addAll(userRepository.searchBy(keyword));
+
+        return res.stream()
+                .distinct()
+                .toList();
+    }
+
+    private AttributedUser tryGetUserById(String s) {
+        try {
+            return getUser(Long.parseLong(s));
+        } catch (NumberFormatException | UserViewException e) {
+            return null;
         }
-        if (user.isCanceled()) {
-            throw new UserViewException(UserErrorCode.ERROR_USER_CANCELED);
-        }
-        return user;
     }
 
     @Override
-    public UserIdentity findUser(UserIdentity userIdentity) throws UserViewException {
-        if (userIdentity == null) {
-            throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
-        }
-        return findUser(userIdentity.getUserId());
-    }
-
-    @Override
-    public List<? extends UserIdentity> findUsers() {
-        // TODO: filter canceled user
-        return userRepository.get();
-    }
-
-    @Override
-    public List<? extends UserIdentity> findUsers(List<Long> ids) {
-        return userRepository.getByIds(ids);
+    public List<AttributedUser> findUsers(List<Long> ids) {
+        return Collections.unmodifiableList(
+                userRepository.getByIds(ids)
+        );
     }
 }

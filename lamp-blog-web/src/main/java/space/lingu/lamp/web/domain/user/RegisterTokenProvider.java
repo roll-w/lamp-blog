@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
+package space.lingu.lamp.web.domain.user;
 
-import space.lingu.lamp.web.domain.user.AttributedUser;
-import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.common.UserViewException;
-
-import java.util.List;
+import tech.rollw.common.web.BusinessRuntimeException;
 
 /**
  * @author RollW
  */
-public interface UserManageService {
-    AttributedUser createUser(String username, String password,
-                                String email, Role role, boolean enable);
+public interface RegisterTokenProvider {
+    String createRegisterToken(UserIdentity userIdentity);
 
-    AttributedUser getUser(long userId) throws UserViewException;
-
-    List<AttributedUser> getUsers(int page, int size);
-
-    List<AttributedUser> getUsers();
+    void verifyRegisterToken(String token) throws BusinessRuntimeException;
 }

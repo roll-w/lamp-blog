@@ -16,15 +16,11 @@
 
 package space.lingu.lamp.web.domain.user;
 
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import tech.rollw.common.web.system.Operator;
-import tech.rollw.common.web.system.SystemResource;
-import tech.rollw.common.web.system.SystemResourceKind;
-
 /**
  * @author RollW
  */
-public interface UserIdentity extends Operator, SystemResource<Long> {
+public interface UserIdentity extends UserTrait {
+    @Override
     long getUserId();
 
     String getUsername();
@@ -32,19 +28,4 @@ public interface UserIdentity extends Operator, SystemResource<Long> {
     String getEmail();
 
     Role getRole();
-
-    @Override
-    default long getOperatorId() {
-        return getUserId();
-    }
-
-    @Override
-    default Long getResourceId() {
-        return getUserId();
-    }
-
-    @Override
-    default SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.USER;
-    }
 }

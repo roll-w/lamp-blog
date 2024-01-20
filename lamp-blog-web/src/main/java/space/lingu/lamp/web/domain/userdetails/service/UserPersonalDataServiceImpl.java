@@ -17,9 +17,9 @@
 package space.lingu.lamp.web.domain.userdetails.service;
 
 import org.springframework.stereotype.Service;
+import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.UserIdentity;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
-import space.lingu.lamp.web.domain.user.repository.UserRepository;
+import space.lingu.lamp.web.domain.user.UserProvider;
 import space.lingu.lamp.web.domain.userdetails.Birthday;
 import space.lingu.lamp.web.domain.userdetails.Gender;
 import space.lingu.lamp.web.domain.userdetails.UserDataField;
@@ -35,12 +35,12 @@ import java.util.List;
  */
 @Service
 public class UserPersonalDataServiceImpl implements UserPersonalDataService {
-    private final UserRepository userRepository;
+    private final UserProvider userProvider;
     private final UserPersonalDataRepository userPersonalDataRepository;
 
-    public UserPersonalDataServiceImpl(UserRepository userRepository,
+    public UserPersonalDataServiceImpl(UserProvider userProvider,
                                        UserPersonalDataRepository userPersonalDataRepository) {
-        this.userRepository = userRepository;
+        this.userProvider = userProvider;
         this.userPersonalDataRepository = userPersonalDataRepository;
     }
 
@@ -48,14 +48,14 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
     public UserPersonalData getPersonalData(long userId) {
         UserPersonalData data = userPersonalDataRepository.getById(userId);
         if (data == null) {
-            UserInfo userInfo = userRepository.getUserInfoById(userId);
-            return UserPersonalData.defaultOf(userInfo);
+            AttributedUser user = userProvider.getUser(userId);
+            return UserPersonalData.defaultOf(user);
         }
         if (UserPersonalData.checkNecessaryFields(data)) {
             return data;
         }
-        UserInfo userInfo = userRepository.getUserInfoById(userId);
-        return UserPersonalData.replaceWithDefault(userInfo, data);
+        AttributedUser user = userProvider.getUser(userId);
+        return UserPersonalData.replaceWithDefault(user, data);
     }
 
     @Override
@@ -72,10 +72,9 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
 
     @Override
     public List<UserPersonalData> getPersonalData(List<? extends UserIdentity> userIdentities) {
-        Long[] ids = userIdentities.stream().map(UserIdentity::getUserId)
-                .toList()
-                .toArray(new Long[0]);
-        List<UserPersonalData> userPersonalData = getPersonalData(ids);
+        List<Long> ids = userIdentities.stream().map(UserIdentity::getUserId)
+                .toList();
+        List<UserPersonalData> userPersonalData = getPersonalDataByIds(ids);
         return userPersonalData.stream().map(data -> {
             if (UserPersonalData.checkNecessaryFields(data)) {
                 return data;
@@ -91,7 +90,7 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
     }
 
     @Override
-    public List<UserPersonalData> getPersonalData(Long[] ids) {
+    public List<UserPersonalData> getPersonalDataByIds(List<Long> ids) {
         return userPersonalDataRepository.getByIds(ids);
     }
 

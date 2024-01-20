@@ -14,13 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
+package space.lingu.lamp.web.domain.user;
+
+import space.lingu.lamp.web.domain.user.AttributedUser;
+import space.lingu.lamp.web.domain.user.Role;
 
 /**
- * Provides signature of user to sign the token.
- *
  * @author RollW
  */
-public interface UserSignatureProvider {
-    String getSignature(long userId);
+public interface UserManageService {
+    AttributedUser createUser(String username, String password,
+                              String email, Role role, boolean enable);
 }

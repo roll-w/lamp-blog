@@ -14,27 +14,19 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.userdetails;
+package space.lingu.lamp.web.domain.user;
 
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.NonNull;
+import space.lingu.lamp.web.domain.user.AttributedUser;
 
 import java.util.List;
 
 /**
+ *
  * @author RollW
  */
-public interface UserPersonalDataService {
-    UserPersonalData getPersonalData(long userId);
+public interface UserSearchService {
+    List<AttributedUser> findUsers(@NonNull String keyword);
 
-    UserPersonalData getPersonalData(UserIdentity userIdentity);
-
-    List<UserPersonalData> getPersonalData(List<? extends UserIdentity> userIdentities);
-
-    List<UserPersonalData> getPersonalDataByIds(List<Long> ids);
-
-    void updatePersonalData(long userId, UserDataFieldType type, Object value);
-
-    void updatePersonalData(long userId, UserDataField... fields);
-
-    void createPersonalData(UserPersonalData data);
+    List<AttributedUser> findUsers(List<Long> ids);
 }

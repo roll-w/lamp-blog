@@ -14,15 +14,19 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
+package space.lingu.lamp.web.domain.user;
 
-import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.common.UserViewException;
+
+import java.util.List;
 
 /**
  * @author RollW
  */
-public interface UserService {
-    UserInfo createUser(String username, String password,
-                        String email, Role role);
+public interface UserProvider {
+    AttributedUser getUser(long userId) throws UserViewException;
+
+    AttributedUser getUser(UserIdentity userIdentity) throws UserViewException;
+
+    List<AttributedUser> getUsers();
 }

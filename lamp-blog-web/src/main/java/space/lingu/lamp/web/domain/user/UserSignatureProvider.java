@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
-
-import space.lingu.lamp.web.domain.user.UserIdentity;
-import tech.rollw.common.web.BusinessRuntimeException;
+package space.lingu.lamp.web.domain.user;
 
 /**
+ * Provides signature of user to sign the token.
+ *
  * @author RollW
  */
-public interface RegisterTokenProvider {
-    String createRegisterToken(UserIdentity userIdentity);
-
-    void verifyRegisterToken(String token) throws BusinessRuntimeException;
+public interface UserSignatureProvider {
+    String getSignature(long userId);
 }

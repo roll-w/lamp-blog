@@ -29,7 +29,8 @@ import space.lingu.lamp.web.domain.storage.StorageUrlProvider;
 import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.lamp.web.domain.user.common.UserViewException;
-import space.lingu.lamp.web.domain.user.service.UserSearchService;
+import space.lingu.lamp.web.domain.user.UserProvider;
+import space.lingu.lamp.web.domain.user.UserSearchService;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalDataService;
 import tech.rollw.common.web.AuthErrorCode;
@@ -47,17 +48,20 @@ import java.util.List;
 public class UserController {
     private final ContextThreadAware<ApiContext> apiContextThreadAware;
     private final ContextThreadAware<PageableContext> pageableContextThreadAware;
+    private final UserProvider userProvider;
     private final UserSearchService userSearchService;
     private final UserPersonalDataService userPersonalDataService;
     private final StorageUrlProvider storageUrlProvider;
 
     public UserController(ContextThreadAware<ApiContext> apiContextThreadAware,
                           ContextThreadAware<PageableContext> pageableContextThreadAware,
+                          UserProvider userProvider,
                           UserSearchService userSearchService,
                           UserPersonalDataService userPersonalDataService,
                           StorageUrlProvider storageUrlProvider) {
         this.apiContextThreadAware = apiContextThreadAware;
         this.pageableContextThreadAware = pageableContextThreadAware;
+        this.userProvider = userProvider;
         this.userSearchService = userSearchService;
         this.userPersonalDataService = userPersonalDataService;
         this.storageUrlProvider = storageUrlProvider;
@@ -85,7 +89,7 @@ public class UserController {
     @GetMapping("/users/{userId}")
     public HttpResponseEntity<UserCommonDetailsVo> getUserInfo(
             @PathVariable("userId") Long userId) {
-        UserIdentity userIdentity = userSearchService.findUser(userId);
+        UserIdentity userIdentity = userProvider.getUser(userId);
         UserPersonalData userPersonalData =
                 userPersonalDataService.getPersonalData(userIdentity);
         return HttpResponseEntity.success(UserCommonDetailsVo.of(
