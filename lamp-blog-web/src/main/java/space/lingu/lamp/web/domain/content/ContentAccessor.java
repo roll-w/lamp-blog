@@ -16,12 +16,15 @@
 
 package space.lingu.lamp.web.domain.content;
 
+import space.lingu.NonNull;
+
 /**
  * @author RollW
  */
+@Deprecated
 public interface ContentAccessor extends ContentSupportable {
     ContentDetails getContent(long contentId, ContentType contentType);
 
     @Override
-    boolean supports(ContentType contentType);
+    boolean supports(@NonNull ContentType contentType);
 }

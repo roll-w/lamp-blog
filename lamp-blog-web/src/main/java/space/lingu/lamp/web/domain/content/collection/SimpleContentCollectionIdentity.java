@@ -19,12 +19,25 @@ package space.lingu.lamp.web.domain.content.collection;
 /**
  * @author RollW
  */
-public interface ContentCollection extends ContentCollectionIdentity {
-    int SYSTEM = 0;
+public record SimpleContentCollectionIdentity(
+        long contentCollectionId,
+        ContentCollectionType contentCollectionType
+) implements ContentCollectionIdentity {
+    @Override
+    public long getContentCollectionId() {
+        return contentCollectionId;
+    }
 
-    long getUserId();
+    @Override
+    public ContentCollectionType getContentCollectionType() {
+        return contentCollectionType;
+    }
 
-    long getContentCollectionId();
-
-    ContentCollectionType getContentCollectionType();
+    public static SimpleContentCollectionIdentity of(
+            long contentCollectionId,
+            ContentCollectionType contentCollectionType) {
+        return new SimpleContentCollectionIdentity(
+                contentCollectionId,
+                contentCollectionType);
+    }
 }

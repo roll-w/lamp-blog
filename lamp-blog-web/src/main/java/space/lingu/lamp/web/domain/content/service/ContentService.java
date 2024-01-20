@@ -18,73 +18,74 @@ package space.lingu.lamp.web.domain.content.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.web.domain.content.*;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionService;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionIdentity;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionProvider;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionProviderFactory;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
-import space.lingu.lamp.web.domain.content.event.ContentStatusEvent;
 import space.lingu.lamp.web.domain.content.permit.ContentPermitChecker;
 import space.lingu.lamp.web.domain.content.permit.ContentPermitResult;
+import space.lingu.lamp.web.domain.content.publish.ContentPublishCallback;
+import space.lingu.lamp.web.domain.content.publish.ContentPublishFilter;
 import space.lingu.lamp.web.domain.content.repository.ContentMetadataRepository;
-import space.lingu.lamp.web.domain.review.ReviewJob;
-import space.lingu.lamp.web.domain.review.common.NotReviewedException;
-import space.lingu.lamp.web.domain.review.service.ReviewService;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.ErrorCode;
-import tech.rollw.common.web.page.Page;
-import tech.rollw.common.web.page.Pageable;
+import tech.rollw.common.web.system.ContextThreadAware;
+import tech.rollw.common.web.system.UnsupportedKindException;
+import tech.rollw.common.web.system.paged.PageableContext;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author RollW
  */
 @Service
 public class ContentService implements ContentAccessService,
-        ContentPublishProvider, ContentCollectionService {
+        ContentPublishProvider, ContentCollectionProviderFactory {
     private static final Logger logger = LoggerFactory.getLogger(ContentService.class);
+    private final List<ContentPublisher> contentPublishers;
+    private final List<ContentCollectionProvider> contentCollectionProviders;
 
-    private final Set<ContentAccessor> contentAccessors;
-    private final Set<ContentPublisher> contentPublishers;
-    private final Set<ContentDeleter> contentDeleters;
-    private final Set<ContentCollectionAccessor> contentCollectionAccessors;
+    private final List<ContentPublishFilter> contentPublishFilters;
+    private final List<ContentPublishCallback> contentPublishCallbacks;
+
+    private final ContentProviderFactory contentProviderFactory;
     private final ContentPermitChecker contentPermitChecker;
     private final ContentMetadataRepository contentMetadataRepository;
-    private final ReviewService reviewService;
-    private final ApplicationEventPublisher eventPublisher;
+    private final ContextThreadAware<PageableContext> pageableContextThreadAware;
 
-    public ContentService(Set<ContentAccessor> contentAccessors,
-                          Set<ContentPublisher> contentPublishers,
-                          Set<ContentDeleter> contentDeleters,
-                          Set<ContentCollectionAccessor> contentCollectionAccessors,
+    public ContentService(List<ContentPublisher> contentPublishers,
+                          List<ContentCollectionProvider> contentCollectionProviders,
+                          List<ContentPublishFilter> contentPublishFilters,
+                          List<ContentPublishCallback> contentPublishCallbacks,
+                          ContentProviderFactory contentProviderFactory,
                           ContentPermitChecker contentPermitChecker,
                           ContentMetadataRepository contentMetadataRepository,
-                          ReviewService reviewService,
-                          ApplicationEventPublisher eventPublisher) {
-        this.contentAccessors = contentAccessors;
+                          ContextThreadAware<PageableContext> pageableContextThreadAware) {
         this.contentPublishers = contentPublishers;
-        this.contentDeleters = contentDeleters;
-        this.contentCollectionAccessors = contentCollectionAccessors;
+        this.contentCollectionProviders = contentCollectionProviders;
+        this.contentPublishFilters = contentPublishFilters;
+        this.contentPublishCallbacks = contentPublishCallbacks;
+        this.contentProviderFactory = contentProviderFactory;
         this.contentPermitChecker = contentPermitChecker;
         this.contentMetadataRepository = contentMetadataRepository;
-        this.reviewService = reviewService;
-        this.eventPublisher = eventPublisher;
+        this.pageableContextThreadAware = pageableContextThreadAware;
     }
 
     /**
      * @inheritDoc
      */
     @Override
-    public ContentDetails openContent(long contentId, ContentType contentType,
+    public ContentDetails openContent(ContentTrait contentTrait,
                                       ContentAccessCredentials contentAccessCredentials) throws ContentException {
-        ContentMetadata metadata = contentMetadataRepository.getById(contentId, contentType);
+        ContentMetadata metadata = contentMetadataRepository.getById(
+                contentTrait.getContentId(),
+                contentTrait.getContentType()
+        );
         if (metadata == null) {
             throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
         }
@@ -93,7 +94,7 @@ public class ContentService implements ContentAccessService,
             throw new ContentException(errorCode);
         }
         ContentPermitResult permitResult = contentPermitChecker.checkAccessPermit(
-                new SimpleContentInfo(metadata.getUserId(), contentId, contentType),
+                Content.of(metadata.getUserId(), contentTrait),
                 metadata.getContentAccessAuthType(),
                 contentAccessCredentials
         );
@@ -102,67 +103,48 @@ public class ContentService implements ContentAccessService,
                     selectFirst(permitResult.errors())
             );
         }
-        ContentAccessor accessor = getFirstAvailableOf(contentType);
-        return accessor.getContent(contentId, contentType);
+        ContentProvider provider = contentProviderFactory.getContentProvider(
+                contentTrait.getContentType());
+        return provider.getContentDetails(contentTrait);
     }
 
     /**
      * @inheritDoc
      */
     @Override
-    public ContentDetails getContentDetails(long contentId, ContentType contentType)
+    public ContentDetails getContentDetails(ContentTrait contentTrait)
             throws ContentException {
-        return getContentMetadataDetails(contentId, contentType);
+        return getContentMetadataDetails(contentTrait);
     }
 
     @Override
-    public ContentMetadataDetails<?> getContentMetadataDetails(long contentId, ContentType contentType)
+    public ContentMetadataDetails<?> getContentMetadataDetails(ContentTrait contentTrait)
             throws ContentException {
-        ContentMetadata metadata = contentMetadataRepository.getById(contentId, contentType);
+        ContentMetadata metadata = contentMetadataRepository.getById(
+                contentTrait.getContentId(),
+                contentTrait.getContentType()
+        );
         if (metadata == null) {
             throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
         }
-        ContentAccessor accessor = getFirstAvailableOf(contentType);
-        ContentDetails contentDetails = accessor.getContent(contentId, contentType);
+        ContentProvider provider = contentProviderFactory.getContentProvider(
+                contentTrait.getContentType());
+        ContentDetails contentDetails = provider
+                .getContentDetails(contentTrait);
         return new ContentMetadataDetails<>(contentDetails, metadata);
     }
 
     /**
      * @inheritDoc
      */
-    @Override
-    public ContentStatus getContentStatus(long contentId, ContentType contentType)
+    public ContentStatus getContentStatus(ContentTrait contentTrait)
             throws ContentException {
-        ContentMetadata metadata = contentMetadataRepository.getById(contentId, contentType);
+        ContentMetadata metadata = contentMetadataRepository.getById(
+                contentTrait.getContentId(), contentTrait.getContentType());
         if (metadata == null) {
             throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
         }
         return metadata.getContentStatus();
-    }
-
-    @Override
-    public List<ContentStatus> getContentStatuses(List<Long> contentIds,
-                                                  ContentType contentType)
-            throws ContentException {
-
-        return contentMetadataRepository.getStatusByIds(contentIds, contentType);
-    }
-
-    @Override
-    public List<ContentStatus> getContentStatuses(List<? extends Content> contents)
-            throws ContentException {
-
-        return null;
-    }
-
-    private ContentAccessor getFirstAvailableOf(ContentType type) {
-        return contentAccessors
-                .stream()
-                .filter(accessor -> accessor.supports(type))
-                .findFirst()
-                .orElseThrow(() ->
-                        new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND,
-                                "Unsupported content type of " + type));
     }
 
     private ContentPublisher getFirstAvailablePublisherOf(ContentType type) {
@@ -171,13 +153,15 @@ public class ContentService implements ContentAccessService,
                 .filter(accessor -> accessor.supports(type))
                 .findFirst()
                 .orElseThrow(() -> new ContentException(
-                        ContentErrorCode.ERROR_CONTENT_NOT_FOUND,
-                        "Unsupported content type of " + type));
+                        CommonErrorCode.ERROR_NOT_FOUND,
+                        "Unsupported content type of " + type)
+                );
     }
 
     private ErrorCode fromContentStatus(ContentStatus status) {
         return switch (status) {
             case PUBLISHED -> CommonErrorCode.SUCCESS;
+            case DRAFT -> CommonErrorCode.ERROR_NOT_FOUND;
             case REVIEWING -> ContentErrorCode.ERROR_CONTENT_REVIEWING;
             case HIDE -> ContentErrorCode.ERROR_CONTENT_HIDE;
             case FORBIDDEN, REVIEW_REJECTED -> ContentErrorCode.ERROR_CONTENT_FORBIDDEN;
@@ -192,162 +176,45 @@ public class ContentService implements ContentAccessService,
     @Override
     public ContentDetails publishContent(UncreatedContent uncreatedContent) throws ContentException {
         long timestamp = System.currentTimeMillis();
+        for (ContentPublishFilter contentPublishFilter :
+                contentPublishFilters) {
+            ErrorCode errorCode = contentPublishFilter.filter(uncreatedContent);
+            if (errorCode.failed()) {
+                throw new ContentException(errorCode);
+            }
+        }
         ContentPublisher contentPublisher = getFirstAvailablePublisherOf(
                 uncreatedContent.getContentType());
         ContentDetails contentDetails = contentPublisher.publish(
                 uncreatedContent,
                 timestamp
         );
-        ContentMetadata contentMetadata = ContentMetadata.builder()
+        ContentMetadata.Builder contentMetadataBuilder = ContentMetadata
+                .builder()
                 .setContentId(contentDetails.getContentId())
                 .setContentType(contentDetails.getContentType())
                 .setUserId(contentDetails.getUserId())
-                .setContentStatus(ContentStatus.REVIEWING)
-                .setContentAccessAuthType(ContentAccessAuthType.PUBLIC)
-                .build();
-        contentMetadataRepository.insert(contentMetadata);
-        ContentStatusEvent<?> event = new ContentStatusEvent<>(
-                contentDetails,
-                timestamp,
-                null,
-                ContentStatus.REVIEWING
-        );
-        eventPublisher.publishEvent(event);
-
-        try {
-            ReviewJob reviewJob = reviewService.assignReviewer(contentDetails);
-            logger.debug("Content review job assigned: {}.", reviewJob);
-        } catch (NotReviewedException e) {
-            logger.debug("Content review job already assigned: {}.", e.getReviewJob());
+                .setContentStatus(ContentStatus.PUBLISHED)
+                .setContentAccessAuthType(ContentAccessAuthType.PUBLIC);
+        ContentStatus contentStatus = null;
+        for (ContentPublishCallback contentPublishCallback :
+                contentPublishCallbacks) {
+            contentStatus = contentPublishCallback.publish(contentDetails);
         }
+        if (contentStatus != null) {
+            contentMetadataBuilder.setContentStatus(contentStatus);
+        }
+        contentMetadataRepository.insert(contentMetadataBuilder.build());
         return contentDetails;
     }
 
-    @Override
-    public void deleteContent(ContentType contentType, long contentId) {
-        tryUpdateContentStatus(contentId, contentType, ContentStatus.DELETED);
-    }
-
-    @Override
-    public void forbiddenContent(ContentType contentType, long contentId) {
-        tryUpdateContentStatus(contentId, contentType, ContentStatus.FORBIDDEN);
-    }
-
-    @Override
-    public void restoreContent(ContentType contentType, long contentId) {
-        ContentMetadata contentMetadata =
-                tryGetContentMetadata(contentId, contentType);
-        if (contentMetadata.getContentStatus() != ContentStatus.DELETED) {
-            throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_DELETED);
-        }
-        tryUpdateContentStatus(contentMetadata, ContentStatus.PUBLISHED);
-    }
-
-    private void tryUpdateContentStatus(long contentId,
-                                        ContentType contentType,
-                                        ContentStatus newStatus) {
-        ContentMetadata contentMetadata =
-                tryGetContentMetadata(contentId, contentType);
-        tryUpdateContentStatus(contentMetadata, newStatus);
-    }
-
-    private void tryUpdateContentStatus(ContentMetadata contentMetadata,
-                                        ContentStatus newStatus) {
-        long timestamp = System.currentTimeMillis();
-        if (contentMetadata.getContentStatus() == newStatus) {
-            return;
-        }
-        contentMetadataRepository.updateStatus(
-                contentMetadata,
-                newStatus
-        );
-        contentDeleters.forEach(deleter ->
-                callContentDeleter(deleter, contentMetadata, newStatus));
-
-        SimpleContentInfo contentInfo = new SimpleContentInfo(
-                contentMetadata.getUserId(),
-                contentMetadata.getContentId(),
-                contentMetadata.getContentType()
-        );
-        ContentStatusEvent<?> event = new ContentStatusEvent<>(
-                contentInfo,
-                timestamp,
-                contentMetadata.getContentStatus(),
-                newStatus
-        );
-        eventPublisher.publishEvent(event);
-    }
-
-    private void callContentDeleter(ContentDeleter contentDeleter,
-                                    ContentMetadata contentMetadata,
-                                    ContentStatus newStatus) {
-        if (!contentDeleter.supports(contentMetadata.getContentType())) {
-            return;
-        }
-        switch (newStatus) {
-            case DELETED -> contentDeleter.deleteContent(
-                    contentMetadata.getContentType(),
-                    contentMetadata.getContentId());
-            case FORBIDDEN -> contentDeleter.forbiddenContent(
-                    contentMetadata.getContentType(),
-                    contentMetadata.getContentId());
-            case PUBLISHED -> contentDeleter.restoreContent(
-                    contentMetadata.getContentType(),
-                    contentMetadata.getContentId());
-        }
-    }
-
-    private ContentMetadata tryGetContentMetadata(long contentId,
-                                                  ContentType contentType) {
-        ContentMetadata contentMetadata =
-                contentMetadataRepository.getById(contentId, contentType);
+    private ContentMetadata tryGetContentMetadata(ContentTrait contentTrait) {
+        ContentMetadata contentMetadata = contentMetadataRepository.getById(
+                contentTrait.getContentId(), contentTrait.getContentType());
         if (contentMetadata == null) {
             throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
         }
         return contentMetadata;
-    }
-
-    @Override
-    public Page<ContentMetadataDetails<? extends ContentDetails>> accessContentsRelated(
-            ContentCollectionType collectionType,
-            long contentCollectionId,
-            ContentAccessCredentials contentAccessCredentials, Pageable pageable) {
-        // TODO: impl
-        return getContentsRelated(
-                collectionType,
-                contentCollectionId,
-                pageable
-        );
-    }
-
-
-    @Override
-    public Page<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
-            ContentCollectionType contentCollectionType,
-            long contentCollectionId,
-            Pageable pageable) {
-        ContentCollectionAccessor contentCollectionAccessor =
-                getFirstAvailableOf(contentCollectionType);
-        Page<? extends ContentDetails> contentsPage = contentCollectionAccessor.getContentCollection(
-                contentCollectionType,
-                contentCollectionId,
-                pageable
-        );
-        List<ContentMetadata> contentMetadata =
-                contentMetadataRepository.getMetadataByIdentities(contentsPage.getData());
-        List<? extends ContentMetadataDetails<? extends ContentDetails>> contentCollectionDetails
-                = pairWith(contentsPage.getData(), contentMetadata);
-        List<ContentMetadataDetails<? extends ContentDetails>> details =
-                Collections.unmodifiableList(contentCollectionDetails);
-
-        return Page.of(pageable, 0, details);
-    }
-
-    @Override
-    public List<ContentMetadataDetails<? extends ContentDetails>> getContentsRelated(
-            ContentCollectionType contentCollectionType,
-            long contentCollectionId) {
-        return null;
     }
 
     private <T extends ContentDetails> List<ContentMetadataDetails<T>> pairWith(
@@ -362,13 +229,29 @@ public class ContentService implements ContentAccessService,
         }).toList();
     }
 
-    private ContentCollectionAccessor getFirstAvailableOf(ContentCollectionType type) {
-        return contentCollectionAccessors
-                .stream()
-                .filter(provider -> provider.supportsCollection(type))
+    @Override
+    public ContentCollectionProvider getContentCollectionProvider(
+            ContentCollectionType contentCollectionType) {
+        return contentCollectionProviders.stream()
+                .filter(contentCollectionProvider -> contentCollectionProvider
+                        .supportsCollection(contentCollectionType))
                 .findFirst()
-                .orElseThrow(() ->
-                        new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND,
-                                "Unsupported content collection type of " + type));
+                .orElseThrow(() -> new UnsupportedKindException(
+                        "Unsupported content collection type: " + contentCollectionType));
+    }
+
+    @Override
+    public List<ContentMetadataDetails<? extends ContentDetails>> getContents(
+            ContentCollectionIdentity contentCollectionIdentity,
+            ContentAccessCredentials contentAccessCredentials) {
+        // TODO: impl
+        return List.of();
+    }
+
+    @Override
+    public List<ContentMetadataDetails<? extends ContentDetails>> getContents(
+            ContentCollectionIdentity contentCollectionIdentity) {
+        // TODO: impl
+        return List.of();
     }
 }

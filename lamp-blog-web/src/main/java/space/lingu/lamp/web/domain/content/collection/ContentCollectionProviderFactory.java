@@ -16,14 +16,23 @@
 
 package space.lingu.lamp.web.domain.content.collection;
 
+import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
 import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
 
 import java.util.List;
 
 /**
  * @author RollW
  */
-public interface ContentCollectionProvider extends ContentCollectionSupportable {
-    List<? extends ContentDetails> getContents(
+public interface ContentCollectionProviderFactory {
+    ContentCollectionProvider getContentCollectionProvider(
+            ContentCollectionType contentCollectionType);
+
+    List<ContentMetadataDetails<? extends ContentDetails>> getContents(
+            ContentCollectionIdentity contentCollectionIdentity,
+            ContentAccessCredentials contentAccessCredentials);
+
+    List<ContentMetadataDetails<? extends ContentDetails>> getContents(
             ContentCollectionIdentity contentCollectionIdentity);
 }

@@ -16,9 +16,10 @@
 
 package space.lingu.lamp.web.domain.content.collection;
 
+import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.DataItem;
-import space.lingu.lamp.EntityBuilder;
+import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
@@ -32,7 +33,7 @@ import tech.rollw.common.web.system.SystemResourceKind;
  */
 @DataTable(name = "content_collection_metadata")
 @SuppressWarnings({"ClassCanBeRecord"})
-public class ContentCollectionMetadata implements DataItem<ContentCollectionMetadata> {
+public class ContentCollectionMetadata implements LongDataItem<ContentCollectionMetadata> {
     /**
      * The order of the top content in the collection.
      */
@@ -139,12 +140,13 @@ public class ContentCollectionMetadata implements DataItem<ContentCollectionMeta
                 .build();
     }
 
+    @NonNull
     @Override
     public SystemResourceKind getSystemResourceKind() {
         return LampSystemResourceKind.CONTENT_COLLECTION_METADATA;
     }
 
-    public static final class Builder implements EntityBuilder<ContentCollectionMetadata> {
+    public static final class Builder implements LongEntityBuilder<ContentCollectionMetadata> {
         @Nullable
         private Long id;
         private long collectionId;

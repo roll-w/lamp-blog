@@ -21,7 +21,7 @@ package space.lingu.lamp.web.domain.content;
  *
  * @author RollW
  * @implNote This interface is used to mark the metadata of the content.
- * @implSpec Impl should be a DTO/VO. Can be directly convert from or to json.
+ * @implSpec Impl should be a DTO/VO. Can be directly converted from or to json.
  */
 public interface ContentDetailsMetadata {
 }

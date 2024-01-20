@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentProvider;
+import space.lingu.lamp.web.domain.content.ContentProviderFactory;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.content.SimpleContentIdentity;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
@@ -38,7 +39,7 @@ import java.util.List;
  */
 @Service
 public class ContentProvideService implements SystemResourceProvider<Long>,
-        SystemResourceOperatorFactory<Long> {
+        SystemResourceOperatorFactory<Long>, ContentProviderFactory {
     private final List<ContentProvider> contentProviders;
 
     public ContentProvideService(List<ContentProvider> contentProviders) {
@@ -95,5 +96,10 @@ public class ContentProvideService implements SystemResourceProvider<Long>,
                 .findFirst()
                 .orElseThrow(() -> new UnsupportedKindException(
                         "No provider founds support the content type: " + contentType));
+    }
+
+    @Override
+    public ContentProvider getContentProvider(ContentType contentType) {
+        return findProvider(contentType);
     }
 }

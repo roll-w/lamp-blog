@@ -18,8 +18,6 @@ package space.lingu.lamp.web.domain.content;
 
 import space.lingu.lamp.web.domain.content.common.ContentException;
 
-import java.util.List;
-
 /**
  * @author RollW
  */
@@ -27,13 +25,12 @@ public interface ContentAccessService {
     /**
      * Get the details of the content with access check.
      *
-     * @param contentId                the id of content
-     * @param contentType              the type of content
+     * @param contentTrait             the trait of the content
      * @param contentAccessCredentials the credentials to access the content
-     * @return the details of the content, may need to convert to the specific type.
+     * @return the details of the content may need to convert to the specific type.
      * @throws ContentException if the content is not found or the passes are not valid.
      */
-    ContentDetails openContent(long contentId, ContentType contentType,
+    ContentDetails openContent(ContentTrait contentTrait,
                                ContentAccessCredentials contentAccessCredentials)
             throws ContentException;
 
@@ -41,28 +38,12 @@ public interface ContentAccessService {
      * Get the details of the content with no access check.
      *
      * @throws ContentException if the content is not found.
-     * @see #openContent(long, ContentType, ContentAccessCredentials)
+     * @see #openContent(ContentTrait, ContentAccessCredentials)
      */
-    ContentDetails getContentDetails(long contentId, ContentType contentType)
+    ContentDetails getContentDetails(ContentTrait contentTrait)
             throws ContentException;
 
-    ContentMetadataDetails<?> getContentMetadataDetails(long contentId, ContentType contentType)
-            throws ContentException;
-
-    /**
-     * Get the status of the content.
-     *
-     * @param contentId   the id of content
-     * @param contentType the type of content
-     * @throws ContentException if the content is not found.
-     */
-    ContentStatus getContentStatus(long contentId, ContentType contentType)
-            throws ContentException;
-
-    List<ContentStatus> getContentStatuses(List<Long> contentIds, ContentType contentType)
-            throws ContentException;
-
-    List<ContentStatus> getContentStatuses(List<? extends Content> contents)
+    ContentMetadataDetails<?> getContentMetadataDetails(ContentTrait contentTrait)
             throws ContentException;
 
 }

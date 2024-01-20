@@ -75,4 +75,8 @@ public enum ContentType implements SystemResourceKind.Kind {
             default -> null;
         };
     }
+
+    public interface Type {
+        ContentType getContentType();
+    }
 }

@@ -87,11 +87,6 @@ public class ContentCollectionDetails<T extends ContentDetails> implements Conte
     }
 
     @Override
-    public int getVersion() {
-        return contentDetails.getVersion();
-    }
-
-    @Override
     @Nullable
     public String getTitle() {
         return contentDetails.getTitle();
@@ -124,5 +119,15 @@ public class ContentCollectionDetails<T extends ContentDetails> implements Conte
     @Nullable
     public Integer getOrder() {
         return contentCollectionMetadata.getOrder();
+    }
+
+    @Override
+    public long getCreateTime() {
+        return contentDetails.getCreateTime();
+    }
+
+    @Override
+    public long getUpdateTime() {
+        return contentDetails.getUpdateTime();
     }
 }

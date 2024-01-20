@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.domain.content;
 
 import space.lingu.NonNull;
+import space.lingu.Warning;
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
@@ -87,12 +88,24 @@ public class ContentMetadata implements LongDataItem<ContentMetadata>, ContentTr
         return id;
     }
 
+    /**
+     * ContentMetadata does not have create time.
+     *
+     * @return 0 only.
+     */
     @Override
+    @Warning("ContentMetadata does not have create time.")
     public long getCreateTime() {
         return 0;
     }
 
+    /**
+     * ContentMetadata does not have update time.
+     *
+     * @return 0 only.
+     */
     @Override
+    @Warning("ContentMetadata does not have update time.")
     public long getUpdateTime() {
         return 0;
     }

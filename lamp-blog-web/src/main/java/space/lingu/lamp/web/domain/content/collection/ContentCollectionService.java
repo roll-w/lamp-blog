@@ -25,8 +25,11 @@ import tech.rollw.common.web.page.Pageable;
 import java.util.List;
 
 /**
+ *
+ * @deprecated moved to {@link ContentCollectionProviderFactory}
  * @author RollW
  */
+@Deprecated
 public interface ContentCollectionService {
     Page<ContentMetadataDetails<? extends ContentDetails>> accessContentsRelated(
             ContentCollectionType collectionType,

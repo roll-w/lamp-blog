@@ -20,7 +20,9 @@ import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
+import space.lingu.lamp.web.domain.content.ContentAssociated;
 import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentIdentity;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.DataColumn;
@@ -33,7 +35,7 @@ import tech.rollw.common.web.system.SystemResourceKind;
  * @author RollW
  */
 @DataTable(name = "comment")
-public class Comment implements LongDataItem<Comment>, ContentDetails {
+public class Comment implements LongDataItem<Comment>, ContentDetails, ContentAssociated {
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
     private final Long id;
@@ -41,6 +43,7 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
     @DataColumn(name = "user_id")
     private final long userId;
 
+    // TODO: rename to commentOnId
     @DataColumn(name = "comment_on_id")
     private final long commentOn;
 
@@ -59,12 +62,15 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
     /**
      * Comment on which type of content.
      */
+    // TODO: rename to commentOnType
     @DataColumn(name = "type")
     private final ContentType type;
 
     @DataColumn(name = "status", nullable = false)
     @NonNull
     private final CommentStatus commentStatus;
+
+    private final ContentIdentity associatedContent;
 
     public Comment(Long id, long userId, long commentOn,
                    long parentId, String content,
@@ -79,6 +85,7 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
         this.updateTime = updateTime;
         this.type = type;
         this.commentStatus = commentStatus;
+        this.associatedContent = ContentIdentity.of(commentOn, type);
     }
 
     public Long getId() {
@@ -143,6 +150,11 @@ public class Comment implements LongDataItem<Comment>, ContentDetails {
     @NonNull
     public CommentStatus getCommentStatus() {
         return commentStatus;
+    }
+
+    @Override
+    public ContentIdentity getAssociatedContent() {
+        return associatedContent;
     }
 
     @Override

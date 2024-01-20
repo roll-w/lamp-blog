@@ -14,21 +14,21 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.content;
-
-import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.content.common.ContentException;
+package space.lingu.lamp.web.domain.content.collection;
 
 /**
  * @author RollW
  */
-public interface ContentPublisher extends ContentSupportable {
-    /**
-     * @throws ContentException if the content create failed.
-     */
-    ContentDetails publish(@NonNull UncreatedContent uncreatedContent,
-                           long timestamp) throws ContentException;
+public interface ContentCollectionIdentity {
+    long getContentCollectionId();
 
-    @Override
-    boolean supports(@NonNull ContentType contentType);
+    ContentCollectionType getContentCollectionType();
+
+    static ContentCollectionIdentity of(
+            long contentCollectionId,
+            ContentCollectionType contentCollectionType) {
+        return SimpleContentCollectionIdentity.of(
+                contentCollectionId,
+                contentCollectionType);
+    }
 }

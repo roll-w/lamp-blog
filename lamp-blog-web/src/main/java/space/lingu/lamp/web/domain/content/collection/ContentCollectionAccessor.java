@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.domain.content.collection;
 
+import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentType;
 import tech.rollw.common.web.page.Page;
@@ -24,9 +25,12 @@ import tech.rollw.common.web.page.Pageable;
 import java.util.List;
 
 /**
+ *
+ * @deprecated moved to {@link ContentCollectionProvider}
  * @author RollW
  */
-public interface ContentCollectionAccessor extends ContentCollectionProvider {
+@Deprecated
+public interface ContentCollectionAccessor extends ContentCollectionSupportable {
     Page<? extends ContentDetails> getContentCollection(
             ContentCollectionType contentCollectionType,
             long collectionId,
@@ -37,10 +41,10 @@ public interface ContentCollectionAccessor extends ContentCollectionProvider {
             long collectionId);
 
     @Override
-    boolean supports(ContentType contentType);
+    boolean supports(@NonNull ContentType contentType);
 
     @Override
     default boolean supportsCollection(ContentCollectionType contentCollectionType) {
-        return ContentCollectionProvider.super.supportsCollection(contentCollectionType);
+        return ContentCollectionSupportable.super.supportsCollection(contentCollectionType);
     }
 }

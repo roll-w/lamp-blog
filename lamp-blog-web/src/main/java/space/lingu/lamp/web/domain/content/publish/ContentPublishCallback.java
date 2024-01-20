@@ -14,21 +14,20 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.content;
+package space.lingu.lamp.web.domain.content.publish;
 
-import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.content.common.ContentException;
+import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentStatus;
 
 /**
  * @author RollW
  */
-public interface ContentPublisher extends ContentSupportable {
-    /**
-     * @throws ContentException if the content create failed.
-     */
-    ContentDetails publish(@NonNull UncreatedContent uncreatedContent,
-                           long timestamp) throws ContentException;
+public interface ContentPublishCallback {
+    int DEFAULT_ORDER = 0;
 
-    @Override
-    boolean supports(@NonNull ContentType contentType);
+    default int order() {
+        return DEFAULT_ORDER;
+    }
+
+    ContentStatus publish(ContentDetails contentDetails);
 }

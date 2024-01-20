@@ -59,4 +59,8 @@ public enum ContentStatus {
         return this == REVIEWING;
     }
 
+    public boolean canRestore() {
+        return this == DELETED || this == FORBIDDEN;
+    }
+
 }
