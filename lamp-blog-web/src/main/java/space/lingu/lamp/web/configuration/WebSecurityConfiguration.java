@@ -25,7 +25,6 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -35,6 +34,9 @@ import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.configuration.compenent.WebDelegateSecurityHandler;
@@ -44,6 +46,11 @@ import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenServi
 import space.lingu.lamp.web.domain.user.UserDetailsService;
 import space.lingu.lamp.web.domain.user.UserSignatureProvider;
 import tech.rollw.common.web.system.ContextThreadAware;
+
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * @author RollW
@@ -65,6 +72,9 @@ public class WebSecurityConfiguration {
                                                    AuthenticationEntryPoint authenticationEntryPoint,
                                                    AccessDeniedHandler accessDeniedHandler) throws Exception {
         security.csrf(AbstractHttpConfigurer::disable);
+        security.cors(configurer -> configurer
+                .configurationSource(corsConfigurationSource())
+        );
         security.authorizeHttpRequests(configurer -> configurer
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .requestMatchers("/api/{version}/auth/token/**").permitAll()
@@ -72,7 +82,7 @@ public class WebSecurityConfiguration {
                 .requestMatchers("/api/{version}/message/**").hasRole("USER")
                 .requestMatchers("/api/{version}/*/review/**").hasAnyRole("ADMIN", "REVIEWER")
                 .requestMatchers("/api/{version}/common/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/{version}/storage/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/{version}/storages/{id}").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/{version}/admin/**").hasAnyRole("ADMIN")
                 .requestMatchers(HttpMethod.GET, "/api/{version}/{userId}/review").hasAnyRole("ADMIN", "REVIEWER")
                 .requestMatchers(HttpMethod.GET).permitAll()
@@ -80,7 +90,11 @@ public class WebSecurityConfiguration {
                 .requestMatchers("/api/{version}/user/register/**").permitAll()
                 .requestMatchers("/api/{version}/user/logout/**").permitAll()
                 .requestMatchers("/**").hasRole("USER")
-                .anyRequest().hasRole("USER"));
+                .requestMatchers("/static/images/**").permitAll()
+                .requestMatchers("/img/**").permitAll()
+                .requestMatchers("/js/**").permitAll()
+                .anyRequest().hasRole("USER")
+        );
         security.userDetailsService(userDetailsService);
 
         security.exceptionHandling(configurer -> configurer
@@ -96,16 +110,6 @@ public class WebSecurityConfiguration {
         security.addFilterBefore(corsConfigFilter,
                 TokenAuthenticationFilter.class);
         return security.build();
-    }
-
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring()
-                .requestMatchers("/css/**")
-                .requestMatchers("/static/images/**")
-                .requestMatchers("/img/**")
-                .requestMatchers("/html/**")
-                .requestMatchers("/js/**");
     }
 
     @Bean
@@ -147,4 +151,25 @@ public class WebSecurityConfiguration {
     public GrantedAuthorityDefaults grantedAuthorityDefaults() {
         return new GrantedAuthorityDefaults(""); // removes the "ROLE_" prefix
     }
+
+    private CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        configuration.addAllowedOriginPattern("*");
+        configuration.setAllowedMethods(Arrays.stream(HttpMethod.values())
+                .map(HttpMethod::name)
+                .toList()
+        );
+        configuration.setAllowedHeaders(List.of("*"));
+        configuration.setExposedHeaders(List.of("*"));
+        configuration.setAllowCredentials(true);
+        configuration.setMaxAge(Duration.of(1, ChronoUnit.MINUTES));
+
+        final UrlBasedCorsConfigurationSource source =
+                new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration);
+
+        return source;
+    }
+
 }

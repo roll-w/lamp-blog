@@ -16,16 +16,18 @@
 
 package space.lingu.lamp.web.configuration.filter;
 
-import org.springframework.http.HttpMethod;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.FilterConfig;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import tech.rollw.common.web.BusinessRuntimeException;
 
-import jakarta.servlet.*;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.StringJoiner;
 
 /**
  * @author RollW
@@ -43,24 +45,6 @@ public class CorsConfigFilter implements Filter {
         HttpServletResponse response = (HttpServletResponse) res;
         HttpServletRequest request = (HttpServletRequest) req;
 
-        String origin = request.getHeader("Origin");
-        if (origin != null) {
-            response.setHeader("Access-Control-Allow-Origin", origin);
-        }
-
-        String headers = request.getHeader("Access-Control-Request-Headers");
-        if (headers != null) {
-            response.setHeader("Access-Control-Allow-Headers", headers);
-            response.setHeader("Access-Control-Expose-Headers", headers);
-        }
-
-        StringJoiner methods = new StringJoiner(", ");
-        Arrays.stream(HttpMethod.values()).forEach(httpMethod ->
-                methods.add(httpMethod.name()));
-
-        response.setHeader("Access-Control-Allow-Methods", methods.toString());
-        response.setHeader("Access-Control-Max-Age", "3600");
-        response.setHeader("Access-Control-Allow-Credentials", "true");
         try {
             chain.doFilter(request, response);
         } catch (BusinessRuntimeException e) {
