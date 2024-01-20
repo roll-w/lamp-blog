@@ -122,11 +122,14 @@ public class ControllerResponseBodyAdvice implements ResponseBodyAdvice<Object> 
         if (code != 200) {
             return code;
         }
-        return switch (method) {
-            case POST, PUT, PATCH -> 201;
-            case DELETE -> 204;
-            default -> 200;
-        };
+        if (method == HttpMethod.POST || method == HttpMethod.PUT ||
+                method == HttpMethod.PATCH) {
+            return 204;
+        }
+        if (method == HttpMethod.DELETE) {
+            return 204;
+        }
+        return 200;
     }
 
     private String tryGetRawTip(HttpResponseBody<?> responseBody) {

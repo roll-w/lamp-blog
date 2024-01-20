@@ -30,17 +30,17 @@ import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
 import space.lingu.lamp.web.domain.user.UserDetailsService;
 import space.lingu.lamp.web.domain.user.dto.UserInfo;
-import space.lingu.lamp.web.domain.user.service.UserSignatureProvider;
+import space.lingu.lamp.web.domain.user.UserSignatureProvider;
 import space.lingu.lamp.web.util.RequestUtils;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.system.AuthenticationException;
 import tech.rollw.common.web.system.ContextThread;
 import tech.rollw.common.web.system.ContextThreadAware;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -71,7 +71,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                 apiContextThreadAware.assambleContextThread(null);
 
         String requestUri = request.getRequestURI();
-        HttpMethod method = HttpMethod.resolve(request.getMethod());
+        HttpMethod method = HttpMethod.valueOf(request.getMethod());
         boolean isAdminApi = isAdminApi(requestUri);
         String remoteIp = RequestUtils.getRemoteIpAddress(request);
         long timestamp = System.currentTimeMillis();

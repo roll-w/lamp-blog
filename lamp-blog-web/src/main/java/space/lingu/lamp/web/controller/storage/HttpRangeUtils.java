@@ -18,7 +18,7 @@ package space.lingu.lamp.web.controller.storage;
 
 import org.springframework.http.HttpRange;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**

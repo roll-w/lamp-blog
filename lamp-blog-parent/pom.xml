@@ -22,7 +22,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.14</version>
+        <version>3.2.2</version>
         <relativePath/>
     </parent>
     <groupId>space.lingu.lamp-blog</groupId>
@@ -43,11 +43,11 @@
         <light.version>0.4.7</light.version>
         <fiesta.version>0.2.1</fiesta.version>
         <cloudhub.version>0.1.3</cloudhub.version>
-        <web-common.version>0.1.0</web-common.version>
+        <web-common.version>0.2.0</web-common.version>
         <guava.version>31.1-jre</guava.version>
         <hikari.version>5.0.1</hikari.version>
         <jjwt.version>0.11.5</jjwt.version>
-        <mysql.version>8.0.32</mysql.version>
+        <mysql.version>8.0.33</mysql.version>
         <elastic-search.version>8.8.2</elastic-search.version>
         <spring-shell.version>2.1.2</spring-shell.version>
         <tomcat-api.version>6.0.53</tomcat-api.version>

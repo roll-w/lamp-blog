@@ -37,15 +37,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
-import space.lingu.lamp.web.common.ApiContextHolder;
+import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.common.ParameterMissingException;
 import space.lingu.lamp.web.domain.authentication.login.LoginTokenException;
 import space.lingu.lamp.web.system.ErrorRecord;
 import space.lingu.lamp.web.system.ErrorRecordVo;
 import space.lingu.light.LightRuntimeException;
 import tech.rollw.common.web.*;
+import tech.rollw.common.web.system.ContextThread;
+import tech.rollw.common.web.system.ContextThreadAware;
 
-import javax.validation.ConstraintViolationException;
+import jakarta.validation.ConstraintViolationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -65,16 +67,19 @@ public class LampSystemExceptionHandler {
     private static final Logger logger = LoggerFactory.getLogger(LampSystemExceptionHandler.class);
     private final ErrorCodeFinder errorCodeFinder;
     private final MessageSource messageSource;
+    private final ContextThreadAware<ApiContext> apiContextThreadAware;
 
     public LampSystemExceptionHandler(ErrorCodeFinder errorCodeFinder,
-                                      MessageSource messageSource) {
+                                      MessageSource messageSource,
+                                      ContextThreadAware<ApiContext> apiContextThreadAware) {
         this.errorCodeFinder = errorCodeFinder;
         this.messageSource = messageSource;
+        this.apiContextThreadAware = apiContextThreadAware;
     }
 
     @ExceptionHandler(NoHandlerFoundException.class)
     public HttpResponseEntity<Void> handleNoHandlerFoundException(NoHandlerFoundException e) {
-        HttpMethod method = HttpMethod.resolve(e.getHttpMethod());
+        HttpMethod method = HttpMethod.valueOf(e.getHttpMethod());
         if (method == HttpMethod.OPTIONS) {
             return new HttpResponseEntity<>(HttpStatus.OK);
         }
@@ -143,8 +148,11 @@ public class LampSystemExceptionHandler {
         if (Strings.isNullOrEmpty(e.getMessage())) {
             return null;
         }
-        ApiContextHolder.ApiContext context = ApiContextHolder.getContext();
-        Locale locale = context == null ? Locale.getDefault() : context.locale();
+        ContextThread<ApiContext> contextThread =
+                apiContextThreadAware.getContextThread();
+        Locale locale = contextThread.hasContext() ?
+                contextThread.getContext().getLocale() :
+                Locale.getDefault();
         try {
             return messageSource.getMessage(
                     e.getMessage(),
@@ -218,7 +226,7 @@ public class LampSystemExceptionHandler {
     @ExceptionHandler(AuthenticationException.class)
     public HttpResponseEntity<Void> handleAuthException(AuthenticationException e) {
         if (e instanceof InsufficientAuthenticationException) {
-            return HttpResponseEntity.of(AuthErrorCode.ERROR_TOKEN_EXPIRED);
+            return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);
         }
         logger.error("Auth Error: %s, type: %s".formatted(e.toString(), e.getClass().getCanonicalName()), e);
         return HttpResponseEntity.of(AuthErrorCode.ERROR_NOT_HAS_ROLE);

@@ -20,15 +20,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
-import org.springframework.security.access.AccessDecisionManager;
-import org.springframework.security.access.AccessDecisionVoter;
-import org.springframework.security.access.vote.AffirmativeBased;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -36,17 +34,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
-import org.springframework.security.web.access.expression.WebExpressionVoter;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import space.lingu.lamp.web.configuration.compenent.PermissionAccessDecisionVoter;
+import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.configuration.compenent.WebDelegateSecurityHandler;
 import space.lingu.lamp.web.configuration.filter.CorsConfigFilter;
 import space.lingu.lamp.web.configuration.filter.TokenAuthenticationFilter;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
 import space.lingu.lamp.web.domain.user.UserDetailsService;
-
-import java.util.List;
+import space.lingu.lamp.web.domain.user.UserSignatureProvider;
+import tech.rollw.common.web.system.ContextThreadAware;
 
 /**
  * @author RollW
@@ -67,33 +64,33 @@ public class WebSecurityConfiguration {
                                                    TokenAuthenticationFilter tokenAuthenticationFilter,
                                                    AuthenticationEntryPoint authenticationEntryPoint,
                                                    AccessDeniedHandler accessDeniedHandler) throws Exception {
-
-
-        security.csrf().disable()
-                .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS).permitAll()
-                // TODO: customize accessDecisionManager
-                //.accessDecisionManager(accessDecisionManager())
-                .antMatchers("/api/{version}/auth/token/**").permitAll()
-                .antMatchers("/api/{version}/admin/**").hasRole("ADMIN")
-                .antMatchers("/api/{version}/*/review/**").hasAnyRole("ADMIN", "REVIEWER")
-                .antMatchers("/api/{version}/common/**").permitAll()
-                .antMatchers(HttpMethod.GET, "/api/{version}/admin/**").hasAnyRole("ADMIN")
-                .antMatchers(HttpMethod.GET, "/api/{version}/{userId}/review").hasAnyRole("ADMIN", "REVIEWER")
-                .antMatchers(HttpMethod.GET).permitAll()
-                .antMatchers("/api/{version}/user/login/**").permitAll()
-                .antMatchers("/api/{version}/user/register/**").permitAll()
-                .antMatchers("/api/{version}/user/logout/**").permitAll()
-                .antMatchers("/**").hasRole("USER")
-                .anyRequest().permitAll();
+        security.csrf(AbstractHttpConfigurer::disable);
+        security.authorizeHttpRequests(configurer -> configurer
+                .requestMatchers(HttpMethod.OPTIONS).permitAll()
+                .requestMatchers("/api/{version}/auth/token/**").permitAll()
+                .requestMatchers("/api/{version}/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/{version}/message/**").hasRole("USER")
+                .requestMatchers("/api/{version}/*/review/**").hasAnyRole("ADMIN", "REVIEWER")
+                .requestMatchers("/api/{version}/common/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/{version}/storage/{id}").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/{version}/admin/**").hasAnyRole("ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/{version}/{userId}/review").hasAnyRole("ADMIN", "REVIEWER")
+                .requestMatchers(HttpMethod.GET).permitAll()
+                .requestMatchers("/api/{version}/user/login/**").permitAll()
+                .requestMatchers("/api/{version}/user/register/**").permitAll()
+                .requestMatchers("/api/{version}/user/logout/**").permitAll()
+                .requestMatchers("/**").hasRole("USER")
+                .anyRequest().hasRole("USER"));
         security.userDetailsService(userDetailsService);
 
-        security.exceptionHandling()
+        security.exceptionHandling(configurer -> configurer
                 .authenticationEntryPoint(authenticationEntryPoint)
-                .accessDeniedHandler(accessDeniedHandler);
+                .accessDeniedHandler(accessDeniedHandler)
+        );
 
-        security.sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        security.sessionManagement(configurer -> {
+            configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        });
         security.addFilterBefore(tokenAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class);
         security.addFilterBefore(corsConfigFilter,
@@ -103,27 +100,12 @@ public class WebSecurityConfiguration {
 
     @Bean
     public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().antMatchers("/css/**")
-                .antMatchers("/404.html")
-                .antMatchers("/500.html")
-                .antMatchers("/error.html")
-                .antMatchers("/static/img/**")
-                .antMatchers("/img/**")
-                .antMatchers("/html/**")
-                .antMatchers("/js/**")
-                ;
-    }
-
-    public PermissionAccessDecisionVoter accessDecisionProcessor() {
-        return new PermissionAccessDecisionVoter();
-    }
-
-    public AccessDecisionManager accessDecisionManager() {
-        List<AccessDecisionVoter<?>> decisionVoters = List.of(
-                new WebExpressionVoter(),
-                accessDecisionProcessor()
-        );
-        return new AffirmativeBased(decisionVoters);
+        return web -> web.ignoring()
+                .requestMatchers("/css/**")
+                .requestMatchers("/static/images/**")
+                .requestMatchers("/img/**")
+                .requestMatchers("/html/**")
+                .requestMatchers("/js/**");
     }
 
     @Bean
@@ -144,10 +126,14 @@ public class WebSecurityConfiguration {
 
     @Bean
     public TokenAuthenticationFilter tokenAuthenticationFilter(
-            AuthenticationTokenService authenticationTokenService) {
+            AuthenticationTokenService authenticationTokenService,
+            ContextThreadAware<ApiContext> apiContextThreadAware,
+            UserSignatureProvider userSignatureProvider) {
         return new TokenAuthenticationFilter(
                 authenticationTokenService,
-                userDetailsService
+                userDetailsService,
+                userSignatureProvider,
+                apiContextThreadAware
         );
     }
 

@@ -6,8 +6,10 @@ import space.lingu.lamp.web.domain.storage.FileStorage;
 import space.lingu.lamp.web.domain.storage.FileType;
 import space.lingu.lamp.web.domain.storage.StorageProvider;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;

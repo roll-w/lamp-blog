@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.util;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * @author RollW

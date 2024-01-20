@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.ws;
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
 import java.util.Collection;
 
 /**

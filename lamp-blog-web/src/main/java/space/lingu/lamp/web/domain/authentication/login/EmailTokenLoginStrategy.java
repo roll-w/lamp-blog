@@ -38,7 +38,7 @@ import space.lingu.lamp.web.domain.user.User;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
 
-import javax.mail.internet.MimeMessage;
+import jakarta.mail.internet.MimeMessage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -75,7 +75,7 @@ public class EmailTokenLoginStrategy implements LoginStrategy {
     public LoginVerifiableToken createToken(User user) throws LoginTokenException {
         String token = RandomStringUtils.random(5, FULL_SEQUENCE);
         long expireTime = System.currentTimeMillis() + 1000 * 5 * 60;
-        // save to cache, if it already has a token in it
+        // save to cache if it already has a token in it
         LoginConfirmToken oldToken =
                 cache.get(user.getId(), LoginConfirmToken.class);
         if (oldToken != null) {

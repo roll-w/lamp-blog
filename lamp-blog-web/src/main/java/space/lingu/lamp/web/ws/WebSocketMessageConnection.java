@@ -18,12 +18,14 @@ package space.lingu.lamp.web.ws;
 
 import space.lingu.lamp.web.domain.user.UserIdentity;
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
 
 /**
  * @author RollW
  */
 public interface WebSocketMessageConnection<M> {
+    long DEFAULT_TIMEOUT = 60 * 1000;
+
     /**
      * Get the session of this connection.
      */
@@ -41,4 +43,18 @@ public interface WebSocketMessageConnection<M> {
     void onMessage(M message);
 
     void onError(Throwable throwable);
+
+    boolean isClosed();
+
+    void close();
+
+    void onHeartbeat(long timestamp);
+
+    long getLastHeartbeatTime();
+
+    void setTimeout(long timeoutInMillis);
+
+    long getTimeout();
+
+    boolean isTimeout(long timestamp);
 }

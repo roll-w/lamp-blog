@@ -21,7 +21,7 @@ import space.lingu.lamp.web.ws.AbstractWebSocketMessageConnection;
 import space.lingu.lamp.web.ws.UserWebSocketConnectionRegistry;
 import space.lingu.lamp.web.ws.WebSocketMessageConnection;
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
 
 /**
  * @author RollW

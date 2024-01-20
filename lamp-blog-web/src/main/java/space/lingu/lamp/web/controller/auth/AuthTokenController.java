@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
 import space.lingu.lamp.web.domain.authentication.token.TokenAuthResult;
-import space.lingu.lamp.web.domain.user.service.UserSignatureProvider;
+import space.lingu.lamp.web.domain.user.UserSignatureProvider;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.HttpResponseEntity;
 import tech.rollw.common.web.system.AuthenticationException;

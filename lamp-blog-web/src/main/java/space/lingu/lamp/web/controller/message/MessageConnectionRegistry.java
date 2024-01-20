@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
 import space.lingu.lamp.web.ws.AbstractWebSocketMessageConnection;
 import space.lingu.lamp.web.ws.UserWebSocketConnectionRegistry;
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;

@@ -19,7 +19,9 @@ package space.lingu.lamp.web.ws;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.domain.user.UserIdentity;
 
-import javax.websocket.Session;
+import jakarta.websocket.Session;
+import java.io.IOException;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author RollW
@@ -28,6 +30,9 @@ public abstract class AbstractWebSocketMessageConnection<M>
         implements WebSocketMessageConnection<M> {
     protected final Session session;
     protected final ApiContext apiContext;
+
+    protected final AtomicLong lastHeartbeatTime = new AtomicLong();
+    protected final AtomicLong timeout = new AtomicLong(DEFAULT_TIMEOUT);
 
     public AbstractWebSocketMessageConnection(Session session) {
         this.session = session;
@@ -67,5 +72,52 @@ public abstract class AbstractWebSocketMessageConnection<M>
 
     @Override
     public void onError(Throwable throwable) {
+    }
+
+    @Override
+    public void onHeartbeat(long timestamp) {
+        lastHeartbeatTime.set(timestamp);
+    }
+
+    @Override
+    public long getLastHeartbeatTime() {
+        return lastHeartbeatTime.get();
+    }
+
+    @Override
+    public void setTimeout(long timeoutInMillis) {
+        timeout.set(timeoutInMillis);
+    }
+
+    @Override
+    public long getTimeout() {
+        return timeout.get();
+    }
+
+    @Override
+    public boolean isTimeout(long timestamp) {
+        return timestamp - lastHeartbeatTime.get() > timeout.get();
+    }
+
+    @Override
+    public boolean isClosed() {
+        return session == null || !session.isOpen();
+    }
+
+    @Override
+    public void close() {
+        if (session == null) {
+            return;
+        }
+        if (!session.isOpen()) {
+            return;
+        }
+
+        try {
+            session.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+            // TODO: replace with WebSocketException.
+        }
     }
 }

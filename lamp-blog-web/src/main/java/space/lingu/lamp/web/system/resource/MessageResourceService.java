@@ -21,6 +21,7 @@ import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.web.system.MessageResource;
 import space.lingu.lamp.web.system.repository.MessageResourceRepository;
+import tech.rollw.common.web.page.ImmutablePage;
 import tech.rollw.common.web.page.Page;
 import tech.rollw.common.web.page.Pageable;
 
@@ -74,7 +75,7 @@ public class MessageResourceService implements MessageResourceProvider, MessageR
     public Page<MessageResource> getMessageResources(Pageable pageable) {
         List<MessageResource> messageResources =
                 messageResourceRepository.get(pageable.toOffset());
-        return Page.of(pageable, 1, messageResources);
+        return ImmutablePage.of(pageable, 1, messageResources);
     }
 
     @Override
