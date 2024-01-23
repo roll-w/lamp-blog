@@ -21,14 +21,15 @@ import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.lamp.web.domain.comment.CommentDetailsMetadata;
 import space.lingu.lamp.web.domain.comment.repository.CommentRepository;
-import space.lingu.lamp.web.domain.content.*;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
+import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
+import space.lingu.lamp.web.domain.content.ContentPublisher;
+import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.content.UncreatedContent;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionIdentity;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionProvider;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentException;
-import tech.rollw.common.web.page.ImmutablePage;
-import tech.rollw.common.web.page.Offset;
-import tech.rollw.common.web.page.Page;
-import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 
@@ -36,20 +37,13 @@ import java.util.List;
  * @author RollW
  */
 @Service
-public class CommentService implements ContentAccessor,
-        ContentPublisher, ContentCollectionAccessor {
+public class CommentService implements ContentPublisher, ContentCollectionProvider {
     public static final int COMMENT_ROOT_ID = 0;
 
     private final CommentRepository commentRepository;
 
     public CommentService(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
-    }
-
-    @Override
-    public Comment getContent(long contentId,
-                              ContentType contentType) {
-        return commentRepository.getById(contentId);
     }
 
     @Override
@@ -77,48 +71,29 @@ public class CommentService implements ContentAccessor,
     }
 
     @Override
-    public Page<? extends ContentDetails> getContentCollection(
-            ContentCollectionType contentCollectionType,
-            long collectionId, Pageable pageable) {
-        // TODO: collection
-        return ImmutablePage.of(0, 0, 0, getComment(
-                contentCollectionType, collectionId,
-                pageable.getPage(),
-                pageable.getSize()));
-    }
-
-    @Override
-    public List<? extends ContentDetails> getContentCollection(
-            ContentCollectionType contentCollectionType,
-            long collectionId) {
-        return getComment(
-                contentCollectionType,
-                collectionId);
-    }
-
-    private List<Comment> getComment(ContentCollectionType contentCollectionType,
-                                     long collectionId, int page, int size) {
-        Offset offset = Offset.of(page, size);
-
-        return switch (contentCollectionType) {
-            case COMMENTS -> commentRepository.get(offset);
-            case ARTICLE_COMMENTS -> commentRepository.getComments(
-                    collectionId, ContentType.ARTICLE, offset);
-            default -> throw new UnsupportedOperationException("Unsupported collection type: " + contentCollectionType);
-        };
-    }
-
-    private List<Comment> getComment(ContentCollectionType contentCollectionType,
-                                     long collectionId) {
-        return switch (contentCollectionType) {
-            case COMMENTS -> commentRepository.get();
-            case ARTICLE_COMMENTS -> commentRepository.getComments(collectionId, ContentType.ARTICLE);
-            default -> throw new UnsupportedOperationException("Unsupported collection type: " + contentCollectionType);
-        };
-    }
-
-    @Override
     public boolean supports(@NonNull ContentType contentType) {
         return contentType == ContentType.COMMENT;
+    }
+
+    @Override
+    public List<? extends ContentDetails> getContents(
+            ContentCollectionIdentity contentCollectionIdentity) {
+        return switch (contentCollectionIdentity.getContentCollectionType()) {
+            case COMMENTS -> commentRepository.get();
+            case ARTICLE_COMMENTS -> commentRepository.getComments(
+                    contentCollectionIdentity.getContentCollectionId(),
+                    ContentType.ARTICLE
+            );
+            default -> throw new UnsupportedOperationException("Unsupported collection type: " +
+                    contentCollectionIdentity.getContentCollectionType());
+        };
+    }
+
+    @Override
+    public boolean supportsCollection(@NonNull ContentCollectionType contentCollectionType) {
+        return switch (contentCollectionType) {
+            case COMMENTS, ARTICLE_COMMENTS -> true;
+            default -> false;
+        };
     }
 }

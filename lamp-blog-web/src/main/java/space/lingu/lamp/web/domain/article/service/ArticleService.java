@@ -24,15 +24,18 @@ import space.lingu.lamp.web.common.ParamValidate;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.article.common.ArticleErrorCode;
 import space.lingu.lamp.web.domain.article.repository.ArticleRepository;
-import space.lingu.lamp.web.domain.content.*;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionAccessor;
+import space.lingu.lamp.web.domain.content.ContentDetails;
+import space.lingu.lamp.web.domain.content.ContentPublisher;
+import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.content.UncreatedContent;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionIdentity;
+import space.lingu.lamp.web.domain.content.collection.ContentCollectionProvider;
 import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
 import tech.rollw.common.web.page.ImmutablePage;
 import tech.rollw.common.web.page.Offset;
 import tech.rollw.common.web.page.Page;
-import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 
@@ -40,8 +43,7 @@ import java.util.List;
  * @author RollW
  */
 @Service
-public class ArticleService implements
-        ContentAccessor, ContentPublisher, ContentCollectionAccessor {
+public class ArticleService implements ContentPublisher, ContentCollectionProvider {
     private static final Logger logger = LoggerFactory.getLogger(ArticleService.class);
 
     private final ArticleRepository articleRepository;
@@ -51,15 +53,8 @@ public class ArticleService implements
     }
 
     @Override
-    public Article getContent(long contentId, ContentType contentType) {
-        if (contentType != ContentType.ARTICLE) {
-            return null;
-        }
-        return articleRepository.getById(contentId);
-    }
-
-    @Override
-    public ContentDetails publish(@NonNull UncreatedContent uncreatedContent, long timestamp)
+    public ContentDetails publish(@NonNull UncreatedContent uncreatedContent,
+                                  long timestamp)
             throws ContentException {
         if (uncreatedContent.getContentType() != ContentType.ARTICLE) {
             throw new IllegalArgumentException("Content type not supported: " +
@@ -91,47 +86,6 @@ public class ArticleService implements
         return contentType == ContentType.ARTICLE;
     }
 
-    @Override
-    public Page<Article> getContentCollection(
-            ContentCollectionType contentCollectionType,
-            long collectionId,
-            Pageable pageable) {
-        if (!supportsCollection(contentCollectionType)) {
-            throw new IllegalArgumentException("Content collection type not supported: " +
-                    contentCollectionType);
-        }
-        Offset offset = pageable.toOffset();
-        switch (contentCollectionType) {
-            case ARTICLES -> {
-                return getArticles(offset);
-            }
-            case USER_ARTICLES -> {
-                return getUserArticles(collectionId, offset);
-            }
-        }
-        // TODO: implement
-        return ImmutablePage.of();
-    }
-
-
-    @Override
-    public List<Article> getContentCollection(
-            ContentCollectionType contentCollectionType,
-            long collectionId) {
-        if (!supportsCollection(contentCollectionType)) {
-            throw new IllegalArgumentException("Content collection type not supported: " +
-                    contentCollectionType);
-        }
-        switch (contentCollectionType) {
-            case ARTICLES -> {
-                return getArticles();
-            }
-            case USER_ARTICLES -> {
-                return getUserArticles(collectionId);
-            }
-        }
-        return List.of();
-    }
 
     private Page<Article> getUserArticles(long id,
                                           Offset offset) {
@@ -158,5 +112,26 @@ public class ArticleService implements
 
     private List<Article> getArticles() {
         return articleRepository.get();
+    }
+
+    @Override
+    public boolean supportsCollection(ContentCollectionType contentCollectionType) {
+        return switch (contentCollectionType) {
+            case ARTICLES, USER_ARTICLES -> true;
+            default -> false;
+        };
+    }
+
+    @Override
+    public List<? extends ContentDetails> getContents(
+            ContentCollectionIdentity contentCollectionIdentity) {
+        return switch (contentCollectionIdentity.getContentCollectionType()) {
+            case ARTICLES -> getArticles();
+            case USER_ARTICLES -> getUserArticles(
+                    contentCollectionIdentity.getContentCollectionId()
+            );
+            default -> throw new UnsupportedOperationException("Unsupported collection type: " +
+                    contentCollectionIdentity.getContentCollectionType());
+        };
     }
 }
