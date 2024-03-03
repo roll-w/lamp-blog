@@ -1,8 +1,19 @@
-# Lamp Blog System
+# Lamp Blog
 
 A Blog System. Under development.
 
+## Requirements
+
+- Java 17 or higher
+- MySQL 8.0.26 or higher
+
+This project also uses the following libraries that require you 
+to install to your local maven repository:
+
+- [web-common](https://github.com/Roll-W/web-common-starter)
+
 ## Licence
+
 ```text
 Copyright (C) 2023 RollW
 
