@@ -54,4 +54,8 @@ public enum TransferredMessageType {
     public boolean canRecord() {
         return this == NORMAL || this == CONTROL;
     }
+
+    public boolean isHeartbeat() {
+        return this == HEARTBEAT;
+    }
 }
