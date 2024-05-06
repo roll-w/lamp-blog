@@ -21,18 +21,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import space.lingu.lamp.web.controller.AdminApi;
 import space.lingu.lamp.web.domain.article.vo.ArticleMetaVo;
 import space.lingu.lamp.web.domain.content.ContentAccessService;
+import space.lingu.lamp.web.domain.content.ContentIdentity;
 import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
-import space.lingu.lamp.web.domain.content.ContentPublishService;
+import space.lingu.lamp.web.domain.content.ContentPublishProvider;
 import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionService;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
 import tech.rollw.common.web.HttpResponseEntity;
-import tech.rollw.common.web.page.Page;
-import tech.rollw.common.web.page.Pageable;
-
-import java.util.List;
 
 /**
  * @author RollW
@@ -41,45 +36,12 @@ import java.util.List;
 public class ArticleManageController {
     private final ContentPublishProvider contentPublishProvider;
     private final ContentAccessService contentAccessService;
-    private final ContentCollectionService contentCollectionService;
 
     public ArticleManageController(ContentPublishProvider contentPublishProvider,
-                                   ContentAccessService contentAccessService,
-                                   ContentCollectionService contentCollectionService) {
+                                   ContentAccessService contentAccessService) {
         this.contentPublishProvider = contentPublishProvider;
         this.contentAccessService = contentAccessService;
-        this.contentCollectionService = contentCollectionService;
     }
-
-    @GetMapping("/articles")
-    public HttpResponseEntity<List<ArticleMetaVo>> getArticles(Pageable pageable) {
-        Page<ContentMetadataDetails<?>> contents = contentCollectionService.getContentsRelated(
-                ContentCollectionType.ARTICLES,
-                0,
-                pageable
-        );
-
-        return HttpResponseEntity.success(
-                contents.transform(ArticleMetaVo::from)
-        );
-    }
-
-
-    @GetMapping("/users/{userId}/articles")
-    public HttpResponseEntity<List<ArticleMetaVo>> getArticlesByUser(
-            @PathVariable("userId") Long userId,
-            Pageable pageable) {
-        Page<ContentMetadataDetails<?>> contents = contentCollectionService.getContentsRelated(
-                ContentCollectionType.USER_ARTICLES,
-                userId,
-                pageable
-        );
-
-        return HttpResponseEntity.success(
-                contents.transform(ArticleMetaVo::from)
-        );
-    }
-
 
     @GetMapping("/users/{userId}/articles/{articleId}")
     public HttpResponseEntity<ArticleMetaVo> getArticle(
@@ -87,8 +49,7 @@ public class ArticleManageController {
             @PathVariable("articleId") Long articleId) {
         ContentMetadataDetails<?> contentMetadataDetails =
                 contentAccessService.getContentMetadataDetails(
-                        articleId,
-                        ContentType.ARTICLE
+                        ContentIdentity.of(articleId, ContentType.ARTICLE)
                 );
         if (contentMetadataDetails.getUserId() != userId) {
             throw new ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND);
