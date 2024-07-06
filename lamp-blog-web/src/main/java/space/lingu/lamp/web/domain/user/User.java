@@ -18,15 +18,11 @@ package space.lingu.lamp.web.domain.user;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import space.lingu.NonNull;
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.Constructor;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.Index;
-import space.lingu.light.LightConfiguration;
-import space.lingu.light.PrimaryKey;
+import space.lingu.light.*;
 import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.util.Collection;
@@ -70,20 +66,12 @@ public class User implements LongDataItem<User>, UserDetails, AttributedUser {
     @DataColumn(name = "enabled")
     private final boolean enabled;
 
-    /**
-     */
     @DataColumn(name = "locked")
     private final boolean locked;
 
-    /**
-     *
-     */
     @DataColumn(name = "account_expired")
     private final boolean accountExpired;
 
-    /**
-     * 账号注销
-     */
     @DataColumn(name = "account_canceled")
     private final boolean canceled;
 
@@ -243,6 +231,7 @@ public class User implements LongDataItem<User>, UserDetails, AttributedUser {
         return userId <= 0;
     }
 
+    @NonNull
     @Override
     public SystemResourceKind getSystemResourceKind() {
         return LampSystemResourceKind.USER;
