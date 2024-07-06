@@ -32,6 +32,6 @@ public class DefaultStorageUrlProviderStrategy implements StorageUrlProviderStra
                 .fromCurrentContextPath()
                 .build()
                 .toUriString();
-        return baseUrl + "/api/v1/storage/" + id;
+        return baseUrl + "/api/v1/storages/" + id;
     }
 }
