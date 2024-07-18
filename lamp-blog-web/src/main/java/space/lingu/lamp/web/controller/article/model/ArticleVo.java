@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article.vo;
+package space.lingu.lamp.web.controller.article.model;
 
+import space.lingu.lamp.web.controller.content.vo.ContentVo;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
@@ -29,14 +30,14 @@ public record ArticleVo(
         long id,
         String title,
         String content,
-        long authorId,
+        long userId,
         long createTime,
         long updateTime,
         ContentAccessAuthType accessAuthType
         // TODO: add more fields
-) {
+) implements ContentVo {
 
-    public static ArticleVo from(ContentMetadataDetails<?> contentMetadataDetails) {
+    public static ArticleVo of(ContentMetadataDetails<?> contentMetadataDetails) {
         if (!(contentMetadataDetails.getContentDetails() instanceof Article article)) {
             return null;
         }
@@ -51,7 +52,10 @@ public record ArticleVo(
         );
     }
 
-    public static ArticleVo from(ContentDetails contentDetails) {
+    public static ArticleVo of(ContentDetails contentDetails) {
+        if (contentDetails instanceof ContentMetadataDetails<?> contentMetadataDetails) {
+            return of(contentMetadataDetails);
+        }
         if (!(contentDetails instanceof Article article)) {
             return null;
         }
@@ -66,18 +70,10 @@ public record ArticleVo(
         );
     }
 
-    public static ArticleVo from(Content content) {
-        if (!(content instanceof Article article)) {
-            return null;
+    public static ArticleVo of(Content content) {
+        if (content instanceof ContentDetails contentDetails) {
+            return of(contentDetails);
         }
-        return new ArticleVo(
-                article.getId(),
-                article.getTitle(),
-                article.getContent(),
-                article.getUserId(),
-                article.getCreateTime(),
-                article.getUpdateTime(),
-                ContentAccessAuthType.PUBLIC
-        );
+        return null;
     }
 }

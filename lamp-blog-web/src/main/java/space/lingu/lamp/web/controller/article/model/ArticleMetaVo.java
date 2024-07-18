@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article.vo;
+package space.lingu.lamp.web.controller.article.model;
 
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
