@@ -14,12 +14,32 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.controller.review;
+package space.lingu.lamp.web.domain.review;
+
+import space.lingu.NonNull;
+import space.lingu.lamp.web.domain.content.ContentTrait;
+
+import java.util.List;
 
 /**
  * @author RollW
  */
-public record ReviewRejectedRequest(
-        String reason
-) {
+public interface ReviewJobProvider {
+    @NonNull
+    ReviewJob getReviewJob(long reviewJobId);
+
+    @NonNull
+    List<ReviewJob> getReviewJobs();
+
+    @NonNull
+    List<ReviewJob> getReviewJobs(long userId);
+
+    @NonNull
+    List<ReviewJob> getReviewJobs(ContentTrait contentTrait);
+
+    @NonNull
+    List<ReviewJob> getReviewJobs(ReviewStatus reviewStatus);
+
+    @NonNull
+    List<ReviewJob> getReviewJobs(ReviewStatues reviewStatues);
 }

@@ -21,15 +21,13 @@ import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.common.NotReviewedException;
-import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
-import tech.rollw.common.web.page.Pageable;
-
-import java.util.List;
 
 /**
  * @author RollW
  */
 public interface ReviewService {
+    // TODO: needs rename
+
     default ReviewJob assignReviewer(Content content)
             throws NotReviewedException {
         return assignReviewer(content, false);
@@ -51,22 +49,8 @@ public interface ReviewService {
         );
     }
 
+
     ReviewJob assignReviewer(long contentId, ContentType contentType,
                              boolean allowAutoReview) throws NotReviewedException;
 
-    List<ReviewJob> getReviewJobs(long reviewerId, Pageable pageable);
-
-    List<ReviewJob> getReviewJobs(Pageable pageable);
-
-    List<ReviewJob> getUnfinishedReviewJobs(long reviewerId, Pageable pageable);
-
-    List<ReviewJob> getFinishedReviewJobs(long reviewerId, Pageable pageable);
-
-    List<ReviewJob> getRejectedReviewJobs(long reviewerId, Pageable pageable);
-
-    List<ReviewJob> getPassedReviewJobs(long reviewerId, Pageable pageable);
-
-    ReviewInfo getReviewInfo(long reviewContentId, ContentType contentType);
-
-    ReviewInfo getReviewInfo(long jobId);
 }

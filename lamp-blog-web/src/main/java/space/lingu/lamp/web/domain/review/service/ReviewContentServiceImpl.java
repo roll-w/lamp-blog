@@ -46,7 +46,7 @@ public class ReviewContentServiceImpl implements ReviewContentService {
         ReviewJob job = reviewJobRepository.getById(jobId);
         Verify.verifyNotNull(job, "Review job not found");
         ContentDetails details = contentAccessService.getContentDetails(
-                job.getReviewContentId(), job.getType());
+                job.getAssociatedContent());
         return ReviewContent.of(job, details);
     }
 }
