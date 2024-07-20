@@ -14,8 +14,9 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article.dto;
+package space.lingu.lamp.web.controller.article.model;
 
+import space.lingu.lamp.web.domain.article.dto.ArticleDetailsMetadata;
 import space.lingu.lamp.web.domain.content.SimpleUncreatedContent;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.content.UncreatedContent;
@@ -23,7 +24,7 @@ import space.lingu.lamp.web.domain.content.UncreatedContent;
 /**
  * @author RollW
  */
-public record ArticleRequest(
+public record ArticleCreateRequest(
         String title,
         String content
 ) {

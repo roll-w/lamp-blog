@@ -22,7 +22,7 @@ import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.controller.Api;
 import space.lingu.lamp.web.domain.article.dto.ArticleDetailsMetadata;
 import space.lingu.lamp.web.domain.article.dto.ArticleInfo;
-import space.lingu.lamp.web.domain.article.dto.ArticleRequest;
+import space.lingu.lamp.web.controller.article.model.ArticleCreateRequest;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.content.ContentPublishProvider;
 import space.lingu.lamp.web.domain.content.UncreatedContent;
@@ -48,14 +48,14 @@ public class ArticleController {
 
     @PostMapping("/articles")
     public HttpResponseEntity<ArticleInfo> createArticle(
-            @RequestBody ArticleRequest articleRequest) {
+            @RequestBody ArticleCreateRequest articleCreateRequest) {
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
         ApiContext apiContext = apiContextThread.getContext();
         if (!apiContext.hasUser()) {
             throw new ContentException(UserErrorCode.ERROR_USER_NOT_LOGIN);
         }
         long userId = apiContext.getUser().getUserId();
-        UncreatedContent uncreatedContent = articleRequest.toUncreatedContent(
+        UncreatedContent uncreatedContent = articleCreateRequest.toUncreatedContent(
                 userId,
                 ArticleDetailsMetadata.EMPTY
         );
