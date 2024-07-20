@@ -16,7 +16,6 @@
 
 package space.lingu.lamp.web.domain.staff;
 
-import space.lingu.lamp.web.domain.staff.dto.StaffInfo;
 import tech.rollw.common.web.page.Page;
 import tech.rollw.common.web.page.Pageable;
 
@@ -26,6 +25,7 @@ import tech.rollw.common.web.page.Pageable;
 public interface StaffService {
     // TODO: optimize methods.
 
+    @Deprecated
     Page<StaffInfo> getStaffs(Pageable pageable);
 
     Page<StaffInfo> getStaffsByType(StaffType type, Pageable pageable);

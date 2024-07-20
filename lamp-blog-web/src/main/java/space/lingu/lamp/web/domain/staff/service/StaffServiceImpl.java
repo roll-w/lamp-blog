@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.staff.StaffService;
 import space.lingu.lamp.web.domain.staff.StaffType;
-import space.lingu.lamp.web.domain.staff.dto.StaffInfo;
+import space.lingu.lamp.web.domain.staff.StaffInfo;
 import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
 import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.lamp.web.domain.user.UserProvider;
