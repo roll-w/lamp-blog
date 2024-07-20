@@ -17,14 +17,19 @@
 package space.lingu.lamp.web.domain.review;
 
 import com.google.common.base.Preconditions;
+import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
+import space.lingu.lamp.web.domain.content.ContentAssociated;
+import space.lingu.lamp.web.domain.content.ContentIdentity;
 import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.content.SimpleContentIdentity;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
+import space.lingu.light.LightIgnore;
 import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
@@ -34,7 +39,7 @@ import java.util.Objects;
  * @author RollW
  */
 @DataTable(name = "review_job")
-public class ReviewJob implements LongDataItem<ReviewJob> {
+public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
     private final Long jobId;
@@ -71,6 +76,9 @@ public class ReviewJob implements LongDataItem<ReviewJob> {
     @DataColumn(name = "review_mark")
     private final ReviewMark reviewMark;
 
+    @LightIgnore
+    private final ContentIdentity associatedContent;
+
     @Constructor
     public ReviewJob(Long jobId, long reviewContentId,
                      Long reviewerId,
@@ -92,6 +100,7 @@ public class ReviewJob implements LongDataItem<ReviewJob> {
         this.result = result;
         this.reviewTime = reviewTime;
         this.reviewMark = reviewMark;
+        this.associatedContent = new SimpleContentIdentity(reviewContentId, type);
     }
 
     public ReviewJob(long reviewContentId, long reviewerId,
@@ -158,6 +167,11 @@ public class ReviewJob implements LongDataItem<ReviewJob> {
         return reviewMark;
     }
 
+    @Override
+    public ContentIdentity getAssociatedContent() {
+        return associatedContent;
+    }
+
     public ReviewJob reviewPass(long operatorId, long reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewerId,
@@ -220,6 +234,7 @@ public class ReviewJob implements LongDataItem<ReviewJob> {
     }
 
     @Override
+    @NonNull
     public SystemResourceKind getSystemResourceKind() {
         return LampSystemResourceKind.REVIEW_JOB;
     }
