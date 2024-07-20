@@ -22,8 +22,9 @@ import org.springframework.stereotype.Service;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
-import space.lingu.lamp.web.domain.review.service.ReviewerAllocateService;
+import space.lingu.lamp.web.domain.review.service.ReviewerAllocator;
 import space.lingu.lamp.web.domain.staff.Staff;
+import space.lingu.lamp.web.domain.staff.OnStaffEventListener;
 import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
 
@@ -37,16 +38,16 @@ import java.util.TreeMap;
  * @author RollW
  */
 @Service
-public class ReviewerAllocateServiceImpl implements ReviewerAllocateService {
-   private static final Logger logger = LoggerFactory.getLogger(ReviewerAllocateServiceImpl.class);
+public class ReviewerAllocatorImpl implements ReviewerAllocator, OnStaffEventListener {
+   private static final Logger logger = LoggerFactory.getLogger(ReviewerAllocatorImpl.class);
 
     private final StaffRepository staffRepository;
     private final ReviewJobRepository reviewJobRepository;
     private final Map<Long, Integer> weights = new HashMap<>();
     private final TreeMap<Integer, List<Long>> staffReviewingCount = new TreeMap<>();
 
-    public ReviewerAllocateServiceImpl(StaffRepository staffRepository,
-                                       ReviewJobRepository reviewJobRepository) {
+    public ReviewerAllocatorImpl(StaffRepository staffRepository,
+                                 ReviewJobRepository reviewJobRepository) {
         this.staffRepository = staffRepository;
         this.reviewJobRepository = reviewJobRepository;
 
@@ -121,5 +122,14 @@ public class ReviewerAllocateServiceImpl implements ReviewerAllocateService {
 
     private boolean canAutoReview(ContentType contentType) {
         return false;
+    }
+
+    @Override
+    public void onStaffCreated(Staff staff) {
+        weights.put(staff.getUserId(), 0);
+        List<Long> staffIds =
+                staffReviewingCount.getOrDefault(0, new ArrayList<>());
+        staffIds.add(staff.getUserId());
+        staffReviewingCount.put(0, staffIds);
     }
 }
