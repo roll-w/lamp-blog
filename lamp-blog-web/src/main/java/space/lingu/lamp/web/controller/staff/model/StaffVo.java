@@ -14,41 +14,43 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff.dto;
+package space.lingu.lamp.web.controller.staff.model;
 
-import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.staff.StaffType;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.web.domain.staff.StaffInfo;
+import space.lingu.lamp.web.domain.user.Role;
 
 import java.util.Set;
 
 /**
  * @author RollW
  */
-public record StaffInfo(
+public record StaffVo(
         long id,
         long userId,
-        UserIdentity userIdentity,
+        String username,
+        Role role,
         Set<StaffType> types,
         long createTime,
         long updateTime,
         boolean allowUser,
         boolean deleted
 ) {
-    public static StaffInfo from(Staff staff, UserIdentity userIdentity) {
-        if (staff == null) {
+
+    public static StaffVo from(StaffInfo staffInfo) {
+        if (staffInfo == null) {
             return null;
         }
-        return new StaffInfo(
-                staff.getId(),
-                staff.getUserId(),
-                userIdentity,
-                staff.getTypes(),
-                staff.getCreateTime(),
-                staff.getUpdateTime(),
-                staff.isAllowUser(),
-                staff.isDeleted()
+        return new StaffVo(
+                staffInfo.id(),
+                staffInfo.userId(),
+                staffInfo.userIdentity().getUsername(),
+                staffInfo.userIdentity().getRole(),
+                staffInfo.types(),
+                staffInfo.createTime(),
+                staffInfo.updateTime(),
+                staffInfo.allowUser(),
+                staffInfo.deleted()
         );
     }
-
 }
