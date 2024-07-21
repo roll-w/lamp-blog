@@ -43,7 +43,7 @@
         <light.version>0.4.6</light.version>
         <fiesta.version>0.2.1</fiesta.version>
         <web-common.version>0.2.0</web-common.version>
-        <guava.version>31.1-jre</guava.version>
+        <guava.version>33.2.1-jre</guava.version>
         <hikari.version>5.0.1</hikari.version>
         <jjwt.version>0.11.5</jjwt.version>
         <mysql.version>8.0.33</mysql.version>
@@ -51,6 +51,7 @@
         <spring-shell.version>2.1.2</spring-shell.version>
         <tomcat-api.version>6.0.53</tomcat-api.version>
         <tomcat-ws.version>10.1.5</tomcat-ws.version>
+        <kotlin.version>2.0.0</kotlin.version>
     </properties>
 
     <dependencyManagement>
@@ -179,6 +180,47 @@
             <artifactId>fiesta-checker</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-stdlib-jdk8</artifactId>
+            <version>${kotlin.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-test</artifactId>
+            <version>${kotlin.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-maven-plugin</artifactId>
+                <version>${kotlin.version}</version>
+                <executions>
+                    <execution>
+                        <id>compile</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>test-compile</id>
+                        <phase>test-compile</phase>
+                        <goals>
+                            <goal>test-compile</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <jvmTarget>${maven.compiler.target}</jvmTarget>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 </project>
