@@ -19,7 +19,6 @@ package space.lingu.lamp.web.domain.staff;
 import space.lingu.NonNull;
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
@@ -34,9 +33,7 @@ import java.util.Set;
  */
 @SuppressWarnings({"ClassCanBeRecord", "unused"})
 @DataTable(name = "staff")
-public class Staff implements LongDataItem<Staff> {
-    // TODO: staff type
-
+public class Staff implements LongDataItem<Staff>, AttributedStaff {
     @DataColumn(name = "id")
     @PrimaryKey(autoGenerate = true)
     private final Long id;
@@ -77,10 +74,16 @@ public class Staff implements LongDataItem<Staff> {
         return id;
     }
 
+    @Override
+    public long getStaffId() {
+        return id;
+    }
+
     public long getUserId() {
         return userId;
     }
 
+    @NonNull
     public Set<StaffType> getTypes() {
         return types;
     }
@@ -107,10 +110,16 @@ public class Staff implements LongDataItem<Staff> {
         return types.contains(type);
     }
 
+    @NonNull
+    @Override
+    public Long getResourceId() {
+        return AttributedStaff.super.getResourceId();
+    }
+
     @Override
     @NonNull
     public SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.STAFF;
+        return AttributedStaff.super.getSystemResourceKind();
     }
 
     @Override
@@ -146,6 +155,7 @@ public class Staff implements LongDataItem<Staff> {
     public static Builder builder() {
         return new Builder();
     }
+
 
     public final static class Builder implements LongEntityBuilder<Staff> {
         private Long id;

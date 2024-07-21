@@ -42,15 +42,15 @@ public record StaffVo(
             return null;
         }
         return new StaffVo(
-                staffInfo.id(),
-                staffInfo.userId(),
-                staffInfo.userIdentity().getUsername(),
-                staffInfo.userIdentity().getRole(),
-                staffInfo.types(),
-                staffInfo.createTime(),
-                staffInfo.updateTime(),
-                staffInfo.allowUser(),
-                staffInfo.deleted()
+                staffInfo.getId(),
+                staffInfo.getUserId(),
+                staffInfo.getUserIdentity().getUsername(),
+                staffInfo.getUserIdentity().getRole(),
+                staffInfo.getTypes(),
+                staffInfo.getCreateTime(),
+                staffInfo.getUpdateTime(),
+                staffInfo.getAllowUser(),
+                staffInfo.getDeleted()
         );
     }
 }

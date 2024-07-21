@@ -14,53 +14,49 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff;
+package space.lingu.lamp.web.domain.staff
 
-import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.lamp.web.domain.user.UserIdentity;
-import tech.rollw.common.web.system.SystemResource;
-import tech.rollw.common.web.system.SystemResourceKind;
-
-import java.util.Set;
+import space.lingu.lamp.web.domain.user.UserIdentity
 
 /**
  * @author RollW
  */
-public record StaffInfo(
-        long id,
-        long userId,
-        UserIdentity userIdentity,
-        Set<StaffType> types,
-        long createTime,
-        long updateTime,
-        boolean allowUser,
-        boolean deleted
-) implements SystemResource<Long> {
-    public static StaffInfo from(Staff staff, UserIdentity userIdentity) {
-        if (staff == null) {
-            return null;
-        }
-        return new StaffInfo(
-                staff.getId(),
-                staff.getUserId(),
+data class StaffInfo(
+    val id: Long,
+    val userIdentity: UserIdentity,
+    override val types: Set<StaffType>,
+    private val createTime: Long,
+    private val updateTime: Long,
+    val allowUser: Boolean,
+    val deleted: Boolean
+) : AttributedStaff {
+    override val staffId: Long
+        get() = id
+
+    override val userId: Long
+        get() = userIdentity.userId
+
+    override fun getCreateTime(): Long = createTime
+
+    override fun getUpdateTime(): Long = updateTime
+
+    companion object {
+        @JvmStatic
+        fun from(staff: Staff, userIdentity: UserIdentity): StaffInfo {
+            return StaffInfo(
+                staff.id,
                 userIdentity,
-                staff.getTypes(),
-                staff.getCreateTime(),
-                staff.getUpdateTime(),
-                staff.isAllowUser(),
-                staff.isDeleted()
-        );
-    }
+                staff.types,
+                staff.createTime,
+                staff.updateTime,
+                staff.isAllowUser,
+                staff.isDeleted
+            )
+        }
 
-    @Override
-    public Long getResourceId() {
-        return id;
-    }
-
-    @NonNull
-    @Override
-    public SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.STAFF;
+        @JvmStatic
+        fun Staff.toStaffInfo(userIdentity: UserIdentity): StaffInfo {
+            return from(this, userIdentity)
+        }
     }
 }
