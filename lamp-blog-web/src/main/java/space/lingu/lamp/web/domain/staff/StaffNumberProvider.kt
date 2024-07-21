@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff;
+package space.lingu.lamp.web.domain.staff
 
 /**
  * @author RollW
  */
-public interface StaffSerialNumberGenerator {
+interface StaffNumberProvider {
     /**
-     * Auto-generate a serial number for a new staff.
+     * Generate a unique staff number for the given staff.
      *
-     * @return serial number
+     * @return The staff number. For example, "AM0001".
      */
-    String generate(long userId, StaffType staffType);
+    fun getStaffNumber(staff: Staff): String
 }

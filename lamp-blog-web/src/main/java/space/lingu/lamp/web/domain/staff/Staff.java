@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.domain.staff;
 
+import space.lingu.NonNull;
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
@@ -107,6 +108,7 @@ public class Staff implements LongDataItem<Staff> {
     }
 
     @Override
+    @NonNull
     public SystemResourceKind getSystemResourceKind() {
         return LampSystemResourceKind.STAFF;
     }
