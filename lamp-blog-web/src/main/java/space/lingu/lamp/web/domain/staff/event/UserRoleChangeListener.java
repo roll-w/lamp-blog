@@ -21,7 +21,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.staff.Staff;
-import space.lingu.lamp.web.domain.staff.StaffSerialNumberGenerator;
 import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
 import space.lingu.lamp.web.domain.user.Role;
@@ -35,12 +34,9 @@ import space.lingu.lamp.web.domain.user.event.OnUserRoleChangeEvent;
 public class UserRoleChangeListener
         implements ApplicationListener<OnUserRoleChangeEvent> {
     private final StaffRepository staffRepository;
-    private final StaffSerialNumberGenerator serialNumberGenerator;
 
-    public UserRoleChangeListener(StaffRepository staffRepository,
-                                  StaffSerialNumberGenerator serialNumberGenerator) {
+    public UserRoleChangeListener(StaffRepository staffRepository) {
         this.staffRepository = staffRepository;
-        this.serialNumberGenerator = serialNumberGenerator;
     }
 
     @Override
