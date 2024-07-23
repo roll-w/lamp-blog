@@ -44,16 +44,16 @@ export const currentUser = `${prefix}/user`;
 
 export const userChat = wsPrefix + '/message/talk';
 export const userMessages = (userId, admin = false) =>
-    `${admin ? adminPrefix : prefix}/user/${userId}/messages`;
+    `${admin ? adminPrefix : prefix}/users/${userId}/messages`;
 export const messages = (admin = false) =>
     `${admin ? adminPrefix : prefix}/messages`;
 
 export const staffs = `${adminPrefix}/staffs`;
 export const staffInfo = (staffId, admin = false) =>
-    `${prefix}/staff/${staffId}`;
+    `${prefix}/staffs/${staffId}`;
 
 export const staffInfoByUser = (userId, admin = false) =>
-    `${prefix}/user/${userId}/staff`;
+    `${prefix}/users/${userId}/staff`;
 
 export const allReviews = `${adminPrefix}/reviews`;
 export const currentReviews = `${prefix}/reviews`;
@@ -69,12 +69,13 @@ export const reviewResource = (jobId, admin = false) =>
 export const tokenRefresh = `${prefix}/auth/token/r`;
 
 export const articleDetails = (userId, articleId, admin) => {
-    return `${admin ? adminPrefix : prefix}/user/${userId}/articles/${articleId}`;
+    return `${admin ? adminPrefix : prefix}/users/${userId}/articles/${articleId}`;
 }
 export const userArticles = (userId, admin = false) => {
-    return `${admin ? adminPrefix : prefix}/user/${userId}/articles`;
+    return `${admin ? adminPrefix : prefix}/users/${userId}/articles`;
 }
 export const articles = (admin) => `${admin ? adminPrefix : prefix}/articles`;
+export const comments = (admin) => `${admin ? adminPrefix : prefix}/comments`;
 
 export const userList = `${adminPrefix}/users`;
 export const systemErrorLog = `${adminPrefix}/system/errors`;
