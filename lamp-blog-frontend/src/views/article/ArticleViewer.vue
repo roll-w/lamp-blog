@@ -36,7 +36,7 @@
                 <router-link #="{ navigate, href }"
                              :to="route"
                              custom>
-                  <n-a :href="href" @click="navigate">
+                  <n-a :href="href" target="_blank" @click="navigate">
                     {{ userInfo.nickname }}
                   </n-a>
                 </router-link>
@@ -92,19 +92,19 @@ const article = ref({})
 const userId = router.currentRoute.value.params.user
 const articleId = router.currentRoute.value.params.id
 
-const route = {
+const route = ref({
   name: userPage,
   params: {
-    userId: -1
+    userId: 0
   }
-}
+})
 
 const requestUserInfo = (id) => {
-  proxy.$axios.get(api.userInfo(id, false), createConfig())
+  proxy.$axios.get(api.users(false, id), createConfig())
       .then((res) => {
         console.log(res)
         userInfo.value = res.data
-        route.params.userId = userInfo.value.userId
+        route.value.params.userId = userInfo.value.userId
       })
       .catch((err) => {
         console.log(err)
@@ -128,7 +128,7 @@ const requestArticle = (userId, articleId) => {
       .then((res) => {
         article.value = res.data
         updateDocTitle(article.value.title)
-        requestUserInfo(article.value.authorId)
+        requestUserInfo(article.value.userId)
       })
       .catch((err) => {
         console.log(err)
