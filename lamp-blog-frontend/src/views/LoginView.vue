@@ -15,27 +15,28 @@
   -->
 
 <template>
-  <div class="center">
-    <n-grid :cols="2" class="pr-10 pl-10">
-      <n-gi>
-        <n-card>
-          <n-h1>
-            <n-text type="primary">Lamp Blog</n-text>
-          </n-h1>
-          <n-p>Write blogs in <b>Lamp Blog.</b></n-p>
-          <n-card :bordered="false" embedded>
-            <n-code :code="code" language="java" show-line-numbers/>
-          </n-card>
-        </n-card>
-      </n-gi>
-      <n-gi>
-        <n-card>
-          <LoginForm v-if="isLoginPage()"/>
-          <RegisterForm v-else/>
-        </n-card>
-      </n-gi>
-    </n-grid>
-  </div>
+    <div class="center">
+        <n-grid :cols="2" class="pr-10 pl-10">
+            <n-gi>
+                <n-card>
+                    <n-h1>
+                        <n-text type="primary">Lamp Blog</n-text>
+                    </n-h1>
+                    <n-card :bordered="false" embedded>
+                        <!-- TODO: get from api -->
+                        <n-p>生命是束纯净的火焰，我们内心都拥有一颗无形的太阳。</n-p>
+                        <n-p class="text-right">—— 托马斯·布朗</n-p>
+                    </n-card>
+                </n-card>
+            </n-gi>
+            <n-gi>
+                <n-card>
+                    <LoginForm v-if="isLoginPage()"/>
+                    <RegisterForm v-else/>
+                </n-card>
+            </n-gi>
+        </n-grid>
+    </div>
 </template>
 
 <script setup>
@@ -50,32 +51,26 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const checkLogin = () => {
-  if (userStore.isLogin) {
-    router.push({
-      name: index
-    })
-  }
+    if (userStore.isLogin) {
+        router.push({
+            name: index
+        })
+    }
 }
 
 checkLogin()
 
 const isLoginPage = () => {
-  return router.currentRoute.value.name === login
+    return router.currentRoute.value.name === login
 }
-
-const code = `public class LampBlog {
-  public static void main(String[] args) {
-    System.out.println("Hello, Lamp Blog!");
-  }
-}`
 </script>
 
 <style scoped>
 .center {
-  display: flex;
-  flex-direction: column;
-  height: calc(100vh - 64px);
-  justify-content: center;
-  position: relative;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 64px);
+    justify-content: center;
+    position: relative;
 }
 </style>
