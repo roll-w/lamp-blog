@@ -20,9 +20,9 @@
  * @param {string} location
  * @param {string} errorType
  */
-export function adminErrorTemplate(notification, error,
-                                   location = "请求错误",
-                                   errorType = "请求错误") {
+export function popAdminErrorTemplate(notification, error,
+                                      location = "请求错误",
+                                      errorType = "请求错误") {
     const msg = error.tip +
         "\n信息： " + error.message
     notification.error({
@@ -40,9 +40,9 @@ export function adminErrorTemplate(notification, error,
  * @param {string} location
  * @param {string} errorType
  */
-export function userErrorTemplate(notification, error,
-                                  location = "请求错误",
-                                  errorType = "请求错误") {
+export function popUserErrorTemplate(notification, error,
+                                     location = "请求错误",
+                                     errorType = "请求错误") {
     const msg = error.tip
     notification.error({
         title: location,
