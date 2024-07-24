@@ -23,12 +23,26 @@ export const login = "login-page"
 export const register = "register-page"
 export const registerActivate = "register-activate"
 export const registerTip = "register-tip"
-export const userPage = "user-page"
+
+export const searchPage = "search-page"
+
 export const articleEditorPage = "article-page"
 export const articleEditorPageUpdate = "article-page-update"
 export const articleView = "article-details"
 export const articleFocusView = "article-details-focus"
 export const articleList = "article-list"
+
+export const userPage = "user-page"
+export const userSettingPage = "user-setting-page"
+export const userSearchPage = "user-search-page"
+
+export const userSharePage = "user-share-page"
+export const userFavoritePage = "user-favorite-page"
+export const userFavoritePageWithId = "user-favorite-page-with-id"
+export const userStatsPage = "user-stats-page"
+
+
+export const userChat = "user-chat"
 
 // admins
 export const admin = "admin-index"
@@ -40,6 +54,7 @@ export const adminArticles = "admin-article-list"
 export const reviewsQueue = "admin-review-queue"
 export const reviewerReviews = "admin-reviewer-review-list"
 export const systemLog = "admin-system-log"
+export const systemMessageResource = "admin-system-message-resource"
 export const systemSettings = "admin-system-settings"
 export const page404 = "404"
 
@@ -137,12 +152,43 @@ const router = createRouter({
                     }
                 },
                 {
+                    path: '/user/chat/:id',
+                    name: userChat,
+                    component: () => import('@/views/message/UserChat.vue'),
+                    meta: {
+                        title: "聊天",
+                        requireLogin: true,
+                    },
+                },
+                {
+                    path: '/user/chat',
+                    redirect: '/user/chat/s0',
+                },
+                {
                     path: '/article/editor/:id',
                     name: articleEditorPageUpdate,
                     component: () => import('@/views/article/ArticleEditor.vue'),
                     meta: {
                         title: "文章编辑",
                         requireLogin: true,
+                    }
+                },
+                {
+                    path: '/user/search',
+                    name: userSearchPage,
+                    component: () => import("@/views/user/UserSearchView.vue"),
+                    meta: {
+                        title: "用户搜索",
+                        requireLogin: false
+                    }
+                },
+                {
+                    path: '/search',
+                    name: searchPage,
+                    component: () => import("@/views/common/SearchView.vue"),
+                    meta: {
+                        title: "搜索",
+                        requireLogin: false
                     }
                 },
                 {
@@ -169,7 +215,7 @@ const router = createRouter({
                 {
                     path: '/admin',
                     name: admin,
-                    component: () => import('@/views/AdminIndex.vue'),
+                    component: () => import('@/views/admin/AdminIndex.vue'),
                     meta: {
                         title: "系统管理"
                     }
@@ -251,6 +297,14 @@ const router = createRouter({
                     component: () => import('@/views/admin/system/SystemSettings.vue'),
                     meta: {
                         title: "系统设置"
+                    }
+                },
+                {
+                    path: '/admin/system/resources/messages',
+                    name: systemMessageResource,
+                    component: () => import('@/views/admin/system/SystemMessageResources.vue'),
+                    meta: {
+                        title: "消息资源"
                     }
                 },
             ]
