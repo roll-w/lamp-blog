@@ -17,8 +17,8 @@
 <template>
     <div class="center">
         <n-grid :cols="2" class="pr-10 pl-10">
-            <n-gi>
-                <n-card>
+            <n-gi class="h-full">
+                <n-card class="h-full">
                     <n-h1>
                         <n-text type="primary">Lamp Blog</n-text>
                     </n-h1>
