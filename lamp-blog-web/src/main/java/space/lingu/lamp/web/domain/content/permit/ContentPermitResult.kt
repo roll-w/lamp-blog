@@ -13,36 +13,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package space.lingu.lamp.web.domain.content.permit
 
-package space.lingu.lamp.web.domain.content.permit;
-
-import com.google.common.base.Preconditions;
-import tech.rollw.common.web.ErrorCode;
-
-import java.util.HashSet;
-import java.util.Set;
+import tech.rollw.common.web.ErrorCode
 
 /**
  * @author RollW
  */
-public record ContentPermitResult(
-        Set<ErrorCode> errors,
-        boolean isPermitted
+@JvmRecord
+data class ContentPermitResult(
+    val errors: Set<ErrorCode>,
+    val isPermitted: Boolean
 ) {
-    public static ContentPermitResult permit() {
-        return new ContentPermitResult(Set.of(), true);
+    operator fun plus(other: ContentPermitResult): ContentPermitResult {
+        val pluses= HashSet(errors)
+        pluses.addAll(other.errors)
+        return ContentPermitResult(
+            pluses,
+            isPermitted && other.isPermitted
+        )
     }
 
-    public static ContentPermitResult deny(ErrorCode errorCode) {
-        Preconditions.checkArgument(errorCode.failed(), "errorCode must be failed.");
-        return new ContentPermitResult(Set.of(errorCode), false);
-    }
+    companion object {
+        @JvmStatic
+        fun permit(): ContentPermitResult {
+            return ContentPermitResult(setOf(), true)
+        }
 
-    public ContentPermitResult plus(ContentPermitResult other) {
-        Preconditions.checkNotNull(other);
-        Set<ErrorCode> pluses = new HashSet<>(errors);
-        pluses.addAll(other.errors);
-        return new ContentPermitResult(pluses, isPermitted && other.isPermitted);
+        @JvmStatic
+        fun deny(errorCode: ErrorCode): ContentPermitResult {
+            check(errorCode.failed()) {
+                "errorCode must be failed."
+            }
+            return ContentPermitResult(setOf(errorCode), false)
+        }
     }
-
 }
