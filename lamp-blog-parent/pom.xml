@@ -32,9 +32,10 @@
     <modules>
         <module>../lamp-blog-web</module>
         <module>../lamp-blog-common</module>
-        <module>../lamp-blog-file-api</module>
+        <module>../lamp-blog-file</module>
     </modules>
 
+    <!-- TODO: may migrate build system to Gradle -->
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
@@ -219,6 +220,9 @@
                 </executions>
                 <configuration>
                     <jvmTarget>${maven.compiler.target}</jvmTarget>
+                    <args>
+                        <arg>-Xjvm-default=all</arg>
+                    </args>
                 </configuration>
             </plugin>
         </plugins>

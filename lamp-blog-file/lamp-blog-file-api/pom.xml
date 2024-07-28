@@ -21,9 +21,9 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>space.lingu.lamp-blog</groupId>
-        <artifactId>lamp-blog-parent</artifactId>
+        <artifactId>lamp-blog-file</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../lamp-blog-parent/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>lamp-blog-file-api</artifactId>
