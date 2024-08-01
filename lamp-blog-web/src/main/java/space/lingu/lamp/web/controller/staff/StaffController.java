@@ -36,17 +36,13 @@ public class StaffController {
     }
 
 
-    @GetMapping("/staff/{staffId}")
+    @GetMapping("/staffs/{staffId}")
     public HttpResponseEntity<StaffVo> getStaff(
             @PathVariable("staffId") Long staffId) {
-        // StaffInfo staffInfo = staffService.getStaff(staffId);
-        // return HttpResponseEntity.success(
-        //         StaffVo.from(staffInfo)
-        // );
         return HttpResponseEntity.success();
     }
 
-    @GetMapping("/user/{userId}/staff")
+    @GetMapping("/users/{userId}/staff")
     public HttpResponseEntity<StaffVo> getStaffByUserId(
             @PathVariable("userId") Long userId) {
         StaffInfo staffInfo = staffService.getStaffByUser(userId);
