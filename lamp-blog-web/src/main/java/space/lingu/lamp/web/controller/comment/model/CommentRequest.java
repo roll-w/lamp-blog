@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.comment.dto;
+package space.lingu.lamp.web.controller.comment.model;
 
 /**
  * @author RollW
