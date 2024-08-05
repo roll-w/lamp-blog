@@ -1,0 +1,46 @@
+/*
+ * Copyright (C) 2023 RollW
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *        http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package space.lingu.lamp.web.controller.review;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import space.lingu.lamp.web.controller.AdminApi;
+import space.lingu.lamp.web.domain.review.ReviewJobProvider;
+import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
+import tech.rollw.common.web.HttpResponseEntity;
+
+import java.util.List;
+
+/**
+ * @author RollW
+ */
+@AdminApi
+public class ReviewManageController {
+    private final ReviewJobProvider reviewJobProvider;
+
+    public ReviewManageController(ReviewJobProvider reviewJobProvider) {
+        this.reviewJobProvider = reviewJobProvider;
+    }
+
+    @GetMapping("/reviews")
+    public HttpResponseEntity<List<ReviewInfo>> getReviewInfos() {
+        List<ReviewInfo> reviewInfos = reviewJobProvider.getReviewJobs()
+                .stream()
+                .map(ReviewInfo::of)
+                .toList();
+        return HttpResponseEntity.success(reviewInfos);
+    }
+}
