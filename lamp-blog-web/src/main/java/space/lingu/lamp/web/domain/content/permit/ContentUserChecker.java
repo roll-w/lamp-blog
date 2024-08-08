@@ -16,19 +16,21 @@
 
 package space.lingu.lamp.web.domain.content.permit;
 
+import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
 import space.lingu.lamp.web.domain.content.ContentAccessCredential;
 import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.web.domain.user.UserTrait;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 
 /**
  * @author RollW
  */
-public class ContentUserChecker implements ContentPermitChecker {
+@Component
+public class ContentUserChecker implements ContentPermitCheckProvider {
     public ContentUserChecker() {
     }
 
@@ -37,9 +39,6 @@ public class ContentUserChecker implements ContentPermitChecker {
     public ContentPermitResult checkAccessPermit(@NonNull Content content,
                                                  @NonNull ContentAccessAuthType contentAccessAuthType,
                                                  @NonNull ContentAccessCredentials credentials) {
-        if (!contentAccessAuthType.needsAuth()) {
-            return ContentPermitResult.permit();
-        }
         ContentAccessCredential credential = credentials.getCredential(ContentAccessAuthType.USER);
         if (credential == null || credential.getRawData() == null) {
             return ContentPermitResult.deny(UserErrorCode.ERROR_USER_NOT_LOGIN);
@@ -52,7 +51,7 @@ public class ContentUserChecker implements ContentPermitChecker {
         Type type = getType(credential.getRawData());
         return switch (type) {
             case LONG -> checkIfLong(content, (Long) credential.getRawData());
-            case USER_IDENTITY -> checkIfUserIdentity(content, (UserIdentity) credential.getRawData());
+            case USER_TRAIT -> checkIfUserTrait(content, (UserTrait) credential.getRawData());
         };
     }
 
@@ -63,8 +62,8 @@ public class ContentUserChecker implements ContentPermitChecker {
         return ContentPermitResult.deny(AuthErrorCode.ERROR_NOT_HAS_ROLE);
     }
 
-    private ContentPermitResult checkIfUserIdentity(Content content,
-                                                    UserIdentity user) {
+    private ContentPermitResult checkIfUserTrait(Content content,
+                                                 UserTrait user) {
         if (content.getUserId() == user.getUserId()) {
             return ContentPermitResult.permit();
         }
@@ -74,10 +73,15 @@ public class ContentUserChecker implements ContentPermitChecker {
     private Type getType(Object data) {
         if (data instanceof Long) {
             return Type.LONG;
-        } else if (data instanceof UserIdentity) {
-            return Type.USER_IDENTITY;
+        } else if (data instanceof UserTrait) {
+            return Type.USER_TRAIT;
         }
         throw new IllegalArgumentException("Unknown type of data: " + data.getClass().getName());
+    }
+
+    @Override
+    public boolean supports(@NonNull ContentAccessAuthType contentAccessAuthType) {
+        return contentAccessAuthType.needsAuth();
     }
 
     /**
@@ -88,6 +92,6 @@ public class ContentUserChecker implements ContentPermitChecker {
      */
     private enum Type {
         LONG,
-        USER_IDENTITY
+        USER_TRAIT
     }
 }

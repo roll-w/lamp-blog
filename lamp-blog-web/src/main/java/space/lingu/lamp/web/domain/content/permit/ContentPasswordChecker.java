@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.domain.content.permit;
 
+import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
@@ -28,7 +29,8 @@ import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
  *
  * @author RollW
  */
-public class ContentPasswordChecker implements ContentPermitChecker {
+@Component
+public class ContentPasswordChecker implements ContentPermitCheckProvider {
 
     @Override
     @NonNull
@@ -44,5 +46,10 @@ public class ContentPasswordChecker implements ContentPermitChecker {
         }
         // TODO: add password check
         return ContentPermitResult.permit();
+    }
+
+    @Override
+    public boolean supports(@NonNull ContentAccessAuthType contentAccessAuthType) {
+        return contentAccessAuthType == ContentAccessAuthType.PASSWORD;
     }
 }

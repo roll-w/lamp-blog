@@ -26,8 +26,11 @@ data class ContentPermitResult(
     val isPermitted: Boolean
 ) {
     operator fun plus(other: ContentPermitResult): ContentPermitResult {
-        val pluses= HashSet(errors)
+        val pluses = HashSet(errors)
         pluses.addAll(other.errors)
+        if (isPermitted || other.isPermitted) {
+            pluses.removeAll { it.success() }
+        }
         return ContentPermitResult(
             pluses,
             isPermitted && other.isPermitted

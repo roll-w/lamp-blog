@@ -34,7 +34,11 @@ import tech.rollw.common.web.UserErrorCode
 @Component
 class ContentUserBlockChecker(
     private val userProvider: UserProvider
-) : ContentPermitChecker {
+) : ContentPermitCheckProvider {
+    override fun supports(
+        contentAccessAuthType: ContentAccessAuthType
+    ): Boolean = true
+
     override fun checkAccessPermit(
         content: Content,
         contentAccessAuthType: ContentAccessAuthType,
@@ -42,9 +46,8 @@ class ContentUserBlockChecker(
     ): ContentPermitResult {
         val credential = credentials
             .getCredential(ContentAccessAuthType.USER)
-        if (credential == null) {
-            return ContentPermitResult.permit()
-        }
+            ?: return ContentPermitResult.permit()
+
         val creatorId = content.userId
         val accessUserId = tryGetUserId(credential)
         if (creatorId == accessUserId) {

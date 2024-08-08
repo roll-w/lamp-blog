@@ -18,10 +18,11 @@ package space.lingu.lamp.web.domain.content.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import space.lingu.lamp.web.domain.content.permit.ContentPasswordChecker;
+import space.lingu.lamp.web.domain.content.permit.ContentPermitCheckProvider;
 import space.lingu.lamp.web.domain.content.permit.ContentPermitChecker;
 import space.lingu.lamp.web.domain.content.permit.ContentPermitCheckerChain;
-import space.lingu.lamp.web.domain.content.permit.ContentUserChecker;
+
+import java.util.List;
 
 /**
  * @author RollW
@@ -30,10 +31,11 @@ import space.lingu.lamp.web.domain.content.permit.ContentUserChecker;
 public class ContentConfiguration {
 
     @Bean
-    public ContentPermitChecker contentPermitFilterChain() {
+    public ContentPermitChecker contentPermitFilterChain(
+            List<ContentPermitCheckProvider> contentPermitCheckProviders
+    ) {
         return ContentPermitCheckerChain.of(
-                new ContentUserChecker(),
-                new ContentPasswordChecker()
+                contentPermitCheckProviders
         );
     }
 }
