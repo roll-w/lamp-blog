@@ -37,7 +37,6 @@ import space.lingu.lamp.web.domain.review.service.ReviewContentService;
 import space.lingu.lamp.web.domain.review.service.ReviewStatusService;
 import space.lingu.lamp.web.domain.user.UserIdentity;
 import tech.rollw.common.web.HttpResponseEntity;
-import tech.rollw.common.web.page.Pageable;
 import tech.rollw.common.web.system.ContextThread;
 import tech.rollw.common.web.system.ContextThreadAware;
 
@@ -67,12 +66,11 @@ public class ReviewController {
     }
 
     // TODO: verify user
-    @GetMapping("/review/{jobId}")
+    @GetMapping("/reviews/{jobId}")
     public HttpResponseEntity<ReviewInfo> getReviewInfo(
             @PathVariable(name = "jobId") Long jobId) {
         ReviewJob reviewJob = reviewJobProvider.getReviewJob(jobId);
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
-        ApiContext apiContext = apiContextThread.getContext();
 
         return HttpResponseEntity.success(ReviewInfo.of(reviewJob));
     }
@@ -81,36 +79,18 @@ public class ReviewController {
     public HttpResponseEntity<List<ReviewInfo>> getReviewInfo(
             @RequestParam(name = "status", required = false,
                     defaultValue = "ALL")
-            ReviewStatues statues,
-            Pageable pageable) {
-        ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
-        ApiContext apiContext = apiContextThread.getContext();
-        if (apiContext.isAdmin()) {
-            return adminGetReviewInfos(pageable);
-        }
+            ReviewStatues statues) {
+
         List<ReviewInfo> reviewInfos = List.of();
         return HttpResponseEntity.success(reviewInfos);
     }
 
-    private HttpResponseEntity<List<ReviewInfo>> adminGetReviewInfos(
-            Pageable pageable) {
-        List<ReviewInfo> reviewInfos = reviewJobProvider.getReviewJobs()
-                .stream()
-                .map(ReviewInfo::of)
-                .toList();
-        return HttpResponseEntity.success(reviewInfos);
-    }
-
-    @GetMapping("/user/{userId}/reviews")
+    @GetMapping("/users/{userId}/reviews")
     public HttpResponseEntity<List<ReviewInfo>> getReviewInfos(
             @PathVariable(name = "userId") Long userId,
             @RequestParam(name = "status", required = false,
                     defaultValue = "ALL")
-            ReviewStatues statues,
-            Pageable pageable) {
-        ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
-        ApiContext apiContext = apiContextThread.getContext();
-        Verify.verifyNotNull(apiContext.getUser());
+            ReviewStatues statues) {
 
         List<ReviewInfo> reviewInfos = List.of();
         return HttpResponseEntity.success(reviewInfos);
@@ -118,7 +98,7 @@ public class ReviewController {
 
 
     // TODO: auth
-    @GetMapping("/review/{jobId}/content")
+    @GetMapping("/reviews/{jobId}/content")
     public HttpResponseEntity<ReviewContent> getReviewContent(
             @PathVariable(name = "jobId") Long jobId) {
         ReviewContent reviewContent = reviewContentService
@@ -127,7 +107,7 @@ public class ReviewController {
     }
 
 
-    @PatchMapping(value = "/review/{jobId}")
+    @PatchMapping(value = "/reviews/{jobId}")
     // should be use DELETE method, but DELETE method can't have body
     // so use PATCH method instead
     public HttpResponseEntity<ReviewInfo> rejectReview(
@@ -144,7 +124,7 @@ public class ReviewController {
         return HttpResponseEntity.success(info);
     }
 
-    @PutMapping("/review/{jobId}")
+    @PutMapping("/reviews/{jobId}")
     public HttpResponseEntity<ReviewInfo> passReview(
             @PathVariable(name = "jobId") Long jobId) {
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
