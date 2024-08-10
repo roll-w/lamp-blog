@@ -14,12 +14,9 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.dto;
+package space.lingu.lamp.web.domain.review;
 
 import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.review.ReviewJob;
-import space.lingu.lamp.web.domain.review.ReviewMark;
-import space.lingu.lamp.web.domain.review.ReviewStatus;
 
 /**
  * @author RollW

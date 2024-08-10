@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.domain.review.service;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.review.dto.ReviewContent;
+import space.lingu.lamp.web.domain.review.ReviewContent;
 
 /**
  * @author RollW

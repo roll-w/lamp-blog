@@ -13,17 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package space.lingu.lamp.web.domain.review
 
-package space.lingu.lamp.web.domain.review.service;
-
-import space.lingu.lamp.web.domain.review.common.ReviewException;
-import space.lingu.lamp.web.domain.review.ReviewInfo;
+import space.lingu.lamp.web.domain.content.ContentDetails
 
 /**
  * @author RollW
  */
-public interface ReviewStatusService {
-    // TODO: a temporary interface, need to be refactored
-    ReviewInfo makeReview(long jobId, long operator,
-                          boolean passed, String reason) throws ReviewException;
+data class ReviewContent(
+    val reviewInfo: ReviewInfo,
+    val contentDetails: ContentDetails
+) {
+    companion object {
+        @JvmStatic
+        fun of(job: ReviewJob, contentDetails: ContentDetails): ReviewContent {
+            return ReviewContent(
+                ReviewInfo.of(job),
+                contentDetails
+            )
+        }
+    }
 }

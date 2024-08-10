@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.common.ReviewException;
-import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
+import space.lingu.lamp.web.domain.review.ReviewInfo;
 import space.lingu.lamp.web.domain.review.event.OnReviewStateChangeEvent;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
 import tech.rollw.common.web.CommonErrorCode;

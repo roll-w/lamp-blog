@@ -22,7 +22,7 @@ import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.content.ContentAccessService;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.review.ReviewJob;
-import space.lingu.lamp.web.domain.review.dto.ReviewContent;
+import space.lingu.lamp.web.domain.review.ReviewContent;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
 
 /**
