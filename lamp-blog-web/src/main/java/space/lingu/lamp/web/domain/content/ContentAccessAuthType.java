@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.domain.content;
 
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.web.domain.user.UserTrait;
 
 import java.util.Arrays;
 
@@ -41,19 +41,19 @@ public enum ContentAccessAuthType {
      * <p>
      * Long: user id.
      */
-    PRIVATE(Long.class, UserIdentity.class),
+    PRIVATE(Long.class, UserTrait.class),
     /**
      * Needs to be logged in.
      * <p>
      * Long: user id.
      */
-    USER(Long.class, UserIdentity.class),
+    USER(Long.class, UserTrait.class),
     /**
      * Needs to be logged in and in the group.
      * <p>
      * Long: user id.
      */
-    USER_GROUP(Long.class, UserIdentity.class),
+    USER_GROUP(Long.class, UserTrait.class),
     ;
 
     // types of data that can be used to authenticate.
