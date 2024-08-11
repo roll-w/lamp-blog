@@ -61,9 +61,9 @@ export const currentReviews = `${prefix}/reviews`;
 export const statusReviews = (userId, admin = false) =>
     `${admin ? adminPrefix : prefix}/${userId}/reviews`;
 export const reviewContent = (jobId, admin = false) =>
-    `${admin ? adminPrefix : prefix}/review/${jobId}/content`;
+    `${admin ? adminPrefix : prefix}/reviews/${jobId}/content`;
 export const reviewResource = (jobId, admin = false) =>
-    `${admin ? adminPrefix : prefix}/review/${jobId}`;
+    `${admin ? adminPrefix : prefix}/reviews/${jobId}`;
 
 
 export const tokenRefresh = `${prefix}/auth/token/r`;
