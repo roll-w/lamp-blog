@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.domain.content;
 
 import com.google.common.base.Preconditions;
+import space.lingu.Nullable;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import tech.rollw.common.web.system.SystemResourceKind;
 
@@ -74,6 +75,16 @@ public enum ContentType implements SystemResourceKind.Kind {
             case IMAGE -> IMAGE;
             default -> null;
         };
+    }
+
+    @Nullable
+    public static ContentType findByName(String name) {
+        for (ContentType value : values()) {
+            if (value.name().equalsIgnoreCase(name)) {
+                return value;
+            }
+        }
+        return null;
     }
 
     public interface Type {
