@@ -20,22 +20,23 @@ import com.google.common.base.Verify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import space.lingu.lamp.LampException;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.controller.Api;
-import space.lingu.lamp.web.controller.review.model.ReviewRejectedRequest;
+import space.lingu.lamp.web.controller.review.model.ReviewRequest;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewJobProvider;
 import space.lingu.lamp.web.domain.review.ReviewStatues;
-import space.lingu.lamp.web.domain.review.dto.ReviewContent;
-import space.lingu.lamp.web.domain.review.dto.ReviewInfo;
+import space.lingu.lamp.web.domain.review.ReviewContent;
+import space.lingu.lamp.web.domain.review.ReviewInfo;
 import space.lingu.lamp.web.domain.review.service.ReviewContentService;
 import space.lingu.lamp.web.domain.review.service.ReviewStatusService;
 import space.lingu.lamp.web.domain.user.UserIdentity;
+import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.HttpResponseEntity;
 import tech.rollw.common.web.system.ContextThread;
 import tech.rollw.common.web.system.ContextThreadAware;
@@ -65,16 +66,22 @@ public class ReviewController {
         this.apiContextThreadAware = apiContextThreadAware;
     }
 
-    // TODO: verify user
     @GetMapping("/reviews/{jobId}")
     public HttpResponseEntity<ReviewInfo> getReviewInfo(
             @PathVariable(name = "jobId") Long jobId) {
         ReviewJob reviewJob = reviewJobProvider.getReviewJob(jobId);
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
-
+        ApiContext apiContext = apiContextThread.getContext();
+        UserIdentity user = Verify.verifyNotNull(apiContext.getUser());
+        if (reviewJob.getReviewerId() != user.getOperatorId()) {
+            throw new LampException(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+        }
         return HttpResponseEntity.success(ReviewInfo.of(reviewJob));
     }
 
+    /**
+     * Get current user's review infos.
+     */
     @GetMapping("/reviews")
     public HttpResponseEntity<List<ReviewInfo>> getReviewInfo(
             @RequestParam(name = "status", required = false,
@@ -91,49 +98,39 @@ public class ReviewController {
             @RequestParam(name = "status", required = false,
                     defaultValue = "ALL")
             ReviewStatues statues) {
-
+        // TODO: impl
         List<ReviewInfo> reviewInfos = List.of();
         return HttpResponseEntity.success(reviewInfos);
     }
 
-
-    // TODO: auth
     @GetMapping("/reviews/{jobId}/content")
     public HttpResponseEntity<ReviewContent> getReviewContent(
             @PathVariable(name = "jobId") Long jobId) {
-        ReviewContent reviewContent = reviewContentService
-                .getReviewContent(jobId);
-        return HttpResponseEntity.success(reviewContent);
-    }
-
-
-    @PatchMapping(value = "/reviews/{jobId}")
-    // should be use DELETE method, but DELETE method can't have body
-    // so use PATCH method instead
-    public HttpResponseEntity<ReviewInfo> rejectReview(
-            @PathVariable(name = "jobId") Long jobId,
-            @RequestBody ReviewRejectedRequest reviewRejectedRequest) {
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
         ApiContext apiContext = apiContextThread.getContext();
         UserIdentity user = Verify.verifyNotNull(apiContext.getUser());
-        ReviewInfo info = reviewStatusService.makeReview(
-                jobId,
-                user.getOperatorId(),
-                false, reviewRejectedRequest.reason()
-        );
-        return HttpResponseEntity.success(info);
+        ReviewContent reviewContent = reviewContentService
+                .getReviewContent(jobId);
+        ReviewInfo reviewInfo = reviewContent.getReviewInfo();
+        if (reviewInfo.reviewer() != user.getOperatorId()) {
+            throw new LampException(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+        }
+        return HttpResponseEntity.success(reviewContent);
     }
 
-    @PutMapping("/reviews/{jobId}")
-    public HttpResponseEntity<ReviewInfo> passReview(
-            @PathVariable(name = "jobId") Long jobId) {
+    @PostMapping("/reviews/{jobId}")
+    public HttpResponseEntity<ReviewInfo> makeReview(
+            @PathVariable(name = "jobId") Long jobId,
+            @RequestBody ReviewRequest reviewRequest
+    ) {
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
         ApiContext apiContext = apiContextThread.getContext();
         UserIdentity user = Verify.verifyNotNull(apiContext.getUser());
         ReviewInfo reviewInfo = reviewStatusService.makeReview(
                 jobId,
                 user.getOperatorId(),
-                true, null
+                reviewRequest.getPass(),
+                reviewRequest.getResult()
         );
         return HttpResponseEntity.success(reviewInfo);
     }

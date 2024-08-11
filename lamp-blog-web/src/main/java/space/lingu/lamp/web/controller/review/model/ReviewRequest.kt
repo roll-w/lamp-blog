@@ -13,13 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
-package space.lingu.lamp.web.controller.review.model;
+package space.lingu.lamp.web.controller.review.model
 
 /**
  * @author RollW
  */
-public record ReviewRejectedRequest(
-        String reason
+data class ReviewRequest(
+    val pass: Boolean,
+    val reason: String?
 ) {
+    /**
+     * Get the final result reason, ignored reason if pass is true.
+     */
+    val result: String?
+        get() = if (pass) null else reason
 }
