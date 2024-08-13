@@ -152,10 +152,13 @@ public class ContentService implements ContentAccessService,
                 .stream()
                 .filter(accessor -> accessor.supports(type))
                 .findFirst()
-                .orElseThrow(() -> new ContentException(
-                        CommonErrorCode.ERROR_NOT_FOUND,
-                        "Unsupported content type of " + type)
-                );
+                .orElseThrow(() -> {
+                    logger.warn("Unsupported/Unregistered content type of ContentType.{}", type);
+                    return new ContentException(
+                            CommonErrorCode.ERROR_NOT_FOUND,
+                            "Unsupported content type of " + type
+                    );
+                });
     }
 
     private ErrorCode fromContentStatus(ContentStatus status) {
