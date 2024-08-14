@@ -25,7 +25,11 @@ public enum ReviewMark {
      */
     NORMAL,
     /**
-     * Review create from report.
+     * Review created from update.
+     */
+    UPDATE,
+    /**
+     * Review created from the user report.
      */
     REPORT,
     ;
