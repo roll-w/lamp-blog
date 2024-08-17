@@ -19,7 +19,7 @@ package space.lingu.lamp.web.controller.review;
 import org.springframework.web.bind.annotation.GetMapping;
 import space.lingu.lamp.web.controller.AdminApi;
 import space.lingu.lamp.web.domain.review.ReviewJobProvider;
-import space.lingu.lamp.web.domain.review.ReviewInfo;
+import space.lingu.lamp.web.domain.review.ReviewJobInfo;
 import tech.rollw.common.web.HttpResponseEntity;
 
 import java.util.List;
@@ -36,11 +36,8 @@ public class ReviewManageController {
     }
 
     @GetMapping("/reviews")
-    public HttpResponseEntity<List<ReviewInfo>> getReviewInfos() {
-        List<ReviewInfo> reviewInfos = reviewJobProvider.getReviewJobs()
-                .stream()
-                .map(ReviewInfo::of)
-                .toList();
-        return HttpResponseEntity.success(reviewInfos);
+    public HttpResponseEntity<List<ReviewJobInfo>> getReviewInfos() {
+        List<ReviewJobInfo> reviewJobInfos = reviewJobProvider.getReviewJobs();
+        return HttpResponseEntity.success(reviewJobInfos);
     }
 }

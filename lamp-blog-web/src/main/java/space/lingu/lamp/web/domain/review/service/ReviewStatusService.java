@@ -17,13 +17,13 @@
 package space.lingu.lamp.web.domain.review.service;
 
 import space.lingu.lamp.web.domain.review.common.ReviewException;
-import space.lingu.lamp.web.domain.review.ReviewInfo;
+import space.lingu.lamp.web.domain.review.ReviewJobInfo;
 
 /**
  * @author RollW
  */
 public interface ReviewStatusService {
     // TODO: a temporary interface, need to be refactored
-    ReviewInfo makeReview(long jobId, long operator,
-                          boolean passed, String reason) throws ReviewException;
+    ReviewJobInfo makeReview(long jobId, long operator,
+                             boolean passed, String reason) throws ReviewException;
 }

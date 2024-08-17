@@ -17,12 +17,12 @@
 package space.lingu.lamp.web.domain.review.service;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.review.ReviewContent;
+import space.lingu.lamp.web.domain.review.ReviewJobContent;
 
 /**
  * @author RollW
  */
 public interface ReviewContentService {
     @NonNull
-    ReviewContent getReviewContent(long jobId);
+    ReviewJobContent getReviewContent(long jobId);
 }

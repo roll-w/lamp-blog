@@ -19,7 +19,7 @@ package space.lingu.lamp.web.domain.review.service;
 import com.google.common.base.Preconditions;
 import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.review.ReviewJob;
+import space.lingu.lamp.web.domain.review.ReviewJobInfo;
 import space.lingu.lamp.web.domain.review.common.NotReviewedException;
 
 /**
@@ -28,7 +28,7 @@ import space.lingu.lamp.web.domain.review.common.NotReviewedException;
 public interface ReviewService {
     // TODO: needs rename
 
-    default ReviewJob assignReviewer(Content content)
+    default ReviewJobInfo assignReviewer(Content content)
             throws NotReviewedException {
         return assignReviewer(content, false);
     }
@@ -39,7 +39,7 @@ public interface ReviewService {
      * @param allowAutoReview if false, disable {@link ReviewerAllocator#AUTO_REVIEWER
      *                        auto reviewer} and force to assign a staff reviewer.
      */
-    default ReviewJob assignReviewer(Content content, boolean allowAutoReview)
+    default ReviewJobInfo assignReviewer(Content content, boolean allowAutoReview)
             throws NotReviewedException {
         Preconditions.checkNotNull(content, "Content cannot be null");
         return assignReviewer(
@@ -50,7 +50,7 @@ public interface ReviewService {
     }
 
 
-    ReviewJob assignReviewer(long contentId, ContentType contentType,
-                             boolean allowAutoReview) throws NotReviewedException;
+    ReviewJobInfo assignReviewer(long contentId, ContentType contentType,
+                                 boolean allowAutoReview) throws NotReviewedException;
 
 }

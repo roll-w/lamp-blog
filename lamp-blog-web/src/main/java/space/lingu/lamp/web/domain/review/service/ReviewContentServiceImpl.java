@@ -22,7 +22,7 @@ import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.content.ContentAccessService;
 import space.lingu.lamp.web.domain.content.ContentDetails;
 import space.lingu.lamp.web.domain.review.ReviewJob;
-import space.lingu.lamp.web.domain.review.ReviewContent;
+import space.lingu.lamp.web.domain.review.ReviewJobContent;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
 
 /**
@@ -42,11 +42,11 @@ public class ReviewContentServiceImpl implements ReviewContentService {
 
     @NonNull
     @Override
-    public ReviewContent getReviewContent(long jobId) {
+    public ReviewJobContent getReviewContent(long jobId) {
         ReviewJob job = reviewJobRepository.getById(jobId);
         Verify.verifyNotNull(job, "Review job not found");
         ContentDetails details = contentAccessService.getContentDetails(
                 job.getAssociatedContent());
-        return ReviewContent.of(job, details);
+        return ReviewJobContent.of(job, details);
     }
 }

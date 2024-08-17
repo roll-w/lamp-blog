@@ -28,11 +28,10 @@ import space.lingu.lamp.LampException;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.controller.Api;
 import space.lingu.lamp.web.controller.review.model.ReviewRequest;
-import space.lingu.lamp.web.domain.review.ReviewJob;
+import space.lingu.lamp.web.domain.review.ReviewJobContent;
+import space.lingu.lamp.web.domain.review.ReviewJobInfo;
 import space.lingu.lamp.web.domain.review.ReviewJobProvider;
 import space.lingu.lamp.web.domain.review.ReviewStatues;
-import space.lingu.lamp.web.domain.review.ReviewContent;
-import space.lingu.lamp.web.domain.review.ReviewInfo;
 import space.lingu.lamp.web.domain.review.service.ReviewContentService;
 import space.lingu.lamp.web.domain.review.service.ReviewStatusService;
 import space.lingu.lamp.web.domain.user.UserIdentity;
@@ -67,71 +66,75 @@ public class ReviewController {
     }
 
     @GetMapping("/reviews/{jobId}")
-    public HttpResponseEntity<ReviewInfo> getReviewInfo(
+    public HttpResponseEntity<ReviewJobInfo> getReviewInfo(
             @PathVariable(name = "jobId") Long jobId) {
-        ReviewJob reviewJob = reviewJobProvider.getReviewJob(jobId);
+        ReviewJobInfo reviewJobInfo = reviewJobProvider.getReviewJob(jobId);
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
         ApiContext apiContext = apiContextThread.getContext();
         UserIdentity user = Verify.verifyNotNull(apiContext.getUser());
-        if (reviewJob.getReviewerId() != user.getOperatorId()) {
+        if (reviewJobInfo.reviewer() != user.getOperatorId()) {
             throw new LampException(AuthErrorCode.ERROR_NOT_HAS_ROLE);
         }
-        return HttpResponseEntity.success(ReviewInfo.of(reviewJob));
+        return HttpResponseEntity.success(reviewJobInfo);
     }
 
     /**
      * Get current user's review infos.
      */
-    @GetMapping("/reviews")
-    public HttpResponseEntity<List<ReviewInfo>> getReviewInfo(
+    @GetMapping({"/reviews"})
+    public HttpResponseEntity<List<ReviewJobInfo>> getReviewInfo(
             @RequestParam(name = "status", required = false,
                     defaultValue = "ALL")
             ReviewStatues statues) {
+        ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
+        ApiContext apiContext = apiContextThread.getContext();
+        UserIdentity user = Verify.verifyNotNull(apiContext.getUser());
 
-        List<ReviewInfo> reviewInfos = List.of();
-        return HttpResponseEntity.success(reviewInfos);
+        List<ReviewJobInfo> reviewJobInfos = reviewJobProvider
+                .getReviewJobs(user, statues);
+        return HttpResponseEntity.success(reviewJobInfos);
     }
 
     @GetMapping("/users/{userId}/reviews")
-    public HttpResponseEntity<List<ReviewInfo>> getReviewInfos(
+    public HttpResponseEntity<List<ReviewJobInfo>> getReviewInfos(
             @PathVariable(name = "userId") Long userId,
             @RequestParam(name = "status", required = false,
                     defaultValue = "ALL")
             ReviewStatues statues) {
         // TODO: impl
-        List<ReviewInfo> reviewInfos = List.of();
-        return HttpResponseEntity.success(reviewInfos);
+        List<ReviewJobInfo> reviewJobInfos = List.of();
+        return HttpResponseEntity.success(reviewJobInfos);
     }
 
     @GetMapping("/reviews/{jobId}/content")
-    public HttpResponseEntity<ReviewContent> getReviewContent(
+    public HttpResponseEntity<ReviewJobContent> getReviewContent(
             @PathVariable(name = "jobId") Long jobId) {
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
         ApiContext apiContext = apiContextThread.getContext();
         UserIdentity user = Verify.verifyNotNull(apiContext.getUser());
-        ReviewContent reviewContent = reviewContentService
+        ReviewJobContent reviewJobContent = reviewContentService
                 .getReviewContent(jobId);
-        ReviewInfo reviewInfo = reviewContent.getReviewInfo();
-        if (reviewInfo.reviewer() != user.getOperatorId()) {
+        ReviewJobInfo reviewJobInfo = reviewJobContent.getReviewJobInfo();
+        if (reviewJobInfo.reviewer() != user.getOperatorId()) {
             throw new LampException(AuthErrorCode.ERROR_NOT_HAS_ROLE);
         }
-        return HttpResponseEntity.success(reviewContent);
+        return HttpResponseEntity.success(reviewJobContent);
     }
 
     @PostMapping("/reviews/{jobId}")
-    public HttpResponseEntity<ReviewInfo> makeReview(
+    public HttpResponseEntity<ReviewJobInfo> makeReview(
             @PathVariable(name = "jobId") Long jobId,
             @RequestBody ReviewRequest reviewRequest
     ) {
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
         ApiContext apiContext = apiContextThread.getContext();
         UserIdentity user = Verify.verifyNotNull(apiContext.getUser());
-        ReviewInfo reviewInfo = reviewStatusService.makeReview(
+        ReviewJobInfo reviewJobInfo = reviewStatusService.makeReview(
                 jobId,
                 user.getOperatorId(),
                 reviewRequest.getPass(),
                 reviewRequest.getResult()
         );
-        return HttpResponseEntity.success(reviewInfo);
+        return HttpResponseEntity.success(reviewJobInfo);
     }
 }

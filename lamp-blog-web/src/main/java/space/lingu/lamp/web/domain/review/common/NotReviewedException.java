@@ -16,20 +16,20 @@
 
 package space.lingu.lamp.web.domain.review.common;
 
-import space.lingu.lamp.web.domain.review.ReviewJob;
+import space.lingu.lamp.web.domain.review.ReviewJobInfo;
 
 /**
  * @author RollW
  */
 public class NotReviewedException extends ReviewException {
-    private final ReviewJob reviewJob;
+    private final ReviewJobInfo reviewJobInfo;
 
-    public NotReviewedException(ReviewJob reviewJob) {
+    public NotReviewedException(ReviewJobInfo reviewJobInfo) {
         super(ReviewErrorCode.ERROR_NOT_REVIEWED);
-        this.reviewJob = reviewJob;
+        this.reviewJobInfo = reviewJobInfo;
     }
 
-    public ReviewJob getReviewJob() {
-        return reviewJob;
+    public ReviewJobInfo getReviewInfo() {
+        return reviewJobInfo;
     }
 }

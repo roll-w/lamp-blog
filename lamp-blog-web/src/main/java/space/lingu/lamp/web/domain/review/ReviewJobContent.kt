@@ -13,33 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package space.lingu.lamp.web.domain.review
 
-package space.lingu.lamp.web.domain.review;
-
-import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.content.ContentTrait;
-
-import java.util.List;
+import space.lingu.lamp.web.domain.content.ContentDetails
 
 /**
  * @author RollW
  */
-public interface ReviewJobProvider {
-    @NonNull
-    ReviewJob getReviewJob(long reviewJobId);
-
-    @NonNull
-    List<ReviewJob> getReviewJobs();
-
-    @NonNull
-    List<ReviewJob> getReviewJobs(long userId);
-
-    @NonNull
-    List<ReviewJob> getReviewJobs(ContentTrait contentTrait);
-
-    @NonNull
-    List<ReviewJob> getReviewJobs(ReviewStatus reviewStatus);
-
-    @NonNull
-    List<ReviewJob> getReviewJobs(ReviewStatues reviewStatues);
+data class ReviewJobContent(
+    val reviewJobInfo: ReviewJobInfo,
+    val contentDetails: ContentDetails
+) {
+    companion object {
+        @JvmStatic
+        fun of(job: ReviewJob, contentDetails: ContentDetails): ReviewJobContent {
+            return ReviewJobContent(
+                ReviewJobInfo.of(job),
+                contentDetails
+            )
+        }
+    }
 }

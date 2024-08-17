@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.content.ContentTrait;
 import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.web.domain.review.ReviewJobInfo;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewJobProvider;
 import space.lingu.lamp.web.domain.review.ReviewMark;
@@ -29,6 +30,7 @@ import space.lingu.lamp.web.domain.review.common.NotReviewedException;
 import space.lingu.lamp.web.domain.review.common.ReviewException;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
 import tech.rollw.common.web.CommonErrorCode;
+import tech.rollw.common.web.system.Operator;
 
 import java.util.List;
 
@@ -47,13 +49,15 @@ public class ReviewServiceImpl implements ReviewService, ReviewJobProvider {
     }
 
     @Override
-    public ReviewJob assignReviewer(long contentId,
-                                    ContentType contentType,
-                                    boolean allowAutoReview) {
+    public ReviewJobInfo assignReviewer(long contentId,
+                                        ContentType contentType,
+                                        boolean allowAutoReview) {
         long assignedTime = System.currentTimeMillis();
         ReviewJob old = reviewJobRepository.getBy(contentId, contentType);
         if (old != null && !old.getStatus().isReviewed()) {
-            throw new NotReviewedException(old);
+            // if the old review job is still not reviewed, throw exception
+            // we don't want to assign a new reviewer to the same content
+            throw new NotReviewedException(ReviewJobInfo.of(old));
         }
 
         long reviewerId = reviewerAllocator.allocateReviewer(
@@ -67,55 +71,71 @@ public class ReviewServiceImpl implements ReviewService, ReviewJobProvider {
                 .setAssignedTime(assignedTime)
                 .setReviewMark(ReviewMark.NORMAL);
         if (old != null) {
-            // if first time review, mark it as normal
-            // if it is the second or later review, mark it as report
+            // TODO:
             builder.setReviewMark(ReviewMark.REPORT);
         }
 
         ReviewJob reviewJob = builder
                 .build();
         reviewJob = reviewJobRepository.insert(reviewJob);
-        return reviewJob;
+        return ReviewJobInfo.of(reviewJob);
     }
 
     @Override
     @NonNull
-    public ReviewJob getReviewJob(long reviewJobId) {
+    public ReviewJobInfo getReviewJob(long reviewJobId) {
         ReviewJob reviewJob = reviewJobRepository.getById(reviewJobId);
         if (reviewJob == null) {
             throw new ReviewException(CommonErrorCode.ERROR_NOT_FOUND);
         }
-        return reviewJob;
+        return ReviewJobInfo.of(reviewJob);
     }
 
     // TODO: implement
     @Override
     @NonNull
-    public List<ReviewJob> getReviewJobs() {
+    public List<ReviewJobInfo> getReviewJobs() {
         return List.of();
     }
 
     @Override
     @NonNull
-    public List<ReviewJob> getReviewJobs(long userId) {
+    public List<ReviewJobInfo> getReviewJobs(long userId) {
         return List.of();
     }
 
     @Override
     @NonNull
-    public List<ReviewJob> getReviewJobs(ContentTrait contentTrait) {
+    public List<ReviewJobInfo> getReviewJobs(ContentTrait contentTrait) {
         return List.of();
     }
 
     @Override
     @NonNull
-    public List<ReviewJob> getReviewJobs(ReviewStatus reviewStatus) {
+    public List<ReviewJobInfo> getReviewJobs(ReviewStatus reviewStatus) {
+
         return List.of();
     }
 
     @Override
     @NonNull
-    public List<ReviewJob> getReviewJobs(ReviewStatues reviewStatues) {
+    public List<ReviewJobInfo> getReviewJobs(ReviewStatues reviewStatues) {
+        return List.of();
+    }
+
+    @NonNull
+    @Override
+    public List<ReviewJobInfo> getReviewJobs(
+            @NonNull Operator operator,
+            @NonNull ReviewStatus status) {
+        return List.of();
+    }
+
+    @NonNull
+    @Override
+    public List<ReviewJobInfo> getReviewJobs(
+            @NonNull Operator operator,
+            @NonNull ReviewStatues statues) {
         return List.of();
     }
 }

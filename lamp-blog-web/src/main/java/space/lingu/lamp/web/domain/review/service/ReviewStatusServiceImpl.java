@@ -20,7 +20,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.common.ReviewException;
-import space.lingu.lamp.web.domain.review.ReviewInfo;
+import space.lingu.lamp.web.domain.review.ReviewJobInfo;
 import space.lingu.lamp.web.domain.review.event.OnReviewStateChangeEvent;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
 import tech.rollw.common.web.CommonErrorCode;
@@ -44,8 +44,8 @@ public class ReviewStatusServiceImpl implements ReviewStatusService {
 
 
     @Override
-    public ReviewInfo makeReview(long jobId, long operator,
-                                 boolean passed, String reason) throws ReviewException {
+    public ReviewJobInfo makeReview(long jobId, long operator,
+                                    boolean passed, String reason) throws ReviewException {
         ReviewJob job = reviewJobRepository.getById(jobId);
         if (job == null) {
             throw new ReviewException(CommonErrorCode.ERROR_NOT_FOUND);
@@ -59,7 +59,7 @@ public class ReviewStatusServiceImpl implements ReviewStatusService {
         OnReviewStateChangeEvent event = new OnReviewStateChangeEvent(reviewed,
                 job.getStatus(), reviewed.getStatus());
         eventPublisher.publishEvent(event);
-        return ReviewInfo.of(job);
+        return ReviewJobInfo.of(job);
     }
 
 

@@ -21,7 +21,7 @@ import space.lingu.lamp.web.domain.content.ContentType;
 /**
  * @author RollW
  */
-public record ReviewInfo(
+public record ReviewJobInfo(
         long id,
         ReviewStatus status,
         ContentType type,
@@ -33,11 +33,11 @@ public record ReviewInfo(
         long assignedTime,
         long reviewTime
 ) {
-    public static ReviewInfo of(ReviewJob job) {
+    public static ReviewJobInfo of(ReviewJob job) {
         if (job == null) {
             return null;
         }
-        return new ReviewInfo(
+        return new ReviewJobInfo(
                 job.getJobId(),
                 job.getStatus(),
                 job.getType(),
