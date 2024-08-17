@@ -33,6 +33,7 @@
         <module>../lamp-blog-web</module>
         <module>../lamp-blog-common</module>
         <module>../lamp-blog-file</module>
+        <module>../lamp-blog-content-api</module>
     </modules>
 
     <!-- TODO: may migrate build system to Gradle -->
