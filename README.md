@@ -5,7 +5,7 @@ A Blog System. Under development.
 ## Requirements
 
 - Java 17 or higher
-- MySQL 8.0.26 or higher
+- MySQL 8.0 or higher
 
 This project also uses the following libraries that require you 
 to install to your local maven repository:
