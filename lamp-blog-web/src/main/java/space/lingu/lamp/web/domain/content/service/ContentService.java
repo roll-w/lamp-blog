@@ -197,16 +197,15 @@ public class ContentService implements ContentAccessService,
                 .setContentId(contentDetails.getContentId())
                 .setContentType(contentDetails.getContentType())
                 .setUserId(contentDetails.getUserId())
-                .setContentStatus(ContentStatus.PUBLISHED)
                 .setContentAccessAuthType(ContentAccessAuthType.PUBLIC);
-        ContentStatus contentStatus = null;
+        ContentStatus contentStatus = ContentStatus.PUBLISHED;
         for (ContentPublishCallback contentPublishCallback :
                 contentPublishCallbacks) {
-            contentStatus = contentPublishCallback.publish(contentDetails);
+            contentStatus = contentStatus.plus(
+                    contentPublishCallback.publish(contentDetails)
+            );
         }
-        if (contentStatus != null) {
-            contentMetadataBuilder.setContentStatus(contentStatus);
-        }
+        contentMetadataBuilder.setContentStatus(contentStatus);
         contentMetadataRepository.insert(contentMetadataBuilder.build());
         return contentDetails;
     }

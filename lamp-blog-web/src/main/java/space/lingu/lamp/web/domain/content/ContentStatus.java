@@ -16,6 +16,8 @@
 
 package space.lingu.lamp.web.domain.content;
 
+import space.lingu.NonNull;
+
 /**
  * @author RollW
  */
@@ -24,32 +26,42 @@ public enum ContentStatus {
      * Draft, invisible to the public. If the user deletes
      * draft content, it will be recycled for next use.
      */
-    DRAFT,
+    DRAFT(0),
     /**
      * Under reviewing.
      */
-    REVIEWING,
+    REVIEWING(2),
     /**
      * Review rejected.
      */
-    REVIEW_REJECTED,
+    REVIEW_REJECTED(3),
     /**
      * Published, visible to public (if public visitable).
      */
-    PUBLISHED,
+    PUBLISHED(1),
     /**
      * Deleted, and invisible to author.
      */
-    DELETED,
+    DELETED(4),
     /**
      * Hide, and invisible to author.
      */
-    FORBIDDEN,
+    FORBIDDEN(4),
     /**
      * Hide, but visible to the author.
      */
-    HIDE,
+    HIDE(4),
     ;
+
+    /**
+     * The level of status, the higher the level,
+     * the more important.
+     */
+    private final int level;
+
+    ContentStatus(int level) {
+        this.level = level;
+    }
 
     public boolean isPublicVisitable() {
         return this == PUBLISHED;
@@ -63,4 +75,11 @@ public enum ContentStatus {
         return this == DELETED || this == FORBIDDEN;
     }
 
+    @NonNull
+    public ContentStatus plus(@NonNull ContentStatus status) {
+        if (status.level > level) {
+            return status;
+        }
+        return this;
+    }
 }
