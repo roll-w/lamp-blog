@@ -26,7 +26,11 @@
         <relativePath>../lamp-blog-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>lamp-blog-content-api</artifactId>
+    <artifactId>lamp-blog-content</artifactId>
+
+    <modules>
+        <module>lamp-blog-content-api</module>
+    </modules>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>

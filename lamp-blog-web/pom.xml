@@ -46,6 +46,11 @@
         </dependency>
 
         <dependency>
+            <groupId>space.lingu.lamp-blog</groupId>
+            <artifactId>lamp-blog-content-api</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>tech.rollw.common</groupId>
             <artifactId>web-common-spring-boot-starter</artifactId>
         </dependency>
