@@ -21,18 +21,12 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>space.lingu.lamp-blog</groupId>
-        <artifactId>lamp-blog-parent</artifactId>
+        <artifactId>lamp-blog-user</artifactId>
         <version>0.0.1-SNAPSHOT</version>
-        <relativePath>../lamp-blog-parent/pom.xml</relativePath>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>lamp-blog-content</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>lamp-blog-content-api</module>
-        <module>lamp-blog-content-service</module>
-    </modules>
+    <artifactId>lamp-blog-user-api</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -41,5 +35,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>space.lingu.lamp-blog</groupId>
+            <artifactId>lamp-blog-common</artifactId>
+        </dependency>
     </dependencies>
+
 </project>

@@ -25,13 +25,13 @@
         <version>0.0.1-SNAPSHOT</version>
         <relativePath>../lamp-blog-parent/pom.xml</relativePath>
     </parent>
-
-    <artifactId>lamp-blog-content</artifactId>
     <packaging>pom</packaging>
 
+    <artifactId>lamp-blog-user</artifactId>
+
     <modules>
-        <module>lamp-blog-content-api</module>
-        <module>lamp-blog-content-service</module>
+        <module>lamp-blog-user-api</module>
+        <module>lamp-blog-user-service</module>
     </modules>
 
     <properties>

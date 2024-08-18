@@ -35,7 +35,7 @@
         <module>../lamp-blog-file</module>
         <module>../lamp-blog-email</module>
         <module>../lamp-blog-content</module>
-        <module>../lamp-blog-user-api</module>
+        <module>../lamp-blog-user</module>
     </modules>
 
     <!-- TODO: may migrate build system to Gradle -->
@@ -63,6 +63,18 @@
             <dependency>
                 <groupId>space.lingu.lamp-blog</groupId>
                 <artifactId>lamp-blog-common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>space.lingu.lamp-blog</groupId>
+                <artifactId>lamp-blog-user-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>space.lingu.lamp-blog</groupId>
+                <artifactId>lamp-blog-user-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
 

@@ -26,13 +26,7 @@
         <relativePath>../lamp-blog-parent/pom.xml</relativePath>
     </parent>
 
-    <artifactId>lamp-blog-content</artifactId>
-    <packaging>pom</packaging>
-
-    <modules>
-        <module>lamp-blog-content-api</module>
-        <module>lamp-blog-content-service</module>
-    </modules>
+    <artifactId>lamp-blog-email</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -41,5 +35,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
     </dependencies>
+
 </project>
