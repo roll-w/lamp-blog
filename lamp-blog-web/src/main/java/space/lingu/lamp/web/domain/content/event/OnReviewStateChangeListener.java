@@ -41,8 +41,7 @@ public class OnReviewStateChangeListener implements ApplicationListener<OnReview
     private final ContentMetadataRepository contentMetadataRepository;
     private final ApplicationEventPublisher eventPublisher;
 
-    private static final Logger logger =
-            LoggerFactory.getLogger(OnReviewStateChangeListener.class);
+    private static final Logger logger = LoggerFactory.getLogger(OnReviewStateChangeListener.class);
 
     public OnReviewStateChangeListener(
             ContentMetadataRepository contentMetadataRepository,
@@ -61,8 +60,8 @@ public class OnReviewStateChangeListener implements ApplicationListener<OnReview
         );
         if (metadata == null) {
             // means metadata not has been successfully created
-            logger.error("Maybe a bug, ContentMetadata not found for review job: {}.",
-                    reviewJob);
+            logger.warn("ContentMetadata not found for the given review job: id={}, content={}@{}",
+                    reviewJob.getId(), reviewJob.getReviewContentId(), reviewJob.getType());
             return;
         }
         SimpleContentInfo contentInfo = new SimpleContentInfo(
@@ -90,6 +89,7 @@ public class OnReviewStateChangeListener implements ApplicationListener<OnReview
             case NOT_REVIEWED -> ContentStatus.REVIEWING;
             case REVIEWED -> ContentStatus.PUBLISHED;
             case REJECTED -> ContentStatus.REVIEW_REJECTED;
+            case CANCELED -> ContentStatus.HIDE;
         };
     }
 }

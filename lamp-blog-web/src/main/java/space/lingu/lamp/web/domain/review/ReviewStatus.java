@@ -31,7 +31,11 @@ public enum ReviewStatus {
     /**
      * Rejected.
      */
-    REJECTED;
+    REJECTED,
+    /**
+     * Review is canceled by the reviewer or the author.
+     */
+    CANCELED;
 
     public boolean isReviewed() {
         return this != NOT_REVIEWED;
