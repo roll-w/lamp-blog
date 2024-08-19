@@ -47,7 +47,12 @@
 
         <dependency>
             <groupId>space.lingu.lamp-blog</groupId>
-            <artifactId>lamp-blog-content-api</artifactId>
+            <artifactId>lamp-blog-content-service</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>space.lingu.lamp-blog</groupId>
+            <artifactId>lamp-blog-user-service</artifactId>
         </dependency>
 
         <dependency>
