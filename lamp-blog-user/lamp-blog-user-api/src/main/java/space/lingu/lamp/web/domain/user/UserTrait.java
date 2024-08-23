@@ -17,7 +17,6 @@
 package space.lingu.lamp.web.domain.user;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import tech.rollw.common.web.system.Operator;
 import tech.rollw.common.web.system.SystemResource;
 import tech.rollw.common.web.system.SystemResourceKind;
@@ -41,7 +40,7 @@ public interface UserTrait extends Operator, SystemResource<Long> {
     @NonNull
     @Override
     default SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.USER;
+        return UserResourceKind.INSTANCE;
     }
 
     static UserTrait of(long userId) {

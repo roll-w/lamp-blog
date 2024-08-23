@@ -16,13 +16,16 @@
 
 package space.lingu.lamp.web.domain.user;
 
-import space.lingu.lamp.web.domain.user.AttributedUser;
-import space.lingu.lamp.web.domain.user.Role;
+import space.lingu.NonNull;
+
+import java.util.List;
 
 /**
+ *
  * @author RollW
  */
-public interface UserManageService {
-    AttributedUser createUser(String username, String password,
-                              String email, Role role, boolean enable);
+public interface UserSearchService {
+    List<AttributedUser> findUsers(@NonNull String keyword);
+
+    List<AttributedUser> findUsers(List<Long> ids);
 }

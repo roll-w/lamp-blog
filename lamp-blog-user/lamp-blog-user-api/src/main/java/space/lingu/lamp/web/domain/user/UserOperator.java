@@ -18,7 +18,6 @@ package space.lingu.lamp.web.domain.user;
 
 
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import tech.rollw.common.web.BusinessRuntimeException;
 import tech.rollw.common.web.system.SystemResource;
 import tech.rollw.common.web.system.SystemResourceKind;
@@ -41,7 +40,7 @@ public interface UserOperator extends SystemResourceOperator<Long>,
     @NonNull
     @Override
     default SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.USER;
+        return UserResourceKind.INSTANCE;
     }
 
     @Override

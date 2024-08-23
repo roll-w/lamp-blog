@@ -21,7 +21,7 @@ import space.lingu.lamp.web.common.ParameterMissingException;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.UserOperator;
-import space.lingu.lamp.web.domain.user.common.UserViewException;
+import space.lingu.lamp.web.domain.user.UserViewException;
 import space.lingu.lamp.web.domain.user.filter.UserFilteringInfo;
 import space.lingu.lamp.web.domain.user.filter.UserFilteringInfoType;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;

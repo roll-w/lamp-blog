@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.common;
+package space.lingu.lamp.web.domain.user;
 
 import tech.rollw.common.web.BusinessRuntimeException;
 import tech.rollw.common.web.ErrorCode;

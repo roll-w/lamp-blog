@@ -25,6 +25,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
  * @author RollW
  */
 public final class Authorities {
+    // TODO: may move to another module
+
     public static final GrantedAuthority USER = new SimpleGrantedAuthority("USER");
 
     public static final GrantedAuthority ADMIN = new SimpleGrantedAuthority("ADMIN");

@@ -24,7 +24,6 @@ import java.util.List;
 /**
  * For authorization, we use the concept of role.
  *
- * @see space.lingu.lamp.web.domain.staff.StaffType
  * @author RollW
  */
 public enum Role {

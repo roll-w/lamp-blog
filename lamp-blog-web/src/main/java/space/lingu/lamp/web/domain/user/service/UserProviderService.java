@@ -22,7 +22,7 @@ import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.user.common.UserViewException;
+import space.lingu.lamp.web.domain.user.UserViewException;
 import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
 import space.lingu.lamp.web.domain.user.repository.UserRepository;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
