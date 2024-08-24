@@ -23,11 +23,11 @@ import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.user.UserIdentity;
 import space.lingu.lamp.web.domain.user.UserManageService;
 import space.lingu.lamp.web.domain.user.UserProvider;
 import space.lingu.lamp.web.domain.user.UserSearchService;
 import space.lingu.lamp.web.domain.user.UserSignatureProvider;
+import space.lingu.lamp.web.domain.user.UserTrait;
 import space.lingu.lamp.web.domain.user.UserViewException;
 import space.lingu.lamp.web.domain.user.event.OnUserCreateEvent;
 import space.lingu.lamp.web.domain.user.filter.UserFilteringInfo;
@@ -126,9 +126,9 @@ public class UserServiceImpl implements UserSignatureProvider,
     }
 
     @Override
-    public AttributedUser getUser(UserIdentity userIdentity)
+    public AttributedUser getUser(UserTrait userTrait)
             throws UserViewException {
-        return getUser(userIdentity.getUserId());
+        return getUser(userTrait.getUserId());
     }
 
     @Override

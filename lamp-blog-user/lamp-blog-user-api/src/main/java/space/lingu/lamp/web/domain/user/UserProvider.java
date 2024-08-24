@@ -16,8 +16,6 @@
 
 package space.lingu.lamp.web.domain.user;
 
-import space.lingu.lamp.web.domain.user.common.UserViewException;
-
 import java.util.List;
 
 /**
@@ -26,7 +24,7 @@ import java.util.List;
 public interface UserProvider {
     AttributedUser getUser(long userId) throws UserViewException;
 
-    AttributedUser getUser(UserIdentity userIdentity) throws UserViewException;
+    AttributedUser getUser(UserTrait userTrait) throws UserViewException;
 
     List<AttributedUser> getUsers();
 }
