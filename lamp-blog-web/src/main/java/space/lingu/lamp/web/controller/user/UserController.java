@@ -28,7 +28,7 @@ import space.lingu.lamp.web.controller.user.vo.UserCommonDetailsVo;
 import space.lingu.lamp.web.domain.storage.StorageUrlProvider;
 import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.UserIdentity;
-import space.lingu.lamp.web.domain.user.common.UserViewException;
+import space.lingu.lamp.web.domain.user.UserViewException;
 import space.lingu.lamp.web.domain.user.UserProvider;
 import space.lingu.lamp.web.domain.user.UserSearchService;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
@@ -84,6 +84,11 @@ public class UserController {
                 storageUrlProvider.getUrlOfStorage(
                         userPersonalData.getCover())
         ));
+    }
+
+    @GetMapping("/users")
+    public HttpResponseEntity<Void> getUsers() {
+        return HttpResponseEntity.success();
     }
 
     @GetMapping("/users/{userId}")
