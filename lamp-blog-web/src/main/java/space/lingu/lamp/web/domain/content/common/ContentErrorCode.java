@@ -35,7 +35,8 @@ public enum ContentErrorCode implements ErrorCode, ErrorCodeFinder, ErrorCodeMes
     ERROR_CONTENT_REVIEWING("A2005", 401),
     ERROR_PASSWORD_REQUIRED("A2006", 401),
     ERROR_CONTENT_EXISTED("A2007", 400),
-    ERROR_CONTENT_NOT_DELETED("A2008", 400);
+    ERROR_CONTENT_NOT_DELETED("A2008", 400),
+    ERROR_CONTENT_CANNOT_RESTORE("A2009", 400);
 
 
     private final String value;
