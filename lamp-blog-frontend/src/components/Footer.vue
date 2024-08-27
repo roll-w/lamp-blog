@@ -17,8 +17,9 @@
 <template>
   <n-layout-footer bordered>
     <div class="p-10">
-      <n-text>
+      <n-text class="text-neutral-500 text-opacity-85 text-sm">
         <p>©2023 RollW. All rights reserved. 版权所有</p>
+        <p>Licensed under the Apache License, Version 2.0</p>
       </n-text>
     </div>
   </n-layout-footer>
