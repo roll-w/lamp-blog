@@ -19,12 +19,12 @@ plugins {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(project(":lamp-blog-common"))
     implementation(project(":lamp-blog-content-service"))
     implementation(project(":lamp-blog-user-service"))
+    implementation("org.springframework.boot:spring-boot-starter-web:3.3.3")
     implementation(libs.rollw.web.common.spring.boot.starter)
-    implementation(libs.jackson.module.kotlin)
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.apache.commons:commons-lang3")
     implementation(libs.com.google.guava)
     implementation("org.springframework.boot:spring-boot-starter-security")

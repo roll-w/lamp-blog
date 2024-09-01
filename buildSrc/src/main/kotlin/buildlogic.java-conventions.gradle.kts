@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
+
 /*
  * Copyright (C) 2023 RollW
  *
@@ -15,8 +17,8 @@
  */
 
 plugins {
-    `java-library`
     java
+    `java-library`
     kotlin("jvm")
     kotlin("plugin.spring")
     id("io.spring.dependency-management")
@@ -26,8 +28,8 @@ plugins {
 val kotlinVersion = "2.0.20"
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    api("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     testImplementation("org.jetbrains.kotlin:kotlin-test:${kotlinVersion}")
 
     implementation("space.lingu.fiesta:fiesta-annotations:0.2.1")
@@ -36,7 +38,12 @@ dependencies {
 
 group = "space.lingu.lamp-blog"
 version = "0.0.1-SNAPSHOT"
-java.sourceCompatibility = JavaVersion.VERSION_17
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
+}
 
 kotlin {
     compilerOptions {

@@ -28,4 +28,4 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "buildlogic"
+rootProject.name = "buildSrc"
