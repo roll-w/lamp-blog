@@ -5,7 +5,9 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+data/
 !logs
+logs/
 !tmp
 !data
 !dfs
@@ -37,3 +39,6 @@ build/
 
 ### VS Code ###
 .vscode/
+
+.gradle
+build
