@@ -24,7 +24,7 @@ import space.lingu.fiesta.Fiesta;
 import java.util.HashMap;
 import java.util.Map;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackages = "space.lingu.lamp")
 @Fiesta
 public class LampBlogSystemApplication {
     private static ConfigurableApplicationContext sContext;
@@ -39,6 +39,12 @@ public class LampBlogSystemApplication {
         SpringApplication application =
                 new SpringApplication(LampBlogSystemApplication.class);
         application.setDefaultProperties(overrideProperties);
-        sContext = application.run(args);
+        application.setBanner(new LampBlogBanner());
+        sContext = application.run(prepareArguments(args));
+    }
+
+    private static String[] prepareArguments(String[] args) {
+        // temporarily disable arguments
+        return new String[0];
     }
 }
