@@ -51,7 +51,7 @@ class LampBlogBanner : Banner {
     ) {
         printStream.run {
             println()
-            println(BANNER)
+            printCenteredBanner(STRAP_LINE_SIZE)
             // TODO: version read from configuration
             val version = " (v${"0.0.1"})"
             val padding = StringBuilder()
@@ -66,6 +66,21 @@ class LampBlogBanner : Banner {
             )
             println(LICENSE)
             println()
+        }
+    }
+
+    private fun PrintStream.printCenteredBanner(length: Int) {
+        val maxLine = BANNER.lines().maxOf { it.length }
+        if (maxLine > length) {
+            println(BANNER)
+            return
+        }
+        val padding = (length - maxLine) / 2
+        BANNER.lines().forEach { line ->
+            repeat(padding) {
+                print(" ")
+            }
+            println(line)
         }
     }
 }
