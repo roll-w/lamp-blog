@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.configuration
 
+import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
  */
 @Configuration
 @EnableJpaRepositories(value = ["space.lingu.lamp"])
+@EntityScan(value = ["space.lingu.lamp"])
 @EnableTransactionManagement
 class DataSourceConfiguration {
     // TODO: configurable through lamp.conf
