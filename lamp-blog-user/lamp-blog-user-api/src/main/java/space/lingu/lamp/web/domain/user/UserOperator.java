@@ -84,8 +84,4 @@ public interface UserOperator extends SystemResourceOperator<Long>,
 
     UserOperator setCanceled(boolean canceled)
             throws BusinessRuntimeException;
-
-    UserOperator setNickname(String nickname)
-            throws BusinessRuntimeException;
-
 }

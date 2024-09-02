@@ -28,16 +28,19 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.RequestMetadata;
-import space.lingu.lamp.web.domain.user.AttributedUser;
-import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.UserIdentity;
-import space.lingu.lamp.web.domain.user.UserManageService;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategy;
 import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
 import space.lingu.lamp.web.domain.authentication.login.LoginVerifiableToken;
-import space.lingu.lamp.web.domain.user.*;
+import space.lingu.lamp.web.domain.user.AttributedUser;
+import space.lingu.lamp.web.domain.user.RegisterTokenProvider;
+import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
+import space.lingu.lamp.web.domain.user.Role;
+import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.web.domain.user.UserManageService;
+import space.lingu.lamp.web.domain.user.UserSignatureProvider;
 import space.lingu.lamp.web.domain.user.UserViewException;
 import space.lingu.lamp.web.domain.user.dto.UserInfoSignature;
 import space.lingu.lamp.web.domain.user.event.OnUserLoginEvent;
@@ -51,7 +54,11 @@ import tech.rollw.common.web.system.AuthenticationException;
 import tech.rollw.common.web.system.ContextThreadAware;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.UUID;
 
 /**
  * @author RollW

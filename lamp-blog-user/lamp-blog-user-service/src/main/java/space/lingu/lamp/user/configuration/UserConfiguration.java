@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.configuration;
+package space.lingu.lamp.user.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
 import space.lingu.lamp.web.domain.user.filter.UserInfoFilterChain;
-import space.lingu.lamp.web.domain.user.filter.UserInfoFormatValidateFilter;
-import space.lingu.lamp.web.domain.user.filter.UserInfoSensitiveWordFilter;
+import space.lingu.lamp.user.filter.UserInfoFormatValidateFilter;
+import space.lingu.lamp.user.filter.UserInfoSensitiveWordFilter;
 
 /**
  * @author RollW

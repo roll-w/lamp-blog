@@ -14,28 +14,17 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.dto;
+package space.lingu.lamp.web.domain.user;
 
 import org.springframework.security.core.userdetails.UserDetails;
-import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.user.UserIdentity;
-import space.lingu.light.DataColumn;
 
 /**
  * @author RollW
  */
 public record UserInfo(
-        @DataColumn(name = "id")
         long id,
-
-        @DataColumn(name = "username")
         String username,
-
-        @DataColumn(name = "email")
         String email,
-
-        @DataColumn(name = "role")
         Role role
 ) implements UserIdentity {
     public static UserInfo from(UserIdentity user) {
@@ -51,15 +40,10 @@ public record UserInfo(
     }
 
     public static UserInfo from(UserDetails userDetails) {
-        if (!(userDetails instanceof User user)) {
+        if (!(userDetails instanceof UserIdentity user)) {
             return null;
         }
-        return new UserInfo(
-                user.getId(),
-                user.getUsername(),
-                user.getEmail(),
-                user.getRole()
-        );
+        return from(user);
     }
 
     @Override

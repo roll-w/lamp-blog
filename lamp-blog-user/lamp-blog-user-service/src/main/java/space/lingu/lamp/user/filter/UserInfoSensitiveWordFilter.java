@@ -14,9 +14,11 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.filter;
+package space.lingu.lamp.user.filter;
 
 import space.lingu.NonNull;
+import space.lingu.lamp.web.domain.user.filter.UserFilteringInfo;
+import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.ErrorCode;
 

@@ -18,7 +18,7 @@ package space.lingu.lamp.web.controller.user.vo;
 
 import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.UserIdentity;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.UserInfo;
 
 /**
  * @author RollW
