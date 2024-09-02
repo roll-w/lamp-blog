@@ -20,9 +20,9 @@ plugins {
 
 dependencies {
     implementation(project(":lamp-blog-common"))
-    implementation(project(":lamp-blog-content-service"))
+    implementation(project(":lamp-blog-content:content-service"))
     implementation(project(":lamp-blog-user-service"))
-    implementation("org.springframework.boot:spring-boot-starter-web:3.3.3")
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(libs.rollw.web.common.spring.boot.starter)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.apache.commons:commons-lang3")

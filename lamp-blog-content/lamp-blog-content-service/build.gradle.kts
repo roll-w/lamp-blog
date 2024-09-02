@@ -20,7 +20,7 @@ plugins {
 
 dependencies {
     api(project(":lamp-blog-common"))
-    api(project(":lamp-blog-content-api"))
+    api(project(":lamp-blog-content:content-api"))
 }
 
 description = "lamp-blog-content-service"

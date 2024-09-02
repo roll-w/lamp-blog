@@ -17,20 +17,26 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
  */
 
 plugins {
-    java
-    `java-library`
+    id("java")
+    id("java-library")
     kotlin("jvm")
     kotlin("plugin.spring")
     id("io.spring.dependency-management")
     id("org.springframework.boot")
 }
 
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.boot:spring-boot-dependencies:3.3.3")
+    }
+}
+
 val kotlinVersion = "2.0.20"
 
 dependencies {
-    api("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
-    api("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
-    testImplementation("org.jetbrains.kotlin:kotlin-test:${kotlinVersion}")
+    implementation(kotlin("stdlib-jdk8", kotlinVersion))
+    implementation(kotlin("reflect", kotlinVersion))
+    testImplementation(kotlin("test", kotlinVersion))
 
     implementation("space.lingu.fiesta:fiesta-annotations:0.2.1")
     annotationProcessor("space.lingu.fiesta:fiesta-checker:0.2.1")
@@ -52,6 +58,7 @@ kotlin {
             "-Xjvm-default=all-compatibility"
         )
     }
+    jvmToolchain(17)
 }
 
 tasks.withType<JavaCompile> {
@@ -60,4 +67,8 @@ tasks.withType<JavaCompile> {
 
 tasks.withType<Javadoc> {
     options.encoding = "UTF-8"
+}
+
+tasks.withType<Test> {
+    useJUnitPlatform()
 }
