@@ -87,8 +87,14 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public HttpResponseEntity<Void> getUsers() {
-        return HttpResponseEntity.success();
+    public HttpResponseEntity<List<UserCommonDetailsVo>> getUsers() {
+        List<AttributedUser> users = userProvider.getUsers();
+        List<UserCommonDetailsVo> userCommonDetailsVos = users.stream()
+                .map(this::toDetailsVo)
+                .toList();
+        return HttpResponseEntity.success(
+                userCommonDetailsVos
+        );
     }
 
     @GetMapping("/users/{userId}")
