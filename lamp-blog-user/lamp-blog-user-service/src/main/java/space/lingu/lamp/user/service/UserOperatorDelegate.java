@@ -14,13 +14,11 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
-
+package space.lingu.lamp.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
-import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 
 /**
  * Delegate for user operator.
@@ -29,10 +27,6 @@ import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
  */
 public interface UserOperatorDelegate {
     void updateUser(User user);
-
-    UserPersonalData getUserPersonalData(Long id);
-
-    void updateUserPersonalData(UserPersonalData userPersonalData);
 
     boolean checkUsernameExist(String username, long userId);
 

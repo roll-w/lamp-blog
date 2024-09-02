@@ -21,8 +21,13 @@ import org.springframework.security.core.userdetails.UserDetails;
 import space.lingu.NonNull;
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.*;
+import space.lingu.lamp.user.repository.UserDo;
+import space.lingu.light.Constructor;
+import space.lingu.light.DataColumn;
+import space.lingu.light.DataTable;
+import space.lingu.light.Index;
+import space.lingu.light.LightConfiguration;
+import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.util.Collection;
@@ -234,7 +239,15 @@ public class User implements LongDataItem<User>, UserDetails, AttributedUser {
     @NonNull
     @Override
     public SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.USER;
+        return UserResourceKind.INSTANCE;
+    }
+
+    public UserDo toUserDo() {
+        return new UserDo(
+                id, username, password, role,
+                registerTime, updateTime, email, phone,
+                enabled, locked, accountExpired, canceled
+        );
     }
 
     public static final class Builder implements LongEntityBuilder<User> {

@@ -14,19 +14,18 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
+package space.lingu.lamp.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.domain.user.UserResourceKind;
 import space.lingu.lamp.web.domain.user.UserViewException;
 import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
-import space.lingu.lamp.web.domain.user.repository.UserRepository;
-import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
-import space.lingu.lamp.web.domain.userdetails.repository.UserPersonalDataRepository;
+import space.lingu.lamp.user.repository.UserDo;
+import space.lingu.lamp.user.repository.UserDao;
 import tech.rollw.common.web.BusinessRuntimeException;
 import tech.rollw.common.web.UserErrorCode;
 import tech.rollw.common.web.system.SystemResource;
@@ -36,37 +35,40 @@ import tech.rollw.common.web.system.SystemResourceOperatorFactory;
 import tech.rollw.common.web.system.SystemResourceProvider;
 import tech.rollw.common.web.system.UnsupportedKindException;
 
+import java.util.Objects;
+
 /**
  * @author RollW
  */
 @Service
 public class UserProviderService implements SystemResourceProvider<Long>,
         SystemResourceOperatorFactory<Long>, UserOperatorDelegate {
-    private final UserRepository userRepository;
-    private final UserPersonalDataRepository userPersonalDataRepository;
+    private final UserDao userRepository;
     private final UserInfoFilter userInfoFilter;
     private final PasswordEncoder passwordEncoder;
 
-    public UserProviderService(UserRepository userRepository,
-                               UserPersonalDataRepository userPersonalDataRepository,
+    public UserProviderService(UserDao userRepository,
                                UserInfoFilter userInfoFilter,
                                PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.userPersonalDataRepository = userPersonalDataRepository;
         this.userInfoFilter = userInfoFilter;
         this.passwordEncoder = passwordEncoder;
     }
 
     @Override
     public boolean supports(@NonNull SystemResourceKind systemResourceKind) {
-        return systemResourceKind == LampSystemResourceKind.USER;
+        return Objects.equals(
+                systemResourceKind.getName(),
+                UserResourceKind.INSTANCE.getName()
+        );
     }
 
     @NonNull
     @Override
     public SystemResourceOperator<Long> createResourceOperator(
             SystemResource<Long> systemResource, boolean checkDelete) {
-        User user = getUser(systemResource.getResourceId());
+        User user = getUser(systemResource.getResourceId())
+                .toUser();
         return new UserOperatorImpl(user, this, checkDelete);
     }
 
@@ -80,8 +82,8 @@ public class UserProviderService implements SystemResourceProvider<Long>,
         return getUser(rawSystemResource.getResourceId());
     }
 
-    private User getUser(long id) {
-        User user = userRepository.getById(id);
+    private UserDo getUser(long id) {
+        UserDo user = userRepository.getByUserId(id);
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
@@ -89,23 +91,13 @@ public class UserProviderService implements SystemResourceProvider<Long>,
     }
 
     @Override
-    public UserPersonalData getUserPersonalData(Long id) {
-        return userPersonalDataRepository.getById(id);
-    }
-
-    @Override
     public void updateUser(User user) {
-        userRepository.update(user);
-    }
-
-    @Override
-    public void updateUserPersonalData(UserPersonalData userPersonalData) {
-        userPersonalDataRepository.update(userPersonalData);
+        userRepository.save(user.toUserDo());
     }
 
     @Override
     public boolean checkUsernameExist(String username, long id) {
-        User user = userRepository.getByUsername(username);
+        UserDo user = userRepository.getByUsername(username);
         if (user == null) {
             return false;
         }
@@ -117,7 +109,7 @@ public class UserProviderService implements SystemResourceProvider<Long>,
 
     @Override
     public boolean checkEmailExist(String email, long id) {
-        User user = userRepository.getByEmail(email);
+        UserDo user = userRepository.getByEmail(email);
         if (user == null) {
             return false;
         }

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
+package space.lingu.lamp.user.service;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,7 +33,8 @@ import space.lingu.lamp.web.domain.user.event.OnUserCreateEvent;
 import space.lingu.lamp.web.domain.user.filter.UserFilteringInfo;
 import space.lingu.lamp.web.domain.user.filter.UserFilteringInfoType;
 import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
-import space.lingu.lamp.web.domain.user.repository.UserRepository;
+import space.lingu.lamp.user.repository.UserDo;
+import space.lingu.lamp.user.repository.UserDao;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 
@@ -47,12 +48,12 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserSignatureProvider,
         UserManageService, UserSearchService, UserProvider {
-    private final UserRepository userRepository;
+    private final UserDao userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserInfoFilter userInfoFilter;
     private final ApplicationEventPublisher eventPublisher;
 
-    public UserServiceImpl(UserRepository userRepository,
+    public UserServiceImpl(UserDao userRepository,
                            PasswordEncoder passwordEncoder,
                            UserInfoFilter userInfoFilter,
                            ApplicationEventPublisher eventPublisher) {
@@ -64,7 +65,7 @@ public class UserServiceImpl implements UserSignatureProvider,
 
     @Override
     public String getSignature(long userId) {
-        User user = userRepository.getById(userId);
+        UserDo user = userRepository.getByUserId(userId);
         if (user == null) {
             return null;
         }
@@ -74,7 +75,7 @@ public class UserServiceImpl implements UserSignatureProvider,
     @Override
     public AttributedUser createUser(String username, String password,
                                      String email, Role role, boolean enable) {
-        if (userRepository.isExistByEmail(username)) {
+        if (userRepository.isExistByUsername(username)) {
             throw new UserViewException(UserErrorCode.ERROR_USER_EXISTED);
         }
         if (userRepository.isExistByEmail(email)) {
@@ -83,7 +84,7 @@ public class UserServiceImpl implements UserSignatureProvider,
         validate(username, password, email);
 
         long time = System.currentTimeMillis();
-        User user = User.builder()
+        UserDo user = User.builder()
                 .setUsername(username)
                 .setPassword(passwordEncoder.encode(password))
                 .setRole(role)
@@ -92,10 +93,10 @@ public class UserServiceImpl implements UserSignatureProvider,
                 .setRegisterTime(time)
                 .setUpdateTime(time)
                 .setEmail(email)
-                .build();
-        User inserted = userRepository.insert(user);
-        OnUserCreateEvent onUserCreateEvent =
-                new OnUserCreateEvent(inserted);
+                .build()
+                .toUserDo();
+        UserDo inserted = userRepository.save(user);
+        OnUserCreateEvent onUserCreateEvent = new OnUserCreateEvent(inserted);
         eventPublisher.publishEvent(onUserCreateEvent);
         return inserted;
     }
@@ -118,11 +119,11 @@ public class UserServiceImpl implements UserSignatureProvider,
 
     @Override
     public User getUser(long userId) throws UserViewException {
-        User user = userRepository.getById(userId);
+        UserDo user = userRepository.getByUserId(userId);
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
-        return user;
+        return user.toUser();
     }
 
     @Override
@@ -134,7 +135,7 @@ public class UserServiceImpl implements UserSignatureProvider,
     @Override
     public List<AttributedUser> getUsers() {
         return Collections.unmodifiableList(
-                userRepository.get()
+                userRepository.findAll()
         );
     }
 

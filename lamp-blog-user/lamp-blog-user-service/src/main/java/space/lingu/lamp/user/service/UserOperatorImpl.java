@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
+package space.lingu.lamp.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-import space.lingu.lamp.web.common.ParameterMissingException;
+import space.lingu.lamp.LampException;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.UserOperator;
 import space.lingu.lamp.web.domain.user.UserViewException;
 import space.lingu.lamp.web.domain.user.filter.UserFilteringInfo;
 import space.lingu.lamp.web.domain.user.filter.UserFilteringInfoType;
-import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 
@@ -40,10 +40,7 @@ public class UserOperatorImpl implements UserOperator {
     private final User.Builder userBuilder;
     private final UserOperatorDelegate delegate;
 
-    private UpdateFlag updateFlag = UpdateFlag.NONE;
-
-    private UserPersonalData userPersonalData;
-    private UserPersonalData.Builder userPersonalDataBuilder;
+    private boolean updateFlag = false;
 
     public UserOperatorImpl(User user, UserOperatorDelegate delegate,
                             boolean checkDelete) {
@@ -90,22 +87,14 @@ public class UserOperatorImpl implements UserOperator {
         if (autoUpdateEnabled) {
             return this;
         }
-        if (!updateFlag.isUpdate()) {
+        if (!updateFlag) {
             return this;
         }
-        if (updateFlag.isUpdateUser()) {
-            user = userBuilder
-                    .setUpdateTime(System.currentTimeMillis())
-                    .build();
-            delegate.updateUser(user);
-        }
-        if (updateFlag.isUpdatePersonalData()) {
-            userPersonalData = userPersonalDataBuilder
-                    .setUpdateTime(System.currentTimeMillis())
-                    .build();
-            delegate.updateUserPersonalData(userPersonalData);
-        }
-        updateFlag = UpdateFlag.NONE;
+        user = userBuilder
+                .setUpdateTime(System.currentTimeMillis())
+                .build();
+        delegate.updateUser(user);
+        updateFlag = false;
         return this;
     }
 
@@ -120,7 +109,7 @@ public class UserOperatorImpl implements UserOperator {
     public UserOperator rename(String username) throws BusinessRuntimeException {
         checkDelete();
         if (username == null) {
-            throw new ParameterMissingException("username");
+            throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "username is null");
         }
         if (user.getUsername().equals(username)) {
             return this;
@@ -136,39 +125,11 @@ public class UserOperatorImpl implements UserOperator {
     }
 
     @Override
-    public UserOperator setNickname(String nickname) throws BusinessRuntimeException {
-        checkDelete();
-        loadUserPersonalData();
-
-        if (nickname == null) {
-            throw new ParameterMissingException("nickname");
-        }
-        if (userPersonalData.getNickname().equals(nickname)) {
-            return this;
-        }
-        checkRule(nickname, UserFilteringInfoType.NICKNAME);
-        return updatePersonalDataInternal();
-    }
-
-    private UserOperator updatePersonalDataInternal() {
-        if (!autoUpdateEnabled) {
-            updateFlag =
-                    updateFlag.plus(UpdateFlag.PERSONAL_DATA);
-            return this;
-        }
-        userPersonalData = userPersonalDataBuilder
-                .setUpdateTime(System.currentTimeMillis())
-                .build();
-        delegate.updateUserPersonalData(userPersonalData);
-        return this;
-    }
-
-    @Override
     public UserOperator setEmail(String email)
             throws BusinessRuntimeException {
         checkDelete();
         if (email == null) {
-            throw new ParameterMissingException("email");
+            throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "email is null");
         }
         if (user.getEmail().equals(email)) {
             return this;
@@ -187,7 +148,7 @@ public class UserOperatorImpl implements UserOperator {
     public UserOperator setRole(Role role) throws BusinessRuntimeException {
         checkDelete();
         if (role == null) {
-            throw new ParameterMissingException("role");
+            throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "role is null");
         }
         if (user.getRole().equals(role)) {
             return this;
@@ -201,7 +162,7 @@ public class UserOperatorImpl implements UserOperator {
     public UserOperator setPassword(String password) throws BusinessRuntimeException {
         checkDelete();
         if (password == null) {
-            throw new ParameterMissingException("password");
+            throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "password is null");
         }
         if (user.getPassword().equals(password)) {
             return this;
@@ -231,10 +192,10 @@ public class UserOperatorImpl implements UserOperator {
             throws BusinessRuntimeException {
         checkDelete();
         if (oldPassword == null) {
-            throw new ParameterMissingException("oldPassword");
+            throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "oldPassword is null");
         }
         if (password == null) {
-            throw new ParameterMissingException("password");
+            throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "password is null");
         }
         PasswordEncoder encoder = delegate.getPasswordEncoder();
         if (!encoder.matches(oldPassword, user.getPassword())) {
@@ -295,31 +256,15 @@ public class UserOperatorImpl implements UserOperator {
 
     private UserOperator updateInternal() {
         if (!autoUpdateEnabled) {
-            updateFlag = updateFlag.plus(UpdateFlag.USER);
+            updateFlag = true;
             return this;
         }
         user = userBuilder
                 .setUpdateTime(System.currentTimeMillis())
                 .build();
         delegate.updateUser(user);
-        updateFlag = UpdateFlag.NONE;
+        updateFlag = false;
         return this;
-    }
-
-    private void loadUserPersonalData() {
-        if (userPersonalData != null) {
-            return;
-        }
-
-        UserPersonalData personalData =
-                delegate.getUserPersonalData(user.getId());
-        if (personalData != null) {
-            this.userPersonalData = personalData;
-            this.userPersonalDataBuilder = personalData.toBuilder();
-            return;
-        }
-        this.userPersonalData = UserPersonalData.defaultOf(this);
-        this.userPersonalDataBuilder = this.userPersonalData.toBuilder();
     }
 
     public Long getId() {
@@ -369,37 +314,5 @@ public class UserOperatorImpl implements UserOperator {
     @Override
     public long getUpdateTime() {
         return user.getUpdateTime();
-    }
-
-    private enum UpdateFlag {
-        USER,
-        PERSONAL_DATA,
-        ALL,
-        NONE;
-
-        boolean isUpdate() {
-            return this != NONE;
-        }
-
-        boolean isUpdateUser() {
-            return this == USER || this == ALL;
-        }
-
-        boolean isUpdatePersonalData() {
-            return this == PERSONAL_DATA || this == ALL;
-        }
-
-        public UpdateFlag plus(UpdateFlag updateFlag) {
-            if (this == ALL) {
-                return this;
-            }
-            if (this == NONE) {
-                return updateFlag;
-            }
-            if (this == updateFlag) {
-                return this;
-            }
-            return ALL;
-        }
     }
 }

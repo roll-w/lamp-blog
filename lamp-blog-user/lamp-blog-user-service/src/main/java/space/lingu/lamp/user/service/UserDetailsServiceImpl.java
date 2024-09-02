@@ -14,29 +14,29 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
+package space.lingu.lamp.user.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.UserDetailsService;
-import space.lingu.lamp.web.domain.user.repository.UserRepository;
+import space.lingu.lamp.user.repository.UserDao;
+import space.lingu.lamp.user.repository.UserDo;
 
 /**
  * @author RollW
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final UserDao userRepository;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
+    public UserDetailsServiceImpl(UserDao userRepository) {
         this.userRepository = userRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        User user = userRepository.getByUsername(username);
+        UserDo user = userRepository.getByUsername(username);
         if (user == null) {
             throw new UsernameNotFoundException("Username " + username + " not exist");
         }
@@ -45,7 +45,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUserId(long userId) throws UsernameNotFoundException {
-        User user = userRepository.getById(userId);
+        UserDo user = userRepository.getByUserId(userId);
         if (user == null) {
             throw new UsernameNotFoundException("User ID " + userId + " not exist");
         }
