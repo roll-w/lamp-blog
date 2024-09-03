@@ -21,7 +21,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import space.lingu.NonNull;
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
-import space.lingu.lamp.user.repository.UserDo;
+import space.lingu.lamp.web.domain.AttributedUserDetails;
 import space.lingu.light.Constructor;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
@@ -41,7 +41,7 @@ import java.util.Objects;
 })
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
 @SuppressWarnings({"ClassCanBeRecord"})
-public class User implements LongDataItem<User>, UserDetails, AttributedUser {
+public class User implements LongDataItem<User>, UserDetails, AttributedUserDetails {
     @PrimaryKey(autoGenerate = true)
     @DataColumn(name = "id")
     private final Long id;
@@ -240,14 +240,6 @@ public class User implements LongDataItem<User>, UserDetails, AttributedUser {
     @Override
     public SystemResourceKind getSystemResourceKind() {
         return UserResourceKind.INSTANCE;
-    }
-
-    public UserDo toUserDo() {
-        return new UserDo(
-                id, username, password, role,
-                registerTime, updateTime, email, phone,
-                enabled, locked, accountExpired, canceled
-        );
     }
 
     public static final class Builder implements LongEntityBuilder<User> {

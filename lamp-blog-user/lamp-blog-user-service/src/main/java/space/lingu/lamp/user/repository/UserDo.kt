@@ -26,22 +26,20 @@ import jakarta.persistence.Table
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import space.lingu.NonNull
-import space.lingu.lamp.TimeAttributed
-import space.lingu.lamp.web.domain.user.AttributedUser
+import space.lingu.lamp.web.domain.AttributedUserDetails
 import space.lingu.lamp.web.domain.user.Role
 import space.lingu.lamp.web.domain.user.User
 import space.lingu.lamp.web.domain.user.UserResourceKind
 import tech.rollw.common.web.system.SystemResource
 import tech.rollw.common.web.system.SystemResourceKind
 import java.io.Serializable
-import java.util.Objects
 
 /**
  * @author RollW
  */
 @Entity
 @Table(name = "user")
-class UserDo : Serializable, TimeAttributed, SystemResource<Long>, UserDetails, AttributedUser {
+class UserDo : Serializable, SystemResource<Long>, UserDetails, AttributedUserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -202,23 +200,6 @@ class UserDo : Serializable, TimeAttributed, SystemResource<Long>, UserDetails, 
         this.enabled = enabled
     }
 
-    override fun hashCode(): Int {
-        return Objects.hash(
-            id, username, password, role,
-            registerTime, updateTime, email, phone, enabled,
-            locked, accountExpired, canceled
-        )
-    }
-
-    override fun equals(o: Any?): Boolean {
-        if (this === o) return true
-        if (o !is UserDo) return false
-        return registerTime == o.registerTime && updateTime == o.updateTime && enabled == o.enabled && locked == o.locked && accountExpired == o.accountExpired && canceled == o.canceled &&
-                id == o.id && username == o.username &&
-                password == o.password && role == o.role &&
-                email == o.email && phone == o.phone
-    }
-
     override fun toString(): String {
         return "UserDo{" +
                 "id=" + id +
@@ -243,5 +224,17 @@ class UserDo : Serializable, TimeAttributed, SystemResource<Long>, UserDetails, 
             enabled, locked, accountExpired,
             canceled
         )
+    }
+
+    companion object {
+        @JvmStatic
+        fun User.toDo(): UserDo {
+            return UserDo(
+                id, username, password, role,
+                registerTime, updateTime, email, phone,
+                isEnabled, isLocked, isAccountExpired,
+                isCanceled
+            )
+        }
     }
 }
