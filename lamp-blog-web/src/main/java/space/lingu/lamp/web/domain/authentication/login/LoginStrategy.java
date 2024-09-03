@@ -20,7 +20,7 @@ package space.lingu.lamp.web.domain.authentication.login;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.web.common.RequestInfo;
-import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.domain.AttributedUserDetails;
 import tech.rollw.common.web.ErrorCode;
 
 import java.io.IOException;
@@ -29,10 +29,10 @@ import java.io.IOException;
  * @author RollW
  */
 public interface LoginStrategy {
-    LoginVerifiableToken createToken(User user) throws LoginTokenException;
+    LoginVerifiableToken createToken(AttributedUserDetails user) throws LoginTokenException;
 
     @NonNull
-    ErrorCode verify(String token, @NonNull User user);
+    ErrorCode verify(String token, @NonNull AttributedUserDetails user);
 
     /**
      * Send login token to user.
@@ -40,7 +40,7 @@ public interface LoginStrategy {
      * @throws LoginTokenException if login token invalid.
      * @throws IOException         if send failed.
      */
-    void sendToken(LoginVerifiableToken token, User user, @Nullable RequestInfo requestInfo)
+    void sendToken(LoginVerifiableToken token, AttributedUserDetails user, @Nullable RequestInfo requestInfo)
             throws LoginTokenException, IOException;
 
     LoginStrategyType getStrategyType();

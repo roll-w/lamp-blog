@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.domain.authentication.login;
 
 import com.google.common.io.ByteStreams;
+import jakarta.mail.internet.MimeMessage;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +35,11 @@ import space.lingu.Nullable;
 import space.lingu.lamp.web.common.CacheNames;
 import space.lingu.lamp.web.common.MimeMailMessageBuilder;
 import space.lingu.lamp.web.common.RequestInfo;
-import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.domain.AttributedUserDetails;
+import space.lingu.lamp.web.domain.user.AttributedUser;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
 
-import jakarta.mail.internet.MimeMessage;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -72,41 +73,41 @@ public class EmailTokenLoginStrategy implements LoginStrategy {
     private static final String FULL_SEQUENCE = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
 
     @Override
-    public LoginVerifiableToken createToken(User user) throws LoginTokenException {
+    public LoginVerifiableToken createToken(AttributedUserDetails user) throws LoginTokenException {
         String token = RandomStringUtils.random(5, FULL_SEQUENCE);
         long expireTime = System.currentTimeMillis() + 1000 * 5 * 60;
         // save to cache if it already has a token in it
         LoginConfirmToken oldToken =
-                cache.get(user.getId(), LoginConfirmToken.class);
+                cache.get(user.getUserId(), LoginConfirmToken.class);
         if (oldToken != null) {
             throw new LoginTokenException(AuthErrorCode.ERROR_TOKEN_NOT_EXPIRED);
         }
         LoginConfirmToken confirmToken =
-                LoginConfirmToken.emailToken(token, user.getId(), expireTime);
-        cache.put(user.getId(), confirmToken);
+                LoginConfirmToken.emailToken(token, user.getUserId(), expireTime);
+        cache.put(user.getUserId(), confirmToken);
         return confirmToken;
     }
 
     @NonNull
     @Override
-    public ErrorCode verify(String token, @NonNull User user) {
+    public ErrorCode verify(String token, @NonNull AttributedUserDetails user) {
         if (token == null) {
             return AuthErrorCode.ERROR_INVALID_TOKEN;
         }
         LoginConfirmToken confirmToken =
-                cache.get(user.getId(), LoginConfirmToken.class);
+                cache.get(user.getUserId(), LoginConfirmToken.class);
         if (confirmToken == null) {
             return AuthErrorCode.ERROR_TOKEN_NOT_EXIST;
         }
         if (token.equalsIgnoreCase(confirmToken.token())) {
-            cache.evictIfPresent(user.getId());
+            cache.evictIfPresent(user.getUserId());
             return AuthErrorCode.SUCCESS;
         }
         return AuthErrorCode.ERROR_TOKEN_NOT_MATCH;
     }
 
     @Override
-    public void sendToken(LoginVerifiableToken token, User user,
+    public void sendToken(LoginVerifiableToken token, AttributedUserDetails user,
                           @Nullable RequestInfo requestInfo) throws LoginTokenException, IOException {
         if (!(token instanceof LoginConfirmToken confirmToken)) {
             throw new LoginTokenException(AuthErrorCode.ERROR_INVALID_TOKEN);
@@ -138,7 +139,7 @@ public class EmailTokenLoginStrategy implements LoginStrategy {
         return LoginStrategyType.EMAIL_TOKEN;
     }
 
-    private String getMailText(String token, User user, Locale locale) throws IOException {
+    private String getMailText(String token, AttributedUser user, Locale locale) throws IOException {
         String path = getHtmlTemplatePath(locale);
         // TODO: allow set by user in the future
 

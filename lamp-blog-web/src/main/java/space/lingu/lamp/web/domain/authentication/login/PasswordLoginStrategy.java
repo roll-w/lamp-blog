@@ -23,7 +23,7 @@ import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.web.common.RequestInfo;
-import space.lingu.lamp.web.domain.user.User;
+import space.lingu.lamp.web.domain.AttributedUserDetails;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
@@ -42,13 +42,13 @@ public class PasswordLoginStrategy implements LoginStrategy {
     }
 
     @Override
-    public LoginVerifiableToken createToken(User user) throws LoginTokenException {
-        return new LoginPasswordToken(null, user.getId());
+    public LoginVerifiableToken createToken(AttributedUserDetails user) throws LoginTokenException {
+        return new LoginPasswordToken(null, user.getUserId());
     }
 
     @NonNull
     @Override
-    public ErrorCode verify(String token, @NonNull User user) {
+    public ErrorCode verify(String token, @NonNull AttributedUserDetails user) {
         if (!passwordEncoder.matches(token, user.getPassword())) {
             return UserErrorCode.ERROR_PASSWORD_NOT_CORRECT;
         }
@@ -57,7 +57,7 @@ public class PasswordLoginStrategy implements LoginStrategy {
     }
 
     @Override
-    public void sendToken(LoginVerifiableToken token, User user, @Nullable RequestInfo requestInfo)
+    public void sendToken(LoginVerifiableToken token, AttributedUserDetails user, @Nullable RequestInfo requestInfo)
             throws LoginTokenException {
         // no need to send token
     }

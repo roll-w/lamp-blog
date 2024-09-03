@@ -22,5 +22,8 @@ package space.lingu.lamp.web.domain.authentication.login;
 public enum LoginStrategyType {
     PASSWORD,
     PHONE_TOKEN,
-    EMAIL_TOKEN;
+    EMAIL_TOKEN,
+    // can be used for QR code login
+    CODE_TOKEN,
+    ;
 }
