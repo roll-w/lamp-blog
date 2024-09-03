@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserSignatureProvider,
         validate(username, password, email);
 
         long time = System.currentTimeMillis();
-        UserDo user = User.builder()
+        User user = User.builder()
                 .setUsername(username)
                 .setPassword(passwordEncoder.encode(password))
                 .setRole(role)
@@ -93,9 +93,8 @@ public class UserServiceImpl implements UserSignatureProvider,
                 .setRegisterTime(time)
                 .setUpdateTime(time)
                 .setEmail(email)
-                .build()
-                .toUserDo();
-        UserDo inserted = userRepository.save(user);
+                .build();
+        UserDo inserted = userRepository.save(UserDo.toDo(user));
         OnUserCreateEvent onUserCreateEvent = new OnUserCreateEvent(inserted);
         eventPublisher.publishEvent(onUserCreateEvent);
         return inserted;

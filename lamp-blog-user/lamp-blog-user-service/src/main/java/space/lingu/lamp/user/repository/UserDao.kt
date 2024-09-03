@@ -50,6 +50,10 @@ interface UserDao : JpaRepository<UserDo, Long>, JpaSpecificationExecutor<UserDo
         return getByUsername(username) != null
     }
 
+    fun hasUsers(): Boolean {
+        return count() > 0
+    }
+
     private object Specs {
         fun searchBy(keyword: String): Specification<UserDo> {
             return Specification { root, query, builder ->

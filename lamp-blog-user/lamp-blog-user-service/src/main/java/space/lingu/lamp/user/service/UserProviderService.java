@@ -92,7 +92,7 @@ public class UserProviderService implements SystemResourceProvider<Long>,
 
     @Override
     public void updateUser(User user) {
-        userRepository.save(user.toUserDo());
+        userRepository.save(UserDo.toDo(user));
     }
 
     @Override
