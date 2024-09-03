@@ -25,7 +25,6 @@ import space.lingu.lamp.web.database.dao.RegisterVerificationTokenDao;
 import space.lingu.lamp.web.database.dao.ReviewJobDao;
 import space.lingu.lamp.web.database.dao.StaffDao;
 import space.lingu.lamp.web.database.dao.SystemSettingDao;
-import space.lingu.lamp.web.database.dao.UserDao;
 import space.lingu.lamp.web.database.dao.UserLikeDao;
 import space.lingu.lamp.web.database.dao.UserPersonalDataDao;
 import space.lingu.lamp.web.domain.article.Article;
@@ -61,8 +60,6 @@ import space.lingu.light.LightDatabase;
 @DataConverters({LampConverter.class})
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "255")
 public abstract class LampDatabase extends LightDatabase {
-    public abstract UserDao getUserDao();
-
     public abstract UserPersonalDataDao getUserPersonalDataDao();
 
     public abstract RegisterVerificationTokenDao getRegisterVerificationTokenDao();
