@@ -18,12 +18,16 @@ plugins {
     `kotlin-dsl`
 }
 
+val kotlinVersion = "2.0.20"
+
 dependencies {
     implementation("io.spring.gradle:dependency-management-plugin:1.1.6")
     implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.3")
-    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:2.0.20")
+    implementation(kotlin("gradle-plugin", kotlinVersion))
     // plugin.spring
-    implementation("org.jetbrains.kotlin:kotlin-allopen:2.0.20")
+    implementation(kotlin("allopen", kotlinVersion))
+    // plugin.jpa
+    implementation(kotlin("noarg", kotlinVersion))
 }
 
 repositories {
