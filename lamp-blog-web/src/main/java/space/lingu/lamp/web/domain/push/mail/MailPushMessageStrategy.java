@@ -19,7 +19,7 @@ package space.lingu.lamp.web.domain.push.mail;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.common.MimeMailMessageBuilder;
+import space.lingu.lamp.mail.util.MimeMailMessageBuilder;
 import space.lingu.lamp.web.domain.push.PushMessageBody;
 import space.lingu.lamp.web.domain.push.PushMessageStrategy;
 import space.lingu.lamp.web.domain.push.PushType;
