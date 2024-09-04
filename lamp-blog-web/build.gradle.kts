@@ -21,6 +21,7 @@ plugins {
 dependencies {
     implementation(project(":lamp-blog-common"))
     implementation(project(":lamp-blog-content:content-service"))
+    implementation(project(":lamp-blog-iam:authentication-service"))
     implementation(project(":lamp-blog-user-service"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(libs.rollw.web.common.spring.boot.starter)
@@ -28,6 +29,7 @@ dependencies {
     implementation("org.apache.commons:commons-lang3")
     implementation(libs.com.google.guava)
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation(libs.spring.shell.starter)
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
