@@ -16,12 +16,12 @@
 
 package space.lingu.lamp.web.database;
 
+import space.lingu.lamp.authentication.register.RegisterVerificationToken;
 import space.lingu.lamp.web.database.dao.ArticleDao;
 import space.lingu.lamp.web.database.dao.CommentDao;
 import space.lingu.lamp.web.database.dao.ContentCollectionMetadataDao;
 import space.lingu.lamp.web.database.dao.ContentMetadataDao;
 import space.lingu.lamp.web.database.dao.MessageResourceDao;
-import space.lingu.lamp.web.database.dao.RegisterVerificationTokenDao;
 import space.lingu.lamp.web.database.dao.ReviewJobDao;
 import space.lingu.lamp.web.database.dao.StaffDao;
 import space.lingu.lamp.web.database.dao.SystemSettingDao;
@@ -34,7 +34,6 @@ import space.lingu.lamp.web.domain.content.collection.ContentCollectionMetadata;
 import space.lingu.lamp.web.domain.like.UserLike;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.staff.Staff;
-import space.lingu.lamp.authentication.register.RegisterVerificationToken;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import space.lingu.lamp.web.system.MessageResource;
@@ -61,8 +60,6 @@ import space.lingu.light.LightDatabase;
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "255")
 public abstract class LampDatabase extends LightDatabase {
     public abstract UserPersonalDataDao getUserPersonalDataDao();
-
-    public abstract RegisterVerificationTokenDao getRegisterVerificationTokenDao();
 
     public abstract SystemSettingDao getSystemSettingDao();
 

@@ -69,7 +69,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(LoginRegisterService.class);
 
     private final UserDao userRepository;
-    private final RegisterVerificationTokenRepository registerVerificationTokenRepository;
+    private final RegisterTokenDao registerTokenRepository;
     private final UserManageService userManageService;
     private final ApplicationEventPublisher eventPublisher;
     private final AuthenticationManager authenticationManager;
@@ -80,14 +80,14 @@ public class LoginRegisterService implements RegisterTokenProvider {
 
     public LoginRegisterService(@NonNull List<LoginStrategy> strategies,
                                 UserDao userRepository,
-                                RegisterVerificationTokenRepository registerVerificationTokenRepository,
+                                RegisterTokenDao registerTokenRepository,
                                 UserManageService userManageService,
                                 ApplicationEventPublisher eventPublisher,
                                 AuthenticationManager authenticationManager,
                                 UserSignatureProvider userSignatureProvider,
                                 ContextThreadAware<ApiContext> apiContextThreadAware) {
         this.userRepository = userRepository;
-        this.registerVerificationTokenRepository = registerVerificationTokenRepository;
+        this.registerTokenRepository = registerTokenRepository;
         this.userManageService = userManageService;
         this.eventPublisher = eventPublisher;
         this.authenticationManager = authenticationManager;
@@ -108,7 +108,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
         LoginVerifiableToken token = strategy.createToken(user);
-        RequestInfo requestInfo = new RequestInfo(LocaleContextHolder.getLocale(), null);
+        LoginStrategy.Options requestInfo = new LoginStrategy.Options(LocaleContextHolder.getLocale());
         strategy.sendToken(token, user, requestInfo);
     }
 
@@ -116,7 +116,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
         LoginStrategy strategy = getLoginStrategy(type);
         AttributedUserDetails user = tryGetUser(identity);
         LoginVerifiableToken token = strategy.createToken(user);
-        RequestInfo requestInfo = new RequestInfo(LocaleContextHolder.getLocale(), null);
+        LoginStrategy.Options requestInfo = new LoginStrategy.Options(LocaleContextHolder.getLocale());
         strategy.sendToken(token, user, requestInfo);
     }
 
@@ -193,27 +193,29 @@ public class LoginRegisterService implements RegisterTokenProvider {
         UUID uuid = UUID.randomUUID();
         String token = uuid.toString();
         long expiryTime = RegisterVerificationToken.calculateExpiryDate();
-        RegisterVerificationToken registerVerificationToken = new RegisterVerificationToken(
+        RegisterTokenDo registerVerificationToken = new RegisterTokenDo(
                 null, token, userIdentity.getUserId(), expiryTime, false
         );
-        registerVerificationTokenRepository.insert(registerVerificationToken);
+        registerTokenRepository.save(registerVerificationToken);
         return uuid.toString();
     }
 
     @Override
     public void verifyRegisterToken(String token) {
-        RegisterVerificationToken verificationToken =
-                registerVerificationTokenRepository.findByToken(token);
-        if (verificationToken == null) {
+        RegisterTokenDo verificationTokenDo =
+                registerTokenRepository.findByToken(token);
+        if (verificationTokenDo == null) {
             throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_NOT_EXIST);
         }
+        // TODO: temporary compatible solution, need to be optimized
+        RegisterVerificationToken verificationToken = verificationTokenDo.lock();
         if (verificationToken.used()) {
             throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_USED);
         }
         if (verificationToken.isExpired()) {
             throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_EXPIRED);
         }
-        registerVerificationTokenRepository.makeTokenVerified(verificationToken);
+        registerTokenRepository.makeTokenVerified(verificationToken.id());
         UserDo user = userRepository
                 .getByUserId(verificationToken.userId());
         if (user == null) {
@@ -225,6 +227,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
         if (user.isEnabled()) {
             throw new AuthenticationException(UserErrorCode.ERROR_USER_ALREADY_ACTIVATED);
         }
+        // TODO: should not modify the original user object, at least should clone it
         user.setEnabled(true);
         user.setUpdateTime(System.currentTimeMillis());
         userRepository.save(user);
