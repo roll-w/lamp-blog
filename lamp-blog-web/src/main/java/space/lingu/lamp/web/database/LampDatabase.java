@@ -34,7 +34,7 @@ import space.lingu.lamp.web.domain.content.collection.ContentCollectionMetadata;
 import space.lingu.lamp.web.domain.like.UserLike;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.staff.Staff;
-import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
+import space.lingu.lamp.authentication.register.RegisterVerificationToken;
 import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import space.lingu.lamp.web.system.MessageResource;

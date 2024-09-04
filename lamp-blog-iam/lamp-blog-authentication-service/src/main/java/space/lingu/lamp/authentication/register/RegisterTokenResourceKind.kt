@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.login;
+package space.lingu.lamp.authentication.register
+
+import tech.rollw.common.web.system.SystemResourceKind
 
 /**
  * @author RollW
  */
-public enum LoginStrategyType {
-    PASSWORD,
-    PHONE_TOKEN,
-    EMAIL_TOKEN,
-    // can be used for QR code login
-    CODE_TOKEN,
-    ;
+object RegisterTokenResourceKind : SystemResourceKind {
+    override fun getName(): String = "REGISTER_TOKEN"
+
+    override fun getAliases(): List<String> = emptyList()
 }

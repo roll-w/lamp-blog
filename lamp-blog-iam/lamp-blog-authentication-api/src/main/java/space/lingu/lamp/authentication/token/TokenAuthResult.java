@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user;
-
-import tech.rollw.common.web.BusinessRuntimeException;
+package space.lingu.lamp.authentication.token;
 
 /**
  * @author RollW
  */
-public interface RegisterTokenProvider {
-    String createRegisterToken(UserIdentity userIdentity);
+public record TokenAuthResult(
+        long userId,
+        String token
+) {
 
-    void verifyRegisterToken(String token) throws BusinessRuntimeException;
+    public static TokenAuthResult success(long userId, String token) {
+        return new TokenAuthResult(userId, token);
+    }
 }

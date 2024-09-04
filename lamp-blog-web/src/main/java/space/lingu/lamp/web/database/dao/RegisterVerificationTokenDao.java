@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.database.dao;
 
-import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
+import space.lingu.lamp.authentication.register.RegisterVerificationToken;
 import space.lingu.light.Dao;
 import space.lingu.light.Delete;
 import space.lingu.light.Query;

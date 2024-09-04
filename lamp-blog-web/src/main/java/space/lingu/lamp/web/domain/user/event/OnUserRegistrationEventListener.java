@@ -24,11 +24,12 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
+import space.lingu.lamp.authentication.event.OnUserRegistrationEvent;
 import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.domain.push.*;
 import space.lingu.lamp.web.domain.push.mail.MailPushUser;
 import space.lingu.lamp.web.domain.user.AttributedUser;
-import space.lingu.lamp.web.domain.user.RegisterTokenProvider;
+import space.lingu.lamp.authentication.register.RegisterTokenProvider;
 
 /**
  * @author RollW

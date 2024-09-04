@@ -14,13 +14,10 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.dto;
+package space.lingu.lamp.authentication;
 
-import org.springframework.security.core.userdetails.UserDetails;
 import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.User;
 import space.lingu.lamp.web.domain.user.UserIdentity;
-import space.lingu.lamp.web.domain.user.UserInfo;
 
 /**
  * @author RollW
@@ -32,38 +29,16 @@ public record UserInfoSignature(
         String email,
         Role role
 ) implements UserIdentity {
-    public static UserInfoSignature from(User user, String signature) {
+    public static UserInfoSignature from(UserIdentity user, String signature) {
         if (user == null) {
             return null;
         }
         return new UserInfoSignature(
-                user.getId(),
+                user.getUserId(),
                 user.getUsername(),
                 signature,
                 user.getEmail(),
                 user.getRole()
-        );
-    }
-
-    public static UserInfoSignature from(UserDetails userDetails, String signature) {
-        if (!(userDetails instanceof User user)) {
-            return null;
-        }
-        return new UserInfoSignature(
-                user.getId(),
-                user.getUsername(),
-                signature,
-                user.getEmail(),
-                user.getRole()
-        );
-    }
-
-    public UserInfo toUserInfo() {
-        return new UserInfo(
-                id,
-                username,
-                email,
-                role
         );
     }
 

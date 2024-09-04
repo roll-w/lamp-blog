@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.token;
+package space.lingu.lamp.authentication.token;
 
 import com.google.common.base.Strings;
 import io.jsonwebtoken.Claims;
@@ -28,8 +28,6 @@ import io.jsonwebtoken.security.SecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.common.keys.SecurityConfigKeys;
-import space.lingu.lamp.web.system.setting.SettingLoader;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.system.AuthenticationException;
 
@@ -46,16 +44,14 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthTokenService.class);
 
-    private final SettingLoader settingLoader;
-
-    public JwtAuthTokenService(SettingLoader settingLoader) {
-        this.settingLoader = settingLoader;
+    public JwtAuthTokenService() {
     }
 
     @Override
     public String generateAuthToken(long userId, String signature) {
-        String timeValue = settingLoader.getSettingValue(
-                SecurityConfigKeys.KEY_TOKEN_EXPIRE_TIME, null);
+        // TODO: after moved setting module, uncomment the following code
+        String timeValue = /*settingLoader.getSettingValue(
+                SecurityConfigKeys.KEY_TOKEN_EXPIRE_TIME, null);*/ "";
         if (Strings.isNullOrEmpty(timeValue)) {
             return generateAuthToken(userId, signature, DAYS_7);
         }
@@ -65,7 +61,7 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
         } catch (NumberFormatException e) {
             logger.error("Invalid token expire time setting: {} and fall back to default," +
                             " please check the setting value of {}.",
-                    timeValue, SecurityConfigKeys.KEY_TOKEN_EXPIRE_TIME);
+                    timeValue, "SecurityConfigKeys.KEY_TOKEN_EXPIRE_TIME");
             return generateAuthToken(userId, signature, DAYS_7);
         }
     }
@@ -77,10 +73,7 @@ public class JwtAuthTokenService implements AuthenticationTokenService {
         String rawToken = Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .setExpiration(getExpirationDateFromNow(expireTimeInSecond))
-                .setIssuer(settingLoader.getSettingValue(
-                        SecurityConfigKeys.KEY_TOKEN_ISSUER,
-                        "Lingu Lamp Blog.")
-                )
+                .setIssuer("Lingu Lamp Blog.")
                 .signWith(key)
                 .compact();
         return TOKEN_HEAD + rawToken;

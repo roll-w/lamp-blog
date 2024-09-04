@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.login;
+package space.lingu.lamp.authentication.login;
 
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.domain.AttributedUserDetails;
 import tech.rollw.common.web.ErrorCode;
 
 import java.io.IOException;
+import java.util.Locale;
 
 /**
  * @author RollW
@@ -40,8 +40,21 @@ public interface LoginStrategy {
      * @throws LoginTokenException if login token invalid.
      * @throws IOException         if send failed.
      */
-    void sendToken(LoginVerifiableToken token, AttributedUserDetails user, @Nullable RequestInfo requestInfo)
+    void sendToken(LoginVerifiableToken token, AttributedUserDetails user, @Nullable Options requestInfo)
             throws LoginTokenException, IOException;
 
     LoginStrategyType getStrategyType();
+
+    class Options {
+        private final Locale locale;
+
+        public Options(Locale locale) {
+            this.locale = locale;
+        }
+
+        public Locale getLocale() {
+            return locale;
+        }
+    }
+
 }

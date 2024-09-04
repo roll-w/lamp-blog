@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.login;
+package space.lingu.lamp.authentication.login;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.common.RequestInfo;
 import space.lingu.lamp.web.domain.AttributedUserDetails;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
@@ -57,7 +56,7 @@ public class PasswordLoginStrategy implements LoginStrategy {
     }
 
     @Override
-    public void sendToken(LoginVerifiableToken token, AttributedUserDetails user, @Nullable RequestInfo requestInfo)
+    public void sendToken(LoginVerifiableToken token, AttributedUserDetails user, @Nullable Options requestInfo)
             throws LoginTokenException {
         // no need to send token
     }

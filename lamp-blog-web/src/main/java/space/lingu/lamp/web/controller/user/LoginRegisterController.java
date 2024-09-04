@@ -28,10 +28,10 @@ import space.lingu.lamp.web.controller.user.vo.LoginResponse;
 import space.lingu.lamp.web.controller.user.vo.LoginTokenSendRequest;
 import space.lingu.lamp.web.controller.user.vo.UserLoginRequest;
 import space.lingu.lamp.web.controller.user.vo.UserRegisterRequest;
-import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
-import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.authentication.login.LoginStrategyType;
+import space.lingu.lamp.authentication.token.AuthenticationTokenService;
 import space.lingu.lamp.web.domain.user.AttributedUser;
-import space.lingu.lamp.web.domain.user.dto.UserInfoSignature;
+import space.lingu.lamp.authentication.UserInfoSignature;
 import space.lingu.lamp.web.domain.user.service.LoginRegisterService;
 import tech.rollw.common.web.HttpResponseEntity;
 

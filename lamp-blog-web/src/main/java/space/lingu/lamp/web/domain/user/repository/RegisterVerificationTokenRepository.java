@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.RegisterVerificationTokenDao;
 import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
-import space.lingu.lamp.web.domain.user.RegisterVerificationToken;
+import space.lingu.lamp.authentication.register.RegisterVerificationToken;
 import space.lingu.lamp.web.domain.user.UserIdentity;
 import tech.rollw.common.web.system.ContextThreadAware;
 import tech.rollw.common.web.system.paged.PageableContext;

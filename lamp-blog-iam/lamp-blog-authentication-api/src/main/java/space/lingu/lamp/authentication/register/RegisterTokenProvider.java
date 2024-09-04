@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication;
+package space.lingu.lamp.authentication.register;
 
-import space.lingu.NonNull;
+import space.lingu.lamp.web.domain.user.UserIdentity;
+import tech.rollw.common.web.BusinessRuntimeException;
 
 /**
  * @author RollW
  */
-public interface VerifiableToken {
-    @NonNull
-    String token();
+public interface RegisterTokenProvider {
+    String createRegisterToken(UserIdentity userIdentity);
+
+    void verifyRegisterToken(String token) throws BusinessRuntimeException;
 }

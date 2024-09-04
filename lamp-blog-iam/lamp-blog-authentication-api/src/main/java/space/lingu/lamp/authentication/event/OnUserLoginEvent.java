@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.event;
+package space.lingu.lamp.authentication.event;
 
 import org.springframework.context.ApplicationEvent;
 import space.lingu.NonNull;

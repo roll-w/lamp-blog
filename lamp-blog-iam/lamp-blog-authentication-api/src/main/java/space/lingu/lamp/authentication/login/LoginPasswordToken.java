@@ -14,12 +14,10 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.login;
+package space.lingu.lamp.authentication.login;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.domain.authentication.login.LoginStrategyType;
-import space.lingu.lamp.web.domain.authentication.login.LoginVerifiableToken;
 
 /**
  * @author RollW

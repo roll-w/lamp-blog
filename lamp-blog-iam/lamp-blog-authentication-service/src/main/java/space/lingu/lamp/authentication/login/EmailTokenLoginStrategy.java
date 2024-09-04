@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.login;
+package space.lingu.lamp.authentication.login;
 
 import com.google.common.io.ByteStreams;
 import jakarta.mail.internet.MimeMessage;
@@ -32,9 +32,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.common.CacheNames;
-import space.lingu.lamp.web.common.MimeMailMessageBuilder;
-import space.lingu.lamp.web.common.RequestInfo;
+import space.lingu.lamp.mail.util.MimeMailMessageBuilder;
 import space.lingu.lamp.web.domain.AttributedUserDetails;
 import space.lingu.lamp.web.domain.user.AttributedUser;
 import tech.rollw.common.web.AuthErrorCode;
@@ -55,6 +53,8 @@ import java.util.Locale;
 public class EmailTokenLoginStrategy implements LoginStrategy {
     private static final Logger logger = LoggerFactory.getLogger(EmailTokenLoginStrategy.class);
 
+    private static final String CACHE = "login-email-token";
+
     private final Cache cache;
     private final MessageSource messageSource;
     private final MailProperties mailProperties;
@@ -64,7 +64,7 @@ public class EmailTokenLoginStrategy implements LoginStrategy {
                                    MessageSource messageSource,
                                    MailProperties mailProperties,
                                    JavaMailSender mailSender) {
-        this.cache = cacheManager.getCache(CacheNames.EMAIL_TOKEN);
+        this.cache = cacheManager.getCache(CACHE);
         this.messageSource = messageSource;
         this.mailProperties = mailProperties;
         this.mailSender = mailSender;
@@ -108,7 +108,7 @@ public class EmailTokenLoginStrategy implements LoginStrategy {
 
     @Override
     public void sendToken(LoginVerifiableToken token, AttributedUserDetails user,
-                          @Nullable RequestInfo requestInfo) throws LoginTokenException, IOException {
+                          @Nullable Options requestInfo) throws LoginTokenException, IOException {
         if (!(token instanceof LoginConfirmToken confirmToken)) {
             throw new LoginTokenException(AuthErrorCode.ERROR_INVALID_TOKEN);
         }
@@ -117,7 +117,7 @@ public class EmailTokenLoginStrategy implements LoginStrategy {
         MimeMailMessageBuilder builder = new MimeMailMessageBuilder(helper);
         try {
             String text = getMailText(confirmToken.token(), user,
-                    requestInfo != null ? requestInfo.locale() : null);
+                    requestInfo != null ? requestInfo.getLocale() : null);
             builder.setText(text, true);
         } catch (FileNotFoundException e) {
             logger.error("Mail template not found", e);

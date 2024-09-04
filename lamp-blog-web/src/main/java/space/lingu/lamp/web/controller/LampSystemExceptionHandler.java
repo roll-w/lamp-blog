@@ -39,7 +39,7 @@ import org.springframework.web.method.annotation.MethodArgumentTypeMismatchExcep
 import org.springframework.web.servlet.NoHandlerFoundException;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.common.ParameterMissingException;
-import space.lingu.lamp.web.domain.authentication.login.LoginTokenException;
+import space.lingu.lamp.authentication.login.LoginTokenException;
 import space.lingu.lamp.web.system.ErrorRecord;
 import space.lingu.lamp.web.system.ErrorRecordVo;
 import space.lingu.light.LightRuntimeException;

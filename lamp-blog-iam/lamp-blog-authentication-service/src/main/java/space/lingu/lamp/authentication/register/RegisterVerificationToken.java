@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user;
+package space.lingu.lamp.authentication.register;
 
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
-import space.lingu.lamp.web.domain.authentication.VerifiableToken;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
+import space.lingu.lamp.authentication.VerifiableToken;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.Index;
@@ -97,7 +96,7 @@ public record RegisterVerificationToken(
 
     @Override
     public SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.REGISTER_CODE;
+        return RegisterTokenResourceKind.INSTANCE;
     }
 
     public static Builder builder() {

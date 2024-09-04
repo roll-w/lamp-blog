@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.token;
+package space.lingu.lamp.authentication.token;
 
 import tech.rollw.common.web.system.AuthenticationException;
 

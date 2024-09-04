@@ -14,17 +14,21 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.token;
+package space.lingu.lamp.authentication.login;
 
 /**
  * @author RollW
  */
-public record TokenAuthResult(
+public record LoginConfirmToken(
+        String token,
         long userId,
-        String token
-) {
+        Long expireTime,
+        LoginStrategyType strategyType
+) implements LoginVerifiableToken {
 
-    public static TokenAuthResult success(long userId, String token) {
-        return new TokenAuthResult(userId, token);
+    public static LoginConfirmToken emailToken(String token, long userId, long expireTime) {
+        return new LoginConfirmToken(token, userId,
+                expireTime, LoginStrategyType.EMAIL_TOKEN);
     }
+
 }

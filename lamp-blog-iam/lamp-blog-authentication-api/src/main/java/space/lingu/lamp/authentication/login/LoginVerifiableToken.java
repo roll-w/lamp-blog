@@ -14,21 +14,24 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.login;
+package space.lingu.lamp.authentication.login;
+
+import space.lingu.NonNull;
+import space.lingu.Nullable;
+import space.lingu.lamp.authentication.VerifiableToken;
 
 /**
  * @author RollW
  */
-public record LoginConfirmToken(
-        String token,
-        long userId,
-        Long expireTime,
-        LoginStrategyType strategyType
-) implements LoginVerifiableToken {
+public interface LoginVerifiableToken extends VerifiableToken {
+    @NonNull
+    @Override
+    String token();
 
-    public static LoginConfirmToken emailToken(String token, long userId, long expireTime) {
-        return new LoginConfirmToken(token, userId,
-                expireTime, LoginStrategyType.EMAIL_TOKEN);
-    }
+    long userId();
 
+    @Nullable
+    Long expireTime();
+
+    LoginStrategyType strategyType();
 }

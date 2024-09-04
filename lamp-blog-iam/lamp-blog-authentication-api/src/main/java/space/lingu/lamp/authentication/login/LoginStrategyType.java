@@ -14,24 +14,16 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.authentication.login;
-
-import space.lingu.NonNull;
-import space.lingu.Nullable;
-import space.lingu.lamp.web.domain.authentication.VerifiableToken;
+package space.lingu.lamp.authentication.login;
 
 /**
  * @author RollW
  */
-public interface LoginVerifiableToken extends VerifiableToken {
-    @NonNull
-    @Override
-    String token();
-
-    long userId();
-
-    @Nullable
-    Long expireTime();
-
-    LoginStrategyType strategyType();
+public enum LoginStrategyType {
+    PASSWORD,
+    PHONE_TOKEN,
+    EMAIL_TOKEN,
+    // can be used for QR code login
+    CODE_TOKEN,
+    ;
 }
