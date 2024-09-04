@@ -16,15 +16,12 @@
 
 plugins {
     id("buildlogic.java-conventions")
+    id("buildlogic.jpa-conventions")
 }
-
-val hibernateVersion = dependencyManagement.importedProperties["hibernate.version"]
 
 dependencies {
     api(project(":lamp-blog-user-api"))
-    api("org.springframework.boot:spring-boot-starter-data-jpa")
     api(libs.lingu.light.core)
-    annotationProcessor("org.hibernate:hibernate-jpamodelgen:$hibernateVersion")
 }
 
 description = "lamp-blog-user-service"
