@@ -19,9 +19,8 @@ plugins {
 }
 
 dependencies {
-    api(project(":lamp-blog-common"))
-    api("org.springframework.boot:spring-boot-starter-mail")
-    api("org.freemarker:freemarker")
+    api(project(":lamp-blog-iam:authentication-api"))
+    api(project(":lamp-blog-email"))
 }
 
-description = "lamp-blog-email"
+description = "lamp-blog-authentication-service"
