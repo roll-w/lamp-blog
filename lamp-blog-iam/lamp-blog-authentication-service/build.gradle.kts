@@ -16,11 +16,17 @@
 
 plugins {
     id("buildlogic.java-conventions")
+    id("buildlogic.jpa-conventions")
+    kotlin("plugin.jpa")
 }
 
 dependencies {
     api(project(":lamp-blog-iam:authentication-api"))
+    api(libs.lingu.light.core)
     api(project(":lamp-blog-email"))
+    implementation(libs.io.jsonwebtoken.jjwt.api)
+    implementation(libs.io.jsonwebtoken.jjwt.impl)
+    implementation(libs.io.jsonwebtoken.jjwt.jackson)
 }
 
 description = "lamp-blog-authentication-service"
