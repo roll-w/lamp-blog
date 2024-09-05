@@ -16,24 +16,33 @@
 
 package space.lingu.lamp;
 
+import space.lingu.NonNull;
+import space.lingu.Nullable;
+import tech.rollw.common.web.system.SystemResource;
+
+import java.io.Serializable;
+import java.util.Objects;
+
 /**
  * Indicates a database entity.
  *
  * @author RollW
  */
-@Deprecated
-public interface DataItem<T extends DataItem<T, ID>, ID> extends
-        DataEntity<ID> {
+public interface DataEntity<ID> extends Serializable,
+        SystemResource<ID>, TimeAttributed {
     /**
      * Get the id of the entity.
      *
      * @return the id of the entity.
      */
+    @Nullable
     ID getId();
 
     @Override
+    @NonNull
+    // Resource id must not be null, but use getId() provides a nullable value.
     default ID getResourceId() {
-        return getId();
+        return Objects.requireNonNull(getId(), "The id of the entity must not be null.");
     }
 
     @Override
@@ -41,6 +50,4 @@ public interface DataItem<T extends DataItem<T, ID>, ID> extends
 
     @Override
     long getUpdateTime();
-
-    EntityBuilder<T, ID> toBuilder();
 }

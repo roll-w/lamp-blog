@@ -25,6 +25,7 @@ import java.io.Serializable;
  *
  * @author RollW
  */
+@Deprecated
 public interface LongDataItem<T extends LongDataItem<T>> extends DataItem<T, Long>,
         Serializable, SystemResource<Long> {
     /**
