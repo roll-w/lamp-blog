@@ -20,7 +20,8 @@ import org.springframework.context.ApplicationEvent;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
+import space.lingu.lamp.web.domain.user.UserInfo;
+
 
 /**
  * @author RollW

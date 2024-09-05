@@ -42,7 +42,7 @@ import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.configuration.compenent.WebDelegateSecurityHandler;
 import space.lingu.lamp.web.configuration.filter.CorsConfigFilter;
 import space.lingu.lamp.web.configuration.filter.TokenAuthenticationFilter;
-import space.lingu.lamp.web.domain.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.authentication.token.AuthenticationTokenService;
 import space.lingu.lamp.web.domain.user.UserDetailsService;
 import space.lingu.lamp.web.domain.user.UserSignatureProvider;
 import tech.rollw.common.web.system.ContextThreadAware;

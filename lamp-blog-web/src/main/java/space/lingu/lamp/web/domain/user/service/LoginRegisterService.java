@@ -41,7 +41,7 @@ import space.lingu.lamp.authentication.register.repository.RegisterTokenDo;
 import space.lingu.lamp.user.repository.UserDao;
 import space.lingu.lamp.user.repository.UserDo;
 import space.lingu.lamp.web.common.ApiContext;
-import space.lingu.lamp.web.domain.AttributedUserDetails;
+import space.lingu.lamp.web.domain.user.AttributedUserDetails;
 import space.lingu.lamp.web.domain.user.AttributedUser;
 import space.lingu.lamp.web.domain.user.Role;
 import space.lingu.lamp.web.domain.user.UserIdentity;
