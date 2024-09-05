@@ -23,10 +23,10 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
+import space.lingu.lamp.DataEntity
 import space.lingu.lamp.authentication.VerifiableToken
 import space.lingu.lamp.authentication.register.RegisterTokenResourceKind
 import space.lingu.lamp.authentication.register.RegisterVerificationToken
-import tech.rollw.common.web.system.SystemResource
 import tech.rollw.common.web.system.SystemResourceKind
 
 /**
@@ -43,27 +43,35 @@ class RegisterTokenDo(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    val id: Long?,
+    private var id: Long? = null,
 
     @Column(name = "token")
-    val token: String,
+    var token: String = "",
 
     @Column(name = "user_id")
-    val userId: Long,
+    var userId: Long = 0,
 
     @Column(name = "expiry_time")
-    val expiryTime: Long,
+    var expiryTime: Long = 0,
 
     @Column(name = "used")
-    val used: Boolean
-) : VerifiableToken, SystemResource<Long> {
+    var used: Boolean = false
+) : VerifiableToken, DataEntity<Long> {
     override fun token(): String {
         return token
     }
 
-    override fun getResourceId(): Long {
-        return id!!
+    fun setId(id: Long?) {
+        this.id = id
     }
+
+    override fun getId(): Long? {
+        return id
+    }
+
+    override fun getCreateTime(): Long = 0
+
+    override fun getUpdateTime(): Long = 0
 
     override fun getSystemResourceKind(): SystemResourceKind =
         RegisterTokenResourceKind

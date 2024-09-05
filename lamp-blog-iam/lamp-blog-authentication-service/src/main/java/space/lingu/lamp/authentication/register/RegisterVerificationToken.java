@@ -16,7 +16,8 @@
 
 package space.lingu.lamp.authentication.register;
 
-import space.lingu.lamp.LongDataItem;
+import space.lingu.NonNull;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.authentication.VerifiableToken;
 import space.lingu.light.DataColumn;
@@ -52,7 +53,7 @@ public record RegisterVerificationToken(
         long expiryTime,// timestamp
 
         @DataColumn(name = "used")
-        boolean used) implements VerifiableToken, LongDataItem<RegisterVerificationToken> {
+        boolean used) implements VerifiableToken, DataEntity<Long> {
 
     public boolean isExpired() {
         return System.currentTimeMillis() > expiryTime;
@@ -89,11 +90,11 @@ public record RegisterVerificationToken(
         return 0;
     }
 
-    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
 
+    @NonNull
     @Override
     public SystemResourceKind getSystemResourceKind() {
         return RegisterTokenResourceKind.INSTANCE;
