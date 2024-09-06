@@ -31,7 +31,6 @@ public class LampBlogSystemApplication {
 
     public static void main(String[] args) {
         Map<String, Object> overrideProperties = new HashMap<>();
-        overrideProperties.put("spring.mvc.throw-exception-if-no-handler-found", true);
         overrideProperties.put("spring.application.name", "Lamp Blog");
         overrideProperties.put("spring.web.resources.add-mappings", false);
         overrideProperties.put("spring.jackson.mapper.ACCEPT_CASE_INSENSITIVE_ENUMS", true);
