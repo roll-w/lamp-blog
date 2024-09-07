@@ -5,6 +5,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+.kotln/
 data/
 !logs
 logs/
