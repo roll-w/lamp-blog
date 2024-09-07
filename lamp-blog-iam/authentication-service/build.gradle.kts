@@ -20,8 +20,12 @@ plugins {
 }
 
 dependencies {
-    api(project(":lamp-blog-user-api"))
+    api(project(":lamp-blog-iam:authentication-api"))
     api(libs.lingu.light.core)
+    api(project(":lamp-blog-email"))
+    implementation(libs.io.jsonwebtoken.jjwt.api)
+    implementation(libs.io.jsonwebtoken.jjwt.impl)
+    implementation(libs.io.jsonwebtoken.jjwt.jackson)
 }
 
-description = "lamp-blog-user-service"
+description = "lamp-blog-authentication-service"

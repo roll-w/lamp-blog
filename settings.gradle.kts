@@ -16,9 +16,9 @@
 
 dependencyResolutionManagement {
     repositories {
-        mavenLocal()
         mavenCentral()
         gradlePluginPortal()
+        mavenLocal()
     }
 }
 
@@ -32,8 +32,8 @@ include(":lamp-blog-email")
 include(":lamp-blog-file")
 include(":lamp-blog-file-awss3")
 include(":lamp-blog-user")
-include(":lamp-blog-user-api")
-include(":lamp-blog-user-service")
+include(":lamp-blog-user:user-api")
+include(":lamp-blog-user:user-service")
 include(":lamp-blog-iam")
 include(":lamp-blog-iam:authentication-api")
 include(":lamp-blog-iam:authentication-service")
@@ -43,12 +43,12 @@ include(":lamp-blog-content")
 include(":lamp-blog-content:content-api")
 include(":lamp-blog-content:content-service")
 
-project(":lamp-blog-content:content-api").projectDir = file("lamp-blog-content/lamp-blog-content-api")
-project(":lamp-blog-content:content-service").projectDir = file("lamp-blog-content/lamp-blog-content-service")
-project(":lamp-blog-user-api").projectDir = file("lamp-blog-user/lamp-blog-user-api")
-project(":lamp-blog-user-service").projectDir = file("lamp-blog-user/lamp-blog-user-service")
+project(":lamp-blog-content:content-api").projectDir = file("lamp-blog-content/content-api")
+project(":lamp-blog-content:content-service").projectDir = file("lamp-blog-content/content-service")
+project(":lamp-blog-user:user-api").projectDir = file("lamp-blog-user/user-api")
+project(":lamp-blog-user:user-service").projectDir = file("lamp-blog-user/user-service")
 project(":lamp-blog-file-api").projectDir = file("lamp-blog-file/lamp-blog-file-api")
 project(":lamp-blog-file-awss3").projectDir = file("lamp-blog-file/lamp-blog-file-awss3")
-project(":lamp-blog-iam:authentication-api").projectDir = file("lamp-blog-iam/lamp-blog-authentication-api")
-project(":lamp-blog-iam:authentication-service").projectDir = file("lamp-blog-iam/lamp-blog-authentication-service")
+project(":lamp-blog-iam:authentication-api").projectDir = file("lamp-blog-iam/authentication-api")
+project(":lamp-blog-iam:authentication-service").projectDir = file("lamp-blog-iam/authentication-service")
 
