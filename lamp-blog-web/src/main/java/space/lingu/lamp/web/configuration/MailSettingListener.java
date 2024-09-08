@@ -19,9 +19,9 @@ package space.lingu.lamp.web.configuration;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
+import space.lingu.lamp.setting.ConfigReader;
+import space.lingu.lamp.setting.SystemSetting;
 import space.lingu.lamp.web.common.keys.MailConfigKeys;
-import space.lingu.lamp.web.system.setting.SettingLoader;
-import space.lingu.lamp.web.system.setting.SystemSetting;
 import tech.rollw.common.event.EventCallback;
 import tech.rollw.common.event.EventRegistry;
 
@@ -35,21 +35,21 @@ import static space.lingu.lamp.web.configuration.MailConfiguration.setProperties
 public class MailSettingListener implements EventCallback<SystemSetting> {
     private final MailProperties properties;
     private final JavaMailSenderImpl sender;
-    private final SettingLoader settingLoader;
+    private final ConfigReader configReader;
 
     public MailSettingListener(MailProperties properties,
                                JavaMailSenderImpl sender,
-                               SettingLoader settingLoader,
+                               ConfigReader configReader,
                                EventRegistry<SystemSetting, String> registry) {
         this.properties = properties;
         this.sender = sender;
-        this.settingLoader = settingLoader;
+        this.configReader = configReader;
         registry.register(this, MailConfigKeys.PREFIX);
     }
 
     @Override
     public void onEvent(SystemSetting event) {
-        setProperties(properties, settingLoader);
+        setProperties(properties, configReader);
         applyProperties(properties, sender);
     }
 }
