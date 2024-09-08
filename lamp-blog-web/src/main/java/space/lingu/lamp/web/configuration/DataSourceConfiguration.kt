@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.configuration
 
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties
 import org.springframework.context.annotation.Bean
@@ -23,6 +24,8 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Primary
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.transaction.annotation.EnableTransactionManagement
+import space.lingu.lamp.setting.ConfigProvider
+import space.lingu.lamp.web.common.keys.DatabaseConfigKeys
 
 /**
  * @author RollW
@@ -31,14 +34,16 @@ import org.springframework.transaction.annotation.EnableTransactionManagement
 @EnableJpaRepositories(value = ["space.lingu.lamp"])
 @EntityScan(value = ["space.lingu.lamp"])
 @EnableTransactionManagement
-class DataSourceConfiguration {
-    // TODO: configurable through lamp.conf
+class DataSourceConfiguration(
+    @Qualifier("localConfigProvider")
+    private val configProvider: ConfigProvider
+) {
     @Bean
     @Primary
     fun dataSourceProperties(): DataSourceProperties = DataSourceProperties().also {
-        it.url = "jdbc:mysql://localhost:3306/lamp_blog_database"
-        it.username = "root"
-        it.password = "123456"
+        it.url = configProvider[DatabaseConfigKeys.DATABASE_URL]
+        it.username = configProvider[DatabaseConfigKeys.DATABASE_USERNAME]
+        it.password = configProvider[DatabaseConfigKeys.DATABASE_PASSWORD]
         it.driverClassName = "com.mysql.cj.jdbc.Driver"
     }
 }

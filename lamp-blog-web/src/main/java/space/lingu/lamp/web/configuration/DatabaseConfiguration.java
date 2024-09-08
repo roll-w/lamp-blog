@@ -16,9 +16,11 @@
 
 package space.lingu.lamp.web.configuration;
 
+import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import space.lingu.lamp.web.database.LampDatabase;
+import space.lingu.light.DatasourceConfig;
 import space.lingu.light.Light;
 import space.lingu.light.connect.HikariConnectionPool;
 import space.lingu.light.log.LightSlf4jLogger;
@@ -31,10 +33,16 @@ import space.lingu.light.sql.MySQLDialectProvider;
 public class DatabaseConfiguration {
 
     @Bean
-    public LampDatabase lampDatabase() {
+    public LampDatabase lampDatabase(DataSourceProperties dataSourceProperties) {
         return Light.databaseBuilder(LampDatabase.class, MySQLDialectProvider.class)
                 .setLogger(LightSlf4jLogger.createLogger(LampDatabase.class))
                 .setConnectionPool(HikariConnectionPool.class)
+                .datasource(new DatasourceConfig(
+                        dataSourceProperties.getUrl(),
+                        dataSourceProperties.getDriverClassName(),
+                        dataSourceProperties.getUsername(),
+                        dataSourceProperties.getPassword()
+                ))
                 .build();
     }
 
