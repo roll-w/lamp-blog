@@ -19,18 +19,18 @@ package space.lingu.lamp.setting
 /**
  * @author RollW
  */
-data class SimpleSettingSpec<T, V>(
+data class SimpleSettingSpec<T, V> @JvmOverloads constructor (
     override val key: SettingKey<T, V>,
     private val allowAnyValue: Boolean = false,
     override val defaults: List<Int> = emptyList(),
-    override val valueEntries: List<V> = emptyList()
+    override val valueEntries: List<V?> = emptyList()
 ) : SettingSpecification<T, V> {
     val type = key.type
 
     constructor(
         key: SettingKey<T, V>,
         default: Int,
-        vararg valueEntries: V
+        vararg valueEntries: V?
     ) : this(
         key,
         defaults = listOf(default),
@@ -39,7 +39,7 @@ data class SimpleSettingSpec<T, V>(
 
     constructor(
         key: SettingKey<T, V>,
-        default: V
+        default: V?
     ) : this(
         key,
         allowAnyValue = true,
@@ -101,18 +101,22 @@ data class SimpleSettingSpec<T, V>(
     override fun allowAnyValue() = valueEntries.isEmpty() || allowAnyValue
 
     companion object {
-        fun stringSet(
+        @JvmOverloads
+        @JvmStatic
+        fun ofStringSet(
             key: String,
             default: List<Int> = emptyList(),
             vararg valueEntries: String
         ) = SimpleSettingSpec(
-            SettingKey(key, SettingType.STRING_SET),
+            SettingKey.ofStringSet(key),
             defaults = default,
             valueEntries = valueEntries.toList()
         )
 
-        fun boolean(key: String, default: Boolean = false) = SimpleSettingSpec(
-            SettingKey(key, SettingType.BOOLEAN),
+        @JvmStatic
+        @JvmOverloads
+        fun ofBoolean(key: String, default: Boolean = false) = SimpleSettingSpec(
+            SettingKey.ofBoolean(key),
             default = if (default) 0 else 1,
             valueEntries = arrayOf(true, false)
         )

@@ -33,8 +33,12 @@ interface SettingSpecification<T, V> {
 
     /**
      * Leave it empty if the setting has no predefined values.
+     *
+     * The order of the values should be the same as the order of the default values.
+     *
+     * The values in the entries should be unique and could be null.
      */
-    val valueEntries: List<V>
+    val valueEntries: List<V?>
 
     val defaultValue: T?
 

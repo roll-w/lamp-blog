@@ -26,4 +26,45 @@ data class SettingKey<T, V>(
     val name: String,
     val type: SettingType<T, V>
 ) {
+    companion object {
+        @JvmStatic
+        fun <T, V> of(name: String, type: SettingType<T, V>): SettingKey<T, V> {
+            return SettingKey(name, type)
+        }
+
+        @JvmStatic
+        fun ofString(name: String): SettingKey<String, String> {
+            return of(name, SettingType.STRING)
+        }
+
+        @JvmStatic
+        fun ofStringSet(name: String): SettingKey<Set<String>, String> {
+            return of(name, SettingType.STRING_SET)
+        }
+
+        @JvmStatic
+        fun ofInt(name: String): SettingKey<Int, Int> {
+            return of(name, SettingType.INT)
+        }
+
+        @JvmStatic
+        fun ofLong(name: String): SettingKey<Long, Long> {
+            return of(name, SettingType.LONG)
+        }
+
+        @JvmStatic
+        fun ofFloat(name: String): SettingKey<Float, Float> {
+            return of(name, SettingType.FLOAT)
+        }
+
+        @JvmStatic
+        fun ofDouble(name: String): SettingKey<Double, Double> {
+            return of(name, SettingType.DOUBLE)
+        }
+
+        @JvmStatic
+        fun ofBoolean(name: String): SettingKey<Boolean, Boolean> {
+            return of(name, SettingType.BOOLEAN)
+        }
+    }
 }

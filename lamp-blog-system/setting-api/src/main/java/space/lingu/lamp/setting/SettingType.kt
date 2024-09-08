@@ -25,12 +25,19 @@ package space.lingu.lamp.setting
  */
 class SettingType<T, V> private constructor() {
     companion object {
+        @JvmField
         val STRING = SettingType<String, String>()
+        @JvmField
         val INT = SettingType<Int, Int>()
+        @JvmField
         val LONG = SettingType<Long, Long>()
+        @JvmField
         val FLOAT = SettingType<Float, Float>()
+        @JvmField
         val DOUBLE = SettingType<Double, Double>()
+        @JvmField
         val BOOLEAN = SettingType<Boolean, Boolean>()
+        @JvmField
         val STRING_SET = SettingType<Set<String>, String>()
 
         fun of(value: Any): SettingType<*, *> = when (value) {
@@ -42,6 +49,19 @@ class SettingType<T, V> private constructor() {
             is Boolean -> BOOLEAN
             is Set<*> -> STRING_SET
             else -> throw IllegalArgumentException("Unsupported type: ${value::class.java}")
+        }
+    }
+
+    override fun toString(): String {
+        return when (this) {
+            STRING -> "STRING"
+            INT -> "INT"
+            LONG -> "LONG"
+            FLOAT -> "FLOAT"
+            DOUBLE -> "DOUBLE"
+            BOOLEAN -> "BOOLEAN"
+            STRING_SET -> "STRING_SET"
+            else -> throw IllegalArgumentException("Unsupported type: $this")
         }
     }
 }

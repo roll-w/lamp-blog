@@ -55,4 +55,19 @@ object SettingSpecificationHelper {
             else -> throw IllegalArgumentException("Unsupported type: $this")
         }
     }
+
+    fun <T, V> SettingSpecification<T, V>.validate(value: String) {
+        try {
+            when (key.type) {
+                SettingType.INT -> value.toInt()
+                SettingType.LONG -> value.toLong()
+                SettingType.FLOAT -> value.toFloat()
+                SettingType.DOUBLE -> value.toDouble()
+                SettingType.BOOLEAN -> value.toBoolean()
+                SettingType.STRING, SettingType.STRING_SET -> {}
+            }
+        } catch (e: Exception) {
+            throw IllegalArgumentException("Invalid value: $value for '$key', expected type: ${key.type}.")
+        }
+    }
 }
