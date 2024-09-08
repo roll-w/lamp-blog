@@ -20,6 +20,7 @@ plugins {
 
 dependencies {
     implementation(project(":lamp-blog-common"))
+    implementation(project(":lamp-blog-system:setting-service"))
     implementation(project(":lamp-blog-content:content-service"))
     implementation(project(":lamp-blog-iam:authentication-service"))
     implementation(project(":lamp-blog-user:user-service"))
