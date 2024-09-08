@@ -20,7 +20,7 @@ import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 import space.lingu.lamp.setting.ConfigReader;
-import space.lingu.lamp.setting.SystemSetting;
+import space.lingu.lamp.setting.RawSettingValue;
 import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import tech.rollw.common.event.EventCallback;
 import tech.rollw.common.event.EventRegistry;
@@ -32,7 +32,7 @@ import static space.lingu.lamp.web.configuration.MailConfiguration.setProperties
  * @author RollW
  */
 @Component
-public class MailSettingListener implements EventCallback<SystemSetting> {
+public class MailSettingListener implements EventCallback<RawSettingValue> {
     private final MailProperties properties;
     private final JavaMailSenderImpl sender;
     private final ConfigReader configReader;
@@ -40,7 +40,7 @@ public class MailSettingListener implements EventCallback<SystemSetting> {
     public MailSettingListener(MailProperties properties,
                                JavaMailSenderImpl sender,
                                ConfigReader configReader,
-                               EventRegistry<SystemSetting, String> registry) {
+                               EventRegistry<RawSettingValue, String> registry) {
         this.properties = properties;
         this.sender = sender;
         this.configReader = configReader;
@@ -48,7 +48,7 @@ public class MailSettingListener implements EventCallback<SystemSetting> {
     }
 
     @Override
-    public void onEvent(SystemSetting event) {
+    public void onEvent(RawSettingValue event) {
         setProperties(properties, configReader);
         applyProperties(properties, sender);
     }

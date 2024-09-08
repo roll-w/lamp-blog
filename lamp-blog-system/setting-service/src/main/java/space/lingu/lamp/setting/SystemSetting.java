@@ -14,11 +14,10 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.system.setting;
+package space.lingu.lamp.setting;
 
-import space.lingu.lamp.DataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.EntityBuilder;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
@@ -31,15 +30,19 @@ import java.util.Objects;
  */
 @DataTable(name = "system_setting")
 @SuppressWarnings("all")
-public class SystemSetting implements DataItem<SystemSetting, String> {
+public class SystemSetting implements DataEntity<Long> {
+    @DataColumn(name = "id")
+    @PrimaryKey(autoGenerate = true)
+    private final Long id;
+
     @DataColumn(name = "key")
-    @PrimaryKey
     private final String key;
 
     @DataColumn(name = "value")
     private final String value;
 
-    public SystemSetting(String key, String value) {
+    public SystemSetting(Long id, String key, String value) {
+        this.id = id;
         this.key = key;
         this.value = value;
     }
@@ -53,8 +56,8 @@ public class SystemSetting implements DataItem<SystemSetting, String> {
     }
 
     @Override
-    public String getId() {
-        return key;
+    public Long getId() {
+        return id;
     }
 
     @Override
@@ -67,22 +70,18 @@ public class SystemSetting implements DataItem<SystemSetting, String> {
         return 0;
     }
 
-    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
 
     @Override
     public SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.SYSTEM_SETTING;
+        return SystemSettingResourceKind.INSTANCE;
     }
 
     @Override
-    public String toString() {
-        return "SystemSetting{" +
-                "key='" + key + '\'' +
-                ", value='" + value + '\'' +
-                '}';
+    public int hashCode() {
+        return Objects.hash(id, key, value);
     }
 
     @Override
@@ -90,15 +89,20 @@ public class SystemSetting implements DataItem<SystemSetting, String> {
         if (this == o) return true;
         if (!(o instanceof SystemSetting)) return false;
         SystemSetting that = (SystemSetting) o;
-        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
+        return Objects.equals(id, that.id) && Objects.equals(key, that.key) && Objects.equals(value, that.value);
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(key, value);
+    public String toString() {
+        return "SystemSetting{" +
+                "id=" + id +
+                ", key='" + key + '\'' +
+                ", value='" + value + '\''
+                + '}';
     }
 
-    public static final class Builder implements EntityBuilder<SystemSetting, String> {
+    public static final class Builder implements EntityBuilder<SystemSetting, Long> {
+        private Long id;
         private String key;
         private String value;
 
@@ -106,13 +110,9 @@ public class SystemSetting implements DataItem<SystemSetting, String> {
         }
 
         public Builder(SystemSetting systemSetting) {
+            this.id = systemSetting.getId();
             this.key = systemSetting.getKey();
             this.value = systemSetting.getValue();
-        }
-
-        @Override
-        public Builder setId(String id) {
-            return setKey(id);
         }
 
         public Builder setKey(String key) {
@@ -127,7 +127,13 @@ public class SystemSetting implements DataItem<SystemSetting, String> {
 
         @Override
         public SystemSetting build() {
-            return new SystemSetting(key, value);
+            return new SystemSetting(id, key, value);
+        }
+
+        @Override
+        public Builder setId(Long id) {
+            this.id = id;
+            return this;
         }
     }
 }

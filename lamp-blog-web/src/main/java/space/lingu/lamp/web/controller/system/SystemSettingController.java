@@ -16,12 +16,14 @@
 
 package space.lingu.lamp.web.controller.system;
 
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import space.lingu.lamp.setting.SystemSetting;
 import space.lingu.lamp.web.controller.AdminApi;
-import space.lingu.lamp.web.system.setting.SettingProvider;
-import space.lingu.lamp.web.system.setting.SystemSetting;
 import tech.rollw.common.web.HttpResponseEntity;
-import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
 
@@ -30,37 +32,31 @@ import java.util.List;
  */
 @AdminApi
 public class SystemSettingController {
-    private final SettingProvider settingProvider;
 
-    public SystemSettingController(SettingProvider settingProvider) {
-        this.settingProvider = settingProvider;
+    public SystemSettingController() {
     }
 
+    // TODO: impl with ConfigProvider
     @GetMapping("/system/settings")
-    public HttpResponseEntity<List<SystemSetting>> getSettings(
-            Pageable pageable) {
-        List<SystemSetting> systemSettings =
-                settingProvider.getSettings(pageable.getPage(), pageable.getSize());
-        return HttpResponseEntity.success(systemSettings);
+    public HttpResponseEntity<List<SystemSetting>> getSettings() {
+        return HttpResponseEntity.success(
+        );
     }
 
-    @PutMapping("/system/setting/{key}")
+    @PutMapping("/system/settings/{key}")
     public HttpResponseEntity<Void> setSetting(@PathVariable String key,
                                                @RequestBody Value value) {
-        settingProvider.setSetting(key, value.value);
         return HttpResponseEntity.success();
     }
 
-    @DeleteMapping("/system/setting/{key}")
+    @DeleteMapping("/system/settings/{key}")
     public HttpResponseEntity<Void> deleteSetting(@PathVariable String key) {
-        settingProvider.deleteSetting(key);
         return HttpResponseEntity.success();
     }
 
-    @GetMapping("/system/setting/{key}")
+    @GetMapping("/system/settings/{key}")
     public HttpResponseEntity<SystemSetting> getSetting(@PathVariable String key) {
-        SystemSetting setting = settingProvider.getSetting(key);
-        return HttpResponseEntity.success(setting);
+        return HttpResponseEntity.success();
     }
 
     public record Value(String value) {
