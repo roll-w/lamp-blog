@@ -28,7 +28,7 @@ import space.lingu.lamp.authentication.event.OnUserRegistrationEvent;
 import space.lingu.lamp.web.common.keys.MailConfigKeys;
 import space.lingu.lamp.web.domain.push.*;
 import space.lingu.lamp.web.domain.push.mail.MailPushUser;
-import space.lingu.lamp.web.domain.user.AttributedUser;
+import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.authentication.register.RegisterTokenProvider;
 
 /**

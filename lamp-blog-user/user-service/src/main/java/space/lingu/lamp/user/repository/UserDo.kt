@@ -26,10 +26,10 @@ import jakarta.persistence.Table
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import space.lingu.NonNull
-import space.lingu.lamp.web.domain.user.AttributedUserDetails
-import space.lingu.lamp.web.domain.user.Role
-import space.lingu.lamp.web.domain.user.User
-import space.lingu.lamp.web.domain.user.UserResourceKind
+import space.lingu.lamp.user.User
+import space.lingu.lamp.user.AttributedUserDetails
+import space.lingu.lamp.user.Role
+import space.lingu.lamp.user.UserResourceKind
 import tech.rollw.common.web.system.SystemResource
 import tech.rollw.common.web.system.SystemResourceKind
 import java.io.Serializable

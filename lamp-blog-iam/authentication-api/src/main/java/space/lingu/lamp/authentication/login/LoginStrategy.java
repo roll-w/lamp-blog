@@ -19,7 +19,7 @@ package space.lingu.lamp.authentication.login;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.domain.user.AttributedUserDetails;
+import space.lingu.lamp.user.AttributedUserDetails;
 import tech.rollw.common.web.ErrorCode;
 
 import java.io.IOException;

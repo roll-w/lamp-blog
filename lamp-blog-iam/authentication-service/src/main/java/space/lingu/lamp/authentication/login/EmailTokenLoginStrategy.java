@@ -33,8 +33,8 @@ import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.mail.util.MimeMailMessageBuilder;
-import space.lingu.lamp.web.domain.user.AttributedUserDetails;
-import space.lingu.lamp.web.domain.user.AttributedUser;
+import space.lingu.lamp.user.AttributedUserDetails;
+import space.lingu.lamp.user.AttributedUser;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
 

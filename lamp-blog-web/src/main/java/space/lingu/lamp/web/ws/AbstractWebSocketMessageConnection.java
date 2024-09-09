@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.ws;
 
 import space.lingu.lamp.web.common.ApiContext;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.user.UserIdentity;
 
 import jakarta.websocket.Session;
 import java.io.IOException;

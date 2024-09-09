@@ -21,7 +21,7 @@ import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.controller.Api;
 import space.lingu.lamp.web.domain.message.ChatMessageProvider;
 import space.lingu.lamp.web.domain.message.TransferredMessage;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.user.UserIdentity;
 import tech.rollw.common.web.HttpResponseEntity;
 import tech.rollw.common.web.system.ContextThreadAware;
 

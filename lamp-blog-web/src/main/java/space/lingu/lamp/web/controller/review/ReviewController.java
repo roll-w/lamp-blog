@@ -34,7 +34,7 @@ import space.lingu.lamp.web.domain.review.ReviewJobProvider;
 import space.lingu.lamp.web.domain.review.ReviewStatues;
 import space.lingu.lamp.web.domain.review.service.ReviewContentService;
 import space.lingu.lamp.web.domain.review.service.ReviewStatusService;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.user.UserIdentity;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.HttpResponseEntity;
 import tech.rollw.common.web.system.ContextThread;

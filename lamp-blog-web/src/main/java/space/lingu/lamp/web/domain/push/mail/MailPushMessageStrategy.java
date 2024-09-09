@@ -24,7 +24,7 @@ import space.lingu.lamp.web.domain.push.PushMessageBody;
 import space.lingu.lamp.web.domain.push.PushMessageStrategy;
 import space.lingu.lamp.web.domain.push.PushType;
 import space.lingu.lamp.web.domain.push.PushUser;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.user.UserIdentity;
 
 import java.util.List;
 

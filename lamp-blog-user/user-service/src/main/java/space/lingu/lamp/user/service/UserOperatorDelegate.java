@@ -17,8 +17,8 @@
 package space.lingu.lamp.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
-import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.user.filter.UserInfoFilter;
+import space.lingu.lamp.user.User;
+import space.lingu.lamp.user.filter.UserInfoFilter;
 
 /**
  * Delegate for user operator.

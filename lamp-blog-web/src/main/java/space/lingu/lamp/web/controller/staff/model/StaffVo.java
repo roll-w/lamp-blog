@@ -18,7 +18,7 @@ package space.lingu.lamp.web.controller.staff.model;
 
 import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.lamp.web.domain.staff.StaffInfo;
-import space.lingu.lamp.web.domain.user.Role;
+import space.lingu.lamp.user.Role;
 
 import java.util.Set;
 

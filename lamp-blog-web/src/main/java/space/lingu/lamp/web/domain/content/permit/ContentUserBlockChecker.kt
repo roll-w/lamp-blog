@@ -20,9 +20,9 @@ import space.lingu.lamp.web.domain.content.Content
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType
 import space.lingu.lamp.web.domain.content.ContentAccessCredential
 import space.lingu.lamp.web.domain.content.ContentAccessCredentials
-import space.lingu.lamp.web.domain.user.UserProvider
-import space.lingu.lamp.web.domain.user.UserTrait
-import space.lingu.lamp.web.domain.user.UserViewException
+import space.lingu.lamp.user.UserProvider
+import space.lingu.lamp.user.UserTrait
+import space.lingu.lamp.user.UserViewException
 import tech.rollw.common.web.UserErrorCode
 
 /**

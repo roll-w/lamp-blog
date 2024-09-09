@@ -22,7 +22,7 @@ import space.lingu.lamp.web.domain.content.Content;
 import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
 import space.lingu.lamp.web.domain.content.ContentAccessCredential;
 import space.lingu.lamp.web.domain.content.ContentAccessCredentials;
-import space.lingu.lamp.web.domain.user.UserTrait;
+import space.lingu.lamp.user.UserTrait;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 

@@ -17,7 +17,7 @@
 package space.lingu.lamp.authentication.event;
 
 import org.springframework.context.ApplicationEvent;
-import space.lingu.lamp.web.domain.user.AttributedUser;
+import space.lingu.lamp.user.AttributedUser;
 
 import java.util.Locale;
 

@@ -20,7 +20,7 @@ import space.lingu.lamp.web.domain.message.ChatType;
 import space.lingu.lamp.web.domain.message.MessageContent;
 import space.lingu.lamp.web.domain.message.TransferredMessage;
 import space.lingu.lamp.web.domain.message.TransferredMessageType;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.user.UserIdentity;
 
 /**
  * @author RollW

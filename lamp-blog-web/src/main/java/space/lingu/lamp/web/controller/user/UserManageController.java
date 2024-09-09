@@ -18,12 +18,12 @@ package space.lingu.lamp.web.controller.user;
 
 import org.springframework.web.bind.annotation.*;
 import space.lingu.lamp.web.controller.AdminApi;
-import space.lingu.lamp.web.controller.user.vo.UserCreateRequest;
-import space.lingu.lamp.web.controller.user.vo.UserDetailsVo;
+import space.lingu.lamp.web.controller.user.model.UserCreateRequest;
+import space.lingu.lamp.web.controller.user.model.UserDetailsVo;
 import space.lingu.lamp.web.domain.storage.StorageUrlProvider;
-import space.lingu.lamp.web.domain.user.AttributedUser;
-import space.lingu.lamp.web.domain.user.UserManageService;
-import space.lingu.lamp.web.domain.user.UserProvider;
+import space.lingu.lamp.user.AttributedUser;
+import space.lingu.lamp.user.UserManageService;
+import space.lingu.lamp.user.UserProvider;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalDataService;
 import tech.rollw.common.web.HttpResponseEntity;

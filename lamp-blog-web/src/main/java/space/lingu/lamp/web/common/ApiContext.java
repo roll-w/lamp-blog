@@ -19,7 +19,7 @@ package space.lingu.lamp.web.common;
 import org.springframework.http.HttpMethod;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.user.UserIdentity;
 import tech.rollw.common.web.system.SystemContext;
 
 import java.util.Locale;

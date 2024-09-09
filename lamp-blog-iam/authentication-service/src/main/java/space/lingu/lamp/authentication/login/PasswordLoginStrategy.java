@@ -22,7 +22,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.domain.user.AttributedUserDetails;
+import space.lingu.lamp.user.AttributedUserDetails;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;

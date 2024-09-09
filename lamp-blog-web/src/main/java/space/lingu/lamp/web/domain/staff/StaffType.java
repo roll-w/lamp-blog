@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.domain.staff;
 
-import space.lingu.lamp.web.domain.user.Role;
+import space.lingu.lamp.user.Role;
 
 /**
  * For job assignment, we need to know the type of staff.

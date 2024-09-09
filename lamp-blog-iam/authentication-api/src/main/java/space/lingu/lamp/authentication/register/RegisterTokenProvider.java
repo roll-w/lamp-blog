@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.authentication.register;
 
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.user.UserIdentity;
 import tech.rollw.common.web.BusinessRuntimeException;
 
 /**

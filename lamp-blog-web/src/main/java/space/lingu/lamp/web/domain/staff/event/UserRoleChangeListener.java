@@ -23,9 +23,9 @@ import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
-import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.dto.UserInfo;
-import space.lingu.lamp.web.domain.user.event.OnUserRoleChangeEvent;
+import space.lingu.lamp.user.Role;
+import space.lingu.lamp.user.UserInfo;
+import space.lingu.lamp.user.event.OnUserRoleChangeEvent;
 
 /**
  * @author RollW

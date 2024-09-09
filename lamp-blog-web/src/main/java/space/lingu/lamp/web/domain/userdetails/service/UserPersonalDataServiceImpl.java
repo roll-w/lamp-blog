@@ -17,9 +17,9 @@
 package space.lingu.lamp.web.domain.userdetails.service;
 
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.domain.user.AttributedUser;
-import space.lingu.lamp.web.domain.user.UserIdentity;
-import space.lingu.lamp.web.domain.user.UserProvider;
+import space.lingu.lamp.user.AttributedUser;
+import space.lingu.lamp.user.UserIdentity;
+import space.lingu.lamp.user.UserProvider;
 import space.lingu.lamp.web.domain.userdetails.Birthday;
 import space.lingu.lamp.web.domain.userdetails.Gender;
 import space.lingu.lamp.web.domain.userdetails.UserDataField;

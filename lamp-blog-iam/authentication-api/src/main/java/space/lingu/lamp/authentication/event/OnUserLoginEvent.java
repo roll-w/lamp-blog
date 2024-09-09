@@ -19,7 +19,7 @@ package space.lingu.lamp.authentication.event;
 import org.springframework.context.ApplicationEvent;
 import space.lingu.NonNull;
 import space.lingu.lamp.RequestMetadata;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.user.UserIdentity;
 
 /**
  * @author RollW

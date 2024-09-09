@@ -16,8 +16,8 @@
 
 package space.lingu.lamp.authentication;
 
-import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.user.Role;
+import space.lingu.lamp.user.UserIdentity;
 
 /**
  * @author RollW

@@ -18,12 +18,12 @@ package space.lingu.lamp.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import space.lingu.lamp.LampException;
-import space.lingu.lamp.web.domain.user.Role;
-import space.lingu.lamp.web.domain.user.User;
-import space.lingu.lamp.web.domain.user.UserOperator;
-import space.lingu.lamp.web.domain.user.UserViewException;
-import space.lingu.lamp.web.domain.user.filter.UserFilteringInfo;
-import space.lingu.lamp.web.domain.user.filter.UserFilteringInfoType;
+import space.lingu.lamp.user.Role;
+import space.lingu.lamp.user.User;
+import space.lingu.lamp.user.UserOperator;
+import space.lingu.lamp.user.UserViewException;
+import space.lingu.lamp.user.filter.UserFilteringInfo;
+import space.lingu.lamp.user.filter.UserFilteringInfoType;
 import tech.rollw.common.web.BusinessRuntimeException;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.ErrorCode;

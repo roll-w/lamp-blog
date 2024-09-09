@@ -19,7 +19,7 @@ package space.lingu.lamp.web.domain.message.service;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.domain.message.*;
-import space.lingu.lamp.web.domain.user.UserIdentity;
+import space.lingu.lamp.user.UserIdentity;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.ErrorCodeMessageProvider;

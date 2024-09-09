@@ -19,7 +19,7 @@ package space.lingu.lamp.user.service;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.domain.user.UserDetailsService;
+import space.lingu.lamp.user.UserDetailsService;
 import space.lingu.lamp.user.repository.UserDao;
 import space.lingu.lamp.user.repository.UserDo;
 

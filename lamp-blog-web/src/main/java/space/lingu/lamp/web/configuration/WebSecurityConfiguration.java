@@ -43,8 +43,8 @@ import space.lingu.lamp.web.configuration.compenent.WebDelegateSecurityHandler;
 import space.lingu.lamp.web.configuration.filter.CorsConfigFilter;
 import space.lingu.lamp.web.configuration.filter.TokenAuthenticationFilter;
 import space.lingu.lamp.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.web.domain.user.UserDetailsService;
-import space.lingu.lamp.web.domain.user.UserSignatureProvider;
+import space.lingu.lamp.user.UserDetailsService;
+import space.lingu.lamp.user.UserSignatureProvider;
 import tech.rollw.common.web.system.ContextThreadAware;
 
 import java.time.Duration;

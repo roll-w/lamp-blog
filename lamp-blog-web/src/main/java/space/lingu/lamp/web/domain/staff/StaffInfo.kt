@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.domain.staff
 
-import space.lingu.lamp.web.domain.user.UserIdentity
+import space.lingu.lamp.user.UserIdentity
 
 /**
  * @author RollW
