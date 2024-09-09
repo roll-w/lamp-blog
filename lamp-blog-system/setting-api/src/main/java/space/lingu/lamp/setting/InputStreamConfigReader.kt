@@ -27,7 +27,7 @@ import java.util.Properties
 /**
  * @author RollW
  */
-class InputStreamConfigReader(inputStream: InputStream): ConfigReader {
+class InputStreamConfigReader(inputStream: InputStream) : ConfigReader {
     private val properties: Properties = Properties()
 
     init {
@@ -77,32 +77,39 @@ class InputStreamConfigReader(inputStream: InputStream): ConfigReader {
         @JvmStatic
         @JvmOverloads
         @Throws(IOException::class)
-        fun loadConfig(appClz: Class<*>, path: String? = null): InputStreamConfigReader {
-            val inputStream = openConfigInput(appClz, path)
+        fun loadConfig(
+            appClz: Class<*>,
+            path: String? = null,
+            allowFail: Boolean = true
+        ): InputStreamConfigReader {
+            val inputStream = openConfigInput(appClz, path, allowFail)
                 ?: InputStream.nullInputStream()
             return InputStreamConfigReader(inputStream)
         }
 
         private fun openConfigInput(
             appClz: Class<*>,
-            path: String?
+            path: String?,
+            allowFail: Boolean
         ): InputStream? {
-            val confFile = tryFile(path)
+            val confFile = tryFile(path, allowFail)
             if (!confFile.exists()) {
                 return appClz.getResourceAsStream("/lamp.conf")
             }
             return FileInputStream(confFile)
         }
 
-        private fun tryFile(path: String?): File {
+        private fun tryFile(path: String?, allowFail: Boolean): File {
             if (!Strings.isNullOrEmpty(path)) {
                 val givenFile = File(path!!)
                 if (givenFile.exists()) {
                     return givenFile
                 }
-                throw FileNotFoundException(
-                    "Given config file '$path' (absolute path: ${givenFile.absolutePath}) does not exist."
-                )
+                if (!allowFail) {
+                    throw FileNotFoundException(
+                        "Given config file '$path' (absolute path: ${givenFile.absolutePath}) does not exist."
+                    )
+                }
             }
             val confFile = File("conf/lamp.conf")
             if (confFile.exists()) {
