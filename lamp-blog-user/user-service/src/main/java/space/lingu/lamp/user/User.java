@@ -35,7 +35,7 @@ import java.util.Objects;
 /**
  * @author RollW
  */
-@DataTable(name = "space/lingu/lamp/user", indices = {
+@DataTable(name = "user", indices = {
         @Index(value = "username", unique = true)
 })
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
