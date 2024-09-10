@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.domain.content;
 
-import space.lingu.lamp.web.domain.user.UserTrait;
+import space.lingu.lamp.user.UserTrait;
 
 import java.util.Arrays;
 
