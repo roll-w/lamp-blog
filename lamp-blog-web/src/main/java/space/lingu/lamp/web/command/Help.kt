@@ -132,8 +132,9 @@ class Help : AbstractShellComponent() {
      * Expand the command to include all subcommands (currently only one level deep)
      */
     private fun Map<String, CommandRegistration>.expandCommand(command: String): ExpandCommandRegistration? {
+        val command = command.trim()
         fun hasAnyChild(command: String): Boolean {
-            return this.any { it.key.startsWith(command) && it.key != command }
+            return this.any { it.key.startsWith("$command ") && it.key != command }
         }
 
         if (this[command] == null && !hasAnyChild(command)) {
@@ -218,7 +219,7 @@ class Help : AbstractShellComponent() {
             if (!it.isRequired && it.defaultValue != null) {
                 append("=${it.defaultValue}")
             }
-            if (it.description.isNotEmpty()) {
+            if (it.description?.isNotEmpty() == true) {
                 appendLine(":")
                 it.description.wrap(LINE_LENGTH - 8).lines().forEach {
                     appendLine("${" ".repeat(8)}$it")
