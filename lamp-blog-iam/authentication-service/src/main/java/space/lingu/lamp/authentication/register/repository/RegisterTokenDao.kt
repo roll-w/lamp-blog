@@ -16,16 +16,15 @@
 
 package space.lingu.lamp.authentication.register.repository
 
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
-import org.springframework.stereotype.Repository
+import space.lingu.lamp.common.data.CommonDao
+import space.lingu.lamp.common.data.Dao
 
 /**
  * @author RollW
  */
-@Repository
-interface RegisterTokenDao : JpaRepository<RegisterTokenDo, Long>, JpaSpecificationExecutor<RegisterTokenDo> {
+@Dao
+interface RegisterTokenDao : CommonDao<RegisterTokenDo, Long> {
     @Query("SELECT t FROM RegisterTokenDo t WHERE t.token = :token")
     fun findByToken(token: String): RegisterTokenDo?
 

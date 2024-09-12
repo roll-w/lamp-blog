@@ -17,14 +17,13 @@
 package space.lingu.lamp.user.repository
 
 import org.springframework.data.jpa.domain.Specification
-import org.springframework.data.jpa.repository.JpaRepository
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.stereotype.Repository
+import space.lingu.lamp.common.data.CommonDao
 
 @Repository
 @JvmDefaultWithoutCompatibility
-interface UserDao : JpaRepository<UserDo, Long>, JpaSpecificationExecutor<UserDo> {
+interface UserDao : CommonDao<UserDo, Long> {
     @Query("SELECT u FROM UserDo u WHERE u.id = :id")
     fun getByUserId(id: Long): UserDo?
 
