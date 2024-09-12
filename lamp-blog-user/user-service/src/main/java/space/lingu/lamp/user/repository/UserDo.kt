@@ -26,11 +26,11 @@ import jakarta.persistence.Table
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
 import space.lingu.NonNull
-import space.lingu.lamp.user.User
+import space.lingu.lamp.DataEntity
 import space.lingu.lamp.user.AttributedUserDetails
 import space.lingu.lamp.user.Role
+import space.lingu.lamp.user.User
 import space.lingu.lamp.user.UserResourceKind
-import tech.rollw.common.web.system.SystemResource
 import tech.rollw.common.web.system.SystemResourceKind
 import java.io.Serializable
 
@@ -39,11 +39,11 @@ import java.io.Serializable
  */
 @Entity
 @Table(name = "user")
-class UserDo : Serializable, SystemResource<Long>, UserDetails, AttributedUserDetails {
+class UserDo : Serializable, DataEntity<Long>, UserDetails, AttributedUserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    var id: Long? = null
+    private var id: Long? = null
 
     @Column(name = "username")
     private var username: String? = null
@@ -102,6 +102,14 @@ class UserDo : Serializable, SystemResource<Long>, UserDetails, AttributedUserDe
     }
 
     constructor()
+
+    override fun getId(): Long? {
+        return id
+    }
+
+    fun setId(id: Long?) {
+        this.id = id
+    }
 
     override fun getResourceId(): Long {
         return id!!
