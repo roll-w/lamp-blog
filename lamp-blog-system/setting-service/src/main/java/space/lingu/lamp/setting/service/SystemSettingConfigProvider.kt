@@ -19,6 +19,7 @@ package space.lingu.lamp.setting.service
 import org.springframework.stereotype.Service
 import space.lingu.lamp.setting.ConfigProvider
 import space.lingu.lamp.setting.RawSettingValue
+import space.lingu.lamp.setting.SettingSource
 import space.lingu.lamp.setting.SettingSpecification
 import space.lingu.lamp.setting.SettingSpecification.Companion.keyName
 import space.lingu.lamp.setting.SettingSpecificationHelper
@@ -62,7 +63,7 @@ class SystemSettingConfigProvider(
             RawSettingValue(
                 it.key,
                 it.value,
-                RawSettingValue.Source.DATABASE
+                SettingSource.DATABASE
             )
         }
     }

@@ -68,7 +68,7 @@ class InputStreamConfigReader(inputStream: InputStream) : ConfigReader {
             RawSettingValue(
                 it.key.toString(),
                 it.value.toString(),
-                RawSettingValue.Source.LOCAL
+                SettingSource.LOCAL
             )
         }
     }

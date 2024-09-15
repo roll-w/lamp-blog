@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.setting
+package space.lingu.lamp.setting;
 
 /**
  * @author RollW
  */
-data class RawSettingValue(
-    val key: String,
-    val value: String? = null,
-    val source: SettingSource = SettingSource.LOCAL
-) {
+public enum SettingSource {
+    LOCAL,
+    DATABASE,
+    REMOTE
 }
