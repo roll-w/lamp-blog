@@ -27,10 +27,12 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
+import space.lingu.lamp.LampException;
 import space.lingu.lamp.RequestMetadata;
 import space.lingu.lamp.authentication.UserInfoSignature;
 import space.lingu.lamp.authentication.event.OnUserLoginEvent;
 import space.lingu.lamp.authentication.event.OnUserRegistrationEvent;
+import space.lingu.lamp.authentication.login.LoginProvider;
 import space.lingu.lamp.authentication.login.LoginStrategy;
 import space.lingu.lamp.authentication.login.LoginStrategyType;
 import space.lingu.lamp.authentication.login.LoginVerifiableToken;
@@ -38,18 +40,19 @@ import space.lingu.lamp.authentication.register.RegisterTokenProvider;
 import space.lingu.lamp.authentication.register.RegisterVerificationToken;
 import space.lingu.lamp.authentication.register.repository.RegisterTokenDao;
 import space.lingu.lamp.authentication.register.repository.RegisterTokenDo;
-import space.lingu.lamp.user.repository.UserDao;
-import space.lingu.lamp.user.repository.UserDo;
-import space.lingu.lamp.web.common.ApiContext;
-import space.lingu.lamp.user.AttributedUserDetails;
 import space.lingu.lamp.user.AttributedUser;
+import space.lingu.lamp.user.AttributedUserDetails;
 import space.lingu.lamp.user.Role;
 import space.lingu.lamp.user.UserIdentity;
 import space.lingu.lamp.user.UserManageService;
 import space.lingu.lamp.user.UserSignatureProvider;
 import space.lingu.lamp.user.UserViewException;
+import space.lingu.lamp.user.repository.UserDao;
+import space.lingu.lamp.user.repository.UserDo;
+import space.lingu.lamp.web.common.ApiContext;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.IoErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 import tech.rollw.common.web.system.AuthenticationException;
 import tech.rollw.common.web.system.ContextThreadAware;
@@ -65,7 +68,7 @@ import java.util.UUID;
  * @author RollW
  */
 @Service
-public class LoginRegisterService implements RegisterTokenProvider {
+public class LoginRegisterService implements LoginProvider, RegisterTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(LoginRegisterService.class);
 
     private final UserDao userRepository;
@@ -101,7 +104,9 @@ public class LoginRegisterService implements RegisterTokenProvider {
         return loginStrategyMap.get(type);
     }
 
-    public void sendToken(long userId, LoginStrategyType type) throws IOException {
+    public void sendToken(long userId, 
+                          LoginStrategyType type, 
+                          RequestMetadata requestMetadata) throws IOException {
         LoginStrategy strategy = getLoginStrategy(type);
         UserDo user = userRepository.getByUserId(userId);
         if (user == null) {
@@ -109,16 +114,33 @@ public class LoginRegisterService implements RegisterTokenProvider {
         }
         LoginVerifiableToken token = strategy.createToken(user);
         LoginStrategy.Options requestInfo = new LoginStrategy.Options(LocaleContextHolder.getLocale());
-        strategy.sendToken(token, user, requestInfo);
+        sendToken(strategy, token, user, requestInfo);
     }
 
-    public void sendToken(String identity, LoginStrategyType type) throws IOException {
+    @Override
+    public void sendToken(@NonNull String identity,
+                          @NonNull LoginStrategyType type,
+                          RequestMetadata requestMetadata) {
         LoginStrategy strategy = getLoginStrategy(type);
         AttributedUserDetails user = tryGetUser(identity);
         LoginVerifiableToken token = strategy.createToken(user);
         LoginStrategy.Options requestInfo = new LoginStrategy.Options(LocaleContextHolder.getLocale());
-        strategy.sendToken(token, user, requestInfo);
+        sendToken(strategy, token, user, requestInfo);
     }
+
+    private void sendToken(LoginStrategy strategy,
+                           LoginVerifiableToken token,
+                           AttributedUserDetails user,
+                           LoginStrategy.Options requestInfo) {
+        try {
+            strategy.sendToken(token, user, requestInfo);
+        } catch (IOException e) {
+            logger.error("Failed to send token to user: {}@{}, due to: {}",
+                    user.getUserId(), user.getUsername(), e.getMessage(), e);
+            throw new LampException(IoErrorCode.ERROR_IO);
+        }
+    }
+
 
     private ErrorCode verifyToken(String token,
                                   AttributedUserDetails user,
@@ -134,10 +156,12 @@ public class LoginRegisterService implements RegisterTokenProvider {
         return userRepository.getByUsername(identity);
     }
 
-    public UserInfoSignature loginUser(String identity,
-                                       String token,
-                                       RequestMetadata metadata,
-                                       LoginStrategyType type) {
+    @Override
+    @NonNull
+    public UserInfoSignature login(@NonNull String identity,
+                                   @NonNull String token,
+                                   @NonNull LoginStrategyType type,
+                                   RequestMetadata metadata) {
         Preconditions.checkNotNull(identity, "identity cannot be null");
         Preconditions.checkNotNull(token, "token cannot be null");
 
@@ -184,6 +208,7 @@ public class LoginRegisterService implements RegisterTokenProvider {
         return user;
     }
 
+    @Override
     public void logout() {
         SecurityContextHolder.clearContext();
     }

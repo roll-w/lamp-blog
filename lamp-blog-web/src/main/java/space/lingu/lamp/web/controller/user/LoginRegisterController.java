@@ -63,11 +63,11 @@ public class LoginRegisterController {
         ParamValidate.notEmpty(loginRequest.identity(), "identity cannot be null or empty.");
         ParamValidate.notEmpty(loginRequest.token(), "token cannot be null or empty.");
 
-        UserInfoSignature userInfoSignature = loginRegisterService.loginUser(
+        UserInfoSignature userInfoSignature = loginRegisterService.login(
                 loginRequest.identity(),
                 loginRequest.token(),
-                requestMetadata,
-                LoginStrategyType.PASSWORD);
+                LoginStrategyType.PASSWORD,
+                requestMetadata);
         return loginResponse(userInfoSignature);
     }
 
@@ -76,11 +76,11 @@ public class LoginRegisterController {
     public HttpResponseEntity<LoginResponse> loginByEmailToken(
             RequestMetadata requestMetadata,
             @RequestBody UserLoginRequest loginRequest) {
-        UserInfoSignature signature = loginRegisterService.loginUser(
+        UserInfoSignature signature = loginRegisterService.login(
                 loginRequest.identity(),
                 loginRequest.token(),
-                requestMetadata,
-                LoginStrategyType.EMAIL_TOKEN);
+                LoginStrategyType.EMAIL_TOKEN,
+                requestMetadata);
         return loginResponse(signature);
     }
 
@@ -91,7 +91,8 @@ public class LoginRegisterController {
         ParamValidate.notEmpty(loginTokenSendRequest.identity(), "identity cannot be null or empty.");
         loginRegisterService.sendToken(
                 loginTokenSendRequest.identity(),
-                LoginStrategyType.EMAIL_TOKEN
+                LoginStrategyType.EMAIL_TOKEN,
+                null
         );
         return HttpResponseEntity.success();
     }

@@ -16,6 +16,7 @@
 package space.lingu.lamp.authentication.login
 
 import space.lingu.lamp.RequestMetadata
+import space.lingu.lamp.authentication.UserInfoSignature
 
 /**
  * @author RollW
@@ -28,7 +29,7 @@ interface LoginProvider {
         identity: String, token: String,
         type: LoginStrategyType,
         requestMetadata: RequestMetadata? = null
-    )
+    ): UserInfoSignature
 
     fun sendToken(
         identity: String,
