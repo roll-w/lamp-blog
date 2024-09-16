@@ -19,32 +19,39 @@ package space.lingu.lamp.setting
 /**
  * @author RollW
  */
-data class SimpleSettingSpec<T, V> @JvmOverloads constructor (
+data class SimpleSettingSpec<T, V> @JvmOverloads constructor(
     override val key: SettingKey<T, V>,
     private val allowAnyValue: Boolean = false,
     override val defaults: List<Int> = emptyList(),
-    override val valueEntries: List<V?> = emptyList()
+    override val valueEntries: List<V?> = emptyList(),
+    override val isRequired: Boolean = false
 ) : SettingSpecification<T, V> {
     val type = key.type
 
+    @JvmOverloads
     constructor(
         key: SettingKey<T, V>,
+        isRequired: Boolean = false,
         default: Int,
         vararg valueEntries: V?
     ) : this(
         key,
         defaults = listOf(default),
-        valueEntries = valueEntries.toList()
+        valueEntries = valueEntries.toList(),
+        isRequired = isRequired
     )
 
+    @JvmOverloads
     constructor(
         key: SettingKey<T, V>,
-        default: V?
+        default: V?,
+        isRequired: Boolean = false
     ) : this(
         key,
         allowAnyValue = true,
         defaults = listOf(0),
-        valueEntries = listOf(default)
+        valueEntries = listOf(default),
+        isRequired = isRequired
     )
 
     constructor(
@@ -105,6 +112,7 @@ data class SimpleSettingSpec<T, V> @JvmOverloads constructor (
         @JvmStatic
         fun ofStringSet(
             key: String,
+            isRequired: Boolean = false,
             default: List<Int> = emptyList(),
             vararg valueEntries: String
         ) = SimpleSettingSpec(
@@ -115,7 +123,11 @@ data class SimpleSettingSpec<T, V> @JvmOverloads constructor (
 
         @JvmStatic
         @JvmOverloads
-        fun ofBoolean(key: String, default: Boolean = false) = SimpleSettingSpec(
+        fun ofBoolean(
+            key: String,
+            isRequired: Boolean = false,
+            default: Boolean = false
+        ) = SimpleSettingSpec(
             SettingKey.ofBoolean(key),
             default = if (default) 0 else 1,
             valueEntries = arrayOf(true, false)

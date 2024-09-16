@@ -21,6 +21,7 @@ package space.lingu.lamp.setting
  *
  * @author RollW
  */
+@JvmDefaultWithoutCompatibility
 interface SettingSpecification<T, V> {
     val key: SettingKey<T, V>
 
@@ -41,6 +42,12 @@ interface SettingSpecification<T, V> {
     val valueEntries: List<V?>
 
     val defaultValue: T?
+
+    /**
+     * Whether the setting is required. If the setting is required,
+     * the value of the setting must be set and cannot be null.
+     */
+    val isRequired : Boolean
 
     operator fun get(index: Int): V?
 
