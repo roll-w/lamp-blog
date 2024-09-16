@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.setting;
-
-import java.util.List;
+package space.lingu.lamp.setting
 
 /**
  * @author RollW
  */
-public enum SettingSource {
-    LOCAL,
-    DATABASE;
+interface AttributedSettingSpecification<T, V> : SettingSpecification<T, V> {
+    val description: SettingDescription
 
-    public static final List<SettingSource> VALUES = List.of(SettingSource.values());
+    override val isRequired: Boolean
 
-    public static final List<SettingSource> LOCAL_ONLY = List.of(LOCAL);
+    val supportedSources: List<SettingSource>
 }
