@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 /*
  * Copyright (C) 2023 RollW
  *
@@ -27,3 +29,23 @@ dependencies {
 }
 
 description = "lamp-blog-common"
+
+
+tasks.register<GenerateBuildConfigTask>("generateBuildConfig") {
+    packageName = "space.lingu.lamp"
+    outputDirectory = file("build/")
+}
+
+tasks.named<ProcessResources>("processResources") {
+    dependsOn("generateBuildConfig")
+}
+
+tasks.named<KotlinCompile>("compileKotlin") {
+    dependsOn("generateBuildConfig")
+}
+
+sourceSets {
+    main {
+        java.srcDir("build/generated/sources/buildconfig/java/main/")
+    }
+}
