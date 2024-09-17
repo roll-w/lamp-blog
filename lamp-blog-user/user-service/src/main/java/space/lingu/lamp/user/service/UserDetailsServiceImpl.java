@@ -20,17 +20,17 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.user.UserDetailsService;
-import space.lingu.lamp.user.repository.UserDao;
 import space.lingu.lamp.user.repository.UserDo;
+import space.lingu.lamp.user.repository.UserRepository;
 
 /**
  * @author RollW
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserDao userRepository;
+    private final UserRepository userRepository;
 
-    public UserDetailsServiceImpl(UserDao userRepository) {
+    public UserDetailsServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

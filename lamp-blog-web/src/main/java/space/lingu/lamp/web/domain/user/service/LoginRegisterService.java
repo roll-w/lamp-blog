@@ -38,8 +38,8 @@ import space.lingu.lamp.authentication.login.LoginStrategyType;
 import space.lingu.lamp.authentication.login.LoginVerifiableToken;
 import space.lingu.lamp.authentication.register.RegisterTokenProvider;
 import space.lingu.lamp.authentication.register.RegisterVerificationToken;
-import space.lingu.lamp.authentication.register.repository.RegisterTokenDao;
 import space.lingu.lamp.authentication.register.repository.RegisterTokenDo;
+import space.lingu.lamp.authentication.register.repository.RegisterTokenRepository;
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.AttributedUserDetails;
 import space.lingu.lamp.user.Role;
@@ -47,8 +47,8 @@ import space.lingu.lamp.user.UserIdentity;
 import space.lingu.lamp.user.UserManageService;
 import space.lingu.lamp.user.UserSignatureProvider;
 import space.lingu.lamp.user.UserViewException;
-import space.lingu.lamp.user.repository.UserDao;
 import space.lingu.lamp.user.repository.UserDo;
+import space.lingu.lamp.user.repository.UserRepository;
 import space.lingu.lamp.web.common.ApiContext;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
@@ -71,8 +71,8 @@ import java.util.UUID;
 public class LoginRegisterService implements LoginProvider, RegisterTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(LoginRegisterService.class);
 
-    private final UserDao userRepository;
-    private final RegisterTokenDao registerTokenRepository;
+    private final UserRepository userRepository;
+    private final RegisterTokenRepository registerTokenRepository;
     private final UserManageService userManageService;
     private final ApplicationEventPublisher eventPublisher;
     private final AuthenticationManager authenticationManager;
@@ -82,8 +82,8 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
             new EnumMap<>(LoginStrategyType.class);
 
     public LoginRegisterService(@NonNull List<LoginStrategy> strategies,
-                                UserDao userRepository,
-                                RegisterTokenDao registerTokenRepository,
+                                UserRepository userRepository,
+                                RegisterTokenRepository registerTokenRepository,
                                 UserManageService userManageService,
                                 ApplicationEventPublisher eventPublisher,
                                 AuthenticationManager authenticationManager,
@@ -100,7 +100,8 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
                 loginStrategyMap.put(strategy.getStrategyType(), strategy));
     }
 
-    public LoginStrategy getLoginStrategy(LoginStrategyType type) {
+    @NonNull
+    public LoginStrategy getLoginStrategy(@NonNull LoginStrategyType type) {
         return loginStrategyMap.get(type);
     }
 

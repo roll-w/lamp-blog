@@ -34,7 +34,7 @@ import space.lingu.lamp.user.filter.UserFilteringInfo;
 import space.lingu.lamp.user.filter.UserFilteringInfoType;
 import space.lingu.lamp.user.filter.UserInfoFilter;
 import space.lingu.lamp.user.repository.UserDo;
-import space.lingu.lamp.user.repository.UserDao;
+import space.lingu.lamp.user.repository.UserRepository;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 
@@ -48,12 +48,12 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserSignatureProvider,
         UserManageService, UserSearchService, UserProvider {
-    private final UserDao userRepository;
+    private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserInfoFilter userInfoFilter;
     private final ApplicationEventPublisher eventPublisher;
 
-    public UserServiceImpl(UserDao userRepository,
+    public UserServiceImpl(UserRepository userRepository,
                            PasswordEncoder passwordEncoder,
                            UserInfoFilter userInfoFilter,
                            ApplicationEventPublisher eventPublisher) {

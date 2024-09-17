@@ -25,7 +25,7 @@ import space.lingu.lamp.user.UserResourceKind;
 import space.lingu.lamp.user.UserViewException;
 import space.lingu.lamp.user.filter.UserInfoFilter;
 import space.lingu.lamp.user.repository.UserDo;
-import space.lingu.lamp.user.repository.UserDao;
+import space.lingu.lamp.user.repository.UserRepository;
 import tech.rollw.common.web.BusinessRuntimeException;
 import tech.rollw.common.web.UserErrorCode;
 import tech.rollw.common.web.system.SystemResource;
@@ -43,11 +43,11 @@ import java.util.Objects;
 @Service
 public class UserProviderService implements SystemResourceProvider<Long>,
         SystemResourceOperatorFactory<Long>, UserOperatorDelegate {
-    private final UserDao userRepository;
+    private final UserRepository userRepository;
     private final UserInfoFilter userInfoFilter;
     private final PasswordEncoder passwordEncoder;
 
-    public UserProviderService(UserDao userRepository,
+    public UserProviderService(UserRepository userRepository,
                                UserInfoFilter userInfoFilter,
                                PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;

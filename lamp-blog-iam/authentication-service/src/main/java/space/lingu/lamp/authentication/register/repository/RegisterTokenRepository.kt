@@ -14,21 +14,23 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.user.repository
+package space.lingu.lamp.authentication.register.repository
 
-import org.springframework.data.jpa.repository.Query
-import space.lingu.lamp.common.data.CommonDao
-import space.lingu.lamp.common.data.Dao
+import org.springframework.stereotype.Repository
+import space.lingu.lamp.common.data.CommonRepository
 
-@Dao
-@JvmDefaultWithoutCompatibility
-interface UserDao : CommonDao<UserDo, Long> {
-    @Query("SELECT u FROM UserDo u WHERE u.id = :id")
-    fun getByUserId(id: Long): UserDo?
+/**
+ * @author RollW
+ */
+@Repository
+class RegisterTokenRepository(
+    private val registerTokenDao: RegisterTokenDao
+): CommonRepository<RegisterTokenDo, Long>(registerTokenDao) {
+    fun findByToken(token: String): RegisterTokenDo? {
+        return registerTokenDao.findByToken(token)
+    }
 
-    @Query("SELECT u FROM UserDo u WHERE u.username = :username")
-    fun getByUsername(username: String): UserDo?
-
-    @Query("SELECT u FROM UserDo u WHERE u.email = :email")
-    fun getByEmail(email: String): UserDo?
+    fun makeTokenVerified(id: Long) {
+        registerTokenDao.makeTokenVerified(id)
+    }
 }
