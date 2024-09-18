@@ -17,73 +17,88 @@
 package space.lingu.lamp.web.common.keys;
 
 import space.lingu.NonNull;
+import space.lingu.lamp.setting.AttributedSettingSpecification;
 import space.lingu.lamp.setting.SettingKey;
-import space.lingu.lamp.setting.SettingSpecification;
-import space.lingu.lamp.setting.SimpleSettingSpec;
+import space.lingu.lamp.setting.SettingSource;
+import space.lingu.lamp.setting.SettingSpecificationBuilder;
+import space.lingu.lamp.setting.SettingSpecificationSupplier;
 
 import java.util.List;
 
 /**
  * @author RollW
  */
-public final class MailConfigKeys {
+public final class MailConfigKeys implements SettingSpecificationSupplier {
     public static final String EMAIL_DISABLED = "disable";
 
-    private static final String KEY_SMTP_SERVER_HOST = "mail.smtp.server.host";
-    private static final String KEY_SMTP_SERVER_PORT = "mail.smtp.server.port";
-    private static final String KEY_SMTP_SSL_ENABLE = "mail.smtp.ssl.enable";
-    private static final String KEY_MAIL_USERNAME = "mail.username";
-    private static final String KEY_MAIL_PASSWORD = "mail.password";
-    private static final String KEY_MAIL_SENDER_NAME = "mail.nickname";
+    public static final AttributedSettingSpecification<String, String> SMTP_SERVER_HOST =
+            new SettingSpecificationBuilder<>(SettingKey.ofString("mail.smtp.server.host"))
+                    .setDefaultValue("localhost")
+                    .setRequired(false)
+                    .setSupportedSources(SettingSource.VALUES)
+                    .build();
 
-    public static final SettingSpecification<String, String> SMTP_SERVER_HOST =
-            new SimpleSettingSpec<>(
-                    SettingKey.ofString(KEY_SMTP_SERVER_HOST),
-                    "localhost"
-            );
+    public static final AttributedSettingSpecification<Integer, Integer> SMTP_SERVER_PORT =
+            new SettingSpecificationBuilder<>(SettingKey.ofInt("mail.smtp.server.port"))
+                    .setDefaultValue(25)
+                    .setRequired(false)
+                    .setSupportedSources(SettingSource.VALUES)
+                    .build();
 
-    public static final SettingSpecification<Integer, Integer> SMTP_SERVER_PORT =
-            new SimpleSettingSpec<>(
-                    SettingKey.ofInt(KEY_SMTP_SERVER_PORT),
-                    25
-            );
+    public static final AttributedSettingSpecification<Boolean, Boolean> SMTP_SSL_ENABLE =
+            new SettingSpecificationBuilder<>(SettingKey.ofBoolean("mail.smtp.ssl.enable"))
+                    .setDefaultValue(false)
+                    .setRequired(false)
+                    .setSupportedSources(SettingSource.VALUES)
+                    .build();
+    public static final AttributedSettingSpecification<String, String> MAIL_USERNAME =
+            new SettingSpecificationBuilder<>(SettingKey.ofString("mail.username"))
+                    .setDefaultValue(null)
+                    .setRequired(false)
+                    .setSupportedSources(SettingSource.VALUES)
+                    .build();
 
-    public static final SettingSpecification<Boolean, Boolean> SMTP_SSL_ENABLE =
-            SimpleSettingSpec.ofBoolean(KEY_SMTP_SSL_ENABLE, false);
+    public static final AttributedSettingSpecification<String, String> MAIL_PASSWORD =
+            new SettingSpecificationBuilder<>(SettingKey.ofString("mail.password"))
+                    .setDefaultValue(null)
+                    .setRequired(false)
+                    .setSupportedSources(SettingSource.VALUES)
+                    .build();
 
-    public static final SettingSpecification<String, String> MAIL_USERNAME =
-            new SimpleSettingSpec<>(
-                    SettingKey.ofString(KEY_MAIL_USERNAME),
-                    null
-            );
-
-    public static final SettingSpecification<String, String> MAIL_PASSWORD =
-            new SimpleSettingSpec<>(
-                    SettingKey.ofString(KEY_MAIL_PASSWORD),
-                    null
-            );
-
-    public static final SettingSpecification<String, String> MAIL_SENDER_NAME =
-            new SimpleSettingSpec<>(
-                    SettingKey.ofString(KEY_MAIL_SENDER_NAME),
-                    "Lamp Blog"
-            );
+    public static final AttributedSettingSpecification<String, String> MAIL_SENDER_NAME =
+            new SettingSpecificationBuilder<>(SettingKey.ofString("mail.nickname"))
+                    .setDefaultValue("Lamp Blog")
+                    .setRequired(false)
+                    .setSupportedSources(SettingSource.VALUES)
+                    .build();
 
     public static final String PREFIX = "mail.";
 
-    public static final String[] KEYS = {
-            KEY_SMTP_SERVER_HOST,
-            KEY_SMTP_SERVER_PORT,
-            KEY_SMTP_SSL_ENABLE,
-            KEY_MAIL_USERNAME,
-            KEY_MAIL_PASSWORD,
-            KEY_MAIL_SENDER_NAME
-    };
+    private static final List<AttributedSettingSpecification<?, ?>> KEYS;
+
+    static {
+        KEYS = List.of(
+                SMTP_SERVER_HOST,
+                SMTP_SERVER_PORT,
+                SMTP_SSL_ENABLE,
+                MAIL_USERNAME,
+                MAIL_PASSWORD,
+                MAIL_SENDER_NAME
+        );
+    }
+
+    private MailConfigKeys() {
+    }
 
     public static boolean isDisabled(String username) {
         return EMAIL_DISABLED.equals(username);
     }
 
-    private MailConfigKeys() {
+    @NonNull
+    @Override
+    public List<AttributedSettingSpecification<?, ?>> getSpecifications() {
+        return KEYS;
     }
+
+    public static final MailConfigKeys INSTANCE = new MailConfigKeys();
 }

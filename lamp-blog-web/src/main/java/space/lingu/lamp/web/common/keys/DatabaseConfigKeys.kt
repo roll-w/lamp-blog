@@ -16,29 +16,53 @@
 
 package space.lingu.lamp.web.common.keys
 
+import space.lingu.lamp.setting.AttributedSettingSpecification
+import space.lingu.lamp.setting.SettingDescription
 import space.lingu.lamp.setting.SettingKey
-import space.lingu.lamp.setting.SimpleSettingSpec
+import space.lingu.lamp.setting.SettingSource
+import space.lingu.lamp.setting.SettingSpecificationBuilder
+import space.lingu.lamp.setting.SettingSpecificationSupplier
 
 /**
  * @author RollW
  */
-object DatabaseConfigKeys {
-    const val PREFIX = "database"
+object DatabaseConfigKeys : SettingSpecificationSupplier {
+    const val PREFIX = "database."
+
+    private val LOCAL_SOURCE = listOf(SettingSource.LOCAL)
 
     // TODO: add description when AttributedSettingSpec is ready
 
     @JvmField
-    val DATABASE_URL = SimpleSettingSpec(
-        SettingKey.ofString("database.url"), default = null
-    )
+    val DATABASE_URL =
+        SettingSpecificationBuilder(SettingKey.ofString("database.url"))
+            .setDescription(SettingDescription.text("Database URL"))
+            .setSupportedSources(LOCAL_SOURCE)
+            .setDefaultValue(null)
+            .setRequired(true)
+            .build()
+    @JvmField
+    val DATABASE_USERNAME =
+        SettingSpecificationBuilder(SettingKey.ofString("database.username"))
+            .setDescription(SettingDescription.text("Database username"))
+            .setDefaultValue(null)
+            .setSupportedSources(LOCAL_SOURCE)
+            .setRequired(false)
+            .build()
 
     @JvmField
-    val DATABASE_USERNAME = SimpleSettingSpec(
-        SettingKey.ofString("database.username"), default = null
+    val DATABASE_PASSWORD =
+        SettingSpecificationBuilder(SettingKey.ofString("database.password"))
+            .setDescription(SettingDescription.text("Database password"))
+            .setDefaultValue(null)
+            .setSupportedSources(LOCAL_SOURCE)
+            .setRequired(false)
+            .build()
+
+    private val keys = listOf(
+        DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD
     )
 
-    @JvmField
-    val DATABASE_PASSWORD = SimpleSettingSpec(
-        SettingKey.ofString("database.password"), default = null
-    )
+    override val specifications: List<AttributedSettingSpecification<*, *>>
+        get() = keys
 }
