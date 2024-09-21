@@ -16,17 +16,11 @@
 
 package space.lingu.lamp.web.configuration;
 
-import com.google.common.base.Strings;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import space.lingu.lamp.setting.ConfigProvider;
-import space.lingu.lamp.setting.InputStreamConfigReader;
-import space.lingu.lamp.setting.ReadonlyConfigProvider;
-import space.lingu.lamp.web.LampBlogSystemApplication;
-
-import java.io.IOException;
 
 /**
  * @author RollW
@@ -41,18 +35,12 @@ public class LocalConfigConfiguration {
 
     @Bean
     @Order(0)
-    public ConfigProvider localConfigProvider() throws IOException {
-        String path = configurableApplicationContext.getEnvironment()
-                .getProperty("lamp.config.path");
-        if (Strings.isNullOrEmpty(path)) {
-            path = "lamp.conf";
+    public ConfigProvider localConfigProvider() {
+        ConfigProvider configProvider = configurableApplicationContext.getEnvironment()
+                .getProperty("lamp.config.local-provider", ConfigProvider.class);
+        if (configProvider == null) {
+            throw new IllegalStateException("No local config provider found");
         }
-
-        return new ReadonlyConfigProvider(
-                InputStreamConfigReader.loadConfig(
-                        LampBlogSystemApplication.class,
-                        path
-                )
-        );
+        return configProvider;
     }
 }
