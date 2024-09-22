@@ -17,7 +17,6 @@
 package space.lingu.lamp.web.common.keys
 
 import space.lingu.lamp.setting.AttributedSettingSpecification
-import space.lingu.lamp.setting.SettingDescription
 import space.lingu.lamp.setting.SettingKey
 import space.lingu.lamp.setting.SettingSource
 import space.lingu.lamp.setting.SettingSpecificationBuilder
@@ -26,39 +25,28 @@ import space.lingu.lamp.setting.SettingSpecificationSupplier
 /**
  * @author RollW
  */
-object DatabaseConfigKeys : SettingSpecificationSupplier {
-    const val PREFIX = "database."
-
-    private val LOCAL_SOURCE = listOf(SettingSource.LOCAL)
+object ServerConfigKeys : SettingSpecificationSupplier {
 
     @JvmField
-    val DATABASE_URL =
-        SettingSpecificationBuilder(SettingKey.ofString("database.url"))
-            .setDescription(SettingDescription.text("Database URL"))
-            .setSupportedSources(LOCAL_SOURCE)
-            .setDefaultValue(null)
+    val PORT =
+        SettingSpecificationBuilder(SettingKey.ofString("server.port"))
+            .setTextDescription("Server port")
+            .setDefaultValue("5100")
+            .setSupportedSources(SettingSource.LOCAL_ONLY)
             .setRequired(true)
             .build()
-    @JvmField
-    val DATABASE_USERNAME =
-        SettingSpecificationBuilder(SettingKey.ofString("database.username"))
-            .setDescription(SettingDescription.text("Database username"))
-            .setDefaultValue(null)
-            .setSupportedSources(LOCAL_SOURCE)
-            .setRequired(false)
-            .build()
 
     @JvmField
-    val DATABASE_PASSWORD =
-        SettingSpecificationBuilder(SettingKey.ofString("database.password"))
-            .setDescription(SettingDescription.text("Database password"))
+    val HOST =
+        SettingSpecificationBuilder(SettingKey.ofString("server.host"))
+            .setResourceDescription("config.server.host")
             .setDefaultValue(null)
-            .setSupportedSources(LOCAL_SOURCE)
+            .setSupportedSources(SettingSource.LOCAL_ONLY)
             .setRequired(false)
             .build()
 
     private val keys = listOf(
-        DATABASE_URL, DATABASE_USERNAME, DATABASE_PASSWORD
+        PORT
     )
 
     override val specifications: List<AttributedSettingSpecification<*, *>>
