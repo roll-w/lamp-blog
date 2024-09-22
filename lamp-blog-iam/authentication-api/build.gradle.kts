@@ -20,6 +20,7 @@ plugins {
 
 dependencies {
     api(project(":lamp-blog-common"))
+    api(project(":lamp-blog-system:setting-api"))
     api(project(":lamp-blog-user:user-api"))
     api(libs.rollw.web.common.core)
     api("org.springframework.security:spring-security-core")
