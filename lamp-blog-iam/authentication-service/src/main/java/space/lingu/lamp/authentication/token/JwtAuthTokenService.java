@@ -16,7 +16,6 @@
 
 package space.lingu.lamp.authentication.token;
 
-import com.google.common.base.Strings;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Header;
@@ -28,6 +27,8 @@ import io.jsonwebtoken.security.SecurityException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
+import space.lingu.lamp.authentication.SecurityConfigKeys;
+import space.lingu.lamp.setting.ConfigReader;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.system.AuthenticationException;
 
@@ -41,39 +42,29 @@ import java.util.Date;
 @Service
 public class JwtAuthTokenService implements AuthenticationTokenService {
     private static final String TOKEN_HEAD = "Bearer ";
-
     private static final Logger logger = LoggerFactory.getLogger(JwtAuthTokenService.class);
 
-    public JwtAuthTokenService() {
+    private final ConfigReader configReader;
+
+    public JwtAuthTokenService(ConfigReader configReader) {
+        this.configReader = configReader;
     }
 
     @Override
     public String generateAuthToken(long userId, String signature) {
-        // TODO: after moved setting module, uncomment the following code
-        String timeValue = /*settingLoader.getSettingValue(
-                SecurityConfigKeys.KEY_TOKEN_EXPIRE_TIME, null);*/ "";
-        if (Strings.isNullOrEmpty(timeValue)) {
-            return generateAuthToken(userId, signature, DAYS_7);
-        }
-        try {
-            long expireTime = Long.parseLong(timeValue);
-            return generateAuthToken(userId, signature, expireTime);
-        } catch (NumberFormatException e) {
-            logger.error("Invalid token expire time setting: {} and fall back to default," +
-                            " please check the setting value of {}.",
-                    timeValue, "SecurityConfigKeys.KEY_TOKEN_EXPIRE_TIME");
-            return generateAuthToken(userId, signature, DAYS_7);
-        }
+        Long expireTime = configReader.get(SecurityConfigKeys.TOKEN_EXPIRE_TIME, DAYS_7);
+        return generateAuthToken(userId, signature, expireTime);
     }
 
     @Override
     public String generateAuthToken(long userId, String signature,
                                     long expireTimeInSecond) {
+        String issuer = configReader.get(SecurityConfigKeys.TOKEN_ISSUER);
         Key key = Keys.hmacShaKeyFor(signature.getBytes(StandardCharsets.UTF_8));
         String rawToken = Jwts.builder()
                 .setSubject(String.valueOf(userId))
                 .setExpiration(getExpirationDateFromNow(expireTimeInSecond))
-                .setIssuer("Lingu Lamp Blog.")
+                .setIssuer(issuer)
                 .signWith(key)
                 .compact();
         return TOKEN_HEAD + rawToken;
