@@ -17,28 +17,14 @@
 package space.lingu.lamp.web;
 
 /**
+ * Environment keys using in star
+ *
  * @author RollW
  */
-public class ServerInitializeException extends RuntimeException {
-    private final Detail detail;
+public final class LampEnvKeys {
+    public static final String RAW_ARGS = "lamp.startup.raw-args";
+    public static final String LOCAL_CONFIG_LOADER = "lamp.config.local-provider";
 
-    public ServerInitializeException(Detail detail) {
-        super(detail.message());
-        this.detail = detail;
-    }
-
-    public ServerInitializeException(Detail detail, Throwable cause) {
-        super(detail.message(), cause);
-        this.detail = detail;
-    }
-
-    public Detail getDetail() {
-        return detail;
-    }
-
-    public record Detail(
-            String message,
-            String action
-    ) {
+    private LampEnvKeys() {
     }
 }

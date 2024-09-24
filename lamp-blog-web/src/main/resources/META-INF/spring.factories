@@ -16,3 +16,5 @@
 
 org.springframework.boot.diagnostics.FailureAnalyzer=\
     space.lingu.lamp.web.HibernateFailureAnalyzer
+org.springframework.boot.env.EnvironmentPostProcessor=\
+    space.lingu.lamp.web.LampEnvironmentPostProcessor
