@@ -20,11 +20,14 @@ import space.lingu.lamp.setting.AttributedSettingSpecification;
 import space.lingu.lamp.setting.SettingKey;
 import space.lingu.lamp.setting.SettingSource;
 import space.lingu.lamp.setting.SettingSpecificationBuilder;
+import space.lingu.lamp.setting.SettingSpecificationSupplier;
+
+import java.util.List;
 
 /**
  * @author RollW
  */
-public class SecurityConfigKeys {
+public class SecurityConfigKeys implements SettingSpecificationSupplier {
     public static final AttributedSettingSpecification<String, String> TOKEN_ISSUER =
             new SettingSpecificationBuilder<>(SettingKey.ofString("security.token.issuer"))
                     .setDefaultValue("Lamp Blog")
@@ -43,6 +46,18 @@ public class SecurityConfigKeys {
                     .build();
 
     public static final String PREFIX = "security.";
+
+    private static final List<AttributedSettingSpecification<?, ?>> KEYS = List.of(
+            TOKEN_ISSUER,
+            TOKEN_EXPIRE_TIME
+    );
+
+    public static final SecurityConfigKeys INSTANCE = new SecurityConfigKeys();
+
+    @Override
+    public List<AttributedSettingSpecification<?, ?>> getSpecifications() {
+        return KEYS;
+    }
 
     private SecurityConfigKeys() {
     }
