@@ -22,7 +22,7 @@ val kotlinVersion = "2.0.20"
 
 dependencies {
     implementation("io.spring.gradle:dependency-management-plugin:1.1.6")
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.3")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.4")
     implementation(kotlin("gradle-plugin", kotlinVersion))
     // plugin.spring
     implementation(kotlin("allopen", kotlinVersion))
