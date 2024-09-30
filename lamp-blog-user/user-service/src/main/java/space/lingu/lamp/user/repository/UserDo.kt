@@ -39,70 +39,46 @@ import java.io.Serializable
  */
 @Entity
 @Table(name = "user")
-class UserDo : Serializable, DataEntity<Long>, UserDetails, AttributedUserDetails {
+class UserDo(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    private var id: Long? = null
+    private var id: Long? = null,
 
     @Column(name = "username")
-    private var username: String? = null
+    private var username: String? = null,
 
     @Column(name = "password")
-    private var password: String? = null
+    private var password: String? = null,
 
     @Column(name = "role", length = 20)
     @Enumerated(EnumType.STRING)
-    private var role: Role? = null
+    private var role: Role? = null,
 
     @Column(name = "register_time")
-    var registerTime: Long = 0
+    var registerTime: Long = 0,
 
     @Column(name = "update_time")
-    private var updateTime: Long = 0
+    private var updateTime: Long = 0,
 
     @Column(name = "email")
-    private var email: String? = null
+    private var email: String? = null,
 
     @Column(name = "phone")
-    var phone: String? = null
+    var phone: String? = null,
 
     @Column(name = "enabled")
-    private var enabled = false
+    private var enabled: Boolean = false,
 
     @Column(name = "locked")
-    private var locked = false
+    private var locked: Boolean = false,
 
     @Column(name = "account_expired")
-    var accountExpired: Boolean = false
+    var accountExpired: Boolean = false,
 
     @Column(name = "account_canceled")
-    private var canceled = false
-
-    constructor(
-        id: Long?, username: String?, password: String?,
-        role: Role?, registerTime: Long,
-        updateTime: Long, email: String?, phone: String?,
-        enabled: Boolean, locked: Boolean,
-        accountExpired: Boolean,
-        canceled: Boolean
-    ) {
-        this.id = id
-        this.username = username
-        this.password = password
-        this.role = role
-        this.registerTime = registerTime
-        this.updateTime = updateTime
-        this.email = email
-        this.phone = phone
-        this.enabled = enabled
-        this.locked = locked
-        this.accountExpired = accountExpired
-        this.canceled = canceled
-    }
-
-    constructor()
-
+    private var canceled: Boolean = false
+) : Serializable, DataEntity<Long>, UserDetails, AttributedUserDetails {
     override fun getId(): Long? {
         return id
     }
@@ -182,10 +158,6 @@ class UserDo : Serializable, DataEntity<Long>, UserDetails, AttributedUserDetail
 
     override fun getUsername(): String {
         return username!!
-    }
-
-    fun setUsername(username: String?) {
-        this.username = username
     }
 
     override fun isAccountNonExpired(): Boolean {
