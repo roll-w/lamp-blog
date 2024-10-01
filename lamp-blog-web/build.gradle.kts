@@ -21,6 +21,7 @@ plugins {
 dependencies {
     implementation(project(":lamp-blog-common"))
     implementation(project(":lamp-blog-system:setting-service"))
+    implementation(project(":lamp-blog-system:message-resource-service"))
     implementation(project(":lamp-blog-content:content-service"))
     implementation(project(":lamp-blog-iam:authentication-service"))
     implementation(project(":lamp-blog-user:user-service"))
@@ -32,6 +33,7 @@ dependencies {
     implementation(libs.commons.text)
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation(libs.spring.shell.starter)
+    implementation("org.jline:jline-terminal-jna:3.26.3")
     implementation("org.springframework.boot:spring-boot-starter-websocket")
     implementation("org.springframework.boot:spring-boot-starter-aop")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
