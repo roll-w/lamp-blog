@@ -23,6 +23,7 @@ plugins {
 dependencies {
     api(libs.rollw.web.common.core)
     api("org.springframework:spring-web")
+    api("org.springframework:spring-expression")
     api("org.slf4j:slf4j-api")
     api("org.apache.commons:commons-lang3")
     api(libs.com.google.guava)
