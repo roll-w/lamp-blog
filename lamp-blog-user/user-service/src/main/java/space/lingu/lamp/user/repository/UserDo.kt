@@ -23,8 +23,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
-import org.springframework.security.core.GrantedAuthority
-import org.springframework.security.core.userdetails.UserDetails
+import jakarta.persistence.UniqueConstraint
 import space.lingu.NonNull
 import space.lingu.lamp.DataEntity
 import space.lingu.lamp.user.AttributedUserDetails
@@ -38,17 +37,19 @@ import java.io.Serializable
  * @author RollW
  */
 @Entity
-@Table(name = "user")
+@Table(name = "user", uniqueConstraints = [
+    UniqueConstraint(columnNames = ["username"], name = "index__username")
+])
 class UserDo(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private var id: Long? = null,
 
-    @Column(name = "username")
+    @Column(name = "username", length = 120)
     private var username: String? = null,
 
-    @Column(name = "password")
+    @Column(name = "password", length = 120)
     private var password: String? = null,
 
     @Column(name = "role", length = 20)
@@ -61,10 +62,11 @@ class UserDo(
     @Column(name = "update_time")
     private var updateTime: Long = 0,
 
-    @Column(name = "email")
+    @Column(name = "email", length = 255)
     private var email: String? = null,
 
-    @Column(name = "phone")
+    // TODO: phone encryption
+    @Column(name = "phone", length = 255)
     var phone: String? = null,
 
     @Column(name = "enabled")
@@ -73,12 +75,9 @@ class UserDo(
     @Column(name = "locked")
     private var locked: Boolean = false,
 
-    @Column(name = "account_expired")
-    var accountExpired: Boolean = false,
-
     @Column(name = "account_canceled")
     private var canceled: Boolean = false
-) : Serializable, DataEntity<Long>, UserDetails, AttributedUserDetails {
+) : Serializable, DataEntity<Long>, AttributedUserDetails {
     override fun getId(): Long? {
         return id
     }
@@ -144,10 +143,6 @@ class UserDo(
         this.canceled = canceled
     }
 
-    override fun getAuthorities(): Collection<GrantedAuthority> {
-        return role!!.toAuthority()
-    }
-
     override fun getPassword(): String {
         return password!!
     }
@@ -158,18 +153,6 @@ class UserDo(
 
     override fun getUsername(): String {
         return username!!
-    }
-
-    override fun isAccountNonExpired(): Boolean {
-        return !accountExpired || !canceled
-    }
-
-    override fun isAccountNonLocked(): Boolean {
-        return !locked
-    }
-
-    override fun isCredentialsNonExpired(): Boolean {
-        return true
     }
 
     override fun isEnabled(): Boolean {
@@ -192,7 +175,6 @@ class UserDo(
                 ", phone='" + phone + '\'' +
                 ", enabled=" + enabled +
                 ", locked=" + locked +
-                ", accountExpired=" + accountExpired +
                 ", canceled=" + canceled +
                 '}'
     }
@@ -201,8 +183,7 @@ class UserDo(
         return User(
             id, username, password, role,
             registerTime, updateTime, email, phone,
-            enabled, locked, accountExpired,
-            canceled
+            enabled, locked, canceled
         )
     }
 
@@ -212,8 +193,7 @@ class UserDo(
             return UserDo(
                 id, username, password, role,
                 registerTime, updateTime, email, phone,
-                isEnabled, isLocked, isAccountExpired,
-                isCanceled
+                isEnabled, isLocked, isCanceled
             )
         }
     }

@@ -16,8 +16,6 @@
 
 package space.lingu.lamp.user;
 
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import space.lingu.NonNull;
 import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
@@ -29,7 +27,6 @@ import space.lingu.light.LightConfiguration;
 import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.util.Collection;
 import java.util.Objects;
 
 /**
@@ -40,7 +37,7 @@ import java.util.Objects;
 })
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
 @SuppressWarnings({"ClassCanBeRecord"})
-public class User implements UserDetails, AttributedUserDetails, DataEntity<Long> {
+public class User implements AttributedUserDetails, DataEntity<Long> {
     @PrimaryKey(autoGenerate = true)
     @DataColumn(name = "id")
     private final Long id;
@@ -73,9 +70,6 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
     @DataColumn(name = "locked")
     private final boolean locked;
 
-    @DataColumn(name = "account_expired")
-    private final boolean accountExpired;
-
     @DataColumn(name = "account_canceled")
     private final boolean canceled;
 
@@ -83,9 +77,7 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
     public User(Long id, String username, String password,
                 Role role, long registerTime,
                 long updateTime, String email, String phone,
-                boolean enabled, boolean locked,
-                boolean accountExpired,
-                boolean canceled) {
+                boolean enabled, boolean locked, boolean canceled) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -96,7 +88,6 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
         this.phone = phone;
         this.enabled = enabled;
         this.locked = locked;
-        this.accountExpired = accountExpired;
         this.canceled = canceled;
     }
 
@@ -104,9 +95,10 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
         return id;
     }
 
+    @NonNull
     @Override
     public Long getResourceId() {
-        return getId();
+        return Objects.requireNonNull(id, "Id has not be set.");
     }
 
     @Override
@@ -160,32 +152,8 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
         return locked;
     }
 
-    public boolean isAccountExpired() {
-        return accountExpired;
-    }
-
     public boolean isCanceled() {
         return canceled;
-    }
-
-    @Override
-    public boolean isAccountNonExpired() {
-        return !accountExpired || !canceled;
-    }
-
-    @Override
-    public boolean isAccountNonLocked() {
-        return !locked;
-    }
-
-    @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return role.toAuthority();
     }
 
     public static Builder builder() {
@@ -201,12 +169,12 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return registerTime == user.registerTime && enabled == user.enabled && locked == user.locked && accountExpired == user.accountExpired && canceled == user.canceled && Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && role == user.role && Objects.equals(email, user.email) && Objects.equals(phone, user.phone);
+        return registerTime == user.registerTime && enabled == user.enabled && locked == user.locked && canceled == user.canceled && Objects.equals(id, user.id) && Objects.equals(username, user.username) && Objects.equals(password, user.password) && role == user.role && Objects.equals(email, user.email) && Objects.equals(phone, user.phone);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, role, registerTime, email, phone, enabled, locked, accountExpired, canceled);
+        return Objects.hash(id, username, password, role, registerTime, email, phone, enabled, locked, canceled);
     }
 
     @Override
@@ -221,7 +189,6 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
                 ", phone='" + phone + '\'' +
                 ", enabled=" + enabled +
                 ", locked=" + locked +
-                ", accountExpired=" + accountExpired +
                 ", canceled=" + canceled +
                 '}';
     }
@@ -250,7 +217,6 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
         private String phone;
         private boolean enabled;
         private boolean locked = false;
-        private boolean accountExpired = false;
         private boolean canceled = false;
 
         public Builder() {
@@ -267,7 +233,6 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
             this.phone = user.phone;
             this.enabled = user.enabled;
             this.locked = user.locked;
-            this.accountExpired = user.accountExpired;
             this.canceled = user.canceled;
         }
 
@@ -322,11 +287,6 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
             return this;
         }
 
-        public Builder setAccountExpired(boolean accountExpired) {
-            this.accountExpired = accountExpired;
-            return this;
-        }
-
         public Builder setCanceled(boolean canceled) {
             this.canceled = canceled;
             return this;
@@ -338,7 +298,7 @@ public class User implements UserDetails, AttributedUserDetails, DataEntity<Long
                     id, username, password,
                     role, registerTime,
                     updateTime, email, phone, enabled, locked,
-                    accountExpired, canceled
+                    canceled
             );
         }
     }
