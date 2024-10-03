@@ -14,26 +14,34 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.system;
+package space.lingu.lamp.system.resource;
 
-import space.lingu.lamp.LongDataItem;
+import org.jetbrains.annotations.NotNull;
+import space.lingu.NonNull;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.*;
+import space.lingu.light.DataColumn;
+import space.lingu.light.DataTable;
+import space.lingu.light.Index;
+import space.lingu.light.PrimaryKey;
+import space.lingu.light.SQLDataType;
 import tech.rollw.common.web.system.SystemResourceKind;
 
+import java.time.LocalDateTime;
 import java.util.Locale;
 
 /**
- * Message resource, overrides the default message resource in the system.
+ * Localized message resource, overrides the default message resource
+ * in the system.
+ * <p>
  * Could be used to override the default i18n messages in the system.
  *
  * @author RollW
  */
-@DataTable(name = "message_resource", indices = {
+@DataTable(name = "localized_message", indices = {
         @Index(value = {"key", "locale"}, unique = true)
 })
-public record MessageResource(
+public record LocalizedMessage(
         @DataColumn(name = "id")
         @PrimaryKey(autoGenerate = true)
         Long id,
@@ -46,7 +54,10 @@ public record MessageResource(
 
         @DataColumn(name = "locale")
         Locale locale
-) implements LongDataItem<MessageResource> {
+
+        //@DataColumn(name = "update_time")
+//        LocalDateTime updateTime
+) implements LocalizedMessageResource, DataEntity<Long> {
     @Override
     public Long getId() {
         return id;
@@ -62,21 +73,22 @@ public record MessageResource(
         return 0;
     }
 
-    @Override
-    public LongEntityBuilder<MessageResource> toBuilder() {
+    public Builder toBuilder() {
         return new Builder(this);
     }
 
+    @NonNull
     @Override
     public SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.SYSTEM_MESSAGE_RESOURCE;
+        return LocalizedMessageResourceKind.INSTANCE;
     }
 
     public static Builder builder() {
         return new Builder();
     }
 
-    public static MessageResource of(String key, String value, Locale locale) {
+    public static LocalizedMessage of(String key, String value,
+                                      Locale locale) {
         return builder()
                 .setKey(key)
                 .setValue(value)
@@ -84,20 +96,40 @@ public record MessageResource(
                 .build();
     }
 
-    public static final class Builder implements LongEntityBuilder<MessageResource> {
+    @Override
+    @NotNull
+    public String getKey() {
+        return key;
+    }
+
+    @Override
+    @NotNull
+    public String getValue() {
+        return value;
+    }
+
+    @Override
+    @NotNull
+    public Locale getLocale() {
+        return locale;
+    }
+
+    public static final class Builder implements LongEntityBuilder<LocalizedMessage> {
         private Long id;
         private String key;
         private String value;
         private Locale locale;
+        private LocalDateTime updateTime;
 
         public Builder() {
         }
 
-        public Builder(MessageResource messageResource) {
-            this.id = messageResource.id;
-            this.key = messageResource.key;
-            this.value = messageResource.value;
-            this.locale = messageResource.locale;
+        public Builder(LocalizedMessage localizedMessage) {
+            this.id = localizedMessage.id;
+            this.key = localizedMessage.key;
+            this.value = localizedMessage.value;
+            this.locale = localizedMessage.locale;
+            //this.updateTime = localizedMessage.updateTime;
         }
 
         @Override
@@ -121,9 +153,14 @@ public record MessageResource(
             return this;
         }
 
+        public Builder setUpdateTime(LocalDateTime updateTime) {
+            this.updateTime = updateTime;
+            return this;
+        }
+
         @Override
-        public MessageResource build() {
-            return new MessageResource(id, key, value, locale);
+        public LocalizedMessage build() {
+            return new LocalizedMessage(id, key, value, locale);
         }
     }
 }

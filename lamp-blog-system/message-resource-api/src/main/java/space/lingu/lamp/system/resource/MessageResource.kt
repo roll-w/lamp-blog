@@ -14,25 +14,13 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.system.resource;
-
-import space.lingu.NonNull;
-import space.lingu.lamp.web.system.MessageResource;
-
-import java.util.Locale;
+package space.lingu.lamp.system.resource
 
 /**
  * @author RollW
  */
-public interface MessageResourceProvider extends MessageResourceLoader {
-    void setMessageResource(@NonNull String key,
-                            @NonNull String value,
-                            @NonNull Locale locale);
+interface MessageResource {
+    val key: String
 
-    void setMessageResource(@NonNull MessageResource messageResource);
-
-    void deleteMessageResource(@NonNull String key);
-
-    void deleteMessageResource(@NonNull String key,
-                               @NonNull Locale locale);
+    val value: String
 }
