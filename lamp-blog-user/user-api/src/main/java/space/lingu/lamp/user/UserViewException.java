@@ -16,13 +16,13 @@
 
 package space.lingu.lamp.user;
 
-import tech.rollw.common.web.BusinessRuntimeException;
+import space.lingu.lamp.LampException;
 import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW
  */
-public class UserViewException extends BusinessRuntimeException {
+public class UserViewException extends LampException {
     public UserViewException(ErrorCode errorCode) {
         super(errorCode);
     }

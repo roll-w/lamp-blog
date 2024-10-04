@@ -24,7 +24,7 @@ import space.lingu.lamp.web.domain.content.ContentProviderFactory;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.content.SimpleContentIdentity;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.system.SystemResource;
 import tech.rollw.common.web.system.SystemResourceKind;
 import tech.rollw.common.web.system.SystemResourceOperator;
@@ -71,7 +71,7 @@ public class ContentProvideService implements SystemResourceProvider<Long>,
     @Override
     public ContentDetails provide(@NonNull Long resourceId,
                                   @NonNull SystemResourceKind systemResourceKind)
-            throws BusinessRuntimeException, UnsupportedKindException {
+            throws CommonRuntimeException, UnsupportedKindException {
         ContentType contentType = ContentType.from((LampSystemResourceKind)
                 systemResourceKind);
         ContentProvider contentProvider = findProvider(contentType);
@@ -83,7 +83,7 @@ public class ContentProvideService implements SystemResourceProvider<Long>,
     @NonNull
     @Override
     public ContentDetails provide(@NonNull SystemResource<Long> rawSystemResource)
-            throws BusinessRuntimeException, UnsupportedKindException {
+            throws CommonRuntimeException, UnsupportedKindException {
         if (rawSystemResource instanceof ContentDetails contentDetails) {
             return contentDetails;
         }

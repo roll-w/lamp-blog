@@ -18,6 +18,7 @@ package space.lingu.lamp.web.controller;
 
 import com.google.common.base.Strings;
 import com.google.common.base.VerifyException;
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSource;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
 import org.springframework.security.core.AuthenticationException;
@@ -37,17 +39,24 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
+import space.lingu.lamp.authentication.login.LoginTokenException;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.common.ParameterMissingException;
-import space.lingu.lamp.authentication.login.LoginTokenException;
 import space.lingu.lamp.web.system.ErrorRecord;
 import space.lingu.lamp.web.system.ErrorRecordVo;
 import space.lingu.light.LightRuntimeException;
-import tech.rollw.common.web.*;
+import tech.rollw.common.web.AuthErrorCode;
+import tech.rollw.common.web.CommonErrorCode;
+import tech.rollw.common.web.CommonRuntimeException;
+import tech.rollw.common.web.ErrorCode;
+import tech.rollw.common.web.ErrorCodeFinder;
+import tech.rollw.common.web.HttpResponseEntity;
+import tech.rollw.common.web.IoErrorCode;
+import tech.rollw.common.web.UserErrorCode;
+import tech.rollw.common.web.WebCommonErrorCode;
 import tech.rollw.common.web.system.ContextThread;
 import tech.rollw.common.web.system.ContextThreadAware;
 
-import jakarta.validation.ConstraintViolationException;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.MessageFormat;
@@ -135,16 +144,16 @@ public class LampSystemExceptionHandler {
         );
     }
 
-    @ExceptionHandler(BusinessRuntimeException.class)
-    public HttpResponseEntity<Void> handle(BusinessRuntimeException e) {
-        logger.trace("System runtime error: %s".formatted(e.toString()), e);
+    @ExceptionHandler(CommonRuntimeException.class)
+    public HttpResponseEntity<Void> handle(CommonRuntimeException e) {
+        logger.trace("Common runtime exception: {}", e.getMessage(), e);
         return HttpResponseEntity.of(
                 errorCodeFinder.fromThrowable(e),
                 tryGetMessage(e)
         );
     }
 
-    private String tryGetMessage(BusinessRuntimeException e) {
+    private String tryGetMessage(CommonRuntimeException e) {
         if (Strings.isNullOrEmpty(e.getMessage())) {
             return null;
         }
@@ -280,6 +289,6 @@ public class LampSystemExceptionHandler {
 
     @GetMapping("/api/v1/common/error/occur")
     public void makeException() {
-        throw new RuntimeException("test log");
+        throw new RuntimeException("Test exception");
     }
 }

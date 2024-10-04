@@ -16,13 +16,13 @@
 
 package space.lingu.lamp.authentication.login;
 
-import tech.rollw.common.web.BusinessRuntimeException;
+import space.lingu.lamp.LampException;
 import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW
  */
-public class LoginTokenException extends BusinessRuntimeException {
+public class LoginTokenException extends LampException {
     public LoginTokenException(ErrorCode errorCode) {
         super(errorCode);
     }

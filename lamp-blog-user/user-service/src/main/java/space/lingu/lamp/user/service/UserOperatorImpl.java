@@ -24,7 +24,7 @@ import space.lingu.lamp.user.UserOperator;
 import space.lingu.lamp.user.UserViewException;
 import space.lingu.lamp.user.filter.UserFilteringInfo;
 import space.lingu.lamp.user.filter.UserFilteringInfoType;
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
@@ -83,7 +83,7 @@ public class UserOperatorImpl implements UserOperator {
     }
 
     @Override
-    public UserOperator update() throws BusinessRuntimeException {
+    public UserOperator update() throws CommonRuntimeException {
         if (autoUpdateEnabled) {
             return this;
         }
@@ -99,14 +99,14 @@ public class UserOperatorImpl implements UserOperator {
     }
 
     @Override
-    public UserOperator delete() throws BusinessRuntimeException {
+    public UserOperator delete() throws CommonRuntimeException {
         checkDelete();
         userBuilder.setCanceled(true);
         return updateInternal();
     }
 
     @Override
-    public UserOperator rename(String username) throws BusinessRuntimeException {
+    public UserOperator rename(String username) throws CommonRuntimeException {
         checkDelete();
         if (username == null) {
             throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "username is null");
@@ -126,7 +126,7 @@ public class UserOperatorImpl implements UserOperator {
 
     @Override
     public UserOperator setEmail(String email)
-            throws BusinessRuntimeException {
+            throws CommonRuntimeException {
         checkDelete();
         if (email == null) {
             throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "email is null");
@@ -145,7 +145,7 @@ public class UserOperatorImpl implements UserOperator {
     }
 
     @Override
-    public UserOperator setRole(Role role) throws BusinessRuntimeException {
+    public UserOperator setRole(Role role) throws CommonRuntimeException {
         checkDelete();
         if (role == null) {
             throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "role is null");
@@ -159,7 +159,7 @@ public class UserOperatorImpl implements UserOperator {
     }
 
     @Override
-    public UserOperator setPassword(String password) throws BusinessRuntimeException {
+    public UserOperator setPassword(String password) throws CommonRuntimeException {
         checkDelete();
         if (password == null) {
             throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "password is null");
@@ -189,7 +189,7 @@ public class UserOperatorImpl implements UserOperator {
     @Override
     public UserOperator setPassword(String oldPassword,
                                     String password)
-            throws BusinessRuntimeException {
+            throws CommonRuntimeException {
         checkDelete();
         if (oldPassword == null) {
             throw new LampException(CommonErrorCode.ERROR_ILLEGAL_ARGUMENT, "oldPassword is null");
@@ -208,7 +208,7 @@ public class UserOperatorImpl implements UserOperator {
     }
 
     @Override
-    public UserOperator setEnabled(boolean enabled) throws BusinessRuntimeException {
+    public UserOperator setEnabled(boolean enabled) throws CommonRuntimeException {
         checkDelete();
         if (user.isEnabled() == enabled) {
             return this;
@@ -218,7 +218,7 @@ public class UserOperatorImpl implements UserOperator {
     }
 
     @Override
-    public UserOperator setLocked(boolean locked) throws BusinessRuntimeException {
+    public UserOperator setLocked(boolean locked) throws CommonRuntimeException {
         checkDelete();
         if (user.isLocked() == locked) {
             return this;
@@ -228,7 +228,7 @@ public class UserOperatorImpl implements UserOperator {
     }
 
     @Override
-    public UserOperator setCanceled(boolean canceled) throws BusinessRuntimeException {
+    public UserOperator setCanceled(boolean canceled) throws CommonRuntimeException {
         checkDelete();
         if (user.isCanceled() == canceled) {
             return this;

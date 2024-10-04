@@ -22,9 +22,11 @@ import java.util.List;
  * @author RollW
  */
 public interface UserProvider {
-    AttributedUser getUser(long userId) throws UserViewException;
+    AttributedUserDetails getUser(long userId) throws UserViewException;
 
-    AttributedUser getUser(UserTrait userTrait) throws UserViewException;
+    AttributedUserDetails getUser(String username) throws UserViewException;
 
-    List<AttributedUser> getUsers();
+    AttributedUserDetails getUser(UserTrait userTrait) throws UserViewException;
+
+    List<AttributedUserDetails> getUsers();
 }

@@ -16,13 +16,13 @@
 
 package space.lingu.lamp.web.domain.storage.common;
 
-import tech.rollw.common.web.BusinessRuntimeException;
+import space.lingu.lamp.LampException;
 import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW
  */
-public class StorageException extends BusinessRuntimeException {
+public class StorageException extends LampException {
     public StorageException(ErrorCode errorCode) {
         super(errorCode);
     }

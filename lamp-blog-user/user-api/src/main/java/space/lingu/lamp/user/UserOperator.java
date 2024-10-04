@@ -18,7 +18,7 @@ package space.lingu.lamp.user;
 
 
 import space.lingu.NonNull;
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.system.SystemResource;
 import tech.rollw.common.web.system.SystemResourceKind;
 import tech.rollw.common.web.system.SystemResourceOperator;
@@ -53,35 +53,35 @@ public interface UserOperator extends SystemResourceOperator<Long>,
     boolean isAutoUpdateEnabled();
 
     @Override
-    UserOperator update() throws BusinessRuntimeException;
+    UserOperator update() throws CommonRuntimeException;
 
     @Override
-    UserOperator delete() throws BusinessRuntimeException;
+    UserOperator delete() throws CommonRuntimeException;
 
     @Override
-    UserOperator rename(String newName) throws BusinessRuntimeException;
+    UserOperator rename(String newName) throws CommonRuntimeException;
 
     @Override
     UserOperator getSystemResource();
 
     UserOperator setEmail(String email)
-            throws BusinessRuntimeException;
+            throws CommonRuntimeException;
 
     UserOperator setRole(Role role)
-            throws BusinessRuntimeException;
+            throws CommonRuntimeException;
 
     UserOperator setPassword(String password)
-            throws BusinessRuntimeException;
+            throws CommonRuntimeException;
 
     UserOperator setPassword(String oldPassword, String password)
-            throws BusinessRuntimeException;
+            throws CommonRuntimeException;
 
     UserOperator setEnabled(boolean enabled)
-            throws BusinessRuntimeException;
+            throws CommonRuntimeException;
 
     UserOperator setLocked(boolean locked)
-            throws BusinessRuntimeException;
+            throws CommonRuntimeException;
 
     UserOperator setCanceled(boolean canceled)
-            throws BusinessRuntimeException;
+            throws CommonRuntimeException;
 }

@@ -26,7 +26,7 @@ import space.lingu.lamp.user.UserViewException;
 import space.lingu.lamp.user.filter.UserInfoFilter;
 import space.lingu.lamp.user.repository.UserDo;
 import space.lingu.lamp.user.repository.UserRepository;
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.UserErrorCode;
 import tech.rollw.common.web.system.SystemResource;
 import tech.rollw.common.web.system.SystemResourceKind;
@@ -75,7 +75,7 @@ public class UserProviderService implements SystemResourceProvider<Long>,
     @NonNull
     @Override
     public AttributedUser provide(@NonNull SystemResource<Long> rawSystemResource)
-            throws BusinessRuntimeException, UnsupportedKindException {
+            throws CommonRuntimeException, UnsupportedKindException {
         if (rawSystemResource instanceof AttributedUser attributedUser) {
             return attributedUser;
         }

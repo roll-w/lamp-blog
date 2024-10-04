@@ -16,13 +16,13 @@
 
 package space.lingu.lamp.web.common;
 
-import tech.rollw.common.web.BusinessRuntimeException;
+import space.lingu.lamp.LampException;
 import tech.rollw.common.web.WebCommonErrorCode;
 
 /**
  * @author RollW
  */
-public class ParameterMissingException extends BusinessRuntimeException {
+public class ParameterMissingException extends LampException {
     private static final String DEFAULT_TEMPLATE = "Parameter {} is missing.";
 
     public ParameterMissingException() {

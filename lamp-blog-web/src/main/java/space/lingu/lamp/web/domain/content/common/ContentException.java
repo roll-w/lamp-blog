@@ -16,13 +16,13 @@
 
 package space.lingu.lamp.web.domain.content.common;
 
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW
  */
-public class ContentException extends BusinessRuntimeException {
+public class ContentException extends CommonRuntimeException {
     public ContentException(ErrorCode errorCode) {
         super(errorCode);
     }

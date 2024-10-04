@@ -16,13 +16,13 @@
 
 package space.lingu.lamp.web.domain.review.common;
 
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW
  */
-public class ReviewException extends BusinessRuntimeException {
+public class ReviewException extends CommonRuntimeException {
     public ReviewException(ErrorCode errorCode) {
         super(errorCode);
     }

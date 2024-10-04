@@ -26,7 +26,7 @@ import space.lingu.lamp.web.domain.content.ContentStatus;
 import space.lingu.lamp.web.domain.content.ContentType;
 import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.content.common.ContentException;
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonRuntimeException;
 
 import java.util.Objects;
 
@@ -98,7 +98,7 @@ public abstract class AbstractContentOperator implements ContentOperator {
 
     @Override
     public final ContentOperator rename(String newName)
-            throws BusinessRuntimeException {
+            throws CommonRuntimeException {
         if (Objects.equals(newName, content.getTitle())) {
             return this;
         }
@@ -111,7 +111,7 @@ public abstract class AbstractContentOperator implements ContentOperator {
 
     @Override
     public final ContentOperator setContent(String content)
-            throws BusinessRuntimeException {
+            throws CommonRuntimeException {
         if (Objects.equals(content, this.content.getContent())) {
             return this;
         }
@@ -124,12 +124,12 @@ public abstract class AbstractContentOperator implements ContentOperator {
 
     @Override
     public final ContentOperator setPassword(String password)
-            throws BusinessRuntimeException {
+            throws CommonRuntimeException {
         return this;
     }
 
     @Override
-    public final ContentOperator setMetadata(ContentDetailsMetadata metadata) throws BusinessRuntimeException {
+    public final ContentOperator setMetadata(ContentDetailsMetadata metadata) throws CommonRuntimeException {
         if (Objects.equals(metadata, this.content.getMetadata())) {
             return this;
         }
@@ -140,14 +140,14 @@ public abstract class AbstractContentOperator implements ContentOperator {
         return this;
     }
 
-    protected abstract boolean setNameInternal(@Nullable String name) throws BusinessRuntimeException;
+    protected abstract boolean setNameInternal(@Nullable String name) throws CommonRuntimeException;
 
-    protected abstract boolean setContentInternal(@Nullable String content) throws BusinessRuntimeException;
+    protected abstract boolean setContentInternal(@Nullable String content) throws CommonRuntimeException;
 
-    protected abstract boolean setMetadataInternal(@Nullable ContentDetailsMetadata metadata) throws BusinessRuntimeException;
+    protected abstract boolean setMetadataInternal(@Nullable ContentDetailsMetadata metadata) throws CommonRuntimeException;
 
     @Override
-    public final ContentOperator update() throws BusinessRuntimeException {
+    public final ContentOperator update() throws CommonRuntimeException {
         if (!updateFlag) {
             return this;
         }
@@ -156,7 +156,7 @@ public abstract class AbstractContentOperator implements ContentOperator {
     }
 
     @Override
-    public final ContentOperator delete() throws BusinessRuntimeException {
+    public final ContentOperator delete() throws CommonRuntimeException {
         checkIfDeleted();
 
         ContentMetadata metadata = loadMetadata();
@@ -173,7 +173,7 @@ public abstract class AbstractContentOperator implements ContentOperator {
     }
 
     @Override
-    public final ContentOperator forbidden() throws BusinessRuntimeException {
+    public final ContentOperator forbidden() throws CommonRuntimeException {
         checkIfDeleted();
 
         ContentMetadata metadata = loadMetadata();
@@ -187,7 +187,7 @@ public abstract class AbstractContentOperator implements ContentOperator {
     }
 
     @Override
-    public final ContentOperator restore() throws BusinessRuntimeException {
+    public final ContentOperator restore() throws CommonRuntimeException {
         checkIfDeleted();
 
         ContentMetadata metadata = loadMetadata();

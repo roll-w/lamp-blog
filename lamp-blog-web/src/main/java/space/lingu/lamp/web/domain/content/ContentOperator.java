@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.domain.content;
 
 import space.lingu.NonNull;
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.system.SystemResourceKind;
 import tech.rollw.common.web.system.SystemResourceOperator;
 
@@ -26,24 +26,24 @@ import tech.rollw.common.web.system.SystemResourceOperator;
  */
 public interface ContentOperator extends SystemResourceOperator<Long>, ContentDetails {
     @Override
-    ContentOperator update() throws BusinessRuntimeException;
+    ContentOperator update() throws CommonRuntimeException;
 
     @Override
-    ContentOperator delete() throws BusinessRuntimeException;
+    ContentOperator delete() throws CommonRuntimeException;
 
-    ContentOperator forbidden() throws BusinessRuntimeException;
-
-    @Override
-    ContentOperator restore() throws BusinessRuntimeException;
+    ContentOperator forbidden() throws CommonRuntimeException;
 
     @Override
-    ContentOperator rename(String newName) throws BusinessRuntimeException;
+    ContentOperator restore() throws CommonRuntimeException;
 
-    ContentOperator setContent(String content) throws BusinessRuntimeException;
+    @Override
+    ContentOperator rename(String newName) throws CommonRuntimeException;
 
-    ContentOperator setPassword(String password) throws BusinessRuntimeException;
+    ContentOperator setContent(String content) throws CommonRuntimeException;
 
-    ContentOperator setMetadata(ContentDetailsMetadata metadata) throws BusinessRuntimeException;
+    ContentOperator setPassword(String password) throws CommonRuntimeException;
+
+    ContentOperator setMetadata(ContentDetailsMetadata metadata) throws CommonRuntimeException;
 
     @Override
     ContentOperator disableAutoUpdate();
