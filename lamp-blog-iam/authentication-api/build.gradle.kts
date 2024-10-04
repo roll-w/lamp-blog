@@ -24,6 +24,7 @@ dependencies {
     api(project(":lamp-blog-user:user-api"))
     api(libs.rollw.web.common.core)
     api("org.springframework.security:spring-security-core")
+    api("jakarta.servlet:jakarta.servlet-api")
 }
 
 description = "lamp-blog-authentication-api"
