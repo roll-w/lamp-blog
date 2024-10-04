@@ -28,7 +28,6 @@ import java.util.Locale;
  * @author RollW
  */
 public class ApiContext implements SystemContext {
-    private final boolean admin;
     private final String ip;
     private final Locale locale;
     private final HttpMethod method;
@@ -36,11 +35,9 @@ public class ApiContext implements SystemContext {
     private final long timestamp;
     private final String requestUri;
 
-    public ApiContext(boolean admin, String ip,
-                      Locale locale, HttpMethod method,
-                      UserIdentity user,
+    public ApiContext(String ip, Locale locale,
+                      HttpMethod method, UserIdentity user,
                       long timestamp, String requestUri) {
-        this.admin = admin;
         this.ip = ip;
         this.locale = locale;
         this.method = method;
@@ -52,7 +49,6 @@ public class ApiContext implements SystemContext {
     @Override
     public Object getObject(@NonNull String key) {
         return switch (key) {
-            case "admin" -> admin;
             case "ip" -> ip;
             case "locale" -> locale;
             case "method" -> method;
@@ -63,10 +59,6 @@ public class ApiContext implements SystemContext {
 
     public boolean hasUser() {
         return user != null;
-    }
-
-    public boolean isAdmin() {
-        return admin;
     }
 
     public String getIp() {
@@ -98,14 +90,13 @@ public class ApiContext implements SystemContext {
         if (user == this.user) {
             return this;
         }
-        return new ApiContext(admin, ip, locale, method, user, timestamp, requestUri);
+        return new ApiContext(ip, locale, method, user, timestamp, requestUri);
     }
 
 
     @Override
     public String toString() {
         return "ApiContext{" +
-                "admin=" + admin +
                 ", ip='" + ip + '\'' +
                 ", locale=" + locale +
                 ", method=" + method +

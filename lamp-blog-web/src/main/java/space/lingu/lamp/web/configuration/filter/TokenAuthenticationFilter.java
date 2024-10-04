@@ -16,6 +16,10 @@
 
 package space.lingu.lamp.web.configuration.filter;
 
+import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -23,24 +27,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.user.UserDetailsService;
+import space.lingu.lamp.security.authorization.adapter.userdetails.UserDetailsService;
 import space.lingu.lamp.user.UserInfo;
 import space.lingu.lamp.user.UserSignatureProvider;
+import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.util.RequestUtils;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.system.AuthenticationException;
 import tech.rollw.common.web.system.ContextThread;
 import tech.rollw.common.web.system.ContextThreadAware;
 
-import jakarta.servlet.FilterChain;
-import jakarta.servlet.ServletException;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
@@ -51,7 +50,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     private final UserDetailsService userDetailsService;
     private final UserSignatureProvider userSignatureProvider;
     private final ContextThreadAware<ApiContext> apiContextThreadAware;
-    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
     public TokenAuthenticationFilter(AuthenticationTokenService authenticationTokenService,
                                      UserDetailsService userDetailsService,
@@ -72,12 +70,11 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         String requestUri = request.getRequestURI();
         HttpMethod method = HttpMethod.valueOf(request.getMethod());
-        boolean isAdminApi = isAdminApi(requestUri);
         String remoteIp = RequestUtils.getRemoteIpAddress(request);
         long timestamp = System.currentTimeMillis();
 
         ApiContext apiContext = new ApiContext(
-                isAdminApi, remoteIp,
+                remoteIp,
                 LocaleContextHolder.getLocale(),
                 method, null,
                 timestamp, requestUri
@@ -146,15 +143,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         ApiContext apiContext = rawContext.fork(userInfo);
         contextThread.setContext(apiContext);
-    }
-
-    private boolean isAdminApi(String requestUri) {
-        if (requestUri == null || requestUri.length() <= 10) {
-            return false;
-        }
-
-        return antPathMatcher.match("/api/{version}/admin/**", requestUri) ||
-                antPathMatcher.match("/api/admin/**", requestUri);
     }
 
     private String loadToken(HttpServletRequest request) {
