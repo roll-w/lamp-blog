@@ -25,7 +25,6 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import tech.rollw.common.web.BusinessRuntimeException;
 
 import java.io.IOException;
 
@@ -39,7 +38,6 @@ public class CorsConfigFilter implements Filter {
         this.resolver = resolver;
     }
 
-
     @Override
     public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) throws IOException, ServletException {
         HttpServletResponse response = (HttpServletResponse) res;
@@ -47,7 +45,7 @@ public class CorsConfigFilter implements Filter {
 
         try {
             chain.doFilter(request, response);
-        } catch (BusinessRuntimeException e) {
+        } catch (Exception e) {
             resolver.resolveException(request, response, null, e);
         }
     }
