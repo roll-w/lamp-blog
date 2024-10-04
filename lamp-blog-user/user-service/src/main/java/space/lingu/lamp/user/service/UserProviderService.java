@@ -83,7 +83,7 @@ public class UserProviderService implements SystemResourceProvider<Long>,
     }
 
     private UserDo getUser(long id) {
-        UserDo user = userRepository.getByUserId(id);
+        UserDo user = userRepository.getByUserId(id).orElse(null);
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
@@ -97,7 +97,7 @@ public class UserProviderService implements SystemResourceProvider<Long>,
 
     @Override
     public boolean checkUsernameExist(String username, long id) {
-        UserDo user = userRepository.getByUsername(username);
+        UserDo user = userRepository.getByUsername(username).orElse(null);
         if (user == null) {
             return false;
         }
@@ -109,7 +109,7 @@ public class UserProviderService implements SystemResourceProvider<Long>,
 
     @Override
     public boolean checkEmailExist(String email, long id) {
-        UserDo user = userRepository.getByEmail(email);
+        UserDo user = userRepository.getByEmail(email).orElse(null);
         if (user == null) {
             return false;
         }

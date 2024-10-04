@@ -22,8 +22,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
@@ -105,11 +103,11 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
         return loginStrategyMap.get(type);
     }
 
-    public void sendToken(long userId, 
-                          LoginStrategyType type, 
+    public void sendToken(long userId,
+                          LoginStrategyType type,
                           RequestMetadata requestMetadata) throws IOException {
         LoginStrategy strategy = getLoginStrategy(type);
-        UserDo user = userRepository.getByUserId(userId);
+        UserDo user = userRepository.getByUserId(userId).orElse(null);
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
@@ -152,9 +150,9 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
 
     private AttributedUserDetails tryGetUser(String identity) {
         if (identity.contains("@")) {
-            return userRepository.getByEmail(identity);
+            return userRepository.getByEmail(identity).orElse(null);
         }
-        return userRepository.getByUsername(identity);
+        return userRepository.getByUsername(identity).orElse(null);
     }
 
     @Override
@@ -174,10 +172,6 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
         if (code.failed()) {
             throw new UserViewException(code);
         }
-        Authentication authentication =
-                new UsernamePasswordAuthenticationToken(user, token, user.getRole().toAuthority());
-        authentication = authenticationManager.authenticate(authentication);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         OnUserLoginEvent onUserLoginEvent = new OnUserLoginEvent(user, metadata);
         eventPublisher.publishEvent(onUserLoginEvent);
@@ -241,9 +235,11 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
         if (verificationToken.isExpired()) {
             throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_EXPIRED);
         }
-        registerTokenRepository.makeTokenVerified(verificationToken.id());
+        RegisterVerificationToken registerVerificationToken =
+                verificationToken.markVerified();
+        registerTokenRepository.save(RegisterTokenDo.toDo(registerVerificationToken));
         UserDo user = userRepository
-                .getByUserId(verificationToken.userId());
+                .getByUserId(verificationToken.userId()).orElse(null);
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
@@ -260,7 +256,7 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
     }
 
     public void resendToken(String username) {
-        AttributedUserDetails user = userRepository.getByUsername(username);
+        AttributedUserDetails user = userRepository.getByUsername(username).orElse(null);
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }

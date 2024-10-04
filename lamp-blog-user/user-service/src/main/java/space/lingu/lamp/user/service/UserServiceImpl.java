@@ -21,6 +21,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.user.AttributedUser;
+import space.lingu.lamp.user.AttributedUserDetails;
 import space.lingu.lamp.user.Role;
 import space.lingu.lamp.user.User;
 import space.lingu.lamp.user.UserManageService;
@@ -65,7 +66,7 @@ public class UserServiceImpl implements UserSignatureProvider,
 
     @Override
     public String getSignature(long userId) {
-        UserDo user = userRepository.getByUserId(userId);
+        UserDo user = userRepository.findById(userId).orElse(null);
         if (user == null) {
             return null;
         }
@@ -89,7 +90,6 @@ public class UserServiceImpl implements UserSignatureProvider,
                 .setPassword(passwordEncoder.encode(password))
                 .setRole(role)
                 .setEnabled(enable)
-                .setAccountExpired(false)
                 .setRegisterTime(time)
                 .setUpdateTime(time)
                 .setEmail(email)
@@ -117,8 +117,8 @@ public class UserServiceImpl implements UserSignatureProvider,
     }
 
     @Override
-    public User getUser(long userId) throws UserViewException {
-        UserDo user = userRepository.getByUserId(userId);
+    public AttributedUserDetails getUser(long userId) throws UserViewException {
+        UserDo user = userRepository.getByUserId(userId).orElse(null);
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
@@ -126,13 +126,22 @@ public class UserServiceImpl implements UserSignatureProvider,
     }
 
     @Override
-    public AttributedUser getUser(UserTrait userTrait)
+    public AttributedUserDetails getUser(String username) throws UserViewException {
+        UserDo user = userRepository.getByUsername(username).orElse(null);
+        if (user == null) {
+            throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
+        }
+        return user.toUser();
+    }
+
+    @Override
+    public AttributedUserDetails getUser(UserTrait userTrait)
             throws UserViewException {
         return getUser(userTrait.getUserId());
     }
 
     @Override
-    public List<AttributedUser> getUsers() {
+    public List<AttributedUserDetails> getUsers() {
         return Collections.unmodifiableList(
                 userRepository.findAll()
         );

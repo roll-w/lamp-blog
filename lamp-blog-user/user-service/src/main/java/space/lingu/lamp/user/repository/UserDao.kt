@@ -19,16 +19,17 @@ package space.lingu.lamp.user.repository
 import org.springframework.data.jpa.repository.Query
 import space.lingu.lamp.common.data.CommonDao
 import space.lingu.lamp.common.data.Dao
+import java.util.Optional
 
 @Dao
 @JvmDefaultWithoutCompatibility
 interface UserDao : CommonDao<UserDo, Long> {
     @Query("SELECT u FROM UserDo u WHERE u.id = :id")
-    fun getByUserId(id: Long): UserDo?
+    fun getByUserId(id: Long): Optional<UserDo>
 
     @Query("SELECT u FROM UserDo u WHERE u.username = :username")
-    fun getByUsername(username: String): UserDo?
+    fun getByUsername(username: String): Optional<UserDo>
 
     @Query("SELECT u FROM UserDo u WHERE u.email = :email")
-    fun getByEmail(email: String): UserDo?
+    fun getByEmail(email: String): Optional<UserDo>
 }

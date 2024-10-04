@@ -19,6 +19,7 @@ package space.lingu.lamp.user.repository
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.stereotype.Repository
 import space.lingu.lamp.common.data.CommonRepository
+import java.util.Optional
 
 /**
  * @author RollW
@@ -32,21 +33,21 @@ class UserRepository(
         return userDao.findAll(Specs.searchBy(keyword))
     }
 
-    fun getByUserId(id: Long): UserDo? = userDao.getByUserId(id)
+    fun getByUserId(id: Long): Optional<UserDo> = userDao.getByUserId(id)
 
-    fun getByUsername(username: String): UserDo? = userDao.getByUsername(username)
+    fun getByUsername(username: String): Optional<UserDo> = userDao.getByUsername(username)
 
-    fun getByEmail(email: String): UserDo? = userDao.getByEmail(email)
+    fun getByEmail(email: String): Optional<UserDo> = userDao.getByEmail(email)
 
     fun getByIds(ids: MutableList<Long>): List<UserDo> =
         userDao.findAllById(ids)
 
     fun isExistByEmail(email: String): Boolean {
-        return getByEmail(email) != null
+        return getByEmail(email).isPresent
     }
 
     fun isExistByUsername(username: String): Boolean {
-        return getByUsername(username) != null
+        return getByUsername(username).isPresent
     }
 
     fun hasUsers(): Boolean {
