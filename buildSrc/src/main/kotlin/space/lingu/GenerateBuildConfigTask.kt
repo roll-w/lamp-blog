@@ -45,6 +45,9 @@ abstract class GenerateBuildConfigTask : DefaultTask() {
     @get:Input
     abstract val packageName: Property<String>
 
+    @get:Input
+    abstract val version: Property<String>
+
     companion object {
         private const val OUTPUT_DIR = "generated/sources/buildconfig/java/main"
     }
@@ -77,6 +80,7 @@ abstract class GenerateBuildConfigTask : DefaultTask() {
                 - commitId: $commitId
                 - commitIdAbbrev: $commitIdAbbrev
                 - commitTime: $commitTime
+                - version: ${version.get()}
         """.trimIndent()
         )
 
@@ -94,6 +98,7 @@ abstract class GenerateBuildConfigTask : DefaultTask() {
                 public static final String COMMIT_ID = "$commitId";
                 public static final String COMMIT_ID_ABBREV = "$commitIdAbbrev";
                 public static final String COMMIT_TIME = "$commitTime";
+                public static final String VERSION = "${version.get()}";
                 
                 private BuildConfig() {}
             }

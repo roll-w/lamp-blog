@@ -35,6 +35,7 @@ description = "lamp-blog-common"
 tasks.register<GenerateBuildConfigTask>("generateBuildConfig") {
     packageName = "space.lingu.lamp"
     outputDirectory = file("build/")
+    this.version = project.version.toString()
 }
 
 tasks.named<ProcessResources>("processResources") {
