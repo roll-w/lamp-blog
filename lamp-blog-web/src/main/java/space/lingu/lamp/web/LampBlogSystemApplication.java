@@ -22,8 +22,8 @@ import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfigura
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
-import space.lingu.fiesta.Fiesta;
 import org.springframework.core.env.OverrideSystemPropertiesEnvironment;
+import space.lingu.fiesta.Fiesta;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -70,11 +70,5 @@ public class LampBlogSystemApplication {
         properties.put("spring.config.location", "");
         properties.put("spring.messages.basename", "messages");
         properties.put("spring.jmx.enabled", false);
-
-        // TODO: log level read from config
-        properties.put("logging.level.space.lingu", "trace");
-        properties.put("logging.level.web", "debug");
-        properties.put("logging.level.root", "info");
-        properties.put("logging.level.org.springframework", "debug");
     }
 }

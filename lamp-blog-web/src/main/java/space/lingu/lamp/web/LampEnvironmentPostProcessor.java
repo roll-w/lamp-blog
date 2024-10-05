@@ -27,11 +27,13 @@ import org.springframework.core.env.MutablePropertySources;
 import space.lingu.lamp.setting.ConfigProvider;
 import space.lingu.lamp.setting.InputStreamConfigReader;
 import space.lingu.lamp.setting.ReadonlyConfigProvider;
+import space.lingu.lamp.web.common.keys.LoggingConfigKeys;
 import space.lingu.lamp.web.common.keys.ServerConfigKeys;
 
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * @author RollW
@@ -55,13 +57,47 @@ public class LampEnvironmentPostProcessor implements EnvironmentPostProcessor {
         }
         ConfigProvider localProvider = createLocalProvider(rawArgs);
         Map<String, Object> setupProperties = new HashMap<>();
-        setupProperties.put("server.port", localProvider.get(ServerConfigKeys.PORT));
-        setupProperties.put(LampEnvKeys.LOCAL_CONFIG_LOADER, localProvider);
+        setPropertiesNeedsInStartup(setupProperties, localProvider);
 
         MutablePropertySources propertySources = environment.getPropertySources();
         propertySources.addFirst(new MapPropertySource(
                 SETUP_PROPERTIES, setupProperties
         ));
+    }
+
+    private void setPropertiesNeedsInStartup(Map<String, Object> properties, ConfigProvider localProvider) {
+        properties.put("server.port", localProvider.get(ServerConfigKeys.PORT));
+        properties.put(LampEnvKeys.LOCAL_CONFIG_LOADER, localProvider);
+        setupLoggingProperties(properties, localProvider);
+    }
+
+    private void setupLoggingProperties(Map<String, Object> properties,
+                                        ConfigProvider localProvider) {
+        String loggingLevel = localProvider.get(LoggingConfigKeys.LOGGING_LEVEL);
+        Map<String, String> loggingLevels = LoggingConfigKeys
+                .parseLoggingLevel(loggingLevel);
+        for (Map.Entry<String, String> entry : loggingLevels.entrySet()) {
+            properties.put("logging.level." + entry.getKey(), entry.getValue());
+        }
+
+        String loggingFilePath = localProvider.get(LoggingConfigKeys.LOGGING_FILE_PATH);
+        if (Objects.equals(loggingFilePath, LoggingConfigKeys.LOGGING_PATH_CONSOLE)) {
+            logger.info("Set logging to console, no file logging.");
+            return;
+        }
+
+        // set file logging
+        properties.put("logging.file.path", loggingFilePath);
+        properties.put("logging.file.name", "${logging.file.path}/lamp-blog.log");
+        properties.put("logging.logback.rollingpolicy.max-file-size",
+                localProvider.get(LoggingConfigKeys.LOGGING_FILE_MAX_SIZE));
+        properties.put("logging.logback.rollingpolicy.max-history",
+                localProvider.get(LoggingConfigKeys.LOGGING_FILE_MAX_HISTORY));
+        properties.put("logging.logback.rollingpolicy.clean-history-on-start", true);
+        properties.put("logging.logback.rollingpolicy.total-size-cap",
+                localProvider.get(LoggingConfigKeys.LOGGING_FILE_TOTAL_SIZE_CAP));
+        properties.put("logging.logback.rollingpolicy.file-name-pattern",
+                "${logging.file.path}/lamp-blog-%d{yyyy-MM-dd}.%i.log");
     }
 
     private static ConfigProvider createLocalProvider(String[] args) {
