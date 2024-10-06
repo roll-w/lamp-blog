@@ -140,9 +140,10 @@ class Help : AbstractShellComponent() {
         if (this[command] == null && !hasAnyChild(command)) {
             return null
         }
-        val children = this.filter { it.key.startsWith(command) && it.key != command }
-            .map { it.value }
-            .sortedBy { it.command }
+        val children = filter {
+            it.key.startsWith("$command ") && it.key != command
+        }.map { it.value }.sortedBy { it.command }
+
         return ExpandCommandRegistration(command, this[command], children)
     }
 
