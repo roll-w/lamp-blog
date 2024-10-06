@@ -27,7 +27,4 @@ import space.lingu.lamp.common.data.Dao
 interface RegisterTokenDao : CommonDao<RegisterTokenDo, Long> {
     @Query("SELECT t FROM RegisterTokenDo t WHERE t.token = :token")
     fun findByToken(token: String): RegisterTokenDo?
-
-    @Query("UPDATE RegisterTokenDo t SET t.used = true WHERE t.id = :id")
-    fun makeTokenVerified(id: Long)
 }

@@ -104,6 +104,10 @@ public record RegisterVerificationToken(
         return new Builder();
     }
 
+    public RegisterVerificationToken markVerified() {
+        return toBuilder().setUsed(true).build();
+    }
+
     public static final class Builder implements LongEntityBuilder<RegisterVerificationToken> {
         private Long id;
         private String token;

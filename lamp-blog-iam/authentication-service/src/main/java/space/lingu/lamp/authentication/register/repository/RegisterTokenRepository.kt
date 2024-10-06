@@ -29,8 +29,4 @@ class RegisterTokenRepository(
     fun findByToken(token: String): RegisterTokenDo? {
         return registerTokenDao.findByToken(token)
     }
-
-    fun makeTokenVerified(id: Long) {
-        registerTokenDao.makeTokenVerified(id)
-    }
 }

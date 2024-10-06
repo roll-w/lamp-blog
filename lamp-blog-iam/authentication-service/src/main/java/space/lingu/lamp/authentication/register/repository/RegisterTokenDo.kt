@@ -36,7 +36,7 @@ import tech.rollw.common.web.system.SystemResourceKind
 @Table(
     name = "register_verification_token",
     uniqueConstraints = [
-        UniqueConstraint(columnNames = ["token"])
+        UniqueConstraint(columnNames = ["token"], name = "index__token")
     ]
 )
 class RegisterTokenDo(
@@ -81,9 +81,62 @@ class RegisterTokenDo(
         expiryTime, used
     )
 
+    fun toBuilder(): Builder {
+        return Builder(this)
+    }
+
     companion object {
+        @JvmStatic
         fun RegisterVerificationToken.toDo(): RegisterTokenDo = RegisterTokenDo(
             id, token, userId, expiryTime, used
         )
+
+        @JvmStatic
+        fun builder(): Builder {
+            return Builder()
+        }
+    }
+
+    class Builder {
+        private var id: Long? = null
+        private var token: String = ""
+        private var userId: Long = 0
+        private var expiryTime: Long = 0
+        private var used = false
+
+        internal constructor()
+
+        internal constructor(registerTokenDo: RegisterTokenDo) {
+            id = registerTokenDo.id
+            token = registerTokenDo.token
+            userId = registerTokenDo.userId
+            expiryTime = registerTokenDo.expiryTime
+            used = registerTokenDo.used
+        }
+
+        fun setId(id: Long?): Builder {
+            this.id = id
+            return this
+        }
+
+        fun setToken(token: String): Builder {
+            this.token = token
+            return this
+        }
+
+        fun setUserId(userId: Long): Builder {
+            this.userId = userId
+            return this
+        }
+
+        fun setExpiryTime(expiryTime: Long): Builder {
+            this.expiryTime = expiryTime
+            return this
+        }
+
+        fun setUsed(used: Boolean): Builder {
+            this.used = used
+            return this
+        }
     }
 }
