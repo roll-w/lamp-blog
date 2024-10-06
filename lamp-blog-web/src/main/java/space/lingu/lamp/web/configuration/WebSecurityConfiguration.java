@@ -23,28 +23,28 @@ import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.SecurityContextHolderFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import space.lingu.lamp.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.security.authorization.adapter.userdetails.UserDetailsService;
+import space.lingu.lamp.user.UserSignatureProvider;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.configuration.compenent.WebDelegateSecurityHandler;
 import space.lingu.lamp.web.configuration.filter.CorsConfigFilter;
 import space.lingu.lamp.web.configuration.filter.TokenAuthenticationFilter;
-import space.lingu.lamp.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.user.UserDetailsService;
-import space.lingu.lamp.user.UserSignatureProvider;
 import tech.rollw.common.web.system.ContextThreadAware;
 
 import java.time.Duration;
@@ -58,6 +58,7 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 @EnableGlobalAuthentication
+@EnableMethodSecurity
 public class WebSecurityConfiguration {
     private final UserDetailsService userDetailsService;
 
@@ -78,24 +79,24 @@ public class WebSecurityConfiguration {
         security.authorizeHttpRequests(configurer -> configurer
                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                 .requestMatchers("/api/{version}/auth/token/**").permitAll()
-                .requestMatchers("/api/{version}/admin/**").hasRole("ADMIN")
-                .requestMatchers("/api/{version}/message/**").hasRole("USER")
-                .requestMatchers("/api/{version}/*/review/**").hasAnyRole("ADMIN", "REVIEWER")
+                .requestMatchers("/api/{version}/admin/**").hasAnyAuthority("ADMIN", "role:ADMIN")
+                .requestMatchers("/api/{version}/message/**").hasAnyAuthority("USER", "role:USER")
+                .requestMatchers("/api/{version}/*/review/**").hasAnyAuthority("role:ADMIN", "role:REVIEWER")
                 .requestMatchers("/api/{version}/common/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/{version}/storages/{id}").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/{version}/admin/**").hasAnyRole("ADMIN")
-                .requestMatchers(HttpMethod.GET, "/api/{version}/{userId}/review").hasAnyRole("ADMIN", "REVIEWER")
+                .requestMatchers(HttpMethod.GET, "/api/{version}/admin/**").hasAnyAuthority("role:ADMIN")
+                .requestMatchers(HttpMethod.GET, "/api/{version}/{userId}/review").hasAnyAuthority("role:ADMIN", "role:REVIEWER")
                 .requestMatchers(HttpMethod.GET).permitAll()
                 .requestMatchers("/api/{version}/user/login/**").permitAll()
                 .requestMatchers("/api/{version}/user/register/**").permitAll()
                 .requestMatchers("/api/{version}/user/logout/**").permitAll()
-                .requestMatchers("/**").hasRole("USER")
+                .requestMatchers("/**").hasAnyAuthority("USER", "role:USER")
                 .requestMatchers("/static/images/**").permitAll()
                 .requestMatchers("/img/**").permitAll()
                 .requestMatchers("/js/**").permitAll()
-                .anyRequest().hasRole("USER")
+                .anyRequest().hasAnyAuthority("USER", "role:USER")
         );
-        security.userDetailsService(userDetailsService);
+        //security.userDetailsService(userDetailsService);
 
         security.exceptionHandling(configurer -> configurer
                 .authenticationEntryPoint(authenticationEntryPoint)
@@ -108,18 +109,13 @@ public class WebSecurityConfiguration {
         security.addFilterBefore(tokenAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class);
         security.addFilterBefore(corsConfigFilter,
-                TokenAuthenticationFilter.class);
+                SecurityContextHolderFilter.class);
         return security.build();
     }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
         return configuration.getAuthenticationManager();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean

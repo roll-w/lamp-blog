@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.user;
+package space.lingu.lamp.security.authorization.adapter.userdetails;
+
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 /**
- * For authorization, we use the concept of role.
- *
  * @author RollW
  */
-public enum Role {
-    USER,
-    ADMIN,
-    STAFF,
-    REVIEWER,
-    CUSTOMER_SERVICE,
-    EDITOR,
-    ;
+public interface UserDetailsService extends org.springframework.security.core.userdetails.UserDetailsService {
+    @Override
+    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
 
-    public boolean hasPrivilege() {
-        return this == ADMIN;
-    }
+    UserDetails loadUserByUserId(long userId) throws UsernameNotFoundException;
 }

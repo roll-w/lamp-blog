@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.controller.user;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,19 +24,18 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import space.lingu.lamp.RequestMetadata;
+import space.lingu.lamp.authentication.UserInfoSignature;
+import space.lingu.lamp.authentication.login.LoginStrategyType;
+import space.lingu.lamp.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.web.common.ParamValidate;
 import space.lingu.lamp.web.controller.user.model.LoginResponse;
 import space.lingu.lamp.web.controller.user.model.LoginTokenSendRequest;
 import space.lingu.lamp.web.controller.user.model.UserLoginRequest;
 import space.lingu.lamp.web.controller.user.model.UserRegisterRequest;
-import space.lingu.lamp.authentication.login.LoginStrategyType;
-import space.lingu.lamp.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.user.AttributedUser;
-import space.lingu.lamp.authentication.UserInfoSignature;
 import space.lingu.lamp.web.domain.user.service.LoginRegisterService;
 import tech.rollw.common.web.HttpResponseEntity;
 
-import jakarta.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**

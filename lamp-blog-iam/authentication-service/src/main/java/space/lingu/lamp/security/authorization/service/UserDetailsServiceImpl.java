@@ -14,41 +14,46 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.user.service;
+package space.lingu.lamp.security.authorization.service;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.user.UserDetailsService;
-import space.lingu.lamp.user.repository.UserDo;
-import space.lingu.lamp.user.repository.UserRepository;
+import space.lingu.lamp.security.authorization.RoleBasedPrivilege;
+import space.lingu.lamp.security.authorization.adapter.userdetails.ScopeBasedUserDetails;
+import space.lingu.lamp.security.authorization.adapter.userdetails.UserDetailsService;
+import space.lingu.lamp.user.AttributedUserDetails;
+import space.lingu.lamp.user.UserProvider;
+import space.lingu.lamp.user.UserViewException;
 
 /**
  * @author RollW
  */
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
-    private final UserRepository userRepository;
+    private final UserProvider userProvider;
 
-    public UserDetailsServiceImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public UserDetailsServiceImpl(UserProvider userProvider) {
+        this.userProvider = userProvider;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserDo user = userRepository.getByUsername(username);
-        if (user == null) {
+        try {
+            AttributedUserDetails user = userProvider.getUser(username);
+            return new ScopeBasedUserDetails(user, new RoleBasedPrivilege(user.getRole()));
+        } catch (UserViewException e) {
             throw new UsernameNotFoundException("Username " + username + " not exist");
         }
-        return user;
     }
 
     @Override
     public UserDetails loadUserByUserId(long userId) throws UsernameNotFoundException {
-        UserDo user = userRepository.getByUserId(userId);
-        if (user == null) {
+        try {
+            AttributedUserDetails user = userProvider.getUser(userId);
+            return new ScopeBasedUserDetails(user, new RoleBasedPrivilege(user.getRole()));
+        } catch (UserViewException e) {
             throw new UsernameNotFoundException("User ID " + userId + " not exist");
         }
-        return user;
     }
 }
