@@ -16,9 +16,11 @@
 
 package space.lingu.lamp.web;
 
+import org.springframework.boot.Banner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.freemarker.FreeMarkerAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -30,6 +32,7 @@ import java.util.Map;
 
 @SpringBootApplication(scanBasePackages = "space.lingu.lamp", exclude = {
         FreeMarkerAutoConfiguration.class,
+        ErrorMvcAutoConfiguration.class
 })
 @Fiesta
 public class LampBlogSystemApplication {
@@ -50,7 +53,9 @@ public class LampBlogSystemApplication {
         );
         SpringApplicationBuilder builder = new SpringApplicationBuilder(LampBlogSystemApplication.class)
                 .environment(environment)
+                .bannerMode(Banner.Mode.LOG)
                 .properties(overrideProperties)
+                .listeners(new LoggingPostApplicationPreparedEventListener())
                 .banner(new LampBlogBanner());
         SpringApplication application = builder.build();
         sContext = application.run(prepareArguments(args));
