@@ -20,25 +20,14 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.http.HttpMethod;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.filter.OncePerRequestFilter;
 import space.lingu.NonNull;
-import space.lingu.lamp.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.security.authorization.adapter.userdetails.UserDetailsService;
-import space.lingu.lamp.user.UserInfo;
-import space.lingu.lamp.user.UserSignatureProvider;
-import space.lingu.lamp.web.common.ApiContext;
-import space.lingu.lamp.web.util.RequestUtils;
-import tech.rollw.common.web.AuthErrorCode;
-import tech.rollw.common.web.system.AuthenticationException;
-import tech.rollw.common.web.system.ContextThread;
-import tech.rollw.common.web.system.ContextThreadAware;
+import space.lingu.lamp.security.authentication.adapter.TokenBasedAuthenticationToken;
 
 import java.io.IOException;
 
@@ -46,103 +35,36 @@ import java.io.IOException;
  * @author RollW
  */
 public class TokenAuthenticationFilter extends OncePerRequestFilter {
-    private final AuthenticationTokenService authenticationTokenService;
-    private final UserDetailsService userDetailsService;
-    private final UserSignatureProvider userSignatureProvider;
-    private final ContextThreadAware<ApiContext> apiContextThreadAware;
+    private static final Logger logger = LoggerFactory.getLogger(TokenAuthenticationFilter.class);
 
-    public TokenAuthenticationFilter(AuthenticationTokenService authenticationTokenService,
-                                     UserDetailsService userDetailsService,
-                                     UserSignatureProvider userSignatureProvider,
-                                     ContextThreadAware<ApiContext> apiContextThreadAware) {
-        this.authenticationTokenService = authenticationTokenService;
-        this.userDetailsService = userDetailsService;
-        this.userSignatureProvider = userSignatureProvider;
-        this.apiContextThreadAware = apiContextThreadAware;
+    private final AuthenticationManager authenticationManager;
+
+    public TokenAuthenticationFilter(AuthenticationManager authenticationManager) {
+        this.authenticationManager = authenticationManager;
     }
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
-        ContextThread<ApiContext> contextThread =
-                apiContextThreadAware.assambleContextThread(null);
-
-        String requestUri = request.getRequestURI();
-        HttpMethod method = HttpMethod.valueOf(request.getMethod());
-        String remoteIp = RequestUtils.getRemoteIpAddress(request);
-        long timestamp = System.currentTimeMillis();
-
-        ApiContext apiContext = new ApiContext(
-                remoteIp,
-                LocaleContextHolder.getLocale(),
-                method, null,
-                timestamp, requestUri
-        );
-
-        try {
-            Authentication existAuthentication =
-                    SecurityContextHolder.getContext().getAuthentication();
-            if (existAuthentication != null) {
-                UserDetails userDetails = (UserDetails)
-                        existAuthentication.getPrincipal();
-                UserInfo userInfo = UserInfo.from(userDetails);
-                setApiContext(apiContext, userInfo, contextThread);
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            String token = loadToken(request);
-            if (token == null || token.isEmpty()) {
-                setApiContext(apiContext, null, contextThread);
-                filterChain.doFilter(request, response);
-                return;
-            }
-
-            Long userId = authenticationTokenService.getUserId(token);
-            if (userId == null) {
-                setApiContext(apiContext, null, contextThread);
-                filterChain.doFilter(request, response);
-                return;
-            }
-            UserDetails userDetails = tryGetUserDetails(userId);
-            String signature = userSignatureProvider.getSignature(userId);
-
-            authenticationTokenService.verifyToken(token, signature);
-            // Although there is anonymous api access that doesn't need provides token,
-            // but as long as it provides token here, we have to verify it.
-
-            UserInfo userInfo = UserInfo.from(userDetails);
-            Authentication authentication = UsernamePasswordAuthenticationToken.authenticated(
-                    userDetails,
-                    userDetails.getPassword(),
-                    userDetails.getAuthorities()
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-
-            setApiContext(apiContext, userInfo, contextThread);
+        String loadedToken = loadToken(request);
+        if (loadedToken == null) {
             filterChain.doFilter(request, response);
-        } finally {
-            apiContextThreadAware.clearContextThread();
+            return;
         }
-    }
 
-    @NonNull
-    private UserDetails tryGetUserDetails(long id) {
-        try {
-            return userDetailsService.loadUserByUserId(id);
-        } catch (UsernameNotFoundException e) {
-            throw new AuthenticationException(
-                    AuthErrorCode.ERROR_INVALID_TOKEN
-            );
+        Authentication existAuthentication = SecurityContextHolder.getContext().getAuthentication();
+        if (existAuthentication != null && existAuthentication.isAuthenticated()) {
+            logger.debug("User '{}' is already authenticated", existAuthentication.getName());
+            filterChain.doFilter(request, response);
+            return;
         }
-    }
 
-    private static void setApiContext(ApiContext rawContext, UserInfo userInfo,
-                                      ContextThread<ApiContext> contextThread) {
-
-        ApiContext apiContext = rawContext.fork(userInfo);
-        contextThread.setContext(apiContext);
+        Authentication authentication = authenticationManager
+                .authenticate(new TokenBasedAuthenticationToken(loadedToken));
+        logger.debug("User '{}' authenticated", authentication.getName());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        filterChain.doFilter(request, response);
     }
 
     private String loadToken(HttpServletRequest request) {

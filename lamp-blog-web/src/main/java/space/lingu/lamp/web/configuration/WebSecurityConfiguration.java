@@ -19,6 +19,8 @@ package space.lingu.lamp.web.configuration;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
+import org.springframework.expression.spel.support.SimpleNameTypeLocator;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
@@ -26,6 +28,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.core.GrantedAuthorityDefaults;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -38,14 +41,16 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+import space.lingu.lamp.security.authentication.adapter.TokenBasedAuthenticationProvider;
 import space.lingu.lamp.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.security.authorization.adapter.userdetails.UserDetailsService;
+import space.lingu.lamp.security.authorization.PrivilegedUserProvider;
+import space.lingu.lamp.security.authorization.RoleBasedAuthorizationScope;
+import space.lingu.lamp.security.authorization.adapter.ScopeBasedMethodSecurityExpressionHandler;
 import space.lingu.lamp.user.UserSignatureProvider;
-import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.configuration.compenent.WebDelegateSecurityHandler;
+import space.lingu.lamp.web.configuration.filter.ApiContextInitializeFilter;
 import space.lingu.lamp.web.configuration.filter.CorsConfigFilter;
 import space.lingu.lamp.web.configuration.filter.TokenAuthenticationFilter;
-import tech.rollw.common.web.system.ContextThreadAware;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -60,16 +65,22 @@ import java.util.List;
 @EnableGlobalAuthentication
 @EnableMethodSecurity
 public class WebSecurityConfiguration {
-    private final UserDetailsService userDetailsService;
 
-    public WebSecurityConfiguration(UserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
+    public WebSecurityConfiguration() {
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        // TODO: remove this in production
+        return (web) -> web.debug(true);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity security,
                                                    CorsConfigFilter corsConfigFilter,
                                                    TokenAuthenticationFilter tokenAuthenticationFilter,
+                                                   ApiContextInitializeFilter apiContextInitializeFilter,
+                                                   TokenBasedAuthenticationProvider tokenBasedAuthenticationProvider,
                                                    AuthenticationEntryPoint authenticationEntryPoint,
                                                    AccessDeniedHandler accessDeniedHandler) throws Exception {
         security.csrf(AbstractHttpConfigurer::disable);
@@ -96,7 +107,6 @@ public class WebSecurityConfiguration {
                 .requestMatchers("/js/**").permitAll()
                 .anyRequest().hasAnyAuthority("USER", "role:USER")
         );
-        //security.userDetailsService(userDetailsService);
 
         security.exceptionHandling(configurer -> configurer
                 .authenticationEntryPoint(authenticationEntryPoint)
@@ -106,8 +116,11 @@ public class WebSecurityConfiguration {
         security.sessionManagement(configurer -> {
             configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         });
+        security.authenticationProvider(tokenBasedAuthenticationProvider);
         security.addFilterBefore(tokenAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class);
+        security.addFilterAfter(apiContextInitializeFilter,
+                TokenAuthenticationFilter.class);
         security.addFilterBefore(corsConfigFilter,
                 SecurityContextHolderFilter.class);
         return security.build();
@@ -119,21 +132,39 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
+    @Primary
+    protected ScopeBasedMethodSecurityExpressionHandler lampMethodSecurityExpressionHandler() {
+        SimpleNameTypeLocator simpleNameTypeLocator = new SimpleNameTypeLocator(List.of(
+                RoleBasedAuthorizationScope.class
+        ));
+        ScopeBasedMethodSecurityExpressionHandler expressionHandler =
+                new ScopeBasedMethodSecurityExpressionHandler();
+        expressionHandler.setTypeLocator(simpleNameTypeLocator);
+        return expressionHandler;
+    }
+
+    @Bean
     public CorsConfigFilter corsConfigFilter(
             @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
         return new CorsConfigFilter(resolver);
     }
 
     @Bean
-    public TokenAuthenticationFilter tokenAuthenticationFilter(
+    public TokenAuthenticationFilter token2AuthenticationFilter(
+            AuthenticationManager authenticationManager
+    ) {
+        return new TokenAuthenticationFilter(authenticationManager);
+    }
+
+    @Bean
+    public TokenBasedAuthenticationProvider tokenBasedAuthenticationProvider(
             AuthenticationTokenService authenticationTokenService,
-            ContextThreadAware<ApiContext> apiContextThreadAware,
+            PrivilegedUserProvider privilegedUserProvider,
             UserSignatureProvider userSignatureProvider) {
-        return new TokenAuthenticationFilter(
+        return new TokenBasedAuthenticationProvider(
                 authenticationTokenService,
-                userDetailsService,
-                userSignatureProvider,
-                apiContextThreadAware
+                privilegedUserProvider,
+                userSignatureProvider
         );
     }
 
