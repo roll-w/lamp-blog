@@ -54,7 +54,7 @@ class LocalizedMessageDo(
     override var key: String = "",
 
     @Lob
-    @Column(name = "value", nullable = false, columnDefinition = "LONGTEXT")
+    @Column(name = "value", nullable = false, length = 20000000)
     override var value: String = "",
 
     @Column(name = "locale", nullable = false, length = 20)
@@ -78,6 +78,6 @@ class LocalizedMessageDo(
     }
 
     fun lock(): LocalizedMessage {
-        return LocalizedMessage(id, key, value, locale)
+        return LocalizedMessage(id, key, value, locale, updateTime)
     }
 }
