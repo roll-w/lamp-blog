@@ -30,6 +30,7 @@ import space.lingu.lamp.setting.ReadonlyConfigProvider;
 import space.lingu.lamp.web.common.keys.LoggingConfigKeys;
 import space.lingu.lamp.web.common.keys.ServerConfigKeys;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +69,14 @@ public class LampEnvironmentPostProcessor implements EnvironmentPostProcessor {
     private void setPropertiesNeedsInStartup(Map<String, Object> properties, ConfigProvider localProvider) {
         properties.put("server.port", localProvider.get(ServerConfigKeys.PORT));
         properties.put(LampEnvKeys.LOCAL_CONFIG_LOADER, localProvider);
-        setupLoggingProperties(properties, localProvider);
+        try {
+            setupLoggingProperties(properties, localProvider);
+        } catch (RuntimeException e) {
+            throw new ServerInitializeException(new ServerInitializeException.Detail(
+                    "Failed to setup logging configs, due to: " + e.getMessage(),
+                    "Check the logging configs in your local config file."
+            ), e);
+        }
     }
 
     private void setupLoggingProperties(Map<String, Object> properties,
@@ -93,14 +101,13 @@ public class LampEnvironmentPostProcessor implements EnvironmentPostProcessor {
                 localProvider.get(LoggingConfigKeys.LOGGING_FILE_MAX_SIZE));
         properties.put("logging.logback.rollingpolicy.max-history",
                 localProvider.get(LoggingConfigKeys.LOGGING_FILE_MAX_HISTORY));
-        properties.put("logging.logback.rollingpolicy.clean-history-on-start", true);
         properties.put("logging.logback.rollingpolicy.total-size-cap",
                 localProvider.get(LoggingConfigKeys.LOGGING_FILE_TOTAL_SIZE_CAP));
         properties.put("logging.logback.rollingpolicy.file-name-pattern",
                 "${logging.file.path}/lamp-blog-%d{yyyy-MM-dd}.%i.log");
     }
 
-    private static ConfigProvider createLocalProvider(String[] args) {
+    private static ReadonlyConfigProvider createLocalProvider(String[] args) {
         String path = getConfigPath(args);
         boolean allowFail = Strings.isNullOrEmpty(path);
 
@@ -111,6 +118,11 @@ public class LampEnvironmentPostProcessor implements EnvironmentPostProcessor {
                             path, allowFail
                     )
             );
+        } catch (FileNotFoundException e) {
+            throw new ServerInitializeException(new ServerInitializeException.Detail(
+                    "Failed to find local config file: " + e.getMessage(),
+                    "Check the file path of the local config file."
+            ), e);
         } catch (IOException e) {
             throw new ServerInitializeException(new ServerInitializeException.Detail(
                     "Failed to load local config file, due to: " + e.getMessage(),
