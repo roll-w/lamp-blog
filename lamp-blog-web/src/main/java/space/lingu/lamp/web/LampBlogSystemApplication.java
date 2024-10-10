@@ -75,5 +75,6 @@ public class LampBlogSystemApplication {
         properties.put("spring.config.location", "");
         properties.put("spring.messages.basename", "messages");
         properties.put("spring.jmx.enabled", false);
+        properties.put("spring.jpa.properties.hibernates.globally_quoted_identifiers", true);
     }
 }
