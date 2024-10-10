@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
-
 /*
  * Copyright (C) 2023 RollW
  *
@@ -16,13 +14,16 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
+import org.springframework.boot.gradle.tasks.bundling.BootJar
+
 plugins {
     id("java")
     id("java-library")
     kotlin("jvm")
     kotlin("plugin.spring")
     id("io.spring.dependency-management")
-    id("org.springframework.boot")
+    //id("org.springframework.boot") apply false
 }
 
 dependencyManagement {
@@ -63,6 +64,7 @@ kotlin {
 
 tasks.withType<JavaCompile> {
     options.encoding = "UTF-8"
+    options.compilerArgs.add("-parameters")
 }
 
 tasks.withType<Javadoc> {
