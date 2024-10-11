@@ -1,4 +1,4 @@
-# lamp-blog-frontend
+# Frontend
 
 The frontend of the Lamp Blog project.
 
