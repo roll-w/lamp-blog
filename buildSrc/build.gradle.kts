@@ -18,11 +18,12 @@ plugins {
     `kotlin-dsl`
 }
 
-val kotlinVersion = "2.0.20"
+val kotlinVersion = findProperty("kotlin.version") as String
+val springBootVersion = findProperty("spring.boot.version") as String
 
 dependencies {
     implementation("io.spring.gradle:dependency-management-plugin:1.1.6")
-    implementation("org.springframework.boot:spring-boot-gradle-plugin:3.3.4")
+    implementation("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
     implementation(kotlin("gradle-plugin", kotlinVersion))
     // plugin.spring
     implementation(kotlin("allopen", kotlinVersion))

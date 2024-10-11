@@ -23,16 +23,21 @@ plugins {
     kotlin("jvm")
     kotlin("plugin.spring")
     id("io.spring.dependency-management")
-    //id("org.springframework.boot") apply false
 }
+
+val kotlinVersion = findProperty("kotlin.version") as String
+val springBootVersion = findProperty("spring.boot.version") as String
 
 dependencyManagement {
     imports {
-        mavenBom("org.springframework.boot:spring-boot-dependencies:3.3.4")
+        mavenBom("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+    }
+    dependencies {
+        dependency("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
+        dependency("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+        dependency("org.jetbrains.kotlin:kotlin-test:${kotlinVersion}")
     }
 }
-
-val kotlinVersion = "2.0.20"
 
 dependencies {
     implementation(kotlin("stdlib-jdk8", kotlinVersion))
