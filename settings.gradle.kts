@@ -27,6 +27,9 @@ plugins {
 }
 
 rootProject.name = "lamp-blog"
+
+includeBuild("build-logic")
+
 include(":lamp-blog-web")
 include(":lamp-blog-email")
 include(":lamp-blog-file")

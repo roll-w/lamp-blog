@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 /*
  * Copyright (C) 2023 RollW
  *
@@ -15,6 +13,9 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import space.lingu.GenerateBuildConfigTask
 
 plugins {
     id("buildlogic.java-conventions")
