@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
-import org.springframework.boot.gradle.tasks.bundling.BootJar
-
 plugins {
+    id("lamp-project")
     id("java")
     id("java-library")
     kotlin("jvm")
@@ -25,8 +23,8 @@ plugins {
     id("io.spring.dependency-management")
 }
 
-val kotlinVersion = findProperty("kotlin.version") as String
-val springBootVersion = findProperty("spring.boot.version") as String
+val kotlinVersion = findProperty("kotlin.version").toString()
+val springBootVersion = findProperty("spring.boot.version").toString()
 
 dependencyManagement {
     imports {
@@ -47,9 +45,6 @@ dependencies {
     implementation("space.lingu.fiesta:fiesta-annotations:0.2.1")
     annotationProcessor("space.lingu.fiesta:fiesta-checker:0.2.1")
 }
-
-group = "space.lingu.lamp-blog"
-version = "0.1.0"
 
 java {
     toolchain {

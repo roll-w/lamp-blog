@@ -18,8 +18,8 @@ plugins {
     `kotlin-dsl`
 }
 
-val kotlinVersion = findProperty("kotlin.version") as String
-val springBootVersion = findProperty("spring.boot.version") as String
+val kotlinVersion = findProperty("kotlin.version").toString()
+val springBootVersion = findProperty("spring.boot.version").toString()
 
 dependencies {
     implementation("io.spring.gradle:dependency-management-plugin:1.1.6")
