@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.controller.user;
 
 import org.springframework.web.bind.annotation.*;
+import space.lingu.lamp.user.AttributedUserDetails;
 import space.lingu.lamp.web.controller.AdminApi;
 import space.lingu.lamp.web.controller.user.model.UserCreateRequest;
 import space.lingu.lamp.web.controller.user.model.UserDetailsVo;
@@ -53,7 +54,7 @@ public class UserManageController {
 
     @GetMapping("/users")
     public HttpResponseEntity<List<UserDetailsVo>> getUserList() {
-        List<AttributedUser> userIdentities = userProvider.getUsers();
+        List<AttributedUserDetails> userIdentities = userProvider.getUsers();
         List<UserPersonalData> personalDataList =
                 userPersonalDataService.getPersonalData(userIdentities);
         List<UserDetailsVo> userDetailsVos = new ArrayList<>();

@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import space.lingu.lamp.user.AttributedUserDetails;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.common.ParamValidate;
 import space.lingu.lamp.web.controller.Api;
@@ -88,7 +89,7 @@ public class UserController {
 
     @GetMapping("/users")
     public HttpResponseEntity<List<UserCommonDetailsVo>> getUsers() {
-        List<AttributedUser> users = userProvider.getUsers();
+        List<AttributedUserDetails> users = userProvider.getUsers();
         List<UserCommonDetailsVo> userCommonDetailsVos = users.stream()
                 .map(this::toDetailsVo)
                 .toList();
