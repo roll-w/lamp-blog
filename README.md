@@ -14,12 +14,12 @@ to install to your local maven repository:
 
 - [web-common](https://github.com/Roll-W/web-common-starter)
 
-## Getting Started
+## Building
 
 > This part includes the steps to get the backend of the project running.
 > For the frontend, please refer to the [frontend](lamp-blog-frontend/README.md).
 
-### Building the Project
+### Building Jar
 
 After cloning the repository, and installing the required libraries,
 you can build the project using the following command:
@@ -37,7 +37,33 @@ or if you want to skip the tests:
 After building the project, you should be able to find the jar file in
 `lamp-blog-web/build/libs` directory.
 
-### Configuration
+### Building Distribution Pack
+
+In the previous step, we primarily covered how to build the entire project,
+which is mainly intended for local execution. However, when running in other
+environments, for standardization purposes, we need a distribution package. 
+In the following section, we will introduce how to create a distribution 
+package.
+
+To generate the distribution package, run the following command:
+
+```shell
+./gradlew package
+```
+
+This command will generate a compressed file, similar to `lamp-blog-{version}.tar.gz`, 
+under the `build/dist` directory. This file includes the base JAR file, startup 
+scripts, and other resources.
+
+### Building Image
+
+This section provides guidance on how to build a Docker image. 
+Before continue, ensure that Docker is installed in your build environment.
+
+> [!NOTE]
+> This section is not yet complete.
+
+## Configuration
 
 To start up the application, you need to provide a configuration file.
 
@@ -53,13 +79,19 @@ database.password=root
 server.port=5100
 ```
 
-### Running the Application
+## Running
 
 After building the project, then you can run the application
 using the following command:
 
 ```shell
 java -jar lamp-blog.jar  # Replace lamp-blog.jar with the actual jar file name
+```
+
+Or if you are using the distribution pack:
+
+```shell
+bin/lamp # Replace with the actual path to `lamp`
 ```
 
 > Current support command line arguments:
@@ -74,6 +106,10 @@ or the application will fail to start.
 
 - User Management
 - Article Management
+
+## Contributing
+
+Expected workflow is: Fork -> Patch -> Push -> Pull Request
 
 ## Licence
 
