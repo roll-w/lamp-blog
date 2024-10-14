@@ -61,7 +61,12 @@ tasks.register<Exec>("buildImage") {
     dependsOn(":package")
 
     workingDir = file("${project.projectDir}")
-    commandLine = listOf("docker", "build", "-t", "lamp-blog:${version}", ".")
+    commandLine = listOf(
+        "docker", "build",
+        "--build-arg", "LAMP_VERSION=${version}",
+        "-t", "lamp-blog:${version}", "."
+    )
+
     standardOutput = System.out
     outputs.upToDateWhen { false }
 }
