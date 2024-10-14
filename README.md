@@ -9,19 +9,21 @@ A blog system built with Spring Boot 3 and Vue3.
 - Java 17 or higher
 - MySQL 8.0 or higher
 
-This project also requires the following libraries that require you
-to install to your local maven repository:
-
-- [web-common](https://github.com/Roll-W/web-common-starter)
-
 ## Building
 
 > This part includes the steps to get the backend of the project running.
 > For the frontend, please refer to the [frontend](lamp-blog-frontend/README.md).
 
+### Prerequisites
+
+This project requires the following libraries that need you
+to install to your local Maven repository:
+
+- [web-common](https://github.com/Roll-W/web-common-starter)
+
 ### Building Jar
 
-After cloning the repository, and installing the required libraries,
+After cloning the repository and installing the required libraries,
 you can build the project using the following command:
 
 ```shell
@@ -41,8 +43,8 @@ After building the project, you should be able to find the jar file in
 
 In the previous step, we primarily covered how to build the entire project,
 which is mainly intended for local execution. However, when running in other
-environments, for standardization purposes, we need a distribution package. 
-In the following section, we will introduce how to create a distribution 
+environments, for standardization purposes, we need a distribution package.
+In the following section, we will introduce how to create a distribution
 package.
 
 To generate the distribution package, run the following command:
@@ -51,17 +53,23 @@ To generate the distribution package, run the following command:
 ./gradlew package
 ```
 
-This command will generate a compressed file, similar to `lamp-blog-{version}.tar.gz`, 
-under the `build/dist` directory. This file includes the base JAR file, startup 
+This command will generate a compressed file, similar to `lamp-blog-{version}.tar.gz`,
+under the `build/dist` directory. This file includes the base JAR file, startup
 scripts, and other resources.
 
 ### Building Image
 
-This section provides guidance on how to build a Docker image. 
+This section provides guidance on how to build a Docker image.
 Before continue, ensure that Docker is installed in your build environment.
 
-> [!NOTE]
-> This section is not yet complete.
+To build the Docker image, run the following command:
+
+```shell
+./gradlew buildImage
+```
+
+After the build process is complete, you can find the image with the name
+`lamp-blog:{version}` in the local Docker image list.
 
 ## Configuration
 
@@ -71,7 +79,7 @@ The configuration file uses the `properties` format, like the following:
 
 ```properties
 # Database Configuration
-database.url=jdbc:mysql://localhost:3306/lamp_blog
+database.url=jdbc:mysql://localhost:3306/lamp_blog_database
 database.username=root
 database.password=root
 
@@ -80,6 +88,23 @@ server.port=5100
 ```
 
 ## Running
+
+### Before Running
+
+Before running the application, you need to make sure that the MySQL
+database is running and the database is created.
+
+If you haven't created the database, you can create it using the following
+SQL command:
+
+```sql
+CREATE DATABASE lamp_blog_database;
+```
+
+After the application starts, it will automatically create the tables
+and indexes required by the application.
+
+### Running the Application
 
 After building the project, then you can run the application
 using the following command:
@@ -101,6 +126,30 @@ bin/lamp # Replace with the actual path to `lamp`
 By default, the application will start on port `5100`. And database
 related configurations must be provided in the configuration file,
 or the application will fail to start.
+
+### Running with Docker
+
+If you have built the Docker image, you can run the application using the
+following command:
+
+> [!NOTE]
+> Before running the command, you need to prepare a configuration file named 
+> `lamp.conf` in your local directory for mount to the container and replace
+> the `/path/to/lamp.conf` with the actual path to the configuration file.
+
+```shell
+docker run \
+  -d \
+  -it \
+  -p 5100:5100 \
+  --network host \
+  -v /path/to/lamp.conf:/app/lamp-blog/conf/lamp.conf \
+  --name lamp-blog lamp-blog:{version}
+```
+
+> Options:
+> - `--network host`: Use the host network, or replace with your own network.
+> - `-v /path/to/lamp.conf:/app/lamp-blog/conf/lamp.conf`: Mount the configuration file to the container.
 
 ## Features
 
