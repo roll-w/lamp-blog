@@ -27,6 +27,7 @@ import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.OverrideSystemPropertiesEnvironment;
 import space.lingu.fiesta.Fiesta;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +44,11 @@ public class LampBlogSystemApplication {
     }
 
     public static void main(String[] args) {
+        if (hasAnyArguments(args, "--help", "-h")) {
+            System.out.println(help());
+            return;
+        }
+
         Map<String, Object> overrideProperties = new HashMap<>();
         overrideProperties.put("spring.application.name", "Lamp Blog");
         overrideProperties.put(LampEnvKeys.RAW_ARGS, args);
@@ -53,10 +59,11 @@ public class LampBlogSystemApplication {
         );
         SpringApplicationBuilder builder = new SpringApplicationBuilder(LampBlogSystemApplication.class)
                 .environment(environment)
-                .bannerMode(Banner.Mode.LOG)
+                .bannerMode(Banner.Mode.OFF)
                 .properties(overrideProperties)
-                .listeners(new LoggingPostApplicationPreparedEventListener())
-                .banner(new LampBlogBanner());
+                .listeners(
+                        new LoggingPostApplicationPreparedEventListener(),
+                        new BannerPrintListener());
         SpringApplication application = builder.build();
         sContext = application.run(prepareArguments(args));
     }
@@ -64,6 +71,30 @@ public class LampBlogSystemApplication {
     private static String[] prepareArguments(String[] args) {
         // temporarily disable arguments
         return new String[0];
+    }
+
+    private static boolean hasAnyArguments(String[] arguments, String... options) {
+        return Arrays.stream(arguments).anyMatch(option ->
+                Arrays.asList(options).contains(option)
+        );
+    }
+
+    private static String help() {
+        return """
+                Usage: lamp [options]
+                
+                Options:
+                
+                  --help, -h                Print this help message and exit. Use this option to display
+                                            detailed information about the available command-line options
+                                            and their usage.
+                
+                  --config, -c <path>       Specify the path to the configuration file. This option allows
+                                            you to provide a custom configuration file for the application
+                                            to use. The path can be absolute or relative to current working
+                                            directory.
+                
+                """;
     }
 
     private static void setupFixedProperties(Map<String, Object> properties) {
@@ -76,5 +107,11 @@ public class LampBlogSystemApplication {
         properties.put("spring.messages.basename", "messages");
         properties.put("spring.jmx.enabled", false);
         properties.put("spring.jpa.properties.hibernates.globally_quoted_identifiers", true);
+        properties.put("spring.jpa.hibernate.ddl-auto", "update");
+    }
+
+    public static void exit(int code) {
+        sContext.close();
+        System.exit(code);
     }
 }
