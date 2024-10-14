@@ -23,7 +23,7 @@ plugins {
 tasks.register<Tar>("package") {
     dependsOn(":lamp-blog-web:assemble")
 
-    group = "build"
+    group = "distribution"
     description = "Creates a distribution package for the project"
 
     val baseDir = "/lamp-blog-${version}"
@@ -55,13 +55,20 @@ tasks.register<Tar>("package") {
     compression = Compression.GZIP
 }
 
-tasks.register("build-image") {
-    dependsOn(":lamp-blog-web:assemble")
+tasks.register<Exec>("buildImage") {
+    group = "build"
+    description = "Build OCI image for this project."
+    dependsOn(":package")
+
+    workingDir = file("${project.projectDir}")
+    commandLine = listOf("docker", "build", "-t", "lamp-blog:${version}", ".")
+    standardOutput = System.out
+    outputs.upToDateWhen { false }
 }
 
 tasks.register<Exec>("buildFrontend") {
     group = "build"
-    description = "Build frontend of this project"
+    description = "Build frontend of this project."
 
     workingDir = file("${project.projectDir}/lamp-blog-frontend")
 
@@ -75,18 +82,26 @@ tasks.register<Exec>("buildFrontend") {
 }
 
 tasks.register<Tar>("packageFrontend") {
-    group = "build"
-    description = "Packs frontend of this project"
+    group = "distribution"
+    description = "Creates distribution pack for the project frontend."
 
     dependsOn("buildFrontend")
 
     into("lamp-blog-frontend") {
-       from("${project.projectDir}/lamp-blog-frontend/dist")
+        from("${project.projectDir}/lamp-blog-frontend/dist")
     }
     // TODO: may move to package task
 
     archiveFileName.set("lamp-blog-frontend-${version}.tar.gz")
     destinationDirectory.set(file("${project.projectDir}/build/dist"))
     compression = Compression.GZIP
+}
+
+tasks.register("version") {
+    group = "tool"
+    description = "Displays the version of this project."
+    println(version)
+
+    outputs.upToDateWhen { false }
 }
 
