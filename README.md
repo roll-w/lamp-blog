@@ -9,7 +9,7 @@ A blog system built with Spring Boot 3 and Vue3.
 - Java 17 or higher
 - MySQL 8.0 or higher
 
-## Building
+## Build
 
 > This part includes the steps to get the backend of the project running.
 > For the frontend, please refer to the [frontend](lamp-blog-frontend/README.md).
@@ -21,7 +21,7 @@ to install to your local Maven repository:
 
 - [web-common](https://github.com/Roll-W/web-common-starter)
 
-### Building Jar
+### Build Jar
 
 After cloning the repository and installing the required libraries,
 you can build the project using the following command:
@@ -39,7 +39,7 @@ or if you want to skip the tests:
 After building the project, you should be able to find the jar file in
 `lamp-blog-web/build/libs` directory.
 
-### Building Distribution Pack
+### Build Distribution Pack
 
 In the previous step, we primarily covered how to build the entire project,
 which is mainly intended for local execution. However, when running in other
@@ -57,7 +57,7 @@ This command will generate a compressed file, similar to `lamp-blog-{version}.ta
 under the `build/dist` directory. This file includes the base JAR file, startup
 scripts, and other resources.
 
-### Building Image
+### Build Image
 
 This section provides guidance on how to build a Docker image.
 Before continue, ensure that Docker is installed in your build environment.
@@ -121,7 +121,8 @@ bin/lamp # Replace with the actual path to `lamp`
 
 > Current support command line arguments:
 > - `--config`, `-c`: Specify the configuration file to use.
-> Default will try find `lamp.conf` in the current directory.
+> Default will try find `lamp.conf` in the current directory and the
+> `conf` directory under the working directory.
 
 By default, the application will start on port `5100`. And database
 related configurations must be provided in the configuration file,
