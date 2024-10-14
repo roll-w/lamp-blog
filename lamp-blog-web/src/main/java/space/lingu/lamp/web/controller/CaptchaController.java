@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import space.lingu.lamp.web.domain.captcha.CaptchaImage;
 import tech.rollw.common.web.HttpResponseEntity;
 
 /**
@@ -30,7 +29,7 @@ import tech.rollw.common.web.HttpResponseEntity;
 @CommonApi
 public class CaptchaController {
     @GetMapping("/captcha")
-    public HttpResponseEntity<CaptchaImage> getCaptcha() {
+    public HttpResponseEntity<Void> getCaptcha() {
         return null;
     }
 
