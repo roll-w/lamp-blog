@@ -50,7 +50,7 @@ tasks.register<Tar>("package") {
         from("${project(":lamp-blog-web").projectDir}/src/main/resources/lamp.conf")
     }
 
-    archiveFileName = "lamp-blog-${version}.tar.gz"
+    archiveFileName = "lamp-blog-${version}-dist.tar.gz"
     destinationDirectory = file("${project.projectDir}/build/dist")
     compression = Compression.GZIP
 }
@@ -65,6 +65,22 @@ tasks.register<Exec>("buildImage") {
         "docker", "build",
         "--build-arg", "LAMP_VERSION=${version}",
         "-t", "lamp-blog:${version}", "."
+    )
+
+    standardOutput = System.out
+    outputs.upToDateWhen { false }
+}
+
+tasks.register<Exec>("pacakgeImage") {
+    group = "distribution"
+    description = "Creates distribution pack for the project image."
+    dependsOn("buildImage")
+
+    workingDir = file("${project.projectDir}")
+    commandLine = listOf(
+        "docker", "save",
+        "-o", "build/dist/lamp-blog-${version}-image.tar.gz",
+        "lamp-blog:${version}"
     )
 
     standardOutput = System.out
