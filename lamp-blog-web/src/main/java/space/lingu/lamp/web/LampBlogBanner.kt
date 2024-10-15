@@ -20,6 +20,7 @@ import org.springframework.boot.ansi.AnsiColor
 import org.springframework.boot.ansi.AnsiOutput
 import org.springframework.boot.ansi.AnsiStyle
 import org.springframework.core.env.Environment
+import space.lingu.lamp.Version
 import java.io.PrintStream
 
 /**
@@ -37,9 +38,9 @@ class LampBlogBanner : Banner {
 
 			""".trimIndent()
 
-        const val LAMP_BLOG = " Lamp Blog"
+        const val LAMP_BLOG = "Lamp Blog"
 
-        const val LICENSE = " Release under the Apache License, Version 2.0 (Apache-2.0)"
+        const val LICENSE = "Release under the Apache License, Version 2.0 (Apache-2.0)"
 
         const val STRAP_LINE_SIZE = LICENSE.length
     }
@@ -52,8 +53,7 @@ class LampBlogBanner : Banner {
         printStream.run {
             println()
             printCenteredBanner(STRAP_LINE_SIZE)
-            // TODO: version read from configuration
-            val version = " (v${"0.0.1"})"
+            val version = " (v${Version.VERSION})"
             val padding = StringBuilder()
             while (padding.length < STRAP_LINE_SIZE - (version.length + LAMP_BLOG.length)) {
                 padding.append(" ")
@@ -61,11 +61,12 @@ class LampBlogBanner : Banner {
             println(
                 AnsiOutput.toString(
                     AnsiColor.YELLOW, LAMP_BLOG, AnsiColor.DEFAULT, padding.toString(),
-                    AnsiStyle.FAINT, version
+                    AnsiStyle.FAINT, AnsiColor.GREEN, version, AnsiColor.DEFAULT
                 )
             )
             println(LICENSE)
             println()
+            println(Version.formatVersion())
         }
     }
 
