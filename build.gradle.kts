@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
+import com.bmuschko.gradle.docker.tasks.image.DockerBuildImage
+import com.bmuschko.gradle.docker.tasks.image.DockerSaveImage
 import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     id("lamp-project")
+    id("com.bmuschko.docker-remote-api") version "9.4.0"
 }
 
 tasks.register<Tar>("package") {
@@ -51,39 +54,35 @@ tasks.register<Tar>("package") {
     }
 
     archiveFileName = "lamp-blog-${version}-dist.tar.gz"
-    destinationDirectory = file("${project.projectDir}/build/dist")
+    destinationDirectory = layout.buildDirectory.dir("dist")
     compression = Compression.GZIP
-}
 
-tasks.register<Exec>("buildImage") {
-    group = "build"
-    description = "Build OCI image for this project."
-    dependsOn(":package")
-
-    workingDir = file("${project.projectDir}")
-    commandLine = listOf(
-        "docker", "build",
-        "--build-arg", "LAMP_VERSION=${version}",
-        "-t", "lamp-blog:${version}", "."
-    )
-
-    standardOutput = System.out
     outputs.upToDateWhen { false }
 }
 
-tasks.register<Exec>("pacakgeImage") {
+tasks.register<DockerBuildImage>("buildImage") {
+    group = "build"
+    description = "Build Docker image for this project."
+    dependsOn(":package")
+
+    inputDir = project.projectDir
+    images = listOf("lamp-blog:${version}")
+    buildArgs = mapOf(
+        "LAMP_VERSION" to version.toString()
+    )
+    // TODO: support multi-arch build
+    outputs.upToDateWhen { false }
+}
+
+tasks.register<DockerSaveImage>("packageImage") {
     group = "distribution"
     description = "Creates distribution pack for the project image."
     dependsOn("buildImage")
 
-    workingDir = file("${project.projectDir}")
-    commandLine = listOf(
-        "docker", "save",
-        "-o", "build/dist/lamp-blog-${version}-image.tar.gz",
-        "lamp-blog:${version}"
-    )
+    images = listOf("lamp-blog:${version}")
+    destFile = layout.buildDirectory.file("dist/lamp-blog-${version}-image.tar.gz")
+    useCompression = true
 
-    standardOutput = System.out
     outputs.upToDateWhen { false }
 }
 
