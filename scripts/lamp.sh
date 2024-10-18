@@ -127,13 +127,21 @@ if [ ! -f "$LAMP_JAR" ]; then
 Please verify that this is a standard release package."
 fi
 
-set -- "$@"
+# Add default JVM options here. You can also use JAVA_OPTS to pass JVM options to this script.
+DEFAULT_JVM_OPTS='"-Xmx512m" "-Xms64m"'
 
-eval "set -- $(
-  printf '%s\n' "$JAVA_OPTS" |
+# Stop when "xargs" is not available.
+if ! command -v xargs >/dev/null 2>&1; then
+  die "xargs is not available"
+fi
+
+JAVA_OPTS=$(
+  printf '%s\n' "$DEFAULT_JVM_OPTS $JAVA_OPTS" |
     xargs -n1 |
     sed ' s~[^-[:alnum:]+,./:=@_]~\\&~g; ' |
     tr '\n' ' '
-)" '"$@"'
+)
 
-exec "$JAVACMD" -jar "$LAMP_JAR" "$@"
+# shellcheck disable=SC2086
+# disable SC2086: Since sh not support array, so we use unquoted $JAVA_OPTS here.
+exec "$JAVACMD" $JAVA_OPTS -jar "$LAMP_JAR" "$@"

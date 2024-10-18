@@ -11,5 +11,7 @@ WORKDIR /app/lamp-blog
 
 EXPOSE 5100:5100
 
+ENV JAVA_OPTS=""
+
 # TODO: support args, envs
 ENTRYPOINT ["bin/lamp"]

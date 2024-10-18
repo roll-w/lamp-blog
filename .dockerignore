@@ -1,5 +1,6 @@
 # excludes the .idea folder in the project root
 .idea/
+.gradle/
 
 npm-debug.log*
 yarn-debug.log*
