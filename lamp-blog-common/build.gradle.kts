@@ -28,6 +28,7 @@ dependencies {
     api("org.slf4j:slf4j-api")
     api("org.apache.commons:commons-lang3")
     api(libs.com.google.guava)
+    api(libs.commons.text)
 }
 
 description = "lamp-blog-common"

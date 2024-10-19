@@ -21,6 +21,7 @@ plugins {
 dependencies {
     api(project(":lamp-blog-common"))
     api(libs.rollw.web.common.core)
+    api("org.springframework:spring-context")
 }
 
 description = "lamp-blog-system-setting-api"

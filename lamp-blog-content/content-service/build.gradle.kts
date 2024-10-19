@@ -15,11 +15,12 @@
  */
 
 plugins {
-    id("buildlogic.java-conventions")
+    id("buildlogic.jpa-conventions")
 }
 
 dependencies {
     api(project(":lamp-blog-common"))
+    api(project(":lamp-blog-common-data"))
     api(project(":lamp-blog-content:content-api"))
 }
 
