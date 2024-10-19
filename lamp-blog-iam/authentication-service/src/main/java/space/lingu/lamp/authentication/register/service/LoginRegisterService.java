@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.service;
+package space.lingu.lamp.authentication.register.service;
 
 import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
@@ -28,12 +28,14 @@ import space.lingu.NonNull;
 import space.lingu.lamp.LampException;
 import space.lingu.lamp.RequestMetadata;
 import space.lingu.lamp.authentication.UserInfoSignature;
+import space.lingu.lamp.authentication.VerifiableToken;
 import space.lingu.lamp.authentication.event.OnUserLoginEvent;
 import space.lingu.lamp.authentication.event.OnUserRegistrationEvent;
 import space.lingu.lamp.authentication.login.LoginProvider;
 import space.lingu.lamp.authentication.login.LoginStrategy;
 import space.lingu.lamp.authentication.login.LoginStrategyType;
 import space.lingu.lamp.authentication.login.LoginVerifiableToken;
+import space.lingu.lamp.authentication.register.RegisterProvider;
 import space.lingu.lamp.authentication.register.RegisterTokenProvider;
 import space.lingu.lamp.authentication.register.RegisterVerificationToken;
 import space.lingu.lamp.authentication.register.repository.RegisterTokenDo;
@@ -47,13 +49,11 @@ import space.lingu.lamp.user.UserSignatureProvider;
 import space.lingu.lamp.user.UserViewException;
 import space.lingu.lamp.user.repository.UserDo;
 import space.lingu.lamp.user.repository.UserRepository;
-import space.lingu.lamp.web.common.ApiContext;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.IoErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 import tech.rollw.common.web.system.AuthenticationException;
-import tech.rollw.common.web.system.ContextThreadAware;
 
 import java.io.IOException;
 import java.util.EnumMap;
@@ -66,7 +66,7 @@ import java.util.UUID;
  * @author RollW
  */
 @Service
-public class LoginRegisterService implements LoginProvider, RegisterTokenProvider {
+public class LoginRegisterService implements LoginProvider, RegisterTokenProvider, RegisterProvider {
     private static final Logger logger = LoggerFactory.getLogger(LoginRegisterService.class);
 
     private final UserRepository userRepository;
@@ -75,25 +75,22 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
     private final ApplicationEventPublisher eventPublisher;
     private final AuthenticationManager authenticationManager;
     private final UserSignatureProvider userSignatureProvider;
-    private final ContextThreadAware<ApiContext> apiContextThreadAware;
     private final Map<LoginStrategyType, LoginStrategy> loginStrategyMap =
             new EnumMap<>(LoginStrategyType.class);
 
-    public LoginRegisterService(@NonNull List<LoginStrategy> strategies,
+    public LoginRegisterService(List<LoginStrategy> strategies,
                                 UserRepository userRepository,
                                 RegisterTokenRepository registerTokenRepository,
                                 UserManageService userManageService,
                                 ApplicationEventPublisher eventPublisher,
                                 AuthenticationManager authenticationManager,
-                                UserSignatureProvider userSignatureProvider,
-                                ContextThreadAware<ApiContext> apiContextThreadAware) {
+                                UserSignatureProvider userSignatureProvider) {
         this.userRepository = userRepository;
         this.registerTokenRepository = registerTokenRepository;
         this.userManageService = userManageService;
         this.eventPublisher = eventPublisher;
         this.authenticationManager = authenticationManager;
         this.userSignatureProvider = userSignatureProvider;
-        this.apiContextThreadAware = apiContextThreadAware;
         strategies.forEach(strategy ->
                 loginStrategyMap.put(strategy.getStrategyType(), strategy));
     }
@@ -179,8 +176,11 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
         return UserInfoSignature.from(user, signature);
     }
 
-    public AttributedUser registerUser(String username, String password,
-                                       String email) {
+    @NonNull
+    @Override
+    public AttributedUser register(@NonNull String username,
+                                   @NonNull String password,
+                                   @NonNull String email) {
         boolean hasUsers = userRepository.hasUsers();
         Role role = hasUsers ? Role.USER : Role.ADMIN;
         boolean enabled = !hasUsers;
@@ -209,37 +209,34 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
     }
 
     @Override
-    public String createRegisterToken(UserIdentity userIdentity) {
+    public VerifiableToken createRegisterToken(UserIdentity userIdentity) {
         UUID uuid = UUID.randomUUID();
         String token = uuid.toString();
         long expiryTime = RegisterVerificationToken.calculateExpiryDate();
         RegisterTokenDo registerVerificationToken = new RegisterTokenDo(
                 null, token, userIdentity.getUserId(), expiryTime, false
         );
-        registerTokenRepository.save(registerVerificationToken);
-        return uuid.toString();
+        registerVerificationToken = registerTokenRepository.save(registerVerificationToken);
+        return registerVerificationToken.lock();
     }
 
     @Override
     public void verifyRegisterToken(String token) {
-        RegisterTokenDo verificationTokenDo =
+        RegisterTokenDo registerTokenDo =
                 registerTokenRepository.findByToken(token);
-        if (verificationTokenDo == null) {
+        if (registerTokenDo == null) {
             throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_NOT_EXIST);
         }
-        // TODO: temporary compatible solution, need to be optimized
-        RegisterVerificationToken verificationToken = verificationTokenDo.lock();
-        if (verificationToken.used()) {
+        if (registerTokenDo.getUsed()) {
             throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_USED);
         }
-        if (verificationToken.isExpired()) {
+        if (registerTokenDo.isExpired()) {
             throw new AuthenticationException(AuthErrorCode.ERROR_TOKEN_EXPIRED);
         }
-        RegisterVerificationToken registerVerificationToken =
-                verificationToken.markVerified();
-        registerTokenRepository.save(RegisterTokenDo.toDo(registerVerificationToken));
-        UserDo user = userRepository
-                .getByUserId(verificationToken.userId()).orElse(null);
+        registerTokenDo.markVerified();
+        registerTokenRepository.save(registerTokenDo);
+        UserDo user = userRepository.getByUserId(registerTokenDo.getUserId())
+                .orElse(null);
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
@@ -249,7 +246,6 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
         if (user.isEnabled()) {
             throw new AuthenticationException(UserErrorCode.ERROR_USER_ALREADY_ACTIVATED);
         }
-        // TODO: should not modify the original user object, at least should clone it
         user.setEnabled(true);
         user.setUpdateTime(System.currentTimeMillis());
         userRepository.save(user);
@@ -260,11 +256,7 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
-        ApiContext apiContext = apiContextThreadAware.getContextThread()
-                .getContext();
-        Locale locale = apiContext == null
-                ? Locale.getDefault()
-                : apiContext.getLocale();
+        Locale locale = LocaleContextHolder.getLocale();
         OnUserRegistrationEvent event = new OnUserRegistrationEvent(
                 user, locale,
                 // TODO: get url from config

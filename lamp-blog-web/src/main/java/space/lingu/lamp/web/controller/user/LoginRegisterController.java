@@ -25,7 +25,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import space.lingu.lamp.RequestMetadata;
 import space.lingu.lamp.authentication.UserInfoSignature;
+import space.lingu.lamp.authentication.login.LoginProvider;
 import space.lingu.lamp.authentication.login.LoginStrategyType;
+import space.lingu.lamp.authentication.register.RegisterProvider;
 import space.lingu.lamp.authentication.token.AuthenticationTokenService;
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.web.common.ParamValidate;
@@ -33,7 +35,6 @@ import space.lingu.lamp.web.controller.user.model.LoginResponse;
 import space.lingu.lamp.web.controller.user.model.LoginTokenSendRequest;
 import space.lingu.lamp.web.controller.user.model.UserLoginRequest;
 import space.lingu.lamp.web.controller.user.model.UserRegisterRequest;
-import space.lingu.lamp.web.domain.user.service.LoginRegisterService;
 import tech.rollw.common.web.HttpResponseEntity;
 
 import java.io.IOException;
@@ -45,12 +46,15 @@ import java.io.IOException;
 public class LoginRegisterController {
     private static final Logger logger = LoggerFactory.getLogger(LoginRegisterController.class);
 
-    private final LoginRegisterService loginRegisterService;
+    private final LoginProvider loginProvider;
+    private final RegisterProvider registerProvider;
     private final AuthenticationTokenService authenticationTokenService;
 
-    public LoginRegisterController(LoginRegisterService loginRegisterService,
+    public LoginRegisterController(LoginProvider loginProvider,
+                                   RegisterProvider registerProvider,
                                    AuthenticationTokenService authenticationTokenService) {
-        this.loginRegisterService = loginRegisterService;
+        this.loginProvider = loginProvider;
+        this.registerProvider = registerProvider;
         this.authenticationTokenService = authenticationTokenService;
     }
 
@@ -63,7 +67,7 @@ public class LoginRegisterController {
         ParamValidate.notEmpty(loginRequest.identity(), "identity cannot be null or empty.");
         ParamValidate.notEmpty(loginRequest.token(), "token cannot be null or empty.");
 
-        UserInfoSignature userInfoSignature = loginRegisterService.login(
+        UserInfoSignature userInfoSignature = loginProvider.login(
                 loginRequest.identity(),
                 loginRequest.token(),
                 LoginStrategyType.PASSWORD,
@@ -76,7 +80,7 @@ public class LoginRegisterController {
     public HttpResponseEntity<LoginResponse> loginByEmailToken(
             RequestMetadata requestMetadata,
             @RequestBody UserLoginRequest loginRequest) {
-        UserInfoSignature signature = loginRegisterService.login(
+        UserInfoSignature signature = loginProvider.login(
                 loginRequest.identity(),
                 loginRequest.token(),
                 LoginStrategyType.EMAIL_TOKEN,
@@ -89,7 +93,7 @@ public class LoginRegisterController {
             HttpServletRequest request,
             @RequestBody LoginTokenSendRequest loginTokenSendRequest) throws IOException {
         ParamValidate.notEmpty(loginTokenSendRequest.identity(), "identity cannot be null or empty.");
-        loginRegisterService.sendToken(
+        loginProvider.sendToken(
                 loginTokenSendRequest.identity(),
                 LoginStrategyType.EMAIL_TOKEN,
                 null
@@ -111,7 +115,7 @@ public class LoginRegisterController {
 
     @PostMapping("/register")
     public HttpResponseEntity<Void> registerUser(@RequestBody UserRegisterRequest request) {
-        AttributedUser user = loginRegisterService.registerUser(
+        AttributedUser user = registerProvider.register(
                 request.username(),
                 request.password(),
                 request.email()
@@ -122,7 +126,7 @@ public class LoginRegisterController {
     @PostMapping("/register/token/{token}")
     public HttpResponseEntity<Void> activateUser(@PathVariable String token) {
         ParamValidate.notEmpty(token, "Token cannot be null or empty.");
-        loginRegisterService.verifyRegisterToken(token);
+        registerProvider.verifyRegisterToken(token);
         return HttpResponseEntity.success();
     }
 
@@ -131,8 +135,7 @@ public class LoginRegisterController {
             @RequestParam("username") String username) {
         ParamValidate.notEmpty(username,
                 "Username cannot be null or empty.");
-        loginRegisterService.resendToken(username);
-
+        // TODO: resend the register token
         return HttpResponseEntity.success();
     }
 

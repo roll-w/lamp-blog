@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.authentication.register;
+package space.lingu.lamp.authentication.register
 
-import space.lingu.lamp.authentication.VerifiableToken;
-import space.lingu.lamp.user.UserIdentity;
-import tech.rollw.common.web.CommonRuntimeException;
+import space.lingu.lamp.user.AttributedUser
 
 /**
  * @author RollW
  */
-public interface RegisterTokenProvider {
-    VerifiableToken createRegisterToken(UserIdentity userIdentity);
-
-    void verifyRegisterToken(String token) throws CommonRuntimeException;
+interface RegisterProvider: RegisterTokenProvider {
+    fun register(username: String, password: String, email: String): AttributedUser
 }

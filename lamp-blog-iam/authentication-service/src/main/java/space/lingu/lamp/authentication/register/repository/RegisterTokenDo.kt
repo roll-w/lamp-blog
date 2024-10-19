@@ -85,6 +85,14 @@ class RegisterTokenDo(
         return Builder(this)
     }
 
+    fun markVerified() {
+        used = true
+    }
+
+    fun isExpired(): Boolean {
+        return System.currentTimeMillis() > expiryTime
+    }
+
     companion object {
         @JvmStatic
         fun RegisterVerificationToken.toDo(): RegisterTokenDo = RegisterTokenDo(
