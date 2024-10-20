@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import space.lingu.lamp.web.controller.AdminApi;
 import space.lingu.lamp.web.controller.article.model.ArticleMetaVo;
-import space.lingu.lamp.web.domain.content.ContentAccessService;
-import space.lingu.lamp.web.domain.content.ContentIdentity;
-import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
-import space.lingu.lamp.web.domain.content.ContentPublishProvider;
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
-import space.lingu.lamp.web.domain.content.common.ContentException;
+import space.lingu.lamp.content.ContentAccessService;
+import space.lingu.lamp.content.ContentIdentity;
+import space.lingu.lamp.content.ContentMetadataDetails;
+import space.lingu.lamp.content.ContentPublishProvider;
+import space.lingu.lamp.content.ContentType;
+import space.lingu.lamp.content.common.ContentErrorCode;
+import space.lingu.lamp.content.common.ContentException;
 import tech.rollw.common.web.HttpResponseEntity;
 
 /**

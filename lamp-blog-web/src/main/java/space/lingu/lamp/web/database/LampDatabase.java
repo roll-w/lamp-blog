@@ -16,18 +16,13 @@
 
 package space.lingu.lamp.web.database;
 
-import space.lingu.lamp.authentication.register.RegisterVerificationToken;
-import space.lingu.lamp.setting.SystemSetting;
-import space.lingu.lamp.user.User;
 import space.lingu.lamp.web.database.dao.ArticleDao;
 import space.lingu.lamp.web.database.dao.CommentDao;
-import space.lingu.lamp.web.database.dao.ContentMetadataDao;
 import space.lingu.lamp.web.database.dao.ReviewJobDao;
 import space.lingu.lamp.web.database.dao.StaffDao;
 import space.lingu.lamp.web.database.dao.UserPersonalDataDao;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.comment.Comment;
-import space.lingu.lamp.web.domain.content.ContentMetadata;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
@@ -40,13 +35,9 @@ import space.lingu.light.LightDatabase;
  * @author RollW
  */
 @Database(name = "lamp_blog_database", version = 1, tables = {
-        User.class, UserPersonalData.class, Staff.class,
-        RegisterVerificationToken.class,
-        SystemSetting.class,
-        Article.class,
-        ReviewJob.class,
-        Comment.class,
-        ContentMetadata.class,
+        UserPersonalData.class, Staff.class,
+        Article.class, ReviewJob.class,
+        Comment.class
 })
 @DataConverters({LampConverter.class})
 @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "255")
@@ -58,8 +49,6 @@ public abstract class LampDatabase extends LightDatabase {
     public abstract ReviewJobDao getReviewJobDao();
 
     public abstract StaffDao getStaffDao();
-
-    public abstract ContentMetadataDao getContentMetadataDao();
 
     public abstract CommentDao getCommentDao();
 }

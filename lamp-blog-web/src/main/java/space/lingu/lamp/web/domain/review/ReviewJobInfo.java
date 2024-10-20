@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.domain.review;
 
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.ContentType;
 
 /**
  * @author RollW

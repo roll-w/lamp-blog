@@ -18,8 +18,8 @@ package space.lingu.lamp.web.domain.comment;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.web.domain.content.Content;
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.Content;
+import space.lingu.lamp.content.ContentType;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.Index;

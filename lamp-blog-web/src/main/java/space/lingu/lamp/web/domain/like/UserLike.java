@@ -20,7 +20,7 @@ import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;

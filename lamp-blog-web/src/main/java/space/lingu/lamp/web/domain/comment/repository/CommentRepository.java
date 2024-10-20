@@ -22,7 +22,7 @@ import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.CommentDao;
 import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
 import space.lingu.lamp.web.domain.comment.Comment;
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.ContentType;
 import tech.rollw.common.web.page.Offset;
 import tech.rollw.common.web.system.ContextThreadAware;
 import tech.rollw.common.web.system.paged.PageableContext;

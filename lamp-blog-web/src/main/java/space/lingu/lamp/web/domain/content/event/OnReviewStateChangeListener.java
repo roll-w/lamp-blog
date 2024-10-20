@@ -23,10 +23,10 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.content.ContentMetadata;
-import space.lingu.lamp.web.domain.content.ContentStatus;
-import space.lingu.lamp.web.domain.content.SimpleContentInfo;
-import space.lingu.lamp.web.domain.content.repository.ContentMetadataRepository;
+import space.lingu.lamp.content.ContentMetadata;
+import space.lingu.lamp.content.ContentStatus;
+import space.lingu.lamp.content.SimpleContentInfo;
+import space.lingu.lamp.content.event.ContentStatusEvent;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 import space.lingu.lamp.web.domain.review.event.OnReviewStateChangeEvent;
@@ -38,15 +38,11 @@ import space.lingu.lamp.web.domain.review.event.OnReviewStateChangeEvent;
  */
 @Component
 public class OnReviewStateChangeListener implements ApplicationListener<OnReviewStateChangeEvent> {
-    private final ContentMetadataRepository contentMetadataRepository;
     private final ApplicationEventPublisher eventPublisher;
 
     private static final Logger logger = LoggerFactory.getLogger(OnReviewStateChangeListener.class);
 
-    public OnReviewStateChangeListener(
-            ContentMetadataRepository contentMetadataRepository,
-            ApplicationEventPublisher eventPublisher) {
-        this.contentMetadataRepository = contentMetadataRepository;
+    public OnReviewStateChangeListener(ApplicationEventPublisher eventPublisher) {
         this.eventPublisher = eventPublisher;
     }
 
@@ -54,10 +50,12 @@ public class OnReviewStateChangeListener implements ApplicationListener<OnReview
     @Async
     public void onApplicationEvent(@NonNull OnReviewStateChangeEvent event) {
         ReviewJob reviewJob = event.getReviewJob();
-        ContentMetadata metadata = contentMetadataRepository.getById(
-                reviewJob.getReviewContentId(),
-                reviewJob.getType()
-        );
+        // ContentMetadata metadata = contentMetadataRepository.getById(
+        //         reviewJob.getReviewContentId(),
+        //         reviewJob.getType()
+        // );
+        // TODO: get metadata
+        ContentMetadata metadata = null;
         if (metadata == null) {
             // means metadata not has been successfully created
             logger.warn("ContentMetadata not found for the given review job: id={}, content={}@{}",
@@ -71,10 +69,10 @@ public class OnReviewStateChangeListener implements ApplicationListener<OnReview
         );
         ContentStatus currentStatus = toContentStatus(event.getCurrentStatus());
         ContentStatus previousStatus = toContentStatus(event.getPreviousStatus());
-        contentMetadataRepository.updateStatus(
-                metadata,
-                currentStatus
-        );
+        //contentMetadataRepository.updateStatus(
+        //        metadata,
+        //        currentStatus
+        //);
         ContentStatusEvent<?> contentStatusEvent = new ContentStatusEvent<>(
                 contentInfo, reviewJob.getReviewTime(),
                 previousStatus, currentStatus);

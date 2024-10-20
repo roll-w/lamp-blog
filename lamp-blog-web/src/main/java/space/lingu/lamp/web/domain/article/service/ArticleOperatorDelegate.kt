@@ -16,7 +16,7 @@
 package space.lingu.lamp.web.domain.article.service
 
 import space.lingu.lamp.web.domain.article.Article
-import space.lingu.lamp.web.domain.content.service.ContentMetadataService
+import space.lingu.lamp.content.service.ContentMetadataService
 
 /**
  * @author RollW

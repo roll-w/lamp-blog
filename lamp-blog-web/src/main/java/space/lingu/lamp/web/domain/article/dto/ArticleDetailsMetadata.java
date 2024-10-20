@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.domain.article.dto;
 
 import space.lingu.Nullable;
-import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
+import space.lingu.lamp.content.ContentDetailsMetadata;
 
 /**
  * @author RollW

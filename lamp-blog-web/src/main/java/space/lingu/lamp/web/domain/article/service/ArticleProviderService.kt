@@ -19,14 +19,14 @@ import org.springframework.stereotype.Service
 import space.lingu.NonNull
 import space.lingu.lamp.web.domain.article.Article
 import space.lingu.lamp.web.domain.article.repository.ArticleRepository
-import space.lingu.lamp.web.domain.content.ContentDetails
-import space.lingu.lamp.web.domain.content.ContentOperator
-import space.lingu.lamp.web.domain.content.ContentProvider
-import space.lingu.lamp.web.domain.content.ContentTrait
-import space.lingu.lamp.web.domain.content.ContentType
-import space.lingu.lamp.web.domain.content.common.ContentErrorCode
-import space.lingu.lamp.web.domain.content.common.ContentException
-import space.lingu.lamp.web.domain.content.service.ContentMetadataService
+import space.lingu.lamp.content.ContentDetails
+import space.lingu.lamp.content.ContentOperator
+import space.lingu.lamp.content.ContentProvider
+import space.lingu.lamp.content.ContentTrait
+import space.lingu.lamp.content.ContentType
+import space.lingu.lamp.content.common.ContentErrorCode
+import space.lingu.lamp.content.common.ContentException
+import space.lingu.lamp.content.service.ContentMetadataService
 
 /**
  * @author RollW

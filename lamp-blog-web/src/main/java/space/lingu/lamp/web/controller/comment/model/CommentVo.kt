@@ -17,8 +17,8 @@ package space.lingu.lamp.web.controller.comment.model
 
 import space.lingu.lamp.web.controller.content.vo.ContentVo
 import space.lingu.lamp.web.domain.comment.Comment
-import space.lingu.lamp.web.domain.content.ContentDetails
-import space.lingu.lamp.web.domain.content.ContentType
+import space.lingu.lamp.content.ContentDetails
+import space.lingu.lamp.content.ContentType
 
 /**
  * @author RollW

@@ -24,15 +24,15 @@ import space.lingu.lamp.web.common.ParamValidate;
 import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.web.domain.article.common.ArticleErrorCode;
 import space.lingu.lamp.web.domain.article.repository.ArticleRepository;
-import space.lingu.lamp.web.domain.content.ContentDetails;
-import space.lingu.lamp.web.domain.content.ContentPublisher;
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.content.UncreatedContent;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionIdentity;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionProvider;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
-import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
-import space.lingu.lamp.web.domain.content.common.ContentException;
+import space.lingu.lamp.content.ContentDetails;
+import space.lingu.lamp.content.ContentPublisher;
+import space.lingu.lamp.content.ContentType;
+import space.lingu.lamp.content.UncreatedContent;
+import space.lingu.lamp.content.collection.ContentCollectionIdentity;
+import space.lingu.lamp.content.collection.ContentCollectionProvider;
+import space.lingu.lamp.content.collection.ContentCollectionType;
+import space.lingu.lamp.content.common.ContentErrorCode;
+import space.lingu.lamp.content.common.ContentException;
 import tech.rollw.common.web.page.ImmutablePage;
 import tech.rollw.common.web.page.Offset;
 import tech.rollw.common.web.page.Page;
@@ -122,6 +122,7 @@ public class ArticleService implements ContentPublisher, ContentCollectionProvid
         };
     }
 
+    @NonNull
     @Override
     public List<? extends ContentDetails> getContents(
             ContentCollectionIdentity contentCollectionIdentity) {

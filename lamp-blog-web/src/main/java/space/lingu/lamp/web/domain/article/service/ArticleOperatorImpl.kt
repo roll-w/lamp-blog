@@ -16,10 +16,10 @@
 package space.lingu.lamp.web.domain.article.service
 
 import space.lingu.lamp.web.domain.article.Article
-import space.lingu.lamp.web.domain.content.ContentDetails
-import space.lingu.lamp.web.domain.content.ContentDetailsMetadata
-import space.lingu.lamp.web.domain.content.ContentOperator
-import space.lingu.lamp.web.domain.content.service.AbstractContentOperator
+import space.lingu.lamp.content.ContentDetails
+import space.lingu.lamp.content.ContentDetailsMetadata
+import space.lingu.lamp.content.ContentOperator
+import space.lingu.lamp.content.service.AbstractContentOperator
 
 /**
  * @author RollW

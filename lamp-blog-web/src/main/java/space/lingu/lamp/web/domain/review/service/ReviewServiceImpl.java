@@ -18,8 +18,8 @@ package space.lingu.lamp.web.domain.review.service;
 
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.content.ContentTrait;
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.ContentTrait;
+import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJobInfo;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewJobProvider;

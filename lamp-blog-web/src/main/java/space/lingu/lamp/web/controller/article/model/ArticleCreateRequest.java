@@ -17,9 +17,9 @@
 package space.lingu.lamp.web.controller.article.model;
 
 import space.lingu.lamp.web.domain.article.dto.ArticleDetailsMetadata;
-import space.lingu.lamp.web.domain.content.SimpleUncreatedContent;
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.content.UncreatedContent;
+import space.lingu.lamp.content.SimpleUncreatedContent;
+import space.lingu.lamp.content.ContentType;
+import space.lingu.lamp.content.UncreatedContent;
 
 /**
  * @author RollW

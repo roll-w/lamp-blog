@@ -24,10 +24,10 @@ import space.lingu.lamp.web.controller.Api
 import space.lingu.lamp.web.controller.comment.model.CommentRequest
 import space.lingu.lamp.web.controller.comment.model.CommentVo
 import space.lingu.lamp.web.domain.comment.CommentDetailsMetadata
-import space.lingu.lamp.web.domain.content.ContentPublishProvider
-import space.lingu.lamp.web.domain.content.ContentType
-import space.lingu.lamp.web.domain.content.SimpleUncreatedContent
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionType
+import space.lingu.lamp.content.ContentPublishProvider
+import space.lingu.lamp.content.ContentType
+import space.lingu.lamp.content.SimpleUncreatedContent
+import space.lingu.lamp.content.collection.ContentCollectionType
 import tech.rollw.common.web.HttpResponseEntity
 import tech.rollw.common.web.ParameterFailedException
 import tech.rollw.common.web.system.ContextThreadAware

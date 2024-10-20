@@ -16,8 +16,8 @@
 
 package space.lingu.lamp.web.controller.content.vo;
 
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
+import space.lingu.lamp.content.ContentType;
+import space.lingu.lamp.content.collection.ContentCollectionType;
 
 /**
  * @author RollW

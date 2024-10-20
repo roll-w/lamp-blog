@@ -16,8 +16,8 @@
 
 package space.lingu.lamp.web.domain.comment;
 
-import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.ContentDetailsMetadata;
+import space.lingu.lamp.content.ContentType;
 
 /**
  * @author RollW

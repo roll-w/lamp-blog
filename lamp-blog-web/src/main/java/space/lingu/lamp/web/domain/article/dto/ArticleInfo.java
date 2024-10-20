@@ -18,9 +18,9 @@ package space.lingu.lamp.web.domain.article.dto;
 
 import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.domain.content.Content;
-import space.lingu.lamp.web.domain.content.ContentDetails;
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.Content;
+import space.lingu.lamp.content.ContentDetails;
+import space.lingu.lamp.content.ContentType;
 import space.lingu.light.DataColumn;
 
 /**

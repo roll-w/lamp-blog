@@ -15,7 +15,7 @@
  */
 package space.lingu.lamp.web.domain.review
 
-import space.lingu.lamp.web.domain.content.ContentDetails
+import space.lingu.lamp.content.ContentDetails
 
 /**
  * @author RollW

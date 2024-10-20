@@ -19,7 +19,7 @@ package space.lingu.lamp.web.domain.staff.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
 import space.lingu.lamp.web.domain.review.service.ReviewerAllocator;

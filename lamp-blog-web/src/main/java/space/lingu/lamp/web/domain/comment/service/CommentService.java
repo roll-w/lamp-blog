@@ -21,15 +21,15 @@ import space.lingu.NonNull;
 import space.lingu.lamp.web.domain.comment.Comment;
 import space.lingu.lamp.web.domain.comment.CommentDetailsMetadata;
 import space.lingu.lamp.web.domain.comment.repository.CommentRepository;
-import space.lingu.lamp.web.domain.content.ContentDetails;
-import space.lingu.lamp.web.domain.content.ContentDetailsMetadata;
-import space.lingu.lamp.web.domain.content.ContentPublisher;
-import space.lingu.lamp.web.domain.content.ContentType;
-import space.lingu.lamp.web.domain.content.UncreatedContent;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionIdentity;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionProvider;
-import space.lingu.lamp.web.domain.content.collection.ContentCollectionType;
-import space.lingu.lamp.web.domain.content.common.ContentException;
+import space.lingu.lamp.content.ContentDetails;
+import space.lingu.lamp.content.ContentDetailsMetadata;
+import space.lingu.lamp.content.ContentPublisher;
+import space.lingu.lamp.content.ContentType;
+import space.lingu.lamp.content.UncreatedContent;
+import space.lingu.lamp.content.collection.ContentCollectionIdentity;
+import space.lingu.lamp.content.collection.ContentCollectionProvider;
+import space.lingu.lamp.content.collection.ContentCollectionType;
+import space.lingu.lamp.content.common.ContentException;
 
 import java.util.List;
 

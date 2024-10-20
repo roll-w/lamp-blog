@@ -15,7 +15,7 @@
  */
 package space.lingu.lamp.web.domain.review
 
-import space.lingu.lamp.web.domain.content.ContentTrait
+import space.lingu.lamp.content.ContentTrait
 import tech.rollw.common.web.system.Operator
 
 /**

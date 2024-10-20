@@ -17,9 +17,9 @@
 package space.lingu.lamp.web.controller.article.model;
 
 import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
-import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
-import space.lingu.lamp.web.domain.content.ContentStatus;
+import space.lingu.lamp.content.ContentAccessAuthType;
+import space.lingu.lamp.content.ContentMetadataDetails;
+import space.lingu.lamp.content.ContentStatus;
 
 /**
  * @author RollW

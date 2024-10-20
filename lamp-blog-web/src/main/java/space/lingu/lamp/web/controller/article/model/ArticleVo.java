@@ -18,10 +18,10 @@ package space.lingu.lamp.web.controller.article.model;
 
 import space.lingu.lamp.web.controller.content.vo.ContentVo;
 import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.domain.content.Content;
-import space.lingu.lamp.web.domain.content.ContentAccessAuthType;
-import space.lingu.lamp.web.domain.content.ContentDetails;
-import space.lingu.lamp.web.domain.content.ContentMetadataDetails;
+import space.lingu.lamp.content.Content;
+import space.lingu.lamp.content.ContentAccessAuthType;
+import space.lingu.lamp.content.ContentDetails;
+import space.lingu.lamp.content.ContentMetadataDetails;
 
 /**
  * @author RollW
