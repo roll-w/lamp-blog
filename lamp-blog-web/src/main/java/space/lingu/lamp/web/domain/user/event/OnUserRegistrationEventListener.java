@@ -58,7 +58,7 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
 
     private void handleRegistration(@NonNull OnUserRegistrationEvent event) {
         AttributedUser user = event.getUser();
-        String token = registerTokenProvider.createRegisterToken(user);
+        String token = registerTokenProvider.createRegisterToken(user).token();
         if (mailProperties == null || Strings.isNullOrEmpty(mailProperties.getHost())) {
             logger.debug("Not configure the mail, skip sending mail.");
             registerTokenProvider.verifyRegisterToken(token);

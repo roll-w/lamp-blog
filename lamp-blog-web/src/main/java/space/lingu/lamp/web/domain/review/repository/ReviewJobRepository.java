@@ -21,7 +21,7 @@ import org.springframework.stereotype.Repository;
 import space.lingu.lamp.web.database.LampDatabase;
 import space.lingu.lamp.web.database.dao.ReviewJobDao;
 import space.lingu.lamp.web.database.repo.AutoPrimaryBaseRepository;
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 import tech.rollw.common.web.system.ContextThreadAware;

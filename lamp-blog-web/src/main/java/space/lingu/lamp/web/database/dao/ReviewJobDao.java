@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.database.dao;
 
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.web.domain.review.ReviewJob;
 import space.lingu.lamp.web.domain.review.ReviewStatus;
 import space.lingu.light.Dao;
@@ -63,6 +63,9 @@ public interface ReviewJobDao extends AutoPrimaryBaseDao<ReviewJob> {
 
     @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND `status` = {status} LIMIT {limit} OFFSET {offset}")
     List<ReviewJob> getReviewJobsByStatus(long userId, int offset, int limit, ReviewStatus status);
+
+    @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND `status` IN ({statuses})")
+    List<ReviewJob> getReviewJobsByStatus(long userId, ReviewStatus... statuses);
 
     @Query("SELECT * FROM review_job WHERE reviewer_id = {userId} AND `status` IN ({statuses}) LIMIT {limit} OFFSET {offset}")
     List<ReviewJob> getReviewJobsByStatuses(long userId, int offset, int limit, ReviewStatus... statuses);

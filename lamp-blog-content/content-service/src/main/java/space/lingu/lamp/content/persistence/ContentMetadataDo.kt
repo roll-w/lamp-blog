@@ -18,6 +18,8 @@ package space.lingu.lamp.content.persistence
 
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
@@ -53,10 +55,12 @@ class ContentMetadataDo(
     @Column(name = "content_id", nullable = false)
     private var contentId: Long = 0,
 
-    @Column(name = "type", nullable = false)
+    @Column(name = "type", nullable = false, length = 40)
+    @Enumerated(EnumType.STRING)
     private var contentType: ContentType = ContentType.ARTICLE,
 
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = false, length = 40)
+    @Enumerated(EnumType.STRING)
     var contentStatus: ContentStatus = ContentStatus.REVIEWING,
 
     @Column(name = "auth_type", nullable = false)

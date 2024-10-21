@@ -20,9 +20,14 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import space.lingu.lamp.web.domain.article.common.ArticleErrorCode;
 import space.lingu.lamp.web.domain.comment.common.CommentErrorCode;
-import space.lingu.lamp.web.domain.content.common.ContentErrorCode;
+import space.lingu.lamp.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;
-import tech.rollw.common.web.*;
+import tech.rollw.common.web.AuthErrorCode;
+import tech.rollw.common.web.DataErrorCode;
+import tech.rollw.common.web.ErrorCodeFinderChain;
+import tech.rollw.common.web.IoErrorCode;
+import tech.rollw.common.web.UserErrorCode;
+import tech.rollw.common.web.WebCommonErrorCode;
 
 /**
  * @author RollW

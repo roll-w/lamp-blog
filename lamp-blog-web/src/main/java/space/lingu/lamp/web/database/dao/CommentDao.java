@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.database.dao;
 
 import space.lingu.lamp.web.domain.comment.Comment;
-import space.lingu.lamp.web.domain.content.ContentType;
+import space.lingu.lamp.content.ContentType;
 import space.lingu.light.Dao;
 import space.lingu.light.Query;
 import tech.rollw.common.web.page.Offset;
