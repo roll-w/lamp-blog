@@ -16,13 +16,14 @@
 
 package space.lingu.lamp;
 
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW
  */
-public class LampException extends BusinessRuntimeException {
+// TODO: rename to LampCommonException
+public class LampException extends CommonRuntimeException {
     public LampException(ErrorCode errorCode) {
         super(errorCode);
     }
