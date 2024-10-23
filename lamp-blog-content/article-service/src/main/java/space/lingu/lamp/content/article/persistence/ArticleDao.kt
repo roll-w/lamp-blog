@@ -14,23 +14,18 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.content;
+package space.lingu.lamp.content.article.persistence
 
-import space.lingu.NonNull;
-import space.lingu.lamp.content.common.ContentException;
-
-import java.time.LocalDateTime;
+import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
+import space.lingu.lamp.common.data.CommonDao
+import space.lingu.lamp.common.data.Dao
 
 /**
  * @author RollW
  */
-public interface ContentPublisher extends ContentSupportable {
-    /**
-     * @throws ContentException if the content create failed.
-     */
-    ContentDetails publish(@NonNull UncreatedContent uncreatedContent,
-                           LocalDateTime timestamp) throws ContentException;
-
-    @Override
-    boolean supports(@NonNull ContentType contentType);
+@Dao
+interface ArticleDao : CommonDao<ArticleDo, Long> {
+    @Query("FROM ArticleDo a WHERE a.userId = :userId")
+    fun findAllByUserId(@Param("userId") userId: Long): List<ArticleDo>
 }

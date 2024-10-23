@@ -14,29 +14,27 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article.service;
+package space.lingu.lamp.content.article.service;
 
+import org.apache.commons.lang3.Validate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.common.ParamValidate;
-import space.lingu.lamp.web.domain.article.Article;
-import space.lingu.lamp.web.domain.article.common.ArticleErrorCode;
-import space.lingu.lamp.web.domain.article.repository.ArticleRepository;
 import space.lingu.lamp.content.ContentDetails;
 import space.lingu.lamp.content.ContentPublisher;
 import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.content.UncreatedContent;
+import space.lingu.lamp.content.article.Article;
+import space.lingu.lamp.content.article.persistence.ArticleDo;
+import space.lingu.lamp.content.article.persistence.ArticleRepository;
 import space.lingu.lamp.content.collection.ContentCollectionIdentity;
 import space.lingu.lamp.content.collection.ContentCollectionProvider;
 import space.lingu.lamp.content.collection.ContentCollectionType;
 import space.lingu.lamp.content.common.ContentErrorCode;
 import space.lingu.lamp.content.common.ContentException;
-import tech.rollw.common.web.page.ImmutablePage;
-import tech.rollw.common.web.page.Offset;
-import tech.rollw.common.web.page.Page;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -54,30 +52,30 @@ public class ArticleService implements ContentPublisher, ContentCollectionProvid
 
     @Override
     public ContentDetails publish(@NonNull UncreatedContent uncreatedContent,
-                                  long timestamp)
+                                  LocalDateTime timestamp)
             throws ContentException {
         if (uncreatedContent.getContentType() != ContentType.ARTICLE) {
             throw new IllegalArgumentException("Content type not supported: " +
                     uncreatedContent.getContentType());
         }
-        String title = ParamValidate.notEmpty(uncreatedContent.getTitle(),
-                () -> new ContentException(ArticleErrorCode.ERROR_TITLE_EMPTY));
-        String content = ParamValidate.notEmpty(uncreatedContent.getContent(),
-                () -> new ContentException(ArticleErrorCode.ERROR_CONTENT_EMPTY));
-        if (articleRepository.isTitleExist(
-                uncreatedContent.getUserId(), title)) {
+        String title = Validate.notEmpty(uncreatedContent.getTitle());
+        String content = Validate.notEmpty(uncreatedContent.getContent());
+
+        if (articleRepository.findByTitle(
+                title, uncreatedContent.getUserId()).isPresent()) {
             throw new ContentException(ContentErrorCode.ERROR_CONTENT_EXISTED);
         }
 
-        Article article = Article.builder()
+        ArticleDo article = ArticleDo.builder()
                 .setUserId(uncreatedContent.getUserId())
                 .setTitle(title)
                 .setContent(content)
                 .setCreateTime(timestamp)
                 .setUpdateTime(timestamp)
                 .build();
-        Article created = articleRepository.insert(article);
-        logger.trace("article created: {}.", created);
+        ArticleDo created = articleRepository.save(article);
+        logger.trace("Article({}) title={} created by user({})",
+                created.getId(), created.getTitle(), created.getUserId());
         return created;
     }
 
@@ -86,32 +84,18 @@ public class ArticleService implements ContentPublisher, ContentCollectionProvid
         return contentType == ContentType.ARTICLE;
     }
 
-
-    private Page<Article> getUserArticles(long id,
-                                          Offset offset) {
-        return ImmutablePage.of(
-                offset,
-                1,
-                articleRepository.getArticlesByUser(
-                        id,
-                        offset
-                )
-        );
-    }
-
     private List<Article> getUserArticles(long id) {
-        return articleRepository.getArticlesByUser(id);
-    }
-
-    private Page<Article> getArticles(Offset offset) {
-        return ImmutablePage.of(
-                offset, 1,
-                articleRepository.get(offset)
-        );
+        return articleRepository.findAllByUserId(id)
+                .stream()
+                .map(ArticleDo::lock)
+                .toList();
     }
 
     private List<Article> getArticles() {
-        return articleRepository.get();
+        return articleRepository.findAll()
+                .stream()
+                .map(ArticleDo::lock)
+                .toList();
     }
 
     @Override

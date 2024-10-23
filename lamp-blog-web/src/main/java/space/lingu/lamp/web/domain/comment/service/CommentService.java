@@ -18,9 +18,6 @@ package space.lingu.lamp.web.domain.comment.service;
 
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.comment.Comment;
-import space.lingu.lamp.web.domain.comment.CommentDetailsMetadata;
-import space.lingu.lamp.web.domain.comment.repository.CommentRepository;
 import space.lingu.lamp.content.ContentDetails;
 import space.lingu.lamp.content.ContentDetailsMetadata;
 import space.lingu.lamp.content.ContentPublisher;
@@ -30,7 +27,12 @@ import space.lingu.lamp.content.collection.ContentCollectionIdentity;
 import space.lingu.lamp.content.collection.ContentCollectionProvider;
 import space.lingu.lamp.content.collection.ContentCollectionType;
 import space.lingu.lamp.content.common.ContentException;
+import space.lingu.lamp.web.domain.comment.Comment;
+import space.lingu.lamp.web.domain.comment.CommentDetailsMetadata;
+import space.lingu.lamp.web.domain.comment.repository.CommentRepository;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -48,7 +50,7 @@ public class CommentService implements ContentPublisher, ContentCollectionProvid
 
     @Override
     public ContentDetails publish(@NonNull UncreatedContent uncreatedContent,
-                                  long timestamp)
+                                  LocalDateTime timestamp)
             throws ContentException {
         ContentDetailsMetadata detailsMetadata =
                 uncreatedContent.getMetadata();
@@ -64,8 +66,9 @@ public class CommentService implements ContentPublisher, ContentCollectionProvid
                 .setContent(uncreatedContent.getContent())
                 .setUserId(uncreatedContent.getUserId())
                 .setParentId(commentDetailsMetadata.parentId())
-                .setCreateTime(timestamp)
-                .setCommentOn(commentDetailsMetadata.contentId()).build();
+                .setCreateTime(timestamp.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
+                .setCommentOn(commentDetailsMetadata.contentId())
+                .build();
 
         return commentRepository.insert(comment);
     }
@@ -75,6 +78,7 @@ public class CommentService implements ContentPublisher, ContentCollectionProvid
         return contentType == ContentType.COMMENT;
     }
 
+    @NonNull
     @Override
     public List<? extends ContentDetails> getContents(
             ContentCollectionIdentity contentCollectionIdentity) {

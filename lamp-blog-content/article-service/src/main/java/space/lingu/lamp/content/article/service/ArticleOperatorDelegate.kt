@@ -13,9 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package space.lingu.lamp.web.domain.article.service
+package space.lingu.lamp.content.article.service
 
-import space.lingu.lamp.web.domain.article.Article
+import space.lingu.lamp.content.article.Article
 import space.lingu.lamp.content.service.ContentMetadataService
 
 /**

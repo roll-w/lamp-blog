@@ -52,6 +52,7 @@ import tech.rollw.common.web.system.ContextThreadAware;
 import tech.rollw.common.web.system.UnsupportedKindException;
 import tech.rollw.common.web.system.paged.PageableContext;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.List;
 
@@ -192,7 +193,7 @@ public class ContentService implements ContentAccessService,
 
     @Override
     public ContentDetails publishContent(UncreatedContent uncreatedContent) throws ContentException {
-        long timestamp = System.currentTimeMillis();
+        LocalDateTime timestamp = LocalDateTime.now();
         for (ContentPublishFilter contentPublishFilter :
                 contentPublishFilters) {
             ErrorCode errorCode = contentPublishFilter.filter(uncreatedContent);

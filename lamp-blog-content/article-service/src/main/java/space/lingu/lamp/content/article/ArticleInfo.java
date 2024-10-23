@@ -14,60 +14,50 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article.dto;
+package space.lingu.lamp.content.article;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.article.Article;
 import space.lingu.lamp.content.Content;
 import space.lingu.lamp.content.ContentDetails;
+import space.lingu.lamp.content.ContentDetailsMetadata;
 import space.lingu.lamp.content.ContentType;
-import space.lingu.light.DataColumn;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
  */
 public record ArticleInfo(
-        @DataColumn(name = "id")
         long id,
-
-        @DataColumn(name = "user_id")
         long userId,
-
-        @DataColumn(name = "title")
         String title,
-
-        @DataColumn(name = "cover")
         String cover,
-
-        @DataColumn(name = "create_time")
-        long createTime,
-
-        @DataColumn(name = "update_time")
-        long updateTime
+        LocalDateTime createTime,
+        LocalDateTime updateTime
 ) implements Content {
-
-    public static ArticleInfo from(Article article) {
-        if (article == null) {
-            return null;
-        }
-        return new ArticleInfo(
-                article.getId(),
-                article.getUserId(),
-                article.getTitle(),
-                article.getCover(),
-                article.getCreateTime(),
-                article.getUpdateTime()
-        );
-    }
-
     public static ArticleInfo from(ContentDetails contentDetails) {
         if (contentDetails == null) {
             return null;
         }
-        if (contentDetails instanceof Article article) {
-            return from(article);
+        ContentDetailsMetadata metadata = contentDetails.getMetadata();
+        if (!(metadata instanceof ArticleDetailsMetadata articleMetadata)) {
+            return new ArticleInfo(
+                    contentDetails.getContentId(),
+                    contentDetails.getUserId(),
+                    contentDetails.getTitle(),
+                    null,
+                    contentDetails.getCreateDateTime(),
+                    contentDetails.getUpdateDateTime()
+            );
         }
-        return null;
+        return new ArticleInfo(
+                contentDetails.getContentId(),
+                contentDetails.getUserId(),
+                contentDetails.getTitle(),
+                articleMetadata.getCover(),
+                contentDetails.getCreateDateTime(),
+                contentDetails.getUpdateDateTime()
+        );
     }
 
     @Override

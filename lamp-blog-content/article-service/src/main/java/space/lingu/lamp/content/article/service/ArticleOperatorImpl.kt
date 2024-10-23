@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package space.lingu.lamp.web.domain.article.service
+package space.lingu.lamp.content.article.service
 
-import space.lingu.lamp.web.domain.article.Article
 import space.lingu.lamp.content.ContentDetails
 import space.lingu.lamp.content.ContentDetailsMetadata
 import space.lingu.lamp.content.ContentOperator
+import space.lingu.lamp.content.article.Article
 import space.lingu.lamp.content.service.AbstractContentOperator
+import java.time.LocalDateTime
 
 /**
  * @author RollW
@@ -61,7 +62,7 @@ class ArticleOperatorImpl internal constructor(
 
     override fun updateContent(): ContentDetails {
         val newArticle = articleBuilder
-            .setUpdateTime(System.currentTimeMillis())
+            .setUpdateTime(LocalDateTime.now())
             .build()
         delegate.updateArticle(newArticle)
         return newArticle.also {

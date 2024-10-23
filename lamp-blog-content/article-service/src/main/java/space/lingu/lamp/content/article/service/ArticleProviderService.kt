@@ -13,17 +13,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package space.lingu.lamp.web.domain.article.service
+package space.lingu.lamp.content.article.service
 
 import org.springframework.stereotype.Service
 import space.lingu.NonNull
-import space.lingu.lamp.web.domain.article.Article
-import space.lingu.lamp.web.domain.article.repository.ArticleRepository
 import space.lingu.lamp.content.ContentDetails
 import space.lingu.lamp.content.ContentOperator
 import space.lingu.lamp.content.ContentProvider
 import space.lingu.lamp.content.ContentTrait
 import space.lingu.lamp.content.ContentType
+import space.lingu.lamp.content.article.Article
+import space.lingu.lamp.content.article.persistence.ArticleDo.Companion.toDo
+import space.lingu.lamp.content.article.persistence.ArticleRepository
 import space.lingu.lamp.content.common.ContentErrorCode
 import space.lingu.lamp.content.common.ContentException
 import space.lingu.lamp.content.service.ContentMetadataService
@@ -42,18 +43,18 @@ class ArticleProviderService(
     }
 
     override fun getContentDetails(@NonNull contentTrait: ContentTrait): ContentDetails {
-        return articleRepository.getById(contentTrait.contentId)
+        return articleRepository.findById(contentTrait.contentId).orElse(null)
             ?: throw ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND)
     }
 
     override fun getContentOperator(@NonNull contentTrait: ContentTrait, checkDelete: Boolean): ContentOperator {
-        val article = articleRepository.getById(contentTrait.contentId)
+        val article = articleRepository.findById(contentTrait.contentId).orElse(null)
             ?: throw ContentException(ContentErrorCode.ERROR_CONTENT_NOT_FOUND)
 
-        return ArticleOperatorImpl(article, this, checkDelete)
+        return ArticleOperatorImpl(article.lock(), this, checkDelete)
     }
 
     override fun updateArticle(article: Article) {
-        articleRepository.update(article)
+        articleRepository.save(article.toDo())
     }
 }

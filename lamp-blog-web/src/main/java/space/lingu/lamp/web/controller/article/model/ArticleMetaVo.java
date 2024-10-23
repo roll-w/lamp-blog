@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.controller.article.model;
 
-import space.lingu.lamp.web.domain.article.Article;
+import space.lingu.lamp.content.article.Article;
 import space.lingu.lamp.content.ContentAccessAuthType;
 import space.lingu.lamp.content.ContentMetadataDetails;
 import space.lingu.lamp.content.ContentStatus;

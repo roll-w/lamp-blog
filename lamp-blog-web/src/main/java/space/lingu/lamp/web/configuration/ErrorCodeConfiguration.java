@@ -18,7 +18,7 @@ package space.lingu.lamp.web.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import space.lingu.lamp.web.domain.article.common.ArticleErrorCode;
+import space.lingu.lamp.content.article.common.ArticleErrorCode;
 import space.lingu.lamp.web.domain.comment.common.CommentErrorCode;
 import space.lingu.lamp.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;

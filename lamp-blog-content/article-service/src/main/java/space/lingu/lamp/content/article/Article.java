@@ -14,53 +14,33 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article;
+package space.lingu.lamp.content.article;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.content.ContentDetails;
 import space.lingu.lamp.content.ContentDetailsMetadata;
 import space.lingu.lamp.content.ContentType;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.Index;
-import space.lingu.light.PrimaryKey;
-import space.lingu.light.SQLDataType;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * @author RollW
  */
-@SuppressWarnings("ClassCanBeRecord")
-@DataTable(name = "article", indices = {
-        @Index(value = {"user_id", "title"}, unique = true)
-})
-public class Article implements LongDataItem<Article>, ContentDetails {
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
+public class Article implements DataEntity<Long>, ContentDetails {
     private final Long id;
-
-    @DataColumn(name = "user_id")
     private final long userId;
-
-    @DataColumn(name = "title")
     private final String title;
-
-    @DataColumn(name = "cover")
     private final String cover;
-
-    @DataColumn(name = "content", dataType = SQLDataType.LONGTEXT)
     private final String content;
-
-    @DataColumn(name = "create_time")
-    private final long createTime;
-
-    @DataColumn(name = "update_time")
-    private final long updateTime;
+    private final LocalDateTime createTime;
+    private final LocalDateTime updateTime;
 
     public Article(Long id, long userId, String title, String cover,
-                   String content, long createTime, long updateTime) {
+                   String content, LocalDateTime createTime, LocalDateTime updateTime) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -75,6 +55,7 @@ public class Article implements LongDataItem<Article>, ContentDetails {
         return id;
     }
 
+    @NonNull
     @Override
     public Long getResourceId() {
         return getId();
@@ -99,17 +80,17 @@ public class Article implements LongDataItem<Article>, ContentDetails {
     @Nullable
     @Override
     public ContentDetailsMetadata getMetadata() {
-        return null;
+        return new ArticleDetailsMetadata(cover);
     }
 
     @Override
     public long getCreateTime() {
-        return createTime;
+        return createTime.atZone(ZoneId.systemDefault()).toEpochSecond();
     }
 
     @Override
     public long getUpdateTime() {
-        return updateTime;
+        return updateTime.atZone(ZoneId.systemDefault()).toEpochSecond();
     }
 
     public String getCover() {
@@ -147,8 +128,8 @@ public class Article implements LongDataItem<Article>, ContentDetails {
         private String title;
         private String cover;
         private String content;
-        private long createTime;
-        private long updateTime;
+        private LocalDateTime createTime;
+        private LocalDateTime updateTime;
 
         public Builder() {
 
@@ -185,12 +166,12 @@ public class Article implements LongDataItem<Article>, ContentDetails {
             return this;
         }
 
-        public Builder setCreateTime(long createTime) {
+        public Builder setCreateTime(LocalDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(long updateTime) {
+        public Builder setUpdateTime(LocalDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.article.dto;
-
-import space.lingu.Nullable;
-import space.lingu.lamp.content.ContentDetailsMetadata;
+package space.lingu.lamp.content.article;
 
 /**
  * @author RollW
  */
-public record ArticleDetailsMetadata(
-        @Nullable
-        String cover
-) implements ContentDetailsMetadata {
-    public static final ArticleDetailsMetadata EMPTY =
-            new ArticleDetailsMetadata(null);
+public class ArticleMetadata {
+    private long articleId;
+
+    private int viewCount;
+    private int likeCount;
+    private int dislikeCount;
+    private int commentCount;
+
+    // TODO: article metadata
 }
