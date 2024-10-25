@@ -14,17 +14,13 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.comment;
-
-import space.lingu.lamp.content.ContentDetailsMetadata;
-import space.lingu.lamp.content.ContentType;
+package space.lingu.lamp.content.comment;
 
 /**
  * @author RollW
  */
-public record CommentDetailsMetadata(
-        ContentType contentType,
-        long contentId,
-        Long parentId
-) implements ContentDetailsMetadata {
+public enum CommentStatus {
+    NONE,
+    TO_BE_SCREENED,
+    ;
 }

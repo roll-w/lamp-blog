@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.comment;
+package space.lingu.lamp.content.comment.persistence
+
+import space.lingu.lamp.common.data.CommonDao
+import space.lingu.lamp.common.data.Dao
 
 /**
  * @author RollW
  */
-public enum CommentType {
-    /**
-     * Comment on article.
-     */
-    ARTICLE,
-    /**
-     * Comment on post.
-     */
-    POST,
-    ;
-
+@Dao
+interface CommentDao : CommonDao<CommentDo, Long> {
 }

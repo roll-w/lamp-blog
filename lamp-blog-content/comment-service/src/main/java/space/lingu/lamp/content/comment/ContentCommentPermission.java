@@ -14,20 +14,23 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.content.publish;
-
-import space.lingu.lamp.content.UncreatedContent;
-import tech.rollw.common.web.ErrorCode;
+package space.lingu.lamp.content.comment;
 
 /**
  * @author RollW
  */
-public interface ContentPublishFilter {
-    int DEFAULT_ORDER = 0;
-
-    default int order() {
-        return DEFAULT_ORDER;
-    }
-
-    ErrorCode filter(UncreatedContent uncreatedContent);
+public enum ContentCommentPermission {
+    /**
+     * Public, unlimited access.
+     */
+    PUBLIC,
+    /**
+     * Disallow all comments.
+     */
+    DISALLOWED,
+    /**
+     * Comments need to be screened by content owner.
+     */
+    NEED_SCREENED,
+    ;
 }

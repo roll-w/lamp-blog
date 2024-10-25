@@ -14,78 +14,63 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.comment;
+package space.lingu.lamp.content.comment;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.content.ContentAssociated;
 import space.lingu.lamp.content.ContentDetails;
 import space.lingu.lamp.content.ContentIdentity;
 import space.lingu.lamp.content.ContentType;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.PrimaryKey;
-import space.lingu.light.SQLDataType;
 import tech.rollw.common.web.system.SystemResourceKind;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 
 /**
  * @author RollW
  */
-@DataTable(name = "comment")
-public class Comment implements LongDataItem<Comment>, ContentDetails, ContentAssociated {
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
+public class Comment implements DataEntity<Long>, ContentDetails, ContentAssociated {
     private final Long id;
-
-    @DataColumn(name = "user_id")
     private final long userId;
-
-    // TODO: rename to commentOnId
-    @DataColumn(name = "comment_on_id")
-    private final long commentOn;
-
-    @DataColumn(name = "parent_id")
+    /**
+     * Parent comment id.
+     * <p>
+     * If the comment is a top-level comment,
+     * the parent id is 0.
+     */
     private final long parentId;
-
-    @DataColumn(name = "content", dataType = SQLDataType.LONGTEXT)
     private final String content;
-
-    @DataColumn(name = "create_time")
-    private final long createTime;
-
-    @DataColumn(name = "update_time")
-    private final long updateTime;
+    private final LocalDateTime createTime;
+    private final LocalDateTime updateTime;
 
     /**
      * Comment on which type of content.
      */
-    // TODO: rename to commentOnType
-    @DataColumn(name = "type")
-    private final ContentType type;
+    private final ContentType commentOnType;
+    private final long commentOnId;
 
-    @DataColumn(name = "status", nullable = false)
     @NonNull
     private final CommentStatus commentStatus;
 
     private final ContentIdentity associatedContent;
 
-    public Comment(Long id, long userId, long commentOn,
-                   long parentId, String content,
-                   long createTime, long updateTime,
-                   ContentType type, @NonNull CommentStatus commentStatus) {
+    public Comment(Long id, long userId, long parentId, String content,
+                   LocalDateTime createTime, LocalDateTime updateTime,
+                   ContentType commentOnType, long commentOnId,
+                   @NonNull CommentStatus commentStatus) {
         this.id = id;
         this.userId = userId;
-        this.commentOn = commentOn;
+        this.commentOnId = commentOnId;
         this.parentId = parentId;
         this.content = content;
         this.createTime = createTime;
         this.updateTime = updateTime;
-        this.type = type;
+        this.commentOnType = commentOnType;
         this.commentStatus = commentStatus;
-        this.associatedContent = ContentIdentity.of(commentOn, type);
+        this.associatedContent = ContentIdentity.of(commentOnId, commentOnType);
     }
 
     public Long getId() {
@@ -129,22 +114,22 @@ public class Comment implements LongDataItem<Comment>, ContentDetails, ContentAs
         return parentId;
     }
 
-    public long getCommentOn() {
-        return commentOn;
+    public long getCommentOnId() {
+        return commentOnId;
     }
 
     @Override
     public long getCreateTime() {
-        return createTime;
+        return createTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
     @Override
     public long getUpdateTime() {
-        return updateTime;
+        return updateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
     }
 
-    public ContentType getType() {
-        return type;
+    public ContentType getCommentOnType() {
+        return commentOnType;
     }
 
     @NonNull
@@ -157,7 +142,6 @@ public class Comment implements LongDataItem<Comment>, ContentDetails, ContentAs
         return associatedContent;
     }
 
-    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -169,7 +153,7 @@ public class Comment implements LongDataItem<Comment>, ContentDetails, ContentAs
     @NonNull
     @Override
     public SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.COMMENT;
+        return CommentResourceKind.INSTANCE;
     }
 
     public static class Builder implements LongEntityBuilder<Comment> {
@@ -178,8 +162,8 @@ public class Comment implements LongDataItem<Comment>, ContentDetails, ContentAs
         private long commentOn;
         private long parentId;
         private String content;
-        private long createTime;
-        private long updateTime;
+        private LocalDateTime createTime;
+        private LocalDateTime updateTime;
         private ContentType type;
         @NonNull
         private CommentStatus commentStatus;
@@ -187,12 +171,12 @@ public class Comment implements LongDataItem<Comment>, ContentDetails, ContentAs
         public Builder(Comment comment) {
             this.id = comment.id;
             this.userId = comment.userId;
-            this.commentOn = comment.commentOn;
+            this.commentOn = comment.commentOnId;
             this.parentId = comment.parentId;
             this.content = comment.content;
             this.createTime = comment.createTime;
             this.updateTime = comment.updateTime;
-            this.type = comment.type;
+            this.type = comment.commentOnType;
             this.commentStatus = comment.commentStatus;
         }
 
@@ -226,12 +210,12 @@ public class Comment implements LongDataItem<Comment>, ContentDetails, ContentAs
             return this;
         }
 
-        public Builder setCreateTime(long createTime) {
+        public Builder setCreateTime(LocalDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(long updateTime) {
+        public Builder setUpdateTime(LocalDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }
@@ -249,9 +233,10 @@ public class Comment implements LongDataItem<Comment>, ContentDetails, ContentAs
         @Override
         public Comment build() {
             return new Comment(
-                    id, userId, commentOn,
-                    parentId, content,
-                    createTime, updateTime, type, commentStatus
+                    id, userId, parentId,
+                    content, createTime,
+                    updateTime, type,
+                    commentOn, commentStatus
             );
         }
     }

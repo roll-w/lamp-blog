@@ -14,43 +14,29 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.comment;
+package space.lingu.lamp.content.comment;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 import space.lingu.lamp.content.Content;
 import space.lingu.lamp.content.ContentType;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.Index;
-import space.lingu.light.PrimaryKey;
 
 /**
  * Set the comment permission for a content.
  *
  * @author RollW
  */
-@DataTable(name = "comment_metadata", indices = {
-        @Index(value = {"content_id", "content_type"}, unique = true),
-})
 public class CommentMetadata {
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
     @Nullable
     private final Long id;
-
-    @DataColumn(name = "user_id")
     private final long userId;
 
-    @DataColumn(name = "content_id")
     @NonNull
     private final String contentId;
 
-    @DataColumn(name = "content_type")
     @NonNull
     private final ContentType contentType;
 
-    @DataColumn(name = "permission")
     private final ContentCommentPermission contentCommentPermission;
 
     public CommentMetadata(@Nullable Long id,

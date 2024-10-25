@@ -14,10 +14,17 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.comment.common;
+package space.lingu.lamp.content.comment;
+
+import space.lingu.lamp.content.ContentDetailsMetadata;
+import space.lingu.lamp.content.ContentType;
 
 /**
  * @author RollW
  */
-public class CommentException {
+public record CommentDetailsMetadata(
+        ContentType contentType,
+        long contentId,
+        Long parentId
+) implements ContentDetailsMetadata {
 }

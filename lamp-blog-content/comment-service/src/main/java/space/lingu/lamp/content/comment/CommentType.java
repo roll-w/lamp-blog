@@ -14,13 +14,20 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.comment;
+package space.lingu.lamp.content.comment;
 
 /**
  * @author RollW
  */
-public enum CommentStatus {
-    NONE,
-    TO_BE_SCREENED,
+public enum CommentType {
+    /**
+     * Comment on article.
+     */
+    ARTICLE,
+    /**
+     * Comment on post.
+     */
+    POST,
     ;
+
 }

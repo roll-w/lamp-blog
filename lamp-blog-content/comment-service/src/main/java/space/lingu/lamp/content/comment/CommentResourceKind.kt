@@ -14,23 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.comment;
+package space.lingu.lamp.content.comment
+
+import tech.rollw.common.web.system.SystemResourceKind
 
 /**
  * @author RollW
  */
-public enum ContentCommentPermission {
-    /**
-     * Public, unlimited access.
-     */
-    PUBLIC,
-    /**
-     * Disallow all comments.
-     */
-    DISALLOWED,
-    /**
-     * Comments need to be screened by content owner.
-     */
-    NEED_SCREENED,
-    ;
+object CommentResourceKind : SystemResourceKind {
+    override fun getName(): String = "COMMENT"
+
+    override fun getAliases(): List<String> = listOf("COMMENT")
 }

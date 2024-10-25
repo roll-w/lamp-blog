@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.comment.service;
+package space.lingu.lamp.content.comment.service;
 
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
@@ -26,13 +26,12 @@ import space.lingu.lamp.content.UncreatedContent;
 import space.lingu.lamp.content.collection.ContentCollectionIdentity;
 import space.lingu.lamp.content.collection.ContentCollectionProvider;
 import space.lingu.lamp.content.collection.ContentCollectionType;
+import space.lingu.lamp.content.comment.CommentDetailsMetadata;
+import space.lingu.lamp.content.comment.persistence.CommentDo;
+import space.lingu.lamp.content.comment.persistence.CommentRepository;
 import space.lingu.lamp.content.common.ContentException;
-import space.lingu.lamp.web.domain.comment.Comment;
-import space.lingu.lamp.web.domain.comment.CommentDetailsMetadata;
-import space.lingu.lamp.web.domain.comment.repository.CommentRepository;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.List;
 
 /**
@@ -59,18 +58,18 @@ public class CommentService implements ContentPublisher, ContentCollectionProvid
         }
 
         // TODO: check parent id
-
-        Comment comment = Comment
+        CommentDo comment = CommentDo
                 .builder()
-                .setType(commentDetailsMetadata.contentType())
-                .setContent(uncreatedContent.getContent())
                 .setUserId(uncreatedContent.getUserId())
                 .setParentId(commentDetailsMetadata.parentId())
-                .setCreateTime(timestamp.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli())
-                .setCommentOn(commentDetailsMetadata.contentId())
+                .setContent(uncreatedContent.getContent())
+                .setCreateTime(timestamp)
+                .setUpdateTime(timestamp)
+                .setCommentOnId(commentDetailsMetadata.contentId())
+                .setCommentOnType(commentDetailsMetadata.contentType())
                 .build();
 
-        return commentRepository.insert(comment);
+        return commentRepository.save(comment).lock();
     }
 
     @Override
@@ -82,9 +81,18 @@ public class CommentService implements ContentPublisher, ContentCollectionProvid
     @Override
     public List<? extends ContentDetails> getContents(
             ContentCollectionIdentity contentCollectionIdentity) {
+        return getCommentsBy(contentCollectionIdentity)
+                .stream()
+                .map(CommentDo::lock)
+                .toList();
+    }
+
+    @NonNull
+    public List<CommentDo> getCommentsBy(
+            ContentCollectionIdentity contentCollectionIdentity) {
         return switch (contentCollectionIdentity.getContentCollectionType()) {
-            case COMMENTS -> commentRepository.get();
-            case ARTICLE_COMMENTS -> commentRepository.getComments(
+            case COMMENTS -> commentRepository.findAll();
+            case ARTICLE_COMMENTS -> commentRepository.findByContent(
                     contentCollectionIdentity.getContentCollectionId(),
                     ContentType.ARTICLE
             );

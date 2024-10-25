@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.comment.common;
+package space.lingu.lamp.content.comment.common;
 
 import space.lingu.NonNull;
 import tech.rollw.common.web.ErrorCode;
