@@ -17,49 +17,31 @@
 package space.lingu.lamp.web.domain.usergroup;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.PrimaryKey;
-import space.lingu.light.SQLDataType;
 import tech.rollw.common.web.system.SystemResource;
 import tech.rollw.common.web.system.SystemResourceKind;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * @author RollW
  */
-@DataTable(name = "user_group")
-public class UserGroup implements LongDataItem<UserGroup>, SystemResource<Long> {
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
+public class UserGroup implements DataEntity<Long>, SystemResource<Long> {
     private final Long id;
-
-    @DataColumn(name = "name")
     private final String name;
-
-    @DataColumn(name = "description")
     private final String description;
-
-    @DataColumn(name = "settings", dataType = SQLDataType.LONGTEXT)
     private final Map<String, String> settings;
-
-    @DataColumn(name = "create_time")
-    private final long createTime;
-
-    @DataColumn(name = "update_time")
-    private final long updateTime;
-
-    @DataColumn(name = "deleted")
+    private final LocalDateTime createTime;
+    private final LocalDateTime updateTime;
     private final boolean deleted;
 
     public UserGroup(Long id, String name, String description,
                      Map<String, String> settings,
-                     long createTime, long updateTime, boolean deleted) {
+                     LocalDateTime createTime, LocalDateTime updateTime, boolean deleted) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -86,11 +68,13 @@ public class UserGroup implements LongDataItem<UserGroup>, SystemResource<Long> 
         return settings;
     }
 
-    public long getCreateTime() {
+    @NonNull
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    public long getUpdateTime() {
+    @NonNull
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -102,7 +86,6 @@ public class UserGroup implements LongDataItem<UserGroup>, SystemResource<Long> 
         return new Builder();
     }
 
-    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -118,8 +101,8 @@ public class UserGroup implements LongDataItem<UserGroup>, SystemResource<Long> 
         private String name;
         private String description;
         private Map<String, String> settings;
-        private long createTime;
-        private long updateTime;
+        private LocalDateTime createTime;
+        private LocalDateTime updateTime;
         private boolean deleted;
 
         private Builder() {
@@ -175,12 +158,12 @@ public class UserGroup implements LongDataItem<UserGroup>, SystemResource<Long> 
             return this;
         }
 
-        public Builder setCreateTime(long createTime) {
+        public Builder setCreateTime(LocalDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(long updateTime) {
+        public Builder setUpdateTime(LocalDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

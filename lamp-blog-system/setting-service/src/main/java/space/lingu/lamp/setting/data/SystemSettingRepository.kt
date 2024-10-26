@@ -22,7 +22,7 @@ import space.lingu.lamp.common.data.CommonRepository
 /**
  * @author RollW
  */
-@Repository("systemSettingRepository")
+@Repository
 class SystemSettingRepository(
     private val systemSettingDao: SystemSettingDao
 ) : CommonRepository<SystemSettingDo, Long>(systemSettingDao) {

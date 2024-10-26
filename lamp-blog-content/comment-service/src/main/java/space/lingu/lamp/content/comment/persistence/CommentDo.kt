@@ -33,7 +33,6 @@ import space.lingu.lamp.content.ContentType
 import space.lingu.lamp.content.comment.Comment
 import space.lingu.lamp.content.comment.CommentStatus
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 /**
  * @author RollW
@@ -75,15 +74,23 @@ class CommentDo(
 ) : DataEntity<Long>, ContentDetails, ContentAssociated {
     override fun getId(): Long? = id
 
+    fun setId(id: Long) {
+        this.id = id
+    }
+
     override fun getResourceId(): Long = id!!
 
-    @Deprecated("Deprecated in Java")
-    override fun getCreateTime(): Long =
-        createTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    override fun getCreateTime(): LocalDateTime = createTime
 
-    @Deprecated("Deprecated in Java")
-    override fun getUpdateTime(): Long =
-        updateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    fun setCreateTime(createTime: LocalDateTime) {
+        this.createTime = createTime
+    }
+
+    override fun getUpdateTime(): LocalDateTime = updateTime
+
+    fun setUpdateTime(updateTime: LocalDateTime) {
+        this.updateTime = updateTime
+    }
 
     override fun getContentId(): Long = id!!
 
@@ -92,9 +99,17 @@ class CommentDo(
 
     override fun getUserId(): Long = userId
 
+    fun setUserId(userId: Long) {
+        this.userId = userId
+    }
+
     override fun getTitle(): String? = null
 
     override fun getContent(): String = content
+
+    fun setContent(content: String) {
+        this.content = content
+    }
 
     override fun getAssociatedContent(): ContentIdentity =
         ContentIdentity.of(commentOnId, commentOnType)
@@ -103,6 +118,20 @@ class CommentDo(
         id!!, userId, parentId, content, createTime,
         updateTime, commentOnType, commentOnId, commentStatus
     )
+
+    override fun toString(): String {
+        return "CommentDo(" +
+                "id=$id, " +
+                "userId=$userId, " +
+                "parentId=$parentId, " +
+                "content='$content', " +
+                "createTime=$createTime, " +
+                "updateTime=$updateTime, " +
+                "commentOnType=$commentOnType, " +
+                "commentOnId=$commentOnId, " +
+                "commentStatus=$commentStatus" +
+                ")"
+    }
 
     class Builder {
         private var id: Long? = null
@@ -122,56 +151,47 @@ class CommentDo(
             this.userId = other.userId
             this.parentId = other.parentId
             this.content = other.content
-            this.createTime = other.createDateTime
-            this.updateTime = other.updateDateTime
+            this.createTime = other.createTime
+            this.updateTime = other.updateTime
             this.commentOnType = other.commentOnType
             this.commentOnId = other.commentOnId
             this.commentStatus = other.commentStatus
         }
 
-        fun setId(id: Long?): Builder {
+        fun setId(id: Long?) = apply {
             this.id = id
-            return this
         }
 
-        fun setUserId(userId: Long): Builder {
+        fun setUserId(userId: Long) = apply {
             this.userId = userId
-            return this
         }
 
-        fun setParentId(parentId: Long): Builder {
+        fun setParentId(parentId: Long) = apply {
             this.parentId = parentId
-            return this
         }
 
-        fun setContent(content: String): Builder {
+        fun setContent(content: String) = apply {
             this.content = content
-            return this
         }
 
-        fun setCreateTime(createTime: LocalDateTime): Builder {
+        fun setCreateTime(createTime: LocalDateTime) = apply {
             this.createTime = createTime
-            return this
         }
 
-        fun setUpdateTime(updateTime: LocalDateTime): Builder {
+        fun setUpdateTime(updateTime: LocalDateTime) = apply {
             this.updateTime = updateTime
-            return this
         }
 
-        fun setCommentOnType(commentOnType: ContentType): Builder {
+        fun setCommentOnType(commentOnType: ContentType) = apply {
             this.commentOnType = commentOnType
-            return this
         }
 
-        fun setCommentOnId(commentOnId: Long): Builder {
+        fun setCommentOnId(commentOnId: Long) = apply {
             this.commentOnId = commentOnId
-            return this
         }
 
-        fun setCommentStatus(commentStatus: CommentStatus): Builder {
+        fun setCommentStatus(commentStatus: CommentStatus) = apply {
             this.commentStatus = commentStatus
-            return this
         }
 
         fun build(): CommentDo {
@@ -197,7 +217,7 @@ class CommentDo(
         fun Comment.toDo(): CommentDo {
             return CommentDo(
                 id, userId, parentId, content,
-                createDateTime, updateDateTime,
+                createTime, updateTime,
                 commentOnType, commentOnId, commentStatus
             )
         }

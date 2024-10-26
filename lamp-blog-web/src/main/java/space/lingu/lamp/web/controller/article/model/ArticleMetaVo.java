@@ -16,10 +16,12 @@
 
 package space.lingu.lamp.web.controller.article.model;
 
-import space.lingu.lamp.content.article.Article;
 import space.lingu.lamp.content.ContentAccessAuthType;
 import space.lingu.lamp.content.ContentMetadataDetails;
 import space.lingu.lamp.content.ContentStatus;
+import space.lingu.lamp.content.article.Article;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
@@ -29,8 +31,8 @@ public record ArticleMetaVo(
         String title,
         String content,
         long authorId,
-        long createTime,
-        long updateTime,
+        LocalDateTime createTime,
+        LocalDateTime updateTime,
         ContentAccessAuthType accessAuthType,
         ContentStatus contentStatus
 ) {

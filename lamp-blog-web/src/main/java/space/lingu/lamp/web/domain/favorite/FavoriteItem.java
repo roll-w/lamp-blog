@@ -17,54 +17,34 @@
 package space.lingu.lamp.web.domain.favorite;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.content.ContentAssociated;
 import space.lingu.lamp.content.ContentIdentity;
 import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.LightIgnore;
-import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
  */
-@DataTable(name = "favorite_item")
-public class FavoriteItem implements LongDataItem<FavoriteItem>, ContentAssociated {
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
+public class FavoriteItem implements DataEntity<Long>, ContentAssociated {
     private final Long id;
-
-    @DataColumn(name = "group_id")
     private final long favoriteGroupId;
-
-    @DataColumn(name = "user_id")
     private final long userId;
-
-    @DataColumn(name = "content_id")
     private final long contentId;
-
-    @DataColumn(name = "content_type")
     private final ContentType contentType;
-
-    @DataColumn(name = "create_time")
-    private final long createTime;
-
-    @DataColumn(name = "update_time")
-    private final long updateTime;
-
-    @DataColumn(name = "deleted")
+    private final LocalDateTime createTime;
+    private final LocalDateTime updateTime;
     private final boolean deleted;
-
-    @LightIgnore
     private final ContentIdentity associatedContent;
 
     public FavoriteItem(Long id, long favoriteGroupId, long userId,
                         long contentId, ContentType contentType,
-                        long createTime, long updateTime, boolean deleted) {
+                        LocalDateTime createTime,
+                        LocalDateTime updateTime, boolean deleted) {
         this.id = id;
         this.favoriteGroupId = favoriteGroupId;
         this.userId = userId;
@@ -97,11 +77,15 @@ public class FavoriteItem implements LongDataItem<FavoriteItem>, ContentAssociat
         return contentType;
     }
 
-    public long getCreateTime() {
+    @NonNull
+    @Override
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
-    public long getUpdateTime() {
+    @NonNull
+    @Override
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -120,7 +104,6 @@ public class FavoriteItem implements LongDataItem<FavoriteItem>, ContentAssociat
         return LampSystemResourceKind.FAVORITE_ITEM;
     }
 
-    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -135,8 +118,8 @@ public class FavoriteItem implements LongDataItem<FavoriteItem>, ContentAssociat
         private long userId;
         private long contentId;
         private ContentType contentType;
-        private long createTime;
-        private long updateTime;
+        private LocalDateTime createTime;
+        private LocalDateTime updateTime;
         private boolean deleted;
 
         private Builder() {
@@ -178,12 +161,12 @@ public class FavoriteItem implements LongDataItem<FavoriteItem>, ContentAssociat
             return this;
         }
 
-        public Builder setCreateTime(long createTime) {
+        public Builder setCreateTime(LocalDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(long updateTime) {
+        public Builder setUpdateTime(LocalDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

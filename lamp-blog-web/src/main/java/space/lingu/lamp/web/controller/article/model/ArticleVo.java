@@ -16,12 +16,13 @@
 
 package space.lingu.lamp.web.controller.article.model;
 
-import space.lingu.lamp.web.controller.content.vo.ContentVo;
-import space.lingu.lamp.content.article.Article;
 import space.lingu.lamp.content.Content;
 import space.lingu.lamp.content.ContentAccessAuthType;
 import space.lingu.lamp.content.ContentDetails;
 import space.lingu.lamp.content.ContentMetadataDetails;
+import space.lingu.lamp.web.controller.content.vo.ContentVo;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
@@ -31,23 +32,21 @@ public record ArticleVo(
         String title,
         String content,
         long userId,
-        long createTime,
-        long updateTime,
+        LocalDateTime createTime,
+        LocalDateTime updateTime,
         ContentAccessAuthType accessAuthType
         // TODO: add more fields
 ) implements ContentVo {
 
     public static ArticleVo of(ContentMetadataDetails<?> contentMetadataDetails) {
-        if (!(contentMetadataDetails.getContentDetails() instanceof Article article)) {
-            return null;
-        }
+        ContentDetails contentDetails = contentMetadataDetails.getContentDetails();
         return new ArticleVo(
-                article.getId(),
-                article.getTitle(),
-                article.getContent(),
-                article.getUserId(),
-                article.getCreateTime(),
-                article.getUpdateTime(),
+                contentDetails.getContentId(),
+                contentDetails.getTitle(),
+                contentDetails.getContent(),
+                contentDetails.getUserId(),
+                contentDetails.getCreateTime(),
+                contentDetails.getUpdateTime(),
                 contentMetadataDetails.getContentAccessAuthType()
         );
     }
@@ -56,16 +55,13 @@ public record ArticleVo(
         if (contentDetails instanceof ContentMetadataDetails<?> contentMetadataDetails) {
             return of(contentMetadataDetails);
         }
-        if (!(contentDetails instanceof Article article)) {
-            return null;
-        }
         return new ArticleVo(
-                article.getId(),
-                article.getTitle(),
-                article.getContent(),
-                article.getUserId(),
-                article.getCreateTime(),
-                article.getUpdateTime(),
+                contentDetails.getContentId(),
+                contentDetails.getTitle(),
+                contentDetails.getContent(),
+                contentDetails.getUserId(),
+                contentDetails.getCreateTime(),
+                contentDetails.getUpdateTime(),
                 ContentAccessAuthType.PUBLIC
         );
     }

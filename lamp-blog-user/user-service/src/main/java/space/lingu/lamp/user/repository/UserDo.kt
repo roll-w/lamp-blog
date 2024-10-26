@@ -23,6 +23,8 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
+import jakarta.persistence.Temporal
+import jakarta.persistence.TemporalType
 import jakarta.persistence.UniqueConstraint
 import space.lingu.NonNull
 import space.lingu.lamp.DataEntity
@@ -32,50 +34,55 @@ import space.lingu.lamp.user.User
 import space.lingu.lamp.user.UserResourceKind
 import tech.rollw.common.web.system.SystemResourceKind
 import java.io.Serializable
+import java.time.LocalDateTime
 
 /**
  * @author RollW
  */
 @Entity
-@Table(name = "user", uniqueConstraints = [
-    UniqueConstraint(columnNames = ["username"], name = "index__username")
-])
+@Table(
+    name = "user", uniqueConstraints = [
+        UniqueConstraint(columnNames = ["username"], name = "index__username")
+    ]
+)
 class UserDo(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private var id: Long? = null,
 
-    @Column(name = "username", length = 120)
-    private var username: String? = null,
+    @Column(name = "username", length = 120, nullable = false)
+    private var username: String = "",
 
-    @Column(name = "password", length = 120)
-    private var password: String? = null,
+    @Column(name = "password", length = 120, nullable = false)
+    private var password: String = "",
 
-    @Column(name = "role", length = 20)
+    @Column(name = "role", length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
-    private var role: Role? = null,
+    private var role: Role = Role.USER,
 
-    @Column(name = "register_time")
-    var registerTime: Long = 0,
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "register_time", nullable = false)
+    var registerTime: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "update_time")
-    private var updateTime: Long = 0,
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "update_time", nullable = false)
+    private var updateTime: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "email", length = 255)
-    private var email: String? = null,
+    @Column(name = "email", length = 255, nullable = false)
+    private var email: String = "",
 
     // TODO: phone encryption
-    @Column(name = "phone", length = 255)
-    var phone: String? = null,
+    @Column(name = "phone", length = 255, nullable = false)
+    var phone: String = "",
 
-    @Column(name = "enabled")
+    @Column(name = "enabled", nullable = false)
     private var enabled: Boolean = false,
 
-    @Column(name = "locked")
+    @Column(name = "locked", nullable = false)
     private var locked: Boolean = false,
 
-    @Column(name = "account_canceled")
+    @Column(name = "account_canceled", nullable = false)
     private var canceled: Boolean = false
 ) : Serializable, DataEntity<Long>, AttributedUserDetails {
     override fun getId(): Long? {
@@ -95,15 +102,11 @@ class UserDo(
         return UserResourceKind
     }
 
-    override fun getCreateTime(): Long {
-        return registerTime
-    }
+    override fun getCreateTime(): LocalDateTime = registerTime
 
-    override fun getUpdateTime(): Long {
-        return updateTime
-    }
+    override fun getUpdateTime(): LocalDateTime = updateTime
 
-    fun setUpdateTime(updateTime: Long) {
+    fun setUpdateTime(updateTime: LocalDateTime) {
         this.updateTime = updateTime
     }
 
@@ -112,18 +115,18 @@ class UserDo(
     }
 
     override fun getEmail(): String {
-        return email!!
+        return email
     }
 
-    fun setEmail(email: String?) {
+    fun setEmail(email: String) {
         this.email = email
     }
 
     override fun getRole(): Role {
-        return role!!
+        return role
     }
 
-    fun setRole(role: Role?) {
+    fun setRole(role: Role) {
         this.role = role
     }
 
@@ -144,15 +147,15 @@ class UserDo(
     }
 
     override fun getPassword(): String {
-        return password!!
+        return password
     }
 
-    fun setPassword(password: String?) {
+    fun setPassword(password: String) {
         this.password = password
     }
 
     override fun getUsername(): String {
-        return username!!
+        return username
     }
 
     override fun isEnabled(): Boolean {
@@ -179,12 +182,104 @@ class UserDo(
                 '}'
     }
 
-    fun toUser(): User {
+    fun lock(): User {
         return User(
             id, username, password, role,
             registerTime, updateTime, email, phone,
             enabled, locked, canceled
         )
+    }
+
+    fun toBuilder() = Builder(this)
+
+    class Builder {
+        private var id: Long? = null
+        private var username: String = ""
+        private var password: String = ""
+        private var role: Role = Role.USER
+        private var registerTime: LocalDateTime = LocalDateTime.now()
+        private var updateTime: LocalDateTime = LocalDateTime.now()
+        private var email: String = ""
+        private var phone: String = ""
+        private var enabled = false
+        private var locked = false
+        private var canceled = false
+
+        constructor()
+
+        constructor(other: UserDo) {
+            this.id = other.id
+            this.username = other.username
+            this.password = other.password
+            this.role = other.role
+            this.registerTime = other.registerTime
+            this.updateTime = other.updateTime
+            this.email = other.email
+            this.phone = other.phone
+            this.enabled = other.isEnabled
+            this.locked = other.isLocked
+            this.canceled = other.isCanceled
+        }
+
+        fun setId(id: Long?) = apply {
+            this.id = id
+        }
+
+        fun setUsername(username: String) = apply {
+            this.username = username
+        }
+
+        fun setPassword(password: String) = apply {
+            this.password = password
+        }
+
+        fun setRole(role: Role) = apply {
+            this.role = role
+        }
+
+        fun setRegisterTime(registerTime: LocalDateTime) = apply {
+            this.registerTime = registerTime
+        }
+
+        fun setUpdateTime(updateTime: LocalDateTime) = apply {
+            this.updateTime = updateTime
+        }
+
+        fun setEmail(email: String) = apply {
+            this.email = email
+        }
+
+        fun setPhone(phone: String) = apply {
+            this.phone = phone
+        }
+
+        fun setEnabled(enabled: Boolean) = apply {
+            this.enabled = enabled
+        }
+
+        fun setLocked(locked: Boolean) = apply {
+            this.locked = locked
+        }
+
+        fun setCanceled(canceled: Boolean) = apply {
+            this.canceled = canceled
+        }
+
+        fun build(): UserDo {
+            return UserDo(
+                id,
+                username,
+                password,
+                role,
+                registerTime,
+                updateTime,
+                email,
+                phone,
+                enabled,
+                locked,
+                canceled
+            )
+        }
     }
 
     companion object {
@@ -196,5 +291,8 @@ class UserDo(
                 isEnabled, isLocked, isCanceled
             )
         }
+
+        @JvmStatic
+        fun builder(): Builder = Builder()
     }
 }

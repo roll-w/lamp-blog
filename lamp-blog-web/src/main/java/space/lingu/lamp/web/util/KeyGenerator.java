@@ -17,7 +17,7 @@
 package space.lingu.lamp.web.util;
 
 import space.lingu.lamp.content.article.common.ArticleErrorCode;
-import space.lingu.lamp.web.domain.comment.common.CommentErrorCode;
+import space.lingu.lamp.content.comment.common.CommentErrorCode;
 import space.lingu.lamp.content.common.ContentErrorCode;
 import space.lingu.lamp.web.domain.review.common.ReviewErrorCode;
 import tech.rollw.common.web.*;

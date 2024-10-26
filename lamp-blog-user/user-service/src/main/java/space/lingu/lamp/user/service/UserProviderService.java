@@ -68,7 +68,7 @@ public class UserProviderService implements SystemResourceProvider<Long>,
     public SystemResourceOperator<Long> createResourceOperator(
             SystemResource<Long> systemResource, boolean checkDelete) {
         User user = getUser(systemResource.getResourceId())
-                .toUser();
+                .lock();
         return new UserOperatorImpl(user, this, checkDelete);
     }
 

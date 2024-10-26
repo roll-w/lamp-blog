@@ -17,9 +17,9 @@ package space.lingu.lamp.system.resource
 
 import space.lingu.NonNull
 import space.lingu.lamp.DataEntity
+import space.lingu.lamp.TimeAttributed
 import tech.rollw.common.web.system.SystemResourceKind
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.Locale
 
 /**
@@ -37,17 +37,13 @@ data class LocalizedMessage(
     override val locale: Locale,
     private val updateTime: LocalDateTime
 ) : LocalizedMessageResource, DataEntity<Long> {
-    override fun getId(): Long? {
-        return id
+    override fun getId(): Long? = id
+
+    override fun getCreateTime(): LocalDateTime {
+        return TimeAttributed.NONE_TIME
     }
 
-    override fun getCreateTime(): Long {
-        return 0
-    }
-
-    override fun getUpdateTime(): Long {
-        return updateTime.toEpochSecond(ZoneOffset.UTC)
-    }
+    override fun getUpdateTime(): LocalDateTime = updateTime
 
     @NonNull
     override fun getSystemResourceKind(): SystemResourceKind {

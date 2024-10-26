@@ -17,41 +17,27 @@
 package space.lingu.lamp.web.domain.usergroup;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
  */
-@DataTable(name = "user_group_member")
-public class UserGroupMember implements LongDataItem<UserGroupMember> {
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
+public class UserGroupMember implements DataEntity<Long> {
     private final Long id;
-
-    @DataColumn(name = "group_id")
     private final long groupId;
-
-    @DataColumn(name = "user_id")
     private final long userId;
-
-    @DataColumn(name = "create_time")
-    private final long createTime;
-
-    @DataColumn(name = "update_time")
-    private final long updateTime;
-
-    @DataColumn(name = "deleted")
+    private final LocalDateTime createTime;
+    private final LocalDateTime updateTime;
     private final boolean deleted;
 
 
     public UserGroupMember(Long id, long groupId, long userId,
-                           long createTime, long updateTime,
+                           LocalDateTime createTime, LocalDateTime updateTime,
                            boolean deleted) {
         this.id = id;
         this.groupId = groupId;
@@ -74,13 +60,16 @@ public class UserGroupMember implements LongDataItem<UserGroupMember> {
         return userId;
     }
 
+
+    @NonNull
     @Override
-    public long getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -106,8 +95,8 @@ public class UserGroupMember implements LongDataItem<UserGroupMember> {
         private Long id;
         private long groupId;
         private long userId;
-        private long createTime;
-        private long updateTime;
+        private LocalDateTime createTime;
+        private LocalDateTime updateTime;
         private boolean deleted;
 
         private Builder() {
@@ -138,12 +127,12 @@ public class UserGroupMember implements LongDataItem<UserGroupMember> {
             return this;
         }
 
-        public Builder setCreateTime(long createTime) {
+        public Builder setCreateTime(LocalDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(long updateTime) {
+        public Builder setUpdateTime(LocalDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

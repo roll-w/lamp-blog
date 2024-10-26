@@ -33,6 +33,7 @@ import space.lingu.light.LightIgnore;
 import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -65,13 +66,13 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
     private final ContentType type;
 
     @DataColumn(name = "create_time")
-    private final long assignedTime;
+    private final LocalDateTime assignedTime;
 
     @DataColumn(name = "result")
     private final String result;
 
     @DataColumn(name = "review_time")
-    private final long reviewTime;
+    private final LocalDateTime reviewTime;
 
     @DataColumn(name = "review_mark")
     private final ReviewMark reviewMark;
@@ -84,7 +85,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
                      Long reviewerId,
                      @Nullable Long operatorId,
                      ReviewStatus status, ContentType type,
-                     long assignedTime, String result, long reviewTime,
+                     LocalDateTime assignedTime, String result, LocalDateTime reviewTime,
                      ReviewMark reviewMark) {
         Preconditions.checkNotNull(status);
         Preconditions.checkNotNull(type);
@@ -105,7 +106,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
 
     public ReviewJob(long reviewContentId, long reviewerId,
                      long operatorId, ReviewStatus status, ContentType type,
-                     long assignedTime, String result, long reviewTime,
+                     LocalDateTime assignedTime, String result, LocalDateTime reviewTime,
                      ReviewMark reviewMark) {
         this(null, reviewContentId, reviewerId, operatorId, status, type,
                 assignedTime, result, reviewTime, reviewMark);
@@ -116,13 +117,15 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
         return getJobId();
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return getAssignedTime();
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return getReviewTime();
     }
 
@@ -151,7 +154,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
         return type;
     }
 
-    public long getAssignedTime() {
+    public LocalDateTime getAssignedTime() {
         return assignedTime;
     }
 
@@ -159,7 +162,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
         return result;
     }
 
-    public long getReviewTime() {
+    public LocalDateTime getReviewTime() {
         return reviewTime;
     }
 
@@ -172,7 +175,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
         return associatedContent;
     }
 
-    public ReviewJob reviewPass(long operatorId, long reviewTime) {
+    public ReviewJob reviewPass(long operatorId, LocalDateTime reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewerId,
                 operatorId, ReviewStatus.REVIEWED,
@@ -180,7 +183,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
                 reviewMark);
     }
 
-    public ReviewJob reviewReject(long operatorId, String result, long reviewTime) {
+    public ReviewJob reviewReject(long operatorId, String result, LocalDateTime reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewerId,
                 operatorId, ReviewStatus.REJECTED,
@@ -247,9 +250,9 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
         private Long operatorId;
         private ReviewStatus status;
         private ContentType type;
-        private long assignedTime;
+        private LocalDateTime assignedTime;
         private String result;
-        private long reviewTime;
+        private LocalDateTime reviewTime;
         private ReviewMark reviewMark;
 
         public Builder() {
@@ -303,7 +306,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
             return this;
         }
 
-        public Builder setAssignedTime(long assignedTime) {
+        public Builder setAssignedTime(LocalDateTime assignedTime) {
             this.assignedTime = assignedTime;
             return this;
         }
@@ -313,7 +316,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
             return this;
         }
 
-        public Builder setReviewTime(long reviewTime) {
+        public Builder setReviewTime(LocalDateTime reviewTime) {
             this.reviewTime = reviewTime;
             return this;
         }

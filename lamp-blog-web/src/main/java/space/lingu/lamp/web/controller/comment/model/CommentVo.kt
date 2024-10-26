@@ -15,10 +15,11 @@
  */
 package space.lingu.lamp.web.controller.comment.model
 
-import space.lingu.lamp.web.controller.content.vo.ContentVo
-import space.lingu.lamp.web.domain.comment.Comment
 import space.lingu.lamp.content.ContentDetails
 import space.lingu.lamp.content.ContentType
+import space.lingu.lamp.content.comment.Comment
+import space.lingu.lamp.web.controller.content.vo.ContentVo
+import java.time.LocalDateTime
 
 /**
  * @author RollW
@@ -30,15 +31,15 @@ data class CommentVo(
     val content: String,
     val contentId: Long,
     val contentType: ContentType,
-    val createTime: Long,
-    val updateTime: Long
+    val createTime: LocalDateTime,
+    val updateTime: LocalDateTime
 ) : ContentVo {
 
     override fun id(): Long = id
 
-    override fun createTime(): Long = createTime
+    override fun createTime(): LocalDateTime = createTime
 
-    override fun updateTime(): Long = updateTime
+    override fun updateTime(): LocalDateTime = updateTime
 
     companion object {
         @JvmStatic
@@ -51,13 +52,13 @@ data class CommentVo(
             }
             return CommentVo(
                 contentDetails.id,
-                contentDetails.getUserId(),
+                contentDetails.userId,
                 contentDetails.parentId,
-                contentDetails.getContent(),
-                contentDetails.commentOn,
-                contentDetails.type,
-                contentDetails.getCreateTime(),
-                contentDetails.getUpdateTime()
+                contentDetails.content,
+                contentDetails.commentOnId,
+                contentDetails.commentOnType,
+                contentDetails.createTime,
+                contentDetails.updateTime
             )
         }
     }

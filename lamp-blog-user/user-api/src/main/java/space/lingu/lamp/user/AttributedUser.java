@@ -16,7 +16,10 @@
 
 package space.lingu.lamp.user;
 
+import space.lingu.NonNull;
 import space.lingu.lamp.TimeAttributed;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
@@ -28,11 +31,13 @@ public interface AttributedUser extends UserIdentity, TimeAttributed {
 
     boolean isCanceled();
 
+    @NonNull
     @Override
-    long getCreateTime();
+    LocalDateTime getCreateTime();
 
+    @NonNull
     @Override
-    long getUpdateTime();
+    LocalDateTime getUpdateTime();
 
     default boolean isNormal() {
         return isEnabled() && !isLocked() && !isCanceled();

@@ -28,26 +28,28 @@ import jakarta.persistence.Temporal
 import jakarta.persistence.TemporalType
 import jakarta.persistence.UniqueConstraint
 import space.lingu.lamp.DataEntity
+import space.lingu.lamp.TimeAttributed
 import space.lingu.lamp.common.data.LocaleAttributeConverter
 import space.lingu.lamp.system.resource.LocalizedMessage
 import space.lingu.lamp.system.resource.LocalizedMessageResource
 import space.lingu.lamp.system.resource.LocalizedMessageResourceKind
 import tech.rollw.common.web.system.SystemResourceKind
 import java.time.LocalDateTime
-import java.time.ZoneOffset
 import java.util.Locale
 
 /**
  * @author RollW
  */
 @Entity
-@Table(name = "localized_message", uniqueConstraints = [
-    UniqueConstraint(columnNames = ["key", "locale"], name = "index__key_locale")
-])
+@Table(
+    name = "localized_message", uniqueConstraints = [
+        UniqueConstraint(columnNames = ["key", "locale"], name = "index__key_locale")
+    ]
+)
 class LocalizedMessageDo(
     @Id
     @Column(name = "id")
-    @GeneratedValue(GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Long? = null,
 
     @Column(name = "key", nullable = false, length = 255)
@@ -58,20 +60,28 @@ class LocalizedMessageDo(
     override var value: String = "",
 
     @Column(name = "locale", nullable = false, length = 20)
-    @Convert(LocaleAttributeConverter::class)
+    @Convert(converter = LocaleAttributeConverter::class)
     override var locale: Locale = Locale.getDefault(),
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "update_time", nullable = false)
-    var updateTime: LocalDateTime = LocalDateTime.now()
+    private var updateTime: LocalDateTime = LocalDateTime.now()
 ) : LocalizedMessageResource, DataEntity<Long> {
     override fun getId(): Long? {
         return id
     }
 
-    override fun getCreateTime(): Long = 0
+    fun setId(id: Long?) {
+        this.id = id
+    }
 
-    override fun getUpdateTime(): Long = updateTime.toEpochSecond(ZoneOffset.UTC)
+    override fun getCreateTime(): LocalDateTime = TimeAttributed.NONE_TIME
+
+    override fun getUpdateTime(): LocalDateTime = updateTime
+
+    fun setUpdateTime(updateTime: LocalDateTime) {
+        this.updateTime = updateTime
+    }
 
     override fun getSystemResourceKind(): SystemResourceKind {
         return LocalizedMessageResourceKind
@@ -79,5 +89,11 @@ class LocalizedMessageDo(
 
     fun lock(): LocalizedMessage {
         return LocalizedMessage(id, key, value, locale, updateTime)
+    }
+
+    companion object {
+        fun LocalizedMessage.toDo(): LocalizedMessageDo {
+            return LocalizedMessageDo(id, key, value, locale, updateTime)
+        }
     }
 }

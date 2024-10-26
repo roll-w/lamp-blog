@@ -19,64 +19,30 @@ package space.lingu.lamp.user;
 import space.lingu.NonNull;
 import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
-import space.lingu.light.Constructor;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.Index;
-import space.lingu.light.LightConfiguration;
-import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * @author RollW
  */
-@DataTable(name = "user", indices = {
-        @Index(value = "username", unique = true)
-})
-@LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "120")
-@SuppressWarnings({"ClassCanBeRecord"})
 public class User implements AttributedUserDetails, DataEntity<Long> {
-    @PrimaryKey(autoGenerate = true)
-    @DataColumn(name = "id")
     private final Long id;
-
-    @DataColumn(name = "username", nullable = false)
     private final String username;
-
-    @DataColumn(name = "password", nullable = false)
     private final String password;
-
-    @DataColumn(name = "role")
-    @LightConfiguration(key = LightConfiguration.KEY_VARCHAR_LENGTH, value = "20")
     private final Role role;
-
-    @DataColumn(name = "register_time")
-    private final long registerTime;
-
-    @DataColumn(name = "update_time")
-    private final long updateTime;
-
-    @DataColumn(name = "email")
+    private final LocalDateTime registerTime;
+    private final LocalDateTime updateTime;
     private final String email;
-
-    @DataColumn(name = "phone")
     private final String phone;
-
-    @DataColumn(name = "enabled")
     private final boolean enabled;
-
-    @DataColumn(name = "locked")
     private final boolean locked;
-
-    @DataColumn(name = "account_canceled")
     private final boolean canceled;
 
-    @Constructor
     public User(Long id, String username, String password,
-                Role role, long registerTime,
-                long updateTime, String email, String phone,
+                Role role, LocalDateTime registerTime,
+                LocalDateTime updateTime, String email, String phone,
                 boolean enabled, boolean locked, boolean canceled) {
         this.id = id;
         this.username = username;
@@ -101,13 +67,15 @@ public class User implements AttributedUserDetails, DataEntity<Long> {
         return Objects.requireNonNull(id, "Id has not be set.");
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
-        return getRegisterTime();
+    public LocalDateTime getCreateTime() {
+        return registerTime;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -131,7 +99,7 @@ public class User implements AttributedUserDetails, DataEntity<Long> {
         return role;
     }
 
-    public long getRegisterTime() {
+    public LocalDateTime getRegisterTime() {
         return registerTime;
     }
 
@@ -211,8 +179,8 @@ public class User implements AttributedUserDetails, DataEntity<Long> {
         private String username;
         private String password;
         private Role role = Role.USER;
-        private long registerTime;
-        private long updateTime;
+        private LocalDateTime registerTime;
+        private LocalDateTime updateTime;
         private String email;
         private String phone;
         private boolean enabled;
@@ -257,12 +225,12 @@ public class User implements AttributedUserDetails, DataEntity<Long> {
             return this;
         }
 
-        public Builder setRegisterTime(long registerTime) {
+        public Builder setRegisterTime(LocalDateTime registerTime) {
             this.registerTime = registerTime;
             return this;
         }
 
-        public Builder setUpdateTime(long updateTime) {
+        public Builder setUpdateTime(LocalDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

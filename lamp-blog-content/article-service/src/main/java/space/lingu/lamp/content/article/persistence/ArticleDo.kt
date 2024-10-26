@@ -32,7 +32,6 @@ import space.lingu.lamp.content.ContentType
 import space.lingu.lamp.content.article.Article
 import space.lingu.lamp.content.article.ArticleDetailsMetadata
 import java.time.LocalDateTime
-import java.time.ZoneId
 
 /**
  * @author RollW
@@ -68,15 +67,23 @@ class ArticleDo(
 ) : DataEntity<Long>, ContentDetails {
     override fun getId(): Long? = id
 
+    fun setId(id: Long?) {
+        this.id = id
+    }
+
     override fun getResourceId(): Long = id!!
 
-    @Deprecated("Deprecated in Java")
-    override fun getCreateTime(): Long =
-        createTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    override fun getCreateTime(): LocalDateTime = createTime
 
-    @Deprecated("Deprecated in Java")
-    override fun getUpdateTime(): Long =
-        updateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli()
+    fun setCreateTime(createTime: LocalDateTime) {
+        this.createTime = createTime
+    }
+
+    override fun getUpdateTime(): LocalDateTime = updateTime
+
+    fun setUpdateTime(updateTime: LocalDateTime) {
+        this.updateTime = updateTime
+    }
 
     override fun getContentId(): Long = id!!
 
@@ -84,9 +91,21 @@ class ArticleDo(
 
     override fun getUserId(): Long = userId
 
+    fun setUserId(userId: Long) {
+        this.userId = userId
+    }
+
     override fun getTitle(): String? = title
 
+    fun setTitle(title: String) {
+        this.title = title
+    }
+
     override fun getContent(): String? = content
+
+    fun setContent(content: String) {
+        this.content = content
+    }
 
     override fun getMetadata(): ContentDetailsMetadata =
         ArticleDetailsMetadata(cover)
@@ -126,18 +145,16 @@ class ArticleDo(
             this.title = other.title
             this.cover = other.cover
             this.content = other.content
-            this.createTime = other.createDateTime
-            this.updateTime = other.updateDateTime
+            this.createTime = other.createTime
+            this.updateTime = other.updateTime
         }
 
-        fun setId(id: Long?): Builder {
+        fun setId(id: Long?) = apply {
             this.id = id
-            return this
         }
 
-        fun setUserId(userId: Long): Builder {
+        fun setUserId(userId: Long) = apply {
             this.userId = userId
-            return this
         }
 
         fun setTitle(title: String): Builder {
@@ -145,24 +162,20 @@ class ArticleDo(
             return this
         }
 
-        fun setCover(cover: String): Builder {
+        fun setCover(cover: String) = apply {
             this.cover = cover
-            return this
         }
 
-        fun setContent(content: String): Builder {
+        fun setContent(content: String) = apply {
             this.content = content
-            return this
         }
 
-        fun setCreateTime(createTime: LocalDateTime): Builder {
+        fun setCreateTime(createTime: LocalDateTime) = apply {
             this.createTime = createTime
-            return this
         }
 
-        fun setUpdateTime(updateTime: LocalDateTime): Builder {
+        fun setUpdateTime(updateTime: LocalDateTime) = apply {
             this.updateTime = updateTime
-            return this
         }
 
         fun build(): ArticleDo {
@@ -178,7 +191,7 @@ class ArticleDo(
         fun Article.toDo(): ArticleDo {
             return ArticleDo(
                 id, userId, title, cover, content,
-                createDateTime, updateDateTime
+                createTime, updateTime
             )
         }
 

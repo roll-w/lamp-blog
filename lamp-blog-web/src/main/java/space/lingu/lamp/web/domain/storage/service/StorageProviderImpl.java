@@ -17,7 +17,13 @@
 package space.lingu.lamp.web.domain.storage.service;
 
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.domain.storage.*;
+import space.lingu.lamp.TimeAttributed;
+import space.lingu.lamp.web.domain.storage.DefaultStorageIds;
+import space.lingu.lamp.web.domain.storage.FileStorage;
+import space.lingu.lamp.web.domain.storage.FileType;
+import space.lingu.lamp.web.domain.storage.StorageProvider;
+import space.lingu.lamp.web.domain.storage.StorageUrlProvider;
+import space.lingu.lamp.web.domain.storage.StorageUrlProviderStrategy;
 import space.lingu.lamp.web.domain.storage.common.StorageException;
 import space.lingu.lamp.web.domain.storage.dto.FileSystemInfile;
 import tech.rollw.common.web.DataErrorCode;
@@ -76,7 +82,7 @@ public class StorageProviderImpl implements StorageProvider, StorageUrlProvider 
             FileStorage.builder()
                     .setFileId(DefaultStorageIds.DEFAULT_AVATAR_ID)
                     .setFileSize(0)
-                    .setCreateTime(0)
+                    .setCreateTime(TimeAttributed.NONE_TIME)
                     .setMimeType("image/png")
                     .setFileType(FileType.IMAGE)
                     .build();
@@ -85,7 +91,7 @@ public class StorageProviderImpl implements StorageProvider, StorageUrlProvider 
             FileStorage.builder()
                     .setFileId(DefaultStorageIds.DEFAULT_USER_COVER_ID)
                     .setFileSize(0)
-                    .setCreateTime(0)
+                    .setCreateTime(TimeAttributed.NONE_TIME)
                     .setMimeType("image/png")
                     .setFileType(FileType.IMAGE)
                     .build();

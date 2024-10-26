@@ -26,6 +26,7 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import space.lingu.lamp.DataEntity
+import space.lingu.lamp.TimeAttributed
 import space.lingu.lamp.content.ContentAccessAuthType
 import space.lingu.lamp.content.ContentMetadata
 import space.lingu.lamp.content.ContentMetadataResourceKind
@@ -33,6 +34,7 @@ import space.lingu.lamp.content.ContentStatus
 import space.lingu.lamp.content.ContentTrait
 import space.lingu.lamp.content.ContentType
 import tech.rollw.common.web.system.SystemResourceKind
+import java.time.LocalDateTime
 
 /**
  * @author RollW
@@ -68,16 +70,28 @@ class ContentMetadataDo(
 ) : DataEntity<Long>, ContentTrait {
     override fun getId(): Long? = id
 
-    override fun getCreateTime(): Long = 0
+    fun setId(id: Long?) {
+        this.id = id
+    }
 
-    override fun getUpdateTime(): Long = 0
+    override fun getCreateTime(): LocalDateTime = TimeAttributed.NONE_TIME
+
+    override fun getUpdateTime(): LocalDateTime = TimeAttributed.NONE_TIME
 
     override fun getSystemResourceKind(): SystemResourceKind =
         ContentMetadataResourceKind
 
     override fun getContentId(): Long = contentId
 
+    fun setContentId(contentId: Long) {
+        this.contentId = contentId
+    }
+
     override fun getContentType(): ContentType = contentType
+
+    fun setContentType(contentType: ContentType) {
+        this.contentType = contentType
+    }
 
     fun lock(): ContentMetadata = ContentMetadata(
         id, userId, contentId, contentType, contentStatus, contentAccessAuthType

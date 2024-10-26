@@ -26,7 +26,7 @@ import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
 import space.lingu.lamp.user.UserIdentity;
 import space.lingu.lamp.user.UserProvider;
 import space.lingu.lamp.user.UserSearchService;
-import tech.rollw.common.web.BusinessRuntimeException;
+import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.DataErrorCode;
 import tech.rollw.common.web.page.ImmutablePage;
 import tech.rollw.common.web.page.Page;
@@ -92,7 +92,7 @@ public class StaffServiceImpl implements StaffService {
     public StaffInfo getStaffByUser(long userId) {
         Staff staff = staffRepository.getByUserId(userId);
         if (staff == null) {
-            throw new BusinessRuntimeException(DataErrorCode.ERROR_DATA_NOT_EXIST);
+            throw new CommonRuntimeException(DataErrorCode.ERROR_DATA_NOT_EXIST);
         }
         UserIdentity userIdentity = userProvider.getUser(userId);
         return StaffInfo.from(staff, userIdentity);
@@ -102,7 +102,7 @@ public class StaffServiceImpl implements StaffService {
     public StaffInfo getStaff(long staffId) {
         Staff staff = staffRepository.getById(staffId);
         if (staff == null) {
-            throw new BusinessRuntimeException(DataErrorCode.ERROR_DATA_NOT_EXIST);
+            throw new CommonRuntimeException(DataErrorCode.ERROR_DATA_NOT_EXIST);
         }
         UserIdentity userIdentity = userProvider.getUser(staff.getUserId());
         return StaffInfo.from(staff, userIdentity);
@@ -110,7 +110,7 @@ public class StaffServiceImpl implements StaffService {
 
     @Override
     public Staff createStaff(Staff staff) {
-        Validate.notNull(staff);
+        Validate.notNull(staff, "staff must not be null.");
         staffRepository.insert(staff);
         return null;
     }

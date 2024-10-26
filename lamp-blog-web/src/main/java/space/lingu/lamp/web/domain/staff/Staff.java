@@ -19,11 +19,13 @@ package space.lingu.lamp.web.domain.staff;
 import space.lingu.NonNull;
 import space.lingu.lamp.LongDataItem;
 import space.lingu.lamp.LongEntityBuilder;
+import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.light.DataColumn;
 import space.lingu.light.DataTable;
 import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
@@ -45,10 +47,10 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
     private final Set<StaffType> types;
 
     @DataColumn(name = "create_time")
-    private final long createTime;
+    private final LocalDateTime createTime;
 
     @DataColumn(name = "update_time")
-    private final long updateTime;
+    private final LocalDateTime updateTime;
 
     @DataColumn(name = "allow_user")
     private final boolean allowUser;
@@ -57,8 +59,8 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
     private final boolean deleted;
 
     public Staff(Long id, long userId,
-                 Set<StaffType> types, long createTime,
-                 long updateTime, boolean allowUser,
+                 Set<StaffType> types, LocalDateTime createTime,
+                 LocalDateTime updateTime, boolean allowUser,
                  boolean deleted) {
         this.id = id;
         this.userId = userId;
@@ -88,13 +90,15 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
         return types;
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -113,13 +117,13 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
     @NonNull
     @Override
     public Long getResourceId() {
-        return AttributedStaff.super.getResourceId();
+        return id;
     }
 
     @Override
     @NonNull
     public SystemResourceKind getSystemResourceKind() {
-        return AttributedStaff.super.getSystemResourceKind();
+        return LampSystemResourceKind.STAFF;
     }
 
     @Override
@@ -161,8 +165,8 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
         private Long id;
         private long userId;
         private Set<StaffType> type;
-        private long createTime;
-        private long updateTime;
+        private LocalDateTime createTime;
+        private LocalDateTime updateTime;
         private boolean allowUser;
         private boolean deleted;
 
@@ -204,12 +208,12 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
             return this;
         }
 
-        public Builder setCreateTime(long createTime) {
+        public Builder setCreateTime(LocalDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(long updateTime) {
+        public Builder setUpdateTime(LocalDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

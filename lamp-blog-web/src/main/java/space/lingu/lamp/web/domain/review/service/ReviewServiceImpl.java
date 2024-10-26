@@ -32,6 +32,7 @@ import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.system.Operator;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -52,7 +53,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewJobProvider {
     public ReviewJobInfo assignReviewer(long contentId,
                                         ContentType contentType,
                                         boolean allowAutoReview) {
-        long assignedTime = System.currentTimeMillis();
+        LocalDateTime assignedTime = LocalDateTime.now();
         ReviewJob old = reviewJobRepository.getBy(contentId, contentType);
         if (old != null && !old.getStatus().isReviewed()) {
             // if the old review job is still not reviewed, throw exception

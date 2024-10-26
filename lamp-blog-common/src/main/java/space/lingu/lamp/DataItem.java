@@ -36,11 +36,5 @@ public interface DataItem<T extends DataItem<T, ID>, ID> extends
         return getId();
     }
 
-    @Override
-    long getCreateTime();
-
-    @Override
-    long getUpdateTime();
-
     EntityBuilder<T, ID> toBuilder();
 }

@@ -30,6 +30,7 @@ import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
  * User personal data.
@@ -68,13 +69,13 @@ public final class UserPersonalData implements Serializable, LongDataItem<UserPe
     private final String website;
 
     @DataColumn(name = "update_time")
-    private final long updateTime;
+    private final LocalDateTime updateTime;
 
     public UserPersonalData(long userId, String nickname, String avatar,
                             String cover, Birthday birthday,
                             String introduction,
                             Gender gender, String location,
-                            String website, long updateTime) {
+                            String website, LocalDateTime updateTime) {
         this.userId = userId;
         this.nickname = nickname;
         this.avatar = avatar;
@@ -128,16 +129,19 @@ public final class UserPersonalData implements Serializable, LongDataItem<UserPe
         return getUserId();
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
-        return 0;
+    public LocalDateTime getCreateTime() {
+        return NONE_TIME;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
+    @NonNull
     @Override
     public SystemResourceKind getSystemResourceKind() {
         return LampSystemResourceKind.USER;
@@ -155,9 +159,9 @@ public final class UserPersonalData implements Serializable, LongDataItem<UserPe
     public static UserPersonalData defaultOf(UserIdentity user) {
         return new Builder()
                 .setUserId(user.getUserId())
-                .setAvatar("user")
+                .setAvatar(DefaultStorageIds.DEFAULT_AVATAR_ID)
                 .setBirthday(null)
-                .setCover("cover")
+                .setCover(DefaultStorageIds.DEFAULT_USER_COVER_ID)
                 .setIntroduction(null)
                 .setGender(Gender.PRIVATE)
                 .setNickname(user.getUsername())
@@ -168,58 +172,36 @@ public final class UserPersonalData implements Serializable, LongDataItem<UserPe
     public static boolean checkNecessaryFields(
             @NonNull UserPersonalData userPersonalData) {
         Preconditions.checkNotNull(userPersonalData);
-        return !Strings.isNullOrEmpty(userPersonalData.getAvatar())
-                && !Strings.isNullOrEmpty(userPersonalData.getNickname())
-                && !Strings.isNullOrEmpty(userPersonalData.getCover());
+        return !Strings.isNullOrEmpty(userPersonalData.getNickname());
     }
 
     public static UserPersonalData replaceWithDefault(UserIdentity userIdentity,
                                                       UserPersonalData userPersonalData) {
         Builder builder = userPersonalData.toBuilder();
-        if (userPersonalData.getAvatar() == null) {
-            // TODO
-            builder.setAvatar("user");
+        if (Strings.isNullOrEmpty(userPersonalData.getAvatar())) {
+            builder.setAvatar(DefaultStorageIds.DEFAULT_AVATAR_ID);
         }
         if (userPersonalData.getNickname() == null) {
             builder.setNickname(userIdentity.getUsername());
         }
-        if (userPersonalData.getCover() == null) {
-            builder.setCover("cover");
+        if (Strings.isNullOrEmpty(userPersonalData.getCover())) {
+            builder.setCover(DefaultStorageIds.DEFAULT_USER_COVER_ID);
         }
         return builder.build();
     }
 
 
     public static final class Builder implements LongEntityBuilder<UserPersonalData> {
-        @DataColumn(name = "id")
         private long userId;
-
-        @DataColumn(name = "nickname")
         private String nickname;
-
-        @DataColumn(name = "avatar")
         private String avatar;
-
-        @DataColumn(name = "cover")
         private String cover;
-
-        @DataColumn(name = "birthday")
         private Birthday birthday;
-
-        @DataColumn(name = "introduction")
         private String introduction;
-
-        @DataColumn(name = "gender")
         private Gender gender;
-
-        @DataColumn(name = "location")
         private String location;
-
-        @DataColumn(name = "website")
         private String website;
-
-        @DataColumn(name = "update_time")
-        private long updateTime;
+        private LocalDateTime updateTime;
 
         public Builder() {
         }
@@ -289,11 +271,11 @@ public final class UserPersonalData implements Serializable, LongDataItem<UserPe
             return cover;
         }
 
-        public long getUpdateTime() {
+        public LocalDateTime getUpdateTime() {
             return updateTime;
         }
 
-        public Builder setUpdateTime(long updateTime) {
+        public Builder setUpdateTime(LocalDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

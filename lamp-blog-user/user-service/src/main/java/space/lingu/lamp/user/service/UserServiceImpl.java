@@ -23,7 +23,6 @@ import space.lingu.NonNull;
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.AttributedUserDetails;
 import space.lingu.lamp.user.Role;
-import space.lingu.lamp.user.User;
 import space.lingu.lamp.user.UserManageService;
 import space.lingu.lamp.user.UserProvider;
 import space.lingu.lamp.user.UserSearchService;
@@ -39,6 +38,7 @@ import space.lingu.lamp.user.repository.UserRepository;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,8 +84,8 @@ public class UserServiceImpl implements UserSignatureProvider,
         }
         validate(username, password, email);
 
-        long time = System.currentTimeMillis();
-        User user = User.builder()
+        LocalDateTime time = LocalDateTime.now();
+        UserDo user = UserDo.builder()
                 .setUsername(username)
                 .setPassword(passwordEncoder.encode(password))
                 .setRole(role)
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserSignatureProvider,
                 .setUpdateTime(time)
                 .setEmail(email)
                 .build();
-        UserDo inserted = userRepository.save(UserDo.toDo(user));
+        UserDo inserted = userRepository.save(user);
         OnUserCreateEvent onUserCreateEvent = new OnUserCreateEvent(inserted);
         eventPublisher.publishEvent(onUserCreateEvent);
         return inserted;
@@ -122,7 +122,7 @@ public class UserServiceImpl implements UserSignatureProvider,
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
-        return user.toUser();
+        return user.lock();
     }
 
     @Override
@@ -131,7 +131,7 @@ public class UserServiceImpl implements UserSignatureProvider,
         if (user == null) {
             throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
         }
-        return user.toUser();
+        return user.lock();
     }
 
     @Override

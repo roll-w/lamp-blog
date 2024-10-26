@@ -65,6 +65,7 @@ public interface ContentOperator extends SystemResourceOperator<Long>, ContentDe
         return this;
     }
 
+    @NonNull
     @Override
     default Long getResourceId() {
         return getContentId();

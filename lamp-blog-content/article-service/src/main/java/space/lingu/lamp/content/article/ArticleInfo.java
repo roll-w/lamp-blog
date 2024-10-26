@@ -46,8 +46,8 @@ public record ArticleInfo(
                     contentDetails.getUserId(),
                     contentDetails.getTitle(),
                     null,
-                    contentDetails.getCreateDateTime(),
-                    contentDetails.getUpdateDateTime()
+                    contentDetails.getCreateTime(),
+                    contentDetails.getUpdateTime()
             );
         }
         return new ArticleInfo(
@@ -55,8 +55,8 @@ public record ArticleInfo(
                 contentDetails.getUserId(),
                 contentDetails.getTitle(),
                 articleMetadata.getCover(),
-                contentDetails.getCreateDateTime(),
-                contentDetails.getUpdateDateTime()
+                contentDetails.getCreateTime(),
+                contentDetails.getUpdateTime()
         );
     }
 

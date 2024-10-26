@@ -16,10 +16,11 @@
 
 package space.lingu.lamp.web.controller.staff.model;
 
-import space.lingu.lamp.web.domain.staff.StaffType;
-import space.lingu.lamp.web.domain.staff.StaffInfo;
 import space.lingu.lamp.user.Role;
+import space.lingu.lamp.web.domain.staff.StaffInfo;
+import space.lingu.lamp.web.domain.staff.StaffType;
 
+import java.time.LocalDateTime;
 import java.util.Set;
 
 /**
@@ -31,8 +32,8 @@ public record StaffVo(
         String username,
         Role role,
         Set<StaffType> types,
-        long createTime,
-        long updateTime,
+        LocalDateTime createTime,
+        LocalDateTime updateTime,
         boolean allowUser,
         boolean deleted
 ) {

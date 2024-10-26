@@ -19,6 +19,8 @@ package space.lingu.lamp.content;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 
+import java.time.LocalDateTime;
+
 /**
  * @author RollW
  */
@@ -28,8 +30,8 @@ public record SimpleContentDetails(
         long userId,
         @Nullable String title,
         @Nullable String content,
-        long createTime,
-        long updateTime,
+        LocalDateTime createTime,
+        LocalDateTime updateTime,
         @Nullable ContentDetailsMetadata contentDetailsMetadata
 ) implements ContentDetails {
     @Override
@@ -66,13 +68,15 @@ public record SimpleContentDetails(
         return contentDetailsMetadata;
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 }

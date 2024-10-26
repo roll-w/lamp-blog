@@ -18,45 +18,29 @@ package space.lingu.lamp.web.domain.like;
 
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.Index;
-import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
  */
-@DataTable(name = "user_like", indices = {
-        @Index(value = {"user_id", "content_id", "content_type"}, unique = true)
-})
-public final class UserLike implements LongDataItem<UserLike> {
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
+public final class UserLike implements DataEntity<Long> {
     @Nullable
     private final Long id;
-
-    @DataColumn(name = "user_id")
     private final long userId;
-
-    @DataColumn(name = "time")
-    private final long time;
-
-    @DataColumn(name = "content_id")
+    private final LocalDateTime time;
     private final String contentId;
-
-    @DataColumn(name = "content_type")
     private final ContentType contentType;
-
-    @DataColumn(name = "like_type")
     private final LikeType likeType;
 
     public UserLike(@Nullable Long id,
-                    long userId, long time,
+                    long userId,
+                    LocalDateTime time,
                     String contentId,
                     ContentType contentType,
                     LikeType likeType) {
@@ -73,13 +57,15 @@ public final class UserLike implements LongDataItem<UserLike> {
         return id;
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
-        return 0;
+    public LocalDateTime getCreateTime() {
+        return NONE_TIME;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return time;
     }
 
@@ -87,7 +73,7 @@ public final class UserLike implements LongDataItem<UserLike> {
         return userId;
     }
 
-    public long getTime() {
+    public LocalDateTime getTime() {
         return time;
     }
 
@@ -109,7 +95,6 @@ public final class UserLike implements LongDataItem<UserLike> {
         return LampSystemResourceKind.USER_LIKE;
     }
 
-    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -121,7 +106,7 @@ public final class UserLike implements LongDataItem<UserLike> {
     public static final class Builder implements LongEntityBuilder<UserLike> {
         private Long id;
         private long userId;
-        private long time;
+        private LocalDateTime time;
         private String contentId;
         private ContentType contentType;
         private LikeType likeType;
@@ -148,7 +133,7 @@ public final class UserLike implements LongDataItem<UserLike> {
             return this;
         }
 
-        public Builder setTime(long time) {
+        public Builder setTime(LocalDateTime time) {
             this.time = time;
             return this;
         }

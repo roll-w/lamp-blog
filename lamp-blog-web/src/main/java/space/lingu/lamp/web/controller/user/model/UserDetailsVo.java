@@ -22,6 +22,8 @@ import space.lingu.lamp.web.domain.userdetails.Birthday;
 import space.lingu.lamp.web.domain.userdetails.Gender;
 import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
 
+import java.time.LocalDateTime;
+
 /**
  * User details VO.
  * <p>
@@ -37,8 +39,8 @@ public record UserDetailsVo(
         boolean enabled,
         boolean locked,
         boolean canceled,
-        long createTime,
-        long updateTime,
+        LocalDateTime createTime,
+        LocalDateTime updateTime,
         String nickname,
         String avatar,
         String cover,

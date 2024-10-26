@@ -17,6 +17,7 @@
 package space.lingu.lamp.user.service;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
+import space.lingu.NonNull;
 import space.lingu.lamp.LampException;
 import space.lingu.lamp.user.Role;
 import space.lingu.lamp.user.User;
@@ -28,6 +29,8 @@ import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
@@ -91,7 +94,7 @@ public class UserOperatorImpl implements UserOperator {
             return this;
         }
         user = userBuilder
-                .setUpdateTime(System.currentTimeMillis())
+                .setUpdateTime(LocalDateTime.now())
                 .build();
         delegate.updateUser(user);
         updateFlag = false;
@@ -260,7 +263,7 @@ public class UserOperatorImpl implements UserOperator {
             return this;
         }
         user = userBuilder
-                .setUpdateTime(System.currentTimeMillis())
+                .setUpdateTime(LocalDateTime.now())
                 .build();
         delegate.updateUser(user);
         updateFlag = false;
@@ -306,13 +309,15 @@ public class UserOperatorImpl implements UserOperator {
         return user.isCanceled();
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return user.getCreateTime();
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return user.getUpdateTime();
     }
 }

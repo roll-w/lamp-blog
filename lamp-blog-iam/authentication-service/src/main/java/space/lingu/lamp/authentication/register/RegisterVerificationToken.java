@@ -22,6 +22,7 @@ import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.authentication.VerifiableToken;
 import tech.rollw.common.web.system.SystemResourceKind;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -61,14 +62,16 @@ public record RegisterVerificationToken(
         return id;
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
-        return 0;
+    public LocalDateTime getCreateTime() {
+        return NONE_TIME;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
-        return 0;
+    public LocalDateTime getUpdateTime() {
+        return NONE_TIME;
     }
 
     public Builder toBuilder() {

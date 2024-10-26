@@ -41,11 +41,5 @@ public interface LongDataItem<T extends LongDataItem<T>> extends DataItem<T, Lon
         return getId();
     }
 
-    @Override
-    long getCreateTime();
-
-    @Override
-    long getUpdateTime();
-
     LongEntityBuilder<T> toBuilder();
 }

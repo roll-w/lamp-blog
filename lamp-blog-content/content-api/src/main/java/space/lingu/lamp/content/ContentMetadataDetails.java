@@ -19,6 +19,8 @@ package space.lingu.lamp.content;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
 
+import java.time.LocalDateTime;
+
 /**
  * @author RollW
  */
@@ -88,13 +90,15 @@ public class ContentMetadataDetails<T extends ContentDetails> implements Content
         return contentDetails.getMetadata();
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return contentDetails.getCreateTime();
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
        return contentDetails.getUpdateTime();
     }
 }

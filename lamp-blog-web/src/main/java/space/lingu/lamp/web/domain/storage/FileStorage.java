@@ -17,42 +17,29 @@
 package space.lingu.lamp.web.domain.storage;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.DataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.EntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * @author RollW
  */
-@DataTable(name = "file_storage")
-public class FileStorage implements DataItem<FileStorage, String> {
-    @DataColumn(name = "file_id")
-    @PrimaryKey
+public class FileStorage implements DataEntity<String> {
     private final String fileId;
-
-    @DataColumn(name = "size")
     private final long fileSize;
-
-    @DataColumn(name = "mime_type")
     private final String mimeType;
-
-    @DataColumn(name = "file_type")
     private final FileType fileType;
-
-    @DataColumn(name = "create_time")
-    private final long createTime;
+    private final LocalDateTime createTime;
 
     public FileStorage(String fileId,
                        long fileSize,
                        String mimeType,
                        FileType fileType,
-                       long createTime) {
+                       LocalDateTime createTime) {
         this.fileId = fileId;
         this.fileSize = fileSize;
         this.mimeType = mimeType;
@@ -73,10 +60,6 @@ public class FileStorage implements DataItem<FileStorage, String> {
         return fileId;
     }
 
-    public long getCreateTime() {
-        return createTime;
-    }
-
     public String getMimeType() {
         return mimeType;
     }
@@ -85,9 +68,16 @@ public class FileStorage implements DataItem<FileStorage, String> {
         return fileType;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
-        return 0;
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    @NonNull
+    @Override
+    public LocalDateTime getUpdateTime() {
+        return createTime;
     }
 
     public Builder toBuilder() {
@@ -130,7 +120,7 @@ public class FileStorage implements DataItem<FileStorage, String> {
         private long fileSize;
         private String mimeType;
         private FileType fileType;
-        private long createTime;
+        private LocalDateTime createTime;
 
         public Builder() {
         }
@@ -168,7 +158,7 @@ public class FileStorage implements DataItem<FileStorage, String> {
             return this;
         }
 
-        public Builder setCreateTime(long createTime) {
+        public Builder setCreateTime(LocalDateTime createTime) {
             this.createTime = createTime;
             return this;
         }

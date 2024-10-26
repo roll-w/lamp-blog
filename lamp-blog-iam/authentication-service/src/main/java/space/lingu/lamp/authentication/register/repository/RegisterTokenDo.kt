@@ -24,10 +24,12 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import space.lingu.lamp.DataEntity
+import space.lingu.lamp.TimeAttributed
 import space.lingu.lamp.authentication.VerifiableToken
 import space.lingu.lamp.authentication.register.RegisterTokenResourceKind
 import space.lingu.lamp.authentication.register.RegisterVerificationToken
 import tech.rollw.common.web.system.SystemResourceKind
+import java.time.LocalDateTime
 
 /**
  * @author RollW
@@ -69,9 +71,9 @@ class RegisterTokenDo(
         return id
     }
 
-    override fun getCreateTime(): Long = 0
+    override fun getCreateTime(): LocalDateTime = TimeAttributed.NONE_TIME
 
-    override fun getUpdateTime(): Long = 0
+    override fun getUpdateTime(): LocalDateTime = TimeAttributed.NONE_TIME
 
     override fun getSystemResourceKind(): SystemResourceKind =
         RegisterTokenResourceKind

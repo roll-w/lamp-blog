@@ -33,6 +33,7 @@ public interface ContentIdentity extends ContentTrait, SystemResource<Long>, Ser
     ContentType getContentType();
 
     @Override
+    @NonNull
     default Long getResourceId() {
         return getContentId();
     }

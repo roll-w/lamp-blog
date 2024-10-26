@@ -16,13 +16,15 @@
 
 package space.lingu.lamp.web.controller.content.vo;
 
+import java.time.LocalDateTime;
+
 /**
  * @author RollW
  */
 public interface ContentVo {
     long id();
 
-    long createTime();
+    LocalDateTime createTime();
 
-    long updateTime();
+    LocalDateTime updateTime();
 }

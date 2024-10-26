@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.domain.staff
 
 import space.lingu.lamp.user.UserIdentity
+import java.time.LocalDateTime
 
 /**
  * @author RollW
@@ -25,8 +26,8 @@ data class StaffInfo(
     val id: Long,
     val userIdentity: UserIdentity,
     override val types: Set<StaffType>,
-    private val createTime: Long,
-    private val updateTime: Long,
+    private val createTime: LocalDateTime,
+    private val updateTime: LocalDateTime,
     val allowUser: Boolean,
     val deleted: Boolean
 ) : AttributedStaff {
@@ -36,9 +37,9 @@ data class StaffInfo(
     override val userId: Long
         get() = userIdentity.userId
 
-    override fun getCreateTime(): Long = createTime
+    override fun getCreateTime(): LocalDateTime = createTime
 
-    override fun getUpdateTime(): Long = updateTime
+    override fun getUpdateTime(): LocalDateTime = updateTime
 
     companion object {
         @JvmStatic

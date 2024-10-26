@@ -27,6 +27,8 @@ import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.Role;
 import space.lingu.lamp.user.event.OnUserCreateEvent;
 
+import java.time.LocalDateTime;
+
 /**
  * @author RollW
  */
@@ -46,7 +48,7 @@ public class UserCreateEventListener implements ApplicationListener<OnUserCreate
             return;
         }
         StaffType type = StaffType.of(attributedUser.getRole());
-        long time = System.currentTimeMillis();
+        LocalDateTime time = LocalDateTime.now();
         Staff staff = Staff.builder()
                 .setUserId(attributedUser.getUserId())
                 .setTypes(type)

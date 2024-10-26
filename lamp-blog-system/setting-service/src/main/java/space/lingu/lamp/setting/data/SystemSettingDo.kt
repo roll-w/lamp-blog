@@ -24,20 +24,22 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
 import space.lingu.lamp.DataEntity
+import space.lingu.lamp.TimeAttributed
 import space.lingu.lamp.setting.SystemSettingResourceKind
 import tech.rollw.common.web.system.SystemResourceKind
+import java.time.LocalDateTime
 
 /**
  * @author RollW
  */
 @Entity
 @Table(name = "system_setting", uniqueConstraints = [
-    UniqueConstraint(columnNames = ["key"])
+    UniqueConstraint(columnNames = ["key"], name = "index__key")
 ])
 class SystemSettingDo(
     @Id
     @Column(name = "id")
-    @GeneratedValue(GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private var id: Long? = null,
 
     @Column(name = "key")
@@ -52,9 +54,9 @@ class SystemSettingDo(
         this.id = id
     }
 
-    override fun getCreateTime(): Long = 0
+    override fun getCreateTime(): LocalDateTime = TimeAttributed.NONE_TIME
 
-    override fun getUpdateTime(): Long = 0
+    override fun getUpdateTime(): LocalDateTime = TimeAttributed.NONE_TIME
 
     override fun getSystemResourceKind(): SystemResourceKind =
         SystemSettingResourceKind

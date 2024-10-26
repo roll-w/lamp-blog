@@ -17,42 +17,28 @@
 package space.lingu.lamp.web.domain.favorite;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.DataColumn;
-import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
  */
-public class FavoriteGroup implements LongDataItem<FavoriteGroup>{
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
+public class FavoriteGroup implements DataEntity<Long> {
     private final Long id;
-
-    @DataColumn(name = "name")
     private final String name;
-
-    @DataColumn(name = "user_id")
     private final long userId;
-
-    @DataColumn(name = "public")
     private final boolean isPublic;
-
-    @DataColumn(name = "create_time")
-    private final long createTime;
-
-    @DataColumn(name = "update_time")
-    private final long updateTime;
-
-    @DataColumn(name = "deleted")
+    private final LocalDateTime createTime;
+    private final LocalDateTime updateTime;
     private final boolean deleted;
 
     public FavoriteGroup(Long id, String name, long userId,
                          boolean isPublic,
-                         long createTime, long updateTime,
+                         LocalDateTime createTime, LocalDateTime updateTime,
                          boolean deleted) {
         this.id = id;
         this.name = name;
@@ -80,13 +66,15 @@ public class FavoriteGroup implements LongDataItem<FavoriteGroup>{
         return isPublic;
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
+    public LocalDateTime getCreateTime() {
         return createTime;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
+    public LocalDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -94,7 +82,6 @@ public class FavoriteGroup implements LongDataItem<FavoriteGroup>{
         return deleted;
     }
 
-    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -114,8 +101,8 @@ public class FavoriteGroup implements LongDataItem<FavoriteGroup>{
         private String name;
         private long userId;
         private boolean isPublic;
-        private long createTime;
-        private long updateTime;
+        private LocalDateTime createTime;
+        private LocalDateTime updateTime;
         private boolean deleted;
 
         public Builder() {
@@ -152,12 +139,12 @@ public class FavoriteGroup implements LongDataItem<FavoriteGroup>{
             return this;
         }
 
-        public Builder setCreateTime(long createTime) {
+        public Builder setCreateTime(LocalDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(long updateTime) {
+        public Builder setUpdateTime(LocalDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

@@ -45,9 +45,4 @@ public interface DataEntity<ID> extends Serializable,
         return Objects.requireNonNull(getId(), "The id of the entity must not be null.");
     }
 
-    @Override
-    long getCreateTime();
-
-    @Override
-    long getUpdateTime();
 }

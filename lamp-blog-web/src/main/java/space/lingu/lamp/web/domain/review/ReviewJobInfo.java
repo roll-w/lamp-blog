@@ -18,6 +18,8 @@ package space.lingu.lamp.web.domain.review;
 
 import space.lingu.lamp.content.ContentType;
 
+import java.time.LocalDateTime;
+
 /**
  * @author RollW
  */
@@ -30,8 +32,8 @@ public record ReviewJobInfo(
         ReviewMark reviewMark,
         Long reviewer,
         Long operator,
-        long assignedTime,
-        long reviewTime
+        LocalDateTime assignedTime,
+        LocalDateTime reviewTime
 ) {
     public static ReviewJobInfo of(ReviewJob job) {
         if (job == null) {

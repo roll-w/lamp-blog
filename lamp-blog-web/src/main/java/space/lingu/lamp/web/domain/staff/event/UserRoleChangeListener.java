@@ -27,6 +27,8 @@ import space.lingu.lamp.user.Role;
 import space.lingu.lamp.user.UserInfo;
 import space.lingu.lamp.user.event.OnUserRoleChangeEvent;
 
+import java.time.LocalDateTime;
+
 /**
  * @author RollW
  */
@@ -50,7 +52,7 @@ public class UserRoleChangeListener
             return;
         }
         StaffType type = StaffType.of(userInfo.role());
-        long time = System.currentTimeMillis();
+        LocalDateTime time = LocalDateTime.now();
         Staff newStaff = Staff.builder()
                 .setUserId(userInfo.id())
                 .setTypes(type)

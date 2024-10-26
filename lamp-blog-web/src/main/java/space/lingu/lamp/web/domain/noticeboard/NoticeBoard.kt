@@ -16,49 +16,37 @@
 package space.lingu.lamp.web.domain.noticeboard
 
 import space.lingu.NonNull
-import space.lingu.lamp.LongDataItem
+import space.lingu.lamp.DataEntity
 import space.lingu.lamp.LongEntityBuilder
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind
-import space.lingu.light.DataColumn
-import space.lingu.light.DataTable
-import space.lingu.light.PrimaryKey
-import space.lingu.light.SQLDataType
 import tech.rollw.common.web.system.SystemResourceKind
+import java.time.LocalDateTime
 
 /**
  * Notice board, system-wide announcement.
  *
  * @author RollW
  */
-@DataTable(name = "notice_board")
 data class NoticeBoard(
-    @PrimaryKey(autoGenerate = true)
-    @DataColumn(name = "id")
     private val id: Long?,
-
-    @DataColumn(name = "title") val title: String,
-
-    @DataColumn(name = "content", dataType = SQLDataType.LONGTEXT)
+    val title: String,
     val content: String?,
     /**
      * Creator. Needs to be ADMIN or EDITOR.
      */
-    @DataColumn(name = "user_id")
     val userId: Long,
-    @DataColumn(name = "create_time")
-    private val createTime: Long,
-    @DataColumn(name = "update_time")
-    private val updateTime: Long
-) : LongDataItem<NoticeBoard> {
+    private val createTime: LocalDateTime,
+    private val updateTime: LocalDateTime
+) : DataEntity<Long> {
     override fun getId(): Long? {
         return id
     }
 
-    override fun getCreateTime(): Long {
+    override fun getCreateTime(): LocalDateTime {
         return createTime
     }
 
-    override fun getUpdateTime(): Long {
+    override fun getUpdateTime(): LocalDateTime {
         return updateTime
     }
 
@@ -67,7 +55,7 @@ data class NoticeBoard(
         return LampSystemResourceKind.SYSTEM_NOTICE_BOARD
     }
 
-    override fun toBuilder(): Builder {
+    fun toBuilder(): Builder {
         return Builder(this)
     }
 
@@ -76,8 +64,8 @@ data class NoticeBoard(
         private var title: String = ""
         private var content: String? = null
         private var userId: Long = 0
-        private var createTime: Long = 0
-        private var updateTime: Long = 0
+        private var createTime: LocalDateTime = LocalDateTime.now()
+        private var updateTime: LocalDateTime = LocalDateTime.now()
 
         constructor()
 
@@ -110,12 +98,12 @@ data class NoticeBoard(
             return this
         }
 
-        fun setCreateTime(createTime: Long): Builder {
+        fun setCreateTime(createTime: LocalDateTime): Builder {
             this.createTime = createTime
             return this
         }
 
-        fun setUpdateTime(updateTime: Long): Builder {
+        fun setUpdateTime(updateTime: LocalDateTime): Builder {
             this.updateTime = updateTime
             return this
         }

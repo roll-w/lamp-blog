@@ -17,10 +17,11 @@
 package space.lingu.lamp.content;
 
 import space.lingu.NonNull;
-import space.lingu.Warning;
 import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import tech.rollw.common.web.system.SystemResourceKind;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
@@ -76,23 +77,23 @@ public class ContentMetadata implements DataEntity<Long>, ContentTrait {
     /**
      * ContentMetadata does not have create time.
      *
-     * @return 0 only.
+     * @return {@code NONE_TIME} only.
      */
+    @NonNull
     @Override
-    @Warning("ContentMetadata does not have create time.")
-    public long getCreateTime() {
-        return 0;
+    public LocalDateTime getCreateTime() {
+        return NONE_TIME;
     }
 
     /**
      * ContentMetadata does not have update time.
      *
-     * @return 0 only.
+     * @return {@code NONE_TIME} only.
      */
+    @NonNull
     @Override
-    @Warning("ContentMetadata does not have update time.")
-    public long getUpdateTime() {
-        return 0;
+    public LocalDateTime getUpdateTime() {
+        return NONE_TIME;
     }
 
     public long getUserId() {

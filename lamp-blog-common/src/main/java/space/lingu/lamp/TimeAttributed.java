@@ -16,6 +16,8 @@
 
 package space.lingu.lamp;
 
+import space.lingu.NonNull;
+
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 
@@ -23,21 +25,11 @@ import java.time.ZoneOffset;
  * @author RollW
  */
 public interface TimeAttributed {
-    @Deprecated
-    // TODO: use LocalDateTime instead of long
-    long getCreateTime();
+    @NonNull
+    LocalDateTime getCreateTime();
 
-    @Deprecated
-    long getUpdateTime();
+    @NonNull
+    LocalDateTime getUpdateTime();
 
-    // TODO: remove methods below when migration is done
-    default LocalDateTime getCreateDateTime() {
-        return LocalDateTime.ofEpochSecond(getCreateTime(), 0, ZoneOffset.UTC);
-    }
-
-    default LocalDateTime getUpdateDateTime() {
-        return LocalDateTime.ofEpochSecond(getUpdateTime(), 0, ZoneOffset.UTC);
-    }
-
-    LocalDateTime NONE = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+    LocalDateTime NONE_TIME = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
 }

@@ -28,6 +28,7 @@ import space.lingu.lamp.content.common.ContentErrorCode;
 import space.lingu.lamp.content.common.ContentException;
 import tech.rollw.common.web.CommonRuntimeException;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -52,13 +53,15 @@ public abstract class AbstractContentOperator implements ContentOperator {
         this.checkDeleted = checkDeleted;
     }
 
+    @NonNull
     @Override
-    public final long getCreateTime() {
+    public final LocalDateTime getCreateTime() {
         return content.getCreateTime();
     }
 
+    @NonNull
     @Override
-    public final long getUpdateTime() {
+    public final LocalDateTime getUpdateTime() {
         return content.getUpdateTime();
     }
 

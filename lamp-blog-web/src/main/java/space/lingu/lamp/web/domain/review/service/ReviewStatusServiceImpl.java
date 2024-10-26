@@ -19,11 +19,13 @@ package space.lingu.lamp.web.domain.review.service;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.web.domain.review.ReviewJob;
-import space.lingu.lamp.web.domain.review.common.ReviewException;
 import space.lingu.lamp.web.domain.review.ReviewJobInfo;
+import space.lingu.lamp.web.domain.review.common.ReviewException;
 import space.lingu.lamp.web.domain.review.event.OnReviewStateChangeEvent;
 import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
 import tech.rollw.common.web.CommonErrorCode;
+
+import java.time.LocalDateTime;
 
 /**
  * @author RollW
@@ -68,7 +70,7 @@ public class ReviewStatusServiceImpl implements ReviewStatusService {
         if (job == null) {
             return null;
         }
-        long time = System.currentTimeMillis();
+        LocalDateTime time = LocalDateTime.now();
         reviewerAllocator.releaseReviewer(job.getReviewerId(), job.getType());
         if (passed) {
             return job.reviewPass(operator, time);

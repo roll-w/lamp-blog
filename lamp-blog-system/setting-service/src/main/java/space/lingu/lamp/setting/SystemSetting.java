@@ -16,29 +16,21 @@
 
 package space.lingu.lamp.setting;
 
+import space.lingu.NonNull;
 import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.EntityBuilder;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
  * @author RollW
  */
-@DataTable(name = "system_setting")
 @SuppressWarnings("all")
 public class SystemSetting implements DataEntity<Long> {
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
     private final Long id;
-
-    @DataColumn(name = "key")
     private final String key;
-
-    @DataColumn(name = "value")
     private final String value;
 
     public SystemSetting(Long id, String key, String value) {
@@ -60,14 +52,16 @@ public class SystemSetting implements DataEntity<Long> {
         return id;
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
-        return 0;
+    public LocalDateTime getCreateTime() {
+        return NONE_TIME;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
-        return 0;
+    public LocalDateTime getUpdateTime() {
+        return NONE_TIME;
     }
 
     public Builder toBuilder() {

@@ -22,12 +22,14 @@ import space.lingu.Nullable;
 import space.lingu.lamp.content.Content;
 import space.lingu.lamp.content.ContentStatus;
 
+import java.time.LocalDateTime;
+
 /**
  * @author RollW
  */
 public class ContentStatusEvent<C extends Content> extends ApplicationEvent {
     private final C content;
-    private final long timestamp;
+    private final LocalDateTime timestamp;
     /**
      * Maybe null if the event is fired when the content is created.
      */
@@ -36,7 +38,7 @@ public class ContentStatusEvent<C extends Content> extends ApplicationEvent {
     @NonNull
     private final ContentStatus currentStatus;
 
-    public ContentStatusEvent(C content, long timestamp,
+    public ContentStatusEvent(C content, LocalDateTime timestamp,
                               @Nullable ContentStatus previousStatus,
                               @NonNull ContentStatus currentStatus) {
         super(content);
@@ -60,7 +62,7 @@ public class ContentStatusEvent<C extends Content> extends ApplicationEvent {
         return currentStatus;
     }
 
-    public long getEventTimestamp() {
+    public LocalDateTime getEventTimestamp() {
         return timestamp;
     }
 }

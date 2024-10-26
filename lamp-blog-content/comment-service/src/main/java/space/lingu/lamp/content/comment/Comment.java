@@ -27,7 +27,6 @@ import space.lingu.lamp.content.ContentType;
 import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 /**
  * @author RollW
@@ -77,6 +76,7 @@ public class Comment implements DataEntity<Long>, ContentDetails, ContentAssocia
         return id;
     }
 
+    @NonNull
     @Override
     public Long getResourceId() {
         return id;
@@ -118,14 +118,16 @@ public class Comment implements DataEntity<Long>, ContentDetails, ContentAssocia
         return commentOnId;
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
-        return createTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    public LocalDateTime getCreateTime() {
+        return createTime;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
-        return updateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
     }
 
     public ContentType getCommentOnType() {

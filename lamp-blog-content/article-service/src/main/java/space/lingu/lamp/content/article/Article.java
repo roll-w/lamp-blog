@@ -25,7 +25,6 @@ import space.lingu.lamp.content.ContentDetailsMetadata;
 import space.lingu.lamp.content.ContentType;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 
 /**
  * @author RollW
@@ -83,14 +82,16 @@ public class Article implements DataEntity<Long>, ContentDetails {
         return new ArticleDetailsMetadata(cover);
     }
 
+    @NonNull
     @Override
-    public long getCreateTime() {
-        return createTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+    public LocalDateTime getCreateTime() {
+        return createTime;
     }
 
+    @NonNull
     @Override
-    public long getUpdateTime() {
-        return updateTime.atZone(ZoneId.systemDefault()).toEpochSecond();
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
     }
 
     public String getCover() {
