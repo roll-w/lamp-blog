@@ -19,8 +19,6 @@ package space.lingu.lamp.content.service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.content.persistence.ContentMetadataDo;
-import space.lingu.lamp.content.persistence.ContentMetadataRepository;
 import space.lingu.lamp.content.Content;
 import space.lingu.lamp.content.ContentAccessAuthType;
 import space.lingu.lamp.content.ContentAccessCredentials;
@@ -33,9 +31,10 @@ import space.lingu.lamp.content.ContentProviderFactory;
 import space.lingu.lamp.content.ContentPublishProvider;
 import space.lingu.lamp.content.ContentPublisher;
 import space.lingu.lamp.content.ContentStatus;
+import space.lingu.lamp.content.ContentSupportableUtils;
 import space.lingu.lamp.content.ContentTrait;
-import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.content.UncreatedContent;
+import space.lingu.lamp.content.UncreatedContentPreChecker;
 import space.lingu.lamp.content.collection.ContentCollectionIdentity;
 import space.lingu.lamp.content.collection.ContentCollectionProvider;
 import space.lingu.lamp.content.collection.ContentCollectionProviderFactory;
@@ -44,8 +43,9 @@ import space.lingu.lamp.content.common.ContentErrorCode;
 import space.lingu.lamp.content.common.ContentException;
 import space.lingu.lamp.content.permit.ContentPermitChecker;
 import space.lingu.lamp.content.permit.ContentPermitResult;
+import space.lingu.lamp.content.persistence.ContentMetadataDo;
+import space.lingu.lamp.content.persistence.ContentMetadataRepository;
 import space.lingu.lamp.content.publish.ContentPublishCallback;
-import space.lingu.lamp.content.publish.ContentPublishFilter;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.system.ContextThreadAware;
@@ -64,9 +64,8 @@ public class ContentService implements ContentAccessService,
         ContentPublishProvider, ContentCollectionProviderFactory {
     private static final Logger logger = LoggerFactory.getLogger(ContentService.class);
     private final List<ContentPublisher> contentPublishers;
+    private final List<UncreatedContentPreChecker> uncreatedContentPreCheckers;
     private final List<ContentCollectionProvider> contentCollectionProviders;
-
-    private final List<ContentPublishFilter> contentPublishFilters;
     private final List<ContentPublishCallback> contentPublishCallbacks;
 
     private final ContentProviderFactory contentProviderFactory;
@@ -75,16 +74,16 @@ public class ContentService implements ContentAccessService,
     private final ContextThreadAware<PageableContext> pageableContextThreadAware;
 
     public ContentService(List<ContentPublisher> contentPublishers,
+                          List<UncreatedContentPreChecker> uncreatedContentPreCheckers,
                           List<ContentCollectionProvider> contentCollectionProviders,
-                          List<ContentPublishFilter> contentPublishFilters,
                           List<ContentPublishCallback> contentPublishCallbacks,
                           ContentProviderFactory contentProviderFactory,
                           ContentPermitChecker contentPermitChecker,
                           ContentMetadataRepository contentMetadataRepository,
                           ContextThreadAware<PageableContext> pageableContextThreadAware) {
         this.contentPublishers = contentPublishers;
+        this.uncreatedContentPreCheckers = uncreatedContentPreCheckers;
         this.contentCollectionProviders = contentCollectionProviders;
-        this.contentPublishFilters = contentPublishFilters;
         this.contentPublishCallbacks = contentPublishCallbacks;
         this.contentProviderFactory = contentProviderFactory;
         this.contentPermitChecker = contentPermitChecker;
@@ -162,20 +161,6 @@ public class ContentService implements ContentAccessService,
         return metadata.getContentStatus();
     }
 
-    private ContentPublisher getFirstAvailablePublisherOf(ContentType type) {
-        return contentPublishers
-                .stream()
-                .filter(accessor -> accessor.supports(type))
-                .findFirst()
-                .orElseThrow(() -> {
-                    logger.warn("Unsupported/Unregistered content type of ContentType.{}", type);
-                    return new ContentException(
-                            CommonErrorCode.ERROR_NOT_FOUND,
-                            "Unsupported content type of " + type
-                    );
-                });
-    }
-
     private ErrorCode fromContentStatus(ContentStatus status) {
         return switch (status) {
             case PUBLISHED -> CommonErrorCode.SUCCESS;
@@ -194,14 +179,13 @@ public class ContentService implements ContentAccessService,
     @Override
     public ContentDetails publishContent(UncreatedContent uncreatedContent) throws ContentException {
         LocalDateTime timestamp = LocalDateTime.now();
-        for (ContentPublishFilter contentPublishFilter :
-                contentPublishFilters) {
-            ErrorCode errorCode = contentPublishFilter.filter(uncreatedContent);
-            if (errorCode.failed()) {
-                throw new ContentException(errorCode);
-            }
-        }
-        ContentPublisher contentPublisher = getFirstAvailablePublisherOf(
+        ContentSupportableUtils.findAllSupportable(uncreatedContentPreCheckers,
+                        uncreatedContent.getContentType())
+                .forEach(checker ->
+                        checker.checkUncreatedContent(uncreatedContent)
+                );
+        ContentPublisher contentPublisher = ContentSupportableUtils.findSupportableNonNull(
+                contentPublishers,
                 uncreatedContent.getContentType());
         ContentDetails contentDetails = contentPublisher.publish(
                 uncreatedContent,
