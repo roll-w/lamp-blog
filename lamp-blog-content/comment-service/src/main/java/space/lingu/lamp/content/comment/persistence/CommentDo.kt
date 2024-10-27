@@ -25,6 +25,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Lob
 import jakarta.persistence.Table
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import space.lingu.lamp.DataEntity
 import space.lingu.lamp.content.ContentAssociated
 import space.lingu.lamp.content.ContentDetails
@@ -61,15 +63,17 @@ class CommentDo(
     @Column(name = "update_time", nullable = false)
     private var updateTime: LocalDateTime = LocalDateTime.now(),
 
-    @Column(name = "comment_on_type", nullable = false)
+    @Column(name = "comment_on_type", nullable = false, length = 40)
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     var commentOnType: ContentType = ContentType.COMMENT,
 
     @Column(name = "comment_on_id", nullable = false)
     var commentOnId: Long = 0,
 
-    @Column(name = "comment_status", nullable = false)
+    @Column(name = "comment_status", nullable = false, length = 40)
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     var commentStatus: CommentStatus = CommentStatus.NONE
 ) : DataEntity<Long>, ContentDetails, ContentAssociated {
     override fun getId(): Long? = id

@@ -25,6 +25,8 @@ import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import jakarta.persistence.UniqueConstraint
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import space.lingu.lamp.DataEntity
 import space.lingu.lamp.TimeAttributed
 import space.lingu.lamp.content.ContentAccessAuthType
@@ -42,7 +44,7 @@ import java.time.LocalDateTime
 @Entity
 @Table(
     name = "content_metadata", uniqueConstraints = [
-        UniqueConstraint(columnNames = ["content_id", "type"])
+        UniqueConstraint(columnNames = ["content_id", "type"], name = "index__content_id_type")
     ]
 )
 class ContentMetadataDo(
@@ -59,13 +61,17 @@ class ContentMetadataDo(
 
     @Column(name = "type", nullable = false, length = 40)
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private var contentType: ContentType = ContentType.ARTICLE,
 
     @Column(name = "status", nullable = false, length = 40)
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     var contentStatus: ContentStatus = ContentStatus.REVIEWING,
 
-    @Column(name = "auth_type", nullable = false)
+    @Column(name = "auth_type", nullable = false, length = 40)
+    @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     var contentAccessAuthType: ContentAccessAuthType = ContentAccessAuthType.PUBLIC
 ) : DataEntity<Long>, ContentTrait {
     override fun getId(): Long? = id

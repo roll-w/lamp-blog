@@ -106,7 +106,8 @@ public class LampBlogSystemApplication {
         properties.put("spring.config.location", "");
         properties.put("spring.messages.basename", "messages");
         properties.put("spring.jmx.enabled", false);
-        properties.put("spring.jpa.properties.hibernates.globally_quoted_identifiers", true);
+        properties.put("spring.jpa.show-sql", true);
+        properties.put("spring.jpa.properties.hibernate.globally_quoted_identifiers", "true");
         properties.put("spring.jpa.hibernate.ddl-auto", "update");
     }
 

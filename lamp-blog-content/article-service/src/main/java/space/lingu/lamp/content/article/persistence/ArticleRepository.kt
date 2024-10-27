@@ -18,12 +18,14 @@ package space.lingu.lamp.content.article.persistence
 
 import org.springframework.data.jpa.domain.Specification
 import org.springframework.data.repository.query.Param
+import org.springframework.stereotype.Repository
 import space.lingu.lamp.common.data.CommonRepository
-import java.util.*
+import java.util.Optional
 
 /**
  * @author RollW
  */
+@Repository
 class ArticleRepository(
     private val articleDao: ArticleDao
 ) : CommonRepository<ArticleDo, Long>(articleDao) {

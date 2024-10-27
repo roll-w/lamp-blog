@@ -26,6 +26,8 @@ import jakarta.persistence.Table
 import jakarta.persistence.Temporal
 import jakarta.persistence.TemporalType
 import jakarta.persistence.UniqueConstraint
+import org.hibernate.annotations.JdbcTypeCode
+import org.hibernate.type.SqlTypes
 import space.lingu.NonNull
 import space.lingu.lamp.DataEntity
 import space.lingu.lamp.user.AttributedUserDetails
@@ -59,6 +61,7 @@ class UserDo(
 
     @Column(name = "role", length = 20, nullable = false)
     @Enumerated(EnumType.STRING)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     private var role: Role = Role.USER,
 
     @Temporal(TemporalType.TIMESTAMP)
