@@ -18,8 +18,8 @@ package space.lingu.lamp.web.controller.review;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import space.lingu.lamp.web.controller.AdminApi;
-import space.lingu.lamp.web.domain.review.ReviewJobProvider;
-import space.lingu.lamp.web.domain.review.ReviewJobInfo;
+import space.lingu.lamp.content.review.ReviewJobProvider;
+import space.lingu.lamp.content.review.ReviewJobInfo;
 import tech.rollw.common.web.HttpResponseEntity;
 
 import java.util.List;

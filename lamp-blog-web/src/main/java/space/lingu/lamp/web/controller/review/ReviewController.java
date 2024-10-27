@@ -28,12 +28,12 @@ import space.lingu.lamp.LampException;
 import space.lingu.lamp.web.common.ApiContext;
 import space.lingu.lamp.web.controller.Api;
 import space.lingu.lamp.web.controller.review.model.ReviewRequest;
-import space.lingu.lamp.web.domain.review.ReviewJobContent;
-import space.lingu.lamp.web.domain.review.ReviewJobInfo;
-import space.lingu.lamp.web.domain.review.ReviewJobProvider;
-import space.lingu.lamp.web.domain.review.ReviewStatues;
-import space.lingu.lamp.web.domain.review.service.ReviewContentService;
-import space.lingu.lamp.web.domain.review.service.ReviewStatusService;
+import space.lingu.lamp.content.review.ReviewJobContent;
+import space.lingu.lamp.content.review.ReviewJobInfo;
+import space.lingu.lamp.content.review.ReviewJobProvider;
+import space.lingu.lamp.content.review.ReviewStatues;
+import space.lingu.lamp.content.review.ReviewContentProvider;
+import space.lingu.lamp.content.review.service.ReviewStatusService;
 import space.lingu.lamp.user.UserIdentity;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.HttpResponseEntity;
@@ -51,17 +51,17 @@ public class ReviewController {
 
     private final ReviewJobProvider reviewJobProvider;
     private final ReviewStatusService reviewStatusService;
-    private final ReviewContentService reviewContentService;
+    private final ReviewContentProvider reviewContentProvider;
     private final ContextThreadAware<ApiContext> apiContextThreadAware;
 
 
     public ReviewController(ReviewJobProvider reviewJobProvider,
                             ReviewStatusService reviewStatusService,
-                            ReviewContentService reviewContentService,
+                            ReviewContentProvider reviewContentProvider,
                             ContextThreadAware<ApiContext> apiContextThreadAware) {
         this.reviewJobProvider = reviewJobProvider;
         this.reviewStatusService = reviewStatusService;
-        this.reviewContentService = reviewContentService;
+        this.reviewContentProvider = reviewContentProvider;
         this.apiContextThreadAware = apiContextThreadAware;
     }
 
@@ -112,7 +112,7 @@ public class ReviewController {
         ContextThread<ApiContext> apiContextThread = apiContextThreadAware.getContextThread();
         ApiContext apiContext = apiContextThread.getContext();
         UserIdentity user = Verify.verifyNotNull(apiContext.getUser());
-        ReviewJobContent reviewJobContent = reviewContentService
+        ReviewJobContent reviewJobContent = reviewContentProvider
                 .getReviewContent(jobId);
         ReviewJobInfo reviewJobInfo = reviewJobContent.getReviewJobInfo();
         if (reviewJobInfo.reviewer() != user.getOperatorId()) {

@@ -14,16 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.service;
+package space.lingu.lamp.content.review
 
-import space.lingu.lamp.web.domain.review.common.ReviewException;
-import space.lingu.lamp.web.domain.review.ReviewJobInfo;
+import tech.rollw.common.web.system.SystemResourceKind
 
 /**
  * @author RollW
  */
-public interface ReviewStatusService {
-    // TODO: a temporary interface, need to be refactored
-    ReviewJobInfo makeReview(long jobId, long operator,
-                             boolean passed, String reason) throws ReviewException;
+object ReviewJobResourceKind : SystemResourceKind {
+    override fun getName(): String = "REVIEW_JOB"
+
+    override fun getAliases(): List<String> = emptyList()
 }

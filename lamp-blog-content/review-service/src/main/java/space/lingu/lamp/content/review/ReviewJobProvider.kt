@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package space.lingu.lamp.web.domain.review
+package space.lingu.lamp.content.review
 
 import space.lingu.lamp.content.ContentTrait
 import tech.rollw.common.web.system.Operator
@@ -29,12 +29,12 @@ interface ReviewJobProvider {
     fun getReviewJobs(operatorId: Long): List<ReviewJobInfo>
 
     fun getReviewJobs(
-        operator: Operator,
+        reviewer: Operator,
         status: ReviewStatus
     ): List<ReviewJobInfo>
 
     fun getReviewJobs(
-        operator: Operator,
+        reviewer: Operator,
         statues: ReviewStatues = ReviewStatues.ALL
     ): List<ReviewJobInfo>
 

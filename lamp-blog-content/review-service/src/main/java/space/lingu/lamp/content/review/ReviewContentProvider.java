@@ -14,22 +14,14 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.common;
+package space.lingu.lamp.content.review;
 
-import space.lingu.lamp.web.domain.review.ReviewJobInfo;
+import space.lingu.NonNull;
 
 /**
  * @author RollW
  */
-public class NotReviewedException extends ReviewException {
-    private final ReviewJobInfo reviewJobInfo;
-
-    public NotReviewedException(ReviewJobInfo reviewJobInfo) {
-        super(ReviewErrorCode.ERROR_NOT_REVIEWED);
-        this.reviewJobInfo = reviewJobInfo;
-    }
-
-    public ReviewJobInfo getReviewInfo() {
-        return reviewJobInfo;
-    }
+public interface ReviewContentProvider {
+    @NonNull
+    ReviewJobContent getReviewContent(long jobId);
 }

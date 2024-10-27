@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review;
+package space.lingu.lamp.content.review;
 
 import space.lingu.lamp.content.ContentType;
 
@@ -42,7 +42,7 @@ public record ReviewJobInfo(
         return new ReviewJobInfo(
                 job.getJobId(),
                 job.getStatus(),
-                job.getType(),
+                job.getReviewContentType(),
                 job.getResult(),
                 job.getReviewContentId(),
                 job.getReviewMark(),

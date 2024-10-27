@@ -14,23 +14,17 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review;
+package space.lingu.lamp.content.review;
 
 import com.google.common.base.Preconditions;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
-import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.content.ContentAssociated;
 import space.lingu.lamp.content.ContentIdentity;
 import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.content.SimpleContentIdentity;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.Constructor;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.LightIgnore;
-import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.time.LocalDateTime;
@@ -39,56 +33,34 @@ import java.util.Objects;
 /**
  * @author RollW
  */
-@DataTable(name = "review_job")
-public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
+public class ReviewJob implements DataEntity<Long>, ContentAssociated {
     private final Long jobId;
 
     // TODO: may add serial number to replace job id in the future
     // private String serialNumber;
-
-    @DataColumn(name = "content_id")
     private final long reviewContentId;
+    private final ContentType reviewContentType;
 
     // TODO: may change to reviewer ids in the future
-    @DataColumn(name = "reviewer_id")
     private final Long reviewerId;
-
-    @DataColumn(name = "operator_id")
     @Nullable
     private final Long operatorId;
-
-    @DataColumn(name = "status")
     private final ReviewStatus status;
-
-    @DataColumn(name = "type")
-    private final ContentType type;
-
-    @DataColumn(name = "create_time")
-    private final LocalDateTime assignedTime;
-
-    @DataColumn(name = "result")
     private final String result;
-
-    @DataColumn(name = "review_time")
+    private final LocalDateTime assignedTime;
     private final LocalDateTime reviewTime;
-
-    @DataColumn(name = "review_mark")
     private final ReviewMark reviewMark;
-
-    @LightIgnore
     private final ContentIdentity associatedContent;
 
-    @Constructor
     public ReviewJob(Long jobId, long reviewContentId,
-                     Long reviewerId,
+                     ContentType reviewContentType, Long reviewerId,
                      @Nullable Long operatorId,
-                     ReviewStatus status, ContentType type,
-                     LocalDateTime assignedTime, String result, LocalDateTime reviewTime,
+                     ReviewStatus status,
+                     String result, LocalDateTime assignedTime,
+                     LocalDateTime reviewTime,
                      ReviewMark reviewMark) {
         Preconditions.checkNotNull(status);
-        Preconditions.checkNotNull(type);
+        Preconditions.checkNotNull(reviewContentType);
         Preconditions.checkNotNull(reviewMark);
 
         this.jobId = jobId;
@@ -96,20 +68,12 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
         this.reviewerId = reviewerId;
         this.operatorId = operatorId;
         this.status = status;
-        this.type = type;
+        this.reviewContentType = reviewContentType;
         this.assignedTime = assignedTime;
         this.result = result;
         this.reviewTime = reviewTime;
         this.reviewMark = reviewMark;
-        this.associatedContent = new SimpleContentIdentity(reviewContentId, type);
-    }
-
-    public ReviewJob(long reviewContentId, long reviewerId,
-                     long operatorId, ReviewStatus status, ContentType type,
-                     LocalDateTime assignedTime, String result, LocalDateTime reviewTime,
-                     ReviewMark reviewMark) {
-        this(null, reviewContentId, reviewerId, operatorId, status, type,
-                assignedTime, result, reviewTime, reviewMark);
+        this.associatedContent = new SimpleContentIdentity(reviewContentId, reviewContentType);
     }
 
     @Override
@@ -150,8 +114,8 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
         return status;
     }
 
-    public ContentType getType() {
-        return type;
+    public ContentType getReviewContentType() {
+        return reviewContentType;
     }
 
     public LocalDateTime getAssignedTime() {
@@ -177,17 +141,17 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
 
     public ReviewJob reviewPass(long operatorId, LocalDateTime reviewTime) {
         return new ReviewJob(
-                jobId, reviewContentId, reviewerId,
-                operatorId, ReviewStatus.REVIEWED,
-                type, assignedTime, null, reviewTime,
+                jobId, reviewContentId, reviewContentType,
+                reviewerId, operatorId,
+                ReviewStatus.REVIEWED, null, assignedTime, reviewTime,
                 reviewMark);
     }
 
     public ReviewJob reviewReject(long operatorId, String result, LocalDateTime reviewTime) {
         return new ReviewJob(
-                jobId, reviewContentId, reviewerId,
-                operatorId, ReviewStatus.REJECTED,
-                type, assignedTime, result, reviewTime,
+                jobId, reviewContentId, reviewContentType,
+                reviewerId, operatorId,
+                ReviewStatus.REJECTED, result, assignedTime, reviewTime,
                 reviewMark);
     }
 
@@ -200,12 +164,12 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         ReviewJob job = (ReviewJob) o;
-        return Objects.equals(reviewerId, job.reviewerId) && Objects.equals(operatorId, job.operatorId) && assignedTime == job.assignedTime && reviewTime == job.reviewTime && Objects.equals(jobId, job.jobId) && Objects.equals(reviewContentId, job.reviewContentId) && status == job.status && type == job.type && Objects.equals(result, job.result) && reviewMark == job.reviewMark;
+        return Objects.equals(reviewerId, job.reviewerId) && Objects.equals(operatorId, job.operatorId) && assignedTime == job.assignedTime && reviewTime == job.reviewTime && Objects.equals(jobId, job.jobId) && Objects.equals(reviewContentId, job.reviewContentId) && status == job.status && reviewContentType == job.reviewContentType && Objects.equals(result, job.result) && reviewMark == job.reviewMark;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(jobId, reviewContentId, reviewerId, operatorId, status, type, assignedTime, result, reviewTime, reviewMark);
+        return Objects.hash(jobId, reviewContentId, reviewerId, operatorId, status, reviewContentType, assignedTime, result, reviewTime, reviewMark);
     }
 
     @Override
@@ -216,7 +180,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
                 ", reviewerId=" + reviewerId +
                 ", operatorId=" + operatorId +
                 ", status=" + status +
-                ", type=" + type +
+                ", type=" + reviewContentType +
                 ", assignedTime=" + assignedTime +
                 ", result='" + result + '\'' +
                 ", reviewTime=" + reviewTime +
@@ -230,16 +194,16 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
 
     public ReviewJob fork(long id) {
         return new ReviewJob(
-                id, reviewContentId, reviewerId,
-                operatorId, status, type, assignedTime,
-                result, reviewTime,
+                id, reviewContentId, reviewContentType,
+                reviewerId, operatorId, status, result, assignedTime,
+                reviewTime,
                 reviewMark);
     }
 
     @Override
     @NonNull
     public SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.REVIEW_JOB;
+        return ReviewJobResourceKind.INSTANCE;
     }
 
 
@@ -249,7 +213,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
         private Long reviewerId;
         private Long operatorId;
         private ReviewStatus status;
-        private ContentType type;
+        private ContentType reviewContentType;
         private LocalDateTime assignedTime;
         private String result;
         private LocalDateTime reviewTime;
@@ -264,7 +228,7 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
             this.reviewerId = job.reviewerId;
             this.operatorId = job.operatorId;
             this.status = job.status;
-            this.type = job.type;
+            this.reviewContentType = job.reviewContentType;
             this.assignedTime = job.assignedTime;
             this.result = job.result;
             this.reviewTime = job.reviewTime;
@@ -301,8 +265,8 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
             return this;
         }
 
-        public Builder setType(ContentType type) {
-            this.type = type;
+        public Builder setReviewContentType(ContentType reviewContentType) {
+            this.reviewContentType = reviewContentType;
             return this;
         }
 
@@ -330,8 +294,8 @@ public class ReviewJob implements LongDataItem<ReviewJob>, ContentAssociated {
         public ReviewJob build() {
             return new ReviewJob(
                     jobId, reviewContentId,
-                    reviewerId, operatorId, status, type,
-                    assignedTime, result, reviewTime,
+                    reviewContentType, reviewerId, operatorId, status,
+                    result, assignedTime, reviewTime,
                     reviewMark);
         }
 

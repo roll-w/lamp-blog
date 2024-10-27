@@ -14,25 +14,14 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review;
+package space.lingu.lamp.content.review.persistence
+
+import space.lingu.lamp.common.data.CommonDao
+import space.lingu.lamp.common.data.Dao
 
 /**
  * @author RollW
  */
-public enum ReviewStatues {
-    FINISHED(ReviewStatus.REVIEWED, ReviewStatus.REJECTED),
-    UNFINISHED(ReviewStatus.NOT_REVIEWED),
-    PASSED(ReviewStatus.REVIEWED),
-    REJECTED(ReviewStatus.REJECTED),
-    ALL(ReviewStatus.NOT_REVIEWED, ReviewStatus.REVIEWED, ReviewStatus.REJECTED);
-
-    private final ReviewStatus[] statuses;
-
-    ReviewStatues(ReviewStatus... statuses) {
-        this.statuses = statuses;
-    }
-
-    public ReviewStatus[] getStatuses() {
-        return statuses;
-    }
+@Dao
+interface ReviewJobDao : CommonDao<ReviewJobDo, Long> {
 }

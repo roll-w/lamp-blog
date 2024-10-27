@@ -13,24 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package space.lingu.lamp.web.domain.review
 
-import space.lingu.lamp.content.ContentDetails
+package space.lingu.lamp.content.review;
 
 /**
  * @author RollW
  */
-data class ReviewJobContent(
-    val reviewJobInfo: ReviewJobInfo,
-    val contentDetails: ContentDetails
-) {
-    companion object {
-        @JvmStatic
-        fun of(job: ReviewJob, contentDetails: ContentDetails): ReviewJobContent {
-            return ReviewJobContent(
-                ReviewJobInfo.of(job),
-                contentDetails
-            )
-        }
+public enum ReviewStatus {
+    /**
+     * Not reviewed.
+     */
+    NOT_REVIEWED,
+    /**
+     * Reviewed and approved.
+     */
+    REVIEWED,
+    /**
+     * Rejected.
+     */
+    REJECTED,
+    /**
+     * Review is canceled by the reviewer or the author.
+     */
+    CANCELED;
+
+    public boolean isReviewed() {
+        return this != NOT_REVIEWED;
     }
 }

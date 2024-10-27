@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.event;
+package space.lingu.lamp.content.review.event;
 
 import org.springframework.context.ApplicationEvent;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.review.ReviewJob;
-import space.lingu.lamp.web.domain.review.ReviewStatus;
+import space.lingu.lamp.content.review.ReviewJob;
+import space.lingu.lamp.content.review.ReviewStatus;
 
 /**
  * @author RollW

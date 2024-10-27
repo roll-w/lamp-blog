@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.service;
+package space.lingu.lamp.content.review;
 
 import space.lingu.lamp.content.ContentType;
 

@@ -14,15 +14,17 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.service;
+package space.lingu.lamp.content.review.service;
 
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
-import space.lingu.lamp.web.domain.review.ReviewJob;
-import space.lingu.lamp.web.domain.review.ReviewJobInfo;
-import space.lingu.lamp.web.domain.review.common.ReviewException;
-import space.lingu.lamp.web.domain.review.event.OnReviewStateChangeEvent;
-import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
+import space.lingu.lamp.content.review.ReviewJob;
+import space.lingu.lamp.content.review.ReviewJobInfo;
+import space.lingu.lamp.content.review.ReviewerAllocator;
+import space.lingu.lamp.content.review.common.ReviewException;
+import space.lingu.lamp.content.review.event.OnReviewStateChangeEvent;
+import space.lingu.lamp.content.review.persistence.ReviewJobDo;
+import space.lingu.lamp.content.review.persistence.ReviewJobRepository;
 import tech.rollw.common.web.CommonErrorCode;
 
 import java.time.LocalDateTime;
@@ -48,30 +50,31 @@ public class ReviewStatusServiceImpl implements ReviewStatusService {
     @Override
     public ReviewJobInfo makeReview(long jobId, long operator,
                                     boolean passed, String reason) throws ReviewException {
-        ReviewJob job = reviewJobRepository.getById(jobId);
+        ReviewJobDo job = reviewJobRepository.findById(jobId).orElse(null);
         if (job == null) {
             throw new ReviewException(CommonErrorCode.ERROR_NOT_FOUND);
         }
         // if (job.getStatus().isReviewed()) {
         //     throw new ReviewException(ReviewErrorCode.ERROR_REVIEWED);
         // }
-        ReviewJob reviewed = switchStatus(job, operator, passed, reason);
-        reviewJobRepository.update(reviewed);
+        ReviewJobDo reviewed = switchStatus(job, operator, passed, reason);
+        reviewed = reviewJobRepository.save(reviewed);
 
-        OnReviewStateChangeEvent event = new OnReviewStateChangeEvent(reviewed,
+        ReviewJob reviewedJob = reviewed.lock();
+        OnReviewStateChangeEvent event = new OnReviewStateChangeEvent(reviewedJob,
                 job.getStatus(), reviewed.getStatus());
         eventPublisher.publishEvent(event);
-        return ReviewJobInfo.of(job);
+        return ReviewJobInfo.of(reviewedJob);
     }
 
 
-    private ReviewJob switchStatus(ReviewJob job, long operator,
-                                   boolean passed, String reason) {
+    private ReviewJobDo switchStatus(ReviewJobDo job, long operator,
+                                     boolean passed, String reason) {
         if (job == null) {
             return null;
         }
         LocalDateTime time = LocalDateTime.now();
-        reviewerAllocator.releaseReviewer(job.getReviewerId(), job.getType());
+        reviewerAllocator.releaseReviewer(job.getReviewerId(), job.getReviewContentType());
         if (passed) {
             return job.reviewPass(operator, time);
         }

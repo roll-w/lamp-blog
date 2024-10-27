@@ -16,6 +16,7 @@
 
 package space.lingu.lamp.web.domain.staff;
 
+import space.lingu.lamp.content.review.ReviewJob;
 import space.lingu.lamp.user.Role;
 
 /**
@@ -35,7 +36,7 @@ public enum StaffType {
     /**
      * Reviewer.
      *
-     * @see space.lingu.lamp.web.domain.review.ReviewJob
+     * @see ReviewJob
      */
     REVIEWER(1),
     /**

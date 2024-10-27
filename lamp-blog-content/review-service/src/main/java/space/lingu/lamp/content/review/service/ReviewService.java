@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.service;
+package space.lingu.lamp.content.review.service;
 
 import com.google.common.base.Preconditions;
 import space.lingu.lamp.content.Content;
 import space.lingu.lamp.content.ContentType;
-import space.lingu.lamp.web.domain.review.ReviewJobInfo;
-import space.lingu.lamp.web.domain.review.common.NotReviewedException;
+import space.lingu.lamp.content.review.ReviewJobInfo;
+import space.lingu.lamp.content.review.ReviewerAllocator;
+import space.lingu.lamp.content.review.common.NotReviewedException;
 
 /**
  * @author RollW

@@ -14,30 +14,25 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review;
+package space.lingu.lamp.content.review;
 
 /**
  * @author RollW
  */
-public enum ReviewStatus {
-    /**
-     * Not reviewed.
-     */
-    NOT_REVIEWED,
-    /**
-     * Reviewed and approved.
-     */
-    REVIEWED,
-    /**
-     * Rejected.
-     */
-    REJECTED,
-    /**
-     * Review is canceled by the reviewer or the author.
-     */
-    CANCELED;
+public enum ReviewStatues {
+    FINISHED(ReviewStatus.REVIEWED, ReviewStatus.REJECTED),
+    UNFINISHED(ReviewStatus.NOT_REVIEWED),
+    PASSED(ReviewStatus.REVIEWED),
+    REJECTED(ReviewStatus.REJECTED),
+    ALL(ReviewStatus.NOT_REVIEWED, ReviewStatus.REVIEWED, ReviewStatus.REJECTED);
 
-    public boolean isReviewed() {
-        return this != NOT_REVIEWED;
+    private final ReviewStatus[] statuses;
+
+    ReviewStatues(ReviewStatus... statuses) {
+        this.statuses = statuses;
+    }
+
+    public ReviewStatus[] getStatuses() {
+        return statuses;
     }
 }

@@ -13,16 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package space.lingu.lamp.content.review
 
-package space.lingu.lamp.web.domain.review.service;
-
-import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.review.ReviewJobContent;
+import space.lingu.lamp.content.ContentDetails
 
 /**
  * @author RollW
  */
-public interface ReviewContentService {
-    @NonNull
-    ReviewJobContent getReviewContent(long jobId);
+data class ReviewJobContent(
+    val reviewJobInfo: ReviewJobInfo,
+    val contentDetails: ContentDetails
+) {
+    companion object {
+        @JvmStatic
+        fun of(job: ReviewJob, contentDetails: ContentDetails): ReviewJobContent {
+            return ReviewJobContent(
+                ReviewJobInfo.of(job),
+                contentDetails
+            )
+        }
+    }
 }

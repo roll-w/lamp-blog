@@ -14,21 +14,22 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.service;
+package space.lingu.lamp.content.review.service;
 
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
 import space.lingu.lamp.content.ContentTrait;
 import space.lingu.lamp.content.ContentType;
-import space.lingu.lamp.web.domain.review.ReviewJobInfo;
-import space.lingu.lamp.web.domain.review.ReviewJob;
-import space.lingu.lamp.web.domain.review.ReviewJobProvider;
-import space.lingu.lamp.web.domain.review.ReviewMark;
-import space.lingu.lamp.web.domain.review.ReviewStatues;
-import space.lingu.lamp.web.domain.review.ReviewStatus;
-import space.lingu.lamp.web.domain.review.common.NotReviewedException;
-import space.lingu.lamp.web.domain.review.common.ReviewException;
-import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
+import space.lingu.lamp.content.review.ReviewJobInfo;
+import space.lingu.lamp.content.review.ReviewJobProvider;
+import space.lingu.lamp.content.review.ReviewMark;
+import space.lingu.lamp.content.review.ReviewStatues;
+import space.lingu.lamp.content.review.ReviewStatus;
+import space.lingu.lamp.content.review.ReviewerAllocator;
+import space.lingu.lamp.content.review.common.NotReviewedException;
+import space.lingu.lamp.content.review.common.ReviewException;
+import space.lingu.lamp.content.review.persistence.ReviewJobDo;
+import space.lingu.lamp.content.review.persistence.ReviewJobRepository;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.system.Operator;
 
@@ -54,20 +55,22 @@ public class ReviewServiceImpl implements ReviewService, ReviewJobProvider {
                                         ContentType contentType,
                                         boolean allowAutoReview) {
         LocalDateTime assignedTime = LocalDateTime.now();
-        ReviewJob old = reviewJobRepository.getBy(contentId, contentType);
+        // TODO: may has multiple review jobs for the same content
+        ReviewJobDo old = reviewJobRepository.findByContent(contentId, contentType)
+                .orElse(null);
         if (old != null && !old.getStatus().isReviewed()) {
             // if the old review job is still not reviewed, throw exception
             // we don't want to assign a new reviewer to the same content
-            throw new NotReviewedException(ReviewJobInfo.of(old));
+            throw new NotReviewedException(ReviewJobInfo.of(old.lock()));
         }
 
         long reviewerId = reviewerAllocator.allocateReviewer(
                 contentType, allowAutoReview);
 
-        ReviewJob.Builder builder = ReviewJob.builder()
+        ReviewJobDo.Builder builder = ReviewJobDo.builder()
                 .setReviewContentId(contentId)
                 .setReviewerId(reviewerId)
-                .setType(contentType)
+                .setReviewContentType(contentType)
                 .setStatus(ReviewStatus.NOT_REVIEWED)
                 .setAssignedTime(assignedTime)
                 .setReviewMark(ReviewMark.NORMAL);
@@ -76,20 +79,20 @@ public class ReviewServiceImpl implements ReviewService, ReviewJobProvider {
             builder.setReviewMark(ReviewMark.REPORT);
         }
 
-        ReviewJob reviewJob = builder
-                .build();
-        reviewJob = reviewJobRepository.insert(reviewJob);
-        return ReviewJobInfo.of(reviewJob);
+        ReviewJobDo reviewJob = builder.build();
+        reviewJob = reviewJobRepository.save(reviewJob);
+        return ReviewJobInfo.of(reviewJob.lock());
     }
 
     @Override
     @NonNull
     public ReviewJobInfo getReviewJob(long reviewJobId) {
-        ReviewJob reviewJob = reviewJobRepository.getById(reviewJobId);
+        ReviewJobDo reviewJob = reviewJobRepository.findById(reviewJobId)
+                .orElse(null);
         if (reviewJob == null) {
             throw new ReviewException(CommonErrorCode.ERROR_NOT_FOUND);
         }
-        return ReviewJobInfo.of(reviewJob);
+        return ReviewJobInfo.of(reviewJob.lock());
     }
 
     // TODO: implement
@@ -127,7 +130,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewJobProvider {
     @NonNull
     @Override
     public List<ReviewJobInfo> getReviewJobs(
-            @NonNull Operator operator,
+            @NonNull Operator reviewer,
             @NonNull ReviewStatus status) {
         return List.of();
     }
@@ -135,8 +138,15 @@ public class ReviewServiceImpl implements ReviewService, ReviewJobProvider {
     @NonNull
     @Override
     public List<ReviewJobInfo> getReviewJobs(
-            @NonNull Operator operator,
+            @NonNull Operator reviewer,
             @NonNull ReviewStatues statues) {
-        return List.of();
+        List<ReviewJobDo> reviewJobs = reviewJobRepository.findByReviewer(
+                reviewer.getOperatorId(),
+                statues.getStatuses()
+        );
+        return reviewJobs.stream()
+                .map(ReviewJobDo::lock)
+                .map(ReviewJobInfo::of)
+                .toList();
     }
 }

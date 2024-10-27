@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review.common;
+package space.lingu.lamp.content.review.common;
 
-import tech.rollw.common.web.CommonRuntimeException;
+import space.lingu.lamp.content.common.ContentException;
 import tech.rollw.common.web.ErrorCode;
 
 /**
  * @author RollW
  */
-public class ReviewException extends CommonRuntimeException {
+public class ReviewException extends ContentException {
     public ReviewException(ErrorCode errorCode) {
         super(errorCode);
     }

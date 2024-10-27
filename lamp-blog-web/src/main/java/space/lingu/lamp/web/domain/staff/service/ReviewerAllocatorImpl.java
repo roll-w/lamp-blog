@@ -20,11 +20,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.content.ContentType;
-import space.lingu.lamp.web.domain.review.ReviewStatus;
-import space.lingu.lamp.web.domain.review.repository.ReviewJobRepository;
-import space.lingu.lamp.web.domain.review.service.ReviewerAllocator;
-import space.lingu.lamp.web.domain.staff.Staff;
+import space.lingu.lamp.content.review.ReviewStatus;
+import space.lingu.lamp.content.review.ReviewerAllocator;
+import space.lingu.lamp.content.review.persistence.ReviewJobRepository;
 import space.lingu.lamp.web.domain.staff.OnStaffEventListener;
+import space.lingu.lamp.web.domain.staff.Staff;
 import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
 
@@ -59,9 +59,9 @@ public class ReviewerAllocatorImpl implements ReviewerAllocator, OnStaffEventLis
         staffReviewingCount.clear();
 
         // add weight by reviewer
-        reviewJobRepository.getBy(ReviewStatus.NOT_REVIEWED).forEach(reviewJob -> {
+        reviewJobRepository.findByStatus(ReviewStatus.NOT_REVIEWED).forEach(reviewJob -> {
             long reviewerId = reviewJob.getReviewerId();
-            int weight = reviewJob.getType().getWeight();
+            int weight = reviewJob.getReviewContentType().getWeight();
             weights.put(reviewerId, weights.getOrDefault(reviewerId, 0) + weight);
         });
 

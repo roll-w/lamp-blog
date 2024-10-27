@@ -14,23 +14,16 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.review;
+package space.lingu.lamp.content.review.service;
+
+import space.lingu.lamp.content.review.common.ReviewException;
+import space.lingu.lamp.content.review.ReviewJobInfo;
 
 /**
  * @author RollW
  */
-public enum ReviewMark {
-    /**
-     * Normal review mark.
-     */
-    NORMAL,
-    /**
-     * Review created from update.
-     */
-    UPDATE,
-    /**
-     * Review created from the user report.
-     */
-    REPORT,
-    ;
+public interface ReviewStatusService {
+    // TODO: a temporary interface, need to be refactored
+    ReviewJobInfo makeReview(long jobId, long operator,
+                             boolean passed, String reason) throws ReviewException;
 }
