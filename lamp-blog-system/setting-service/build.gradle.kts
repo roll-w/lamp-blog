@@ -22,7 +22,6 @@ plugins {
 dependencies {
     api(project(":lamp-blog-system:setting-api"))
     api(project(":lamp-blog-common-data"))
-    api(libs.lingu.light.core)
 }
 
 description = "lamp-blog-system-setting-service"

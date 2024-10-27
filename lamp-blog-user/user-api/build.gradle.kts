@@ -21,6 +21,7 @@ plugins {
 dependencies {
     api(project(":lamp-blog-common"))
     api(libs.rollw.web.common.core)
+    api(project(":lamp-blog-system:setting-api"))
     api("org.springframework.security:spring-security-core")
 }
 

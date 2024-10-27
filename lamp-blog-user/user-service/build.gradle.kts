@@ -22,7 +22,6 @@ plugins {
 dependencies {
     api(project(":lamp-blog-user:user-api"))
     api(project(":lamp-blog-common-data"))
-    api(libs.lingu.light.core)
 }
 
 description = "lamp-blog-user-service"

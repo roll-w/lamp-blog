@@ -25,6 +25,8 @@ dependencies {
     implementation(project(":lamp-blog-system:message-resource-service"))
     implementation(project(":lamp-blog-content:content-service"))
     implementation(project(":lamp-blog-content:article-service"))
+    implementation(project(":lamp-blog-content:comment-service"))
+    implementation(project(":lamp-blog-content:review-service"))
     implementation(project(":lamp-blog-iam:authentication-service"))
     implementation(project(":lamp-blog-user:user-service"))
     implementation("org.springframework.boot:spring-boot-starter-web")

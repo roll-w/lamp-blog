@@ -15,15 +15,13 @@
  */
 
 plugins {
-    id("buildlogic.java-conventions")
+    id("buildlogic.jpa-conventions")
 }
 
 dependencies {
     api(project(":lamp-blog-common"))
-    api(project(":lamp-blog-system:setting-api"))
-    api(project(":lamp-blog-user:user-api"))
+    api(project(":lamp-blog-common-data"))
     api(project(":lamp-blog-content:content-api"))
-    api(libs.rollw.web.common.core)
 }
 
 description = "lamp-blog-review-service"
