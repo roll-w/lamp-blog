@@ -29,6 +29,8 @@ dependencies {
     implementation(project(":lamp-blog-content:review-service"))
     implementation(project(":lamp-blog-iam:authentication-service"))
     implementation(project(":lamp-blog-user:user-service"))
+    implementation(project(":lamp-blog-user:staff-service"))
+    implementation(project(":lamp-blog-user:user-details-service"))
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation(libs.rollw.web.common.spring.boot.starter)
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
