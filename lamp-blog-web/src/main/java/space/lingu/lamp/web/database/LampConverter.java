@@ -16,14 +16,10 @@
 
 package space.lingu.lamp.web.database;
 
-import space.lingu.lamp.web.domain.staff.StaffType;
 import space.lingu.lamp.web.domain.userdetails.Birthday;
 import space.lingu.light.DataConverter;
 
-import java.util.EnumSet;
 import java.util.Locale;
-import java.util.Set;
-import java.util.StringJoiner;
 
 /**
  * @author RollW
@@ -37,22 +33,6 @@ public class LampConverter {
     @DataConverter
     public static Locale toLocale(String localeString) {
         return Locale.forLanguageTag(localeString);
-    }
-
-    @DataConverter
-    public static Set<StaffType> convertToStaffType(String values) {
-        Set<StaffType> staffTypes = EnumSet.noneOf(StaffType.class);
-        for (String value : values.split(",")) {
-            staffTypes.add(StaffType.of(value));
-        }
-        return staffTypes;
-    }
-
-    @DataConverter
-    public static String convertStaffTypeSet(Set<StaffType> staffTypes) {
-        StringJoiner joiner = new StringJoiner(",");
-        staffTypes.forEach(type -> joiner.add(type.name()));
-        return joiner.toString();
     }
 
     @DataConverter
