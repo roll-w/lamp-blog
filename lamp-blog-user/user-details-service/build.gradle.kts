@@ -19,6 +19,7 @@ plugins {
 }
 
 dependencies {
+    api(project(":lamp-blog-common-data"))
     api(project(":lamp-blog-user:user-details-api"))
 }
 

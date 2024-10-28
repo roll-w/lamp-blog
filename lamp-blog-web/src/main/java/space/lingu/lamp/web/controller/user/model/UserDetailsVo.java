@@ -18,9 +18,9 @@ package space.lingu.lamp.web.controller.user.model;
 
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.Role;
-import space.lingu.lamp.web.domain.userdetails.Birthday;
-import space.lingu.lamp.web.domain.userdetails.Gender;
-import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
+import space.lingu.lamp.user.details.Birthday;
+import space.lingu.lamp.user.details.Gender;
+import space.lingu.lamp.user.details.UserPersonalData;
 
 import java.time.LocalDateTime;
 

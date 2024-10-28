@@ -14,26 +14,13 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.database;
-
-import space.lingu.light.DataConverter;
-
-import java.util.Locale;
+package space.lingu.lamp.user.details;
 
 /**
  * @author RollW
  */
-public class LampConverter {
-    @DataConverter
-    public static String toLocaleString(Locale locale) {
-        return locale.toLanguageTag();
-    }
-
-    @DataConverter
-    public static Locale toLocale(String localeString) {
-        return Locale.forLanguageTag(localeString);
-    }
-
-    private LampConverter() {
-    }
+public record UserDataField(
+        UserDataFieldType type,
+        Object value
+) {
 }

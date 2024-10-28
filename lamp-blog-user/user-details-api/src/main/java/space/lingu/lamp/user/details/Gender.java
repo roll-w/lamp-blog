@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.userdetails;
+package space.lingu.lamp.user.details;
 
 /**
  * @author RollW

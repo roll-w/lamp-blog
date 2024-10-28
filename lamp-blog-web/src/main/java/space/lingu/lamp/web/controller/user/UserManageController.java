@@ -25,8 +25,8 @@ import space.lingu.lamp.web.domain.storage.StorageUrlProvider;
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.UserManageService;
 import space.lingu.lamp.user.UserProvider;
-import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
-import space.lingu.lamp.web.domain.userdetails.UserPersonalDataService;
+import space.lingu.lamp.user.details.UserPersonalData;
+import space.lingu.lamp.user.details.UserPersonalDataService;
 import tech.rollw.common.web.HttpResponseEntity;
 
 import java.util.ArrayList;

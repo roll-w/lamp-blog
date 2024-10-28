@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.userdetails;
+package space.lingu.lamp.user.details;
 
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 import space.lingu.NonNull;
-import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
-import space.lingu.lamp.web.domain.storage.DefaultStorageIds;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import space.lingu.lamp.user.UserIdentity;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.PrimaryKey;
+import space.lingu.lamp.user.UserResourceKind;
 import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.io.Serializable;
@@ -37,38 +33,16 @@ import java.time.LocalDateTime;
  *
  * @author RollW
  */
-@DataTable(name = "user_personal_data")
-@SuppressWarnings({"unused", "ClassCanBeRecord"})
-public final class UserPersonalData implements Serializable, LongDataItem<UserPersonalData> {
-    @PrimaryKey
-    @DataColumn(name = "id")
+public final class UserPersonalData implements Serializable, DataEntity<Long> {
     private final long userId;
-
-    @DataColumn(name = "nickname")
     private final String nickname;
-
-    @DataColumn(name = "avatar")
     private final String avatar;
-
-    @DataColumn(name = "cover")
     private final String cover;
-
-    @DataColumn(name = "birthday")
     private final Birthday birthday;
-
-    @DataColumn(name = "introduction")
     private final String introduction;
-
-    @DataColumn(name = "gender")
     private final Gender gender;
-
-    @DataColumn(name = "location")
     private final String location;
-
-    @DataColumn(name = "website")
     private final String website;
-
-    @DataColumn(name = "update_time")
     private final LocalDateTime updateTime;
 
     public UserPersonalData(long userId, String nickname, String avatar,
@@ -144,10 +118,9 @@ public final class UserPersonalData implements Serializable, LongDataItem<UserPe
     @NonNull
     @Override
     public SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.USER;
+        return UserResourceKind.INSTANCE;
     }
 
-    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -159,9 +132,9 @@ public final class UserPersonalData implements Serializable, LongDataItem<UserPe
     public static UserPersonalData defaultOf(UserIdentity user) {
         return new Builder()
                 .setUserId(user.getUserId())
-                .setAvatar(DefaultStorageIds.DEFAULT_AVATAR_ID)
+                .setAvatar("user")
                 .setBirthday(null)
-                .setCover(DefaultStorageIds.DEFAULT_USER_COVER_ID)
+                .setCover("user-cover")
                 .setIntroduction(null)
                 .setGender(Gender.PRIVATE)
                 .setNickname(user.getUsername())
@@ -179,17 +152,16 @@ public final class UserPersonalData implements Serializable, LongDataItem<UserPe
                                                       UserPersonalData userPersonalData) {
         Builder builder = userPersonalData.toBuilder();
         if (Strings.isNullOrEmpty(userPersonalData.getAvatar())) {
-            builder.setAvatar(DefaultStorageIds.DEFAULT_AVATAR_ID);
+            builder.setAvatar("user");
         }
         if (userPersonalData.getNickname() == null) {
             builder.setNickname(userIdentity.getUsername());
         }
         if (Strings.isNullOrEmpty(userPersonalData.getCover())) {
-            builder.setCover(DefaultStorageIds.DEFAULT_USER_COVER_ID);
+            builder.setCover("user-cover");
         }
         return builder.build();
     }
-
 
     public static final class Builder implements LongEntityBuilder<UserPersonalData> {
         private long userId;
@@ -278,38 +250,6 @@ public final class UserPersonalData implements Serializable, LongDataItem<UserPe
         public Builder setUpdateTime(LocalDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
-        }
-
-        public long getUserId() {
-            return userId;
-        }
-
-        public String getNickname() {
-            return nickname;
-        }
-
-        public String getAvatar() {
-            return avatar;
-        }
-
-        public Birthday getBirthday() {
-            return birthday;
-        }
-
-        public String getIntroduction() {
-            return introduction;
-        }
-
-        public Gender getGender() {
-            return gender;
-        }
-
-        public String getLocation() {
-            return location;
-        }
-
-        public String getWebsite() {
-            return website;
         }
 
         @Override

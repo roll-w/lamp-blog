@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.userdetails;
+package space.lingu.lamp.user.details.persistence
+
+import space.lingu.lamp.common.data.CommonDao
+import space.lingu.lamp.common.data.Dao
 
 /**
  * @author RollW
  */
-public record UserDataField(
-        UserDataFieldType type,
-        Object value
-) {
+@Dao
+interface UserPersonalDataDao : CommonDao<UserPersonalDataDo, Long> {
 }

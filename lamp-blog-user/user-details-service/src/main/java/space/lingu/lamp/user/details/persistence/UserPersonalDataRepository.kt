@@ -14,26 +14,16 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.database;
+package space.lingu.lamp.user.details.persistence
 
-import space.lingu.light.DataConverter;
-
-import java.util.Locale;
+import org.springframework.stereotype.Repository
+import space.lingu.lamp.common.data.CommonRepository
 
 /**
  * @author RollW
  */
-public class LampConverter {
-    @DataConverter
-    public static String toLocaleString(Locale locale) {
-        return locale.toLanguageTag();
-    }
-
-    @DataConverter
-    public static Locale toLocale(String localeString) {
-        return Locale.forLanguageTag(localeString);
-    }
-
-    private LampConverter() {
-    }
+@Repository
+class UserPersonalDataRepository(
+    private val userPersonalDataDao: UserPersonalDataDao
+) : CommonRepository<UserPersonalDataDo, Long>(userPersonalDataDao) {
 }

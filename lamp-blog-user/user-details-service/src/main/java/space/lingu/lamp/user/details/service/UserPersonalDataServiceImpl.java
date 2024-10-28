@@ -14,20 +14,22 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.userdetails.service;
+package space.lingu.lamp.user.details.service;
 
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.UserIdentity;
 import space.lingu.lamp.user.UserProvider;
-import space.lingu.lamp.web.domain.userdetails.Birthday;
-import space.lingu.lamp.web.domain.userdetails.Gender;
-import space.lingu.lamp.web.domain.userdetails.UserDataField;
-import space.lingu.lamp.web.domain.userdetails.UserDataFieldType;
-import space.lingu.lamp.web.domain.userdetails.UserPersonalData;
-import space.lingu.lamp.web.domain.userdetails.UserPersonalDataService;
-import space.lingu.lamp.web.domain.userdetails.repository.UserPersonalDataRepository;
+import space.lingu.lamp.user.details.Birthday;
+import space.lingu.lamp.user.details.Gender;
+import space.lingu.lamp.user.details.UserDataField;
+import space.lingu.lamp.user.details.UserDataFieldType;
+import space.lingu.lamp.user.details.UserPersonalData;
+import space.lingu.lamp.user.details.UserPersonalDataService;
+import space.lingu.lamp.user.details.persistence.UserPersonalDataDo;
+import space.lingu.lamp.user.details.persistence.UserPersonalDataRepository;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -46,28 +48,32 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
 
     @Override
     public UserPersonalData getPersonalData(long userId) {
-        UserPersonalData data = userPersonalDataRepository.getById(userId);
+        UserPersonalDataDo data = userPersonalDataRepository.findById(userId)
+                .orElse(null);
         if (data == null) {
             AttributedUser user = userProvider.getUser(userId);
             return UserPersonalData.defaultOf(user);
         }
-        if (UserPersonalData.checkNecessaryFields(data)) {
-            return data;
+        UserPersonalData locked = data.lock();
+        if (UserPersonalData.checkNecessaryFields(locked)) {
+            return locked;
         }
         AttributedUser user = userProvider.getUser(userId);
-        return UserPersonalData.replaceWithDefault(user, data);
+        return UserPersonalData.replaceWithDefault(user, locked);
     }
 
     @Override
     public UserPersonalData getPersonalData(UserIdentity userIdentity) {
-        UserPersonalData data = userPersonalDataRepository.getById(userIdentity.getUserId());
+        UserPersonalDataDo data = userPersonalDataRepository.findById(
+                userIdentity.getUserId()).orElse(null);
         if (data == null) {
             return UserPersonalData.defaultOf(userIdentity);
         }
-        if (UserPersonalData.checkNecessaryFields(data)) {
-            return data;
+        UserPersonalData locked = data.lock();
+        if (UserPersonalData.checkNecessaryFields(locked)) {
+            return locked;
         }
-        return UserPersonalData.replaceWithDefault(userIdentity, data);
+        return UserPersonalData.replaceWithDefault(userIdentity, locked);
     }
 
     @Override
@@ -91,7 +97,10 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
 
     @Override
     public List<UserPersonalData> getPersonalDataByIds(List<Long> ids) {
-        return userPersonalDataRepository.getByIds(ids);
+        return userPersonalDataRepository.findAllById(ids)
+                .stream()
+                .map(UserPersonalDataDo::lock)
+                .toList();
     }
 
     @Override
@@ -106,20 +115,17 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
         if (fields.length == 0) {
             return;
         }
-        UserPersonalData userPersonalData = getPersonalData(userId);
-        UserPersonalData.Builder builder = toBuilder(userPersonalData);
-
+        UserPersonalDataDo exist = userPersonalDataRepository.findById(userId)
+                .orElse(null);
+        UserPersonalDataDo.Builder builder = toBuilder(exist);
         for (UserDataField field : fields) {
             setBuilderValue(builder, field);
         }
-        if (userPersonalData == null) {
-            userPersonalDataRepository.insert(builder.build());
-            return;
-        }
-        userPersonalDataRepository.update(builder.build());
+        builder.setUpdateTime(LocalDateTime.now());
+        userPersonalDataRepository.save(builder.build());
     }
 
-    private void setBuilderValue(UserPersonalData.Builder builder,
+    private void setBuilderValue(UserPersonalDataDo.Builder builder,
                                  UserDataField field) {
         switch (field.type()) {
             case AVATAR -> builder.setAvatar((String) field.value());
@@ -134,11 +140,11 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
         }
     }
 
-    private UserPersonalData.Builder toBuilder(UserPersonalData data) {
+    private UserPersonalDataDo.Builder toBuilder(UserPersonalDataDo data) {
         if (data != null) {
             return data.toBuilder();
         }
-        return UserPersonalData.builder();
+        return UserPersonalDataDo.builder();
     }
 
     @Override
@@ -146,6 +152,7 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
         if (data == null) {
             return;
         }
-        userPersonalDataRepository.insert(data);
+        UserPersonalDataDo userPersonalDataDo = UserPersonalDataDo.toDo(data);
+        userPersonalDataRepository.save(userPersonalDataDo);
     }
 }

@@ -14,18 +14,27 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.userdetails;
+package space.lingu.lamp.user.details;
+
+import space.lingu.lamp.user.UserIdentity;
+
+import java.util.List;
 
 /**
  * @author RollW
  */
-public enum UserDataFieldType {
-    AVATAR,
-    NICKNAME,
-    INTRO,
-    GENDER,
-    BIRTHDAY,
-    LOCATION,
-    WEBSITE,
-    ;
+public interface UserPersonalDataService {
+    UserPersonalData getPersonalData(long userId);
+
+    UserPersonalData getPersonalData(UserIdentity userIdentity);
+
+    List<UserPersonalData> getPersonalData(List<? extends UserIdentity> userIdentities);
+
+    List<UserPersonalData> getPersonalDataByIds(List<Long> ids);
+
+    void updatePersonalData(long userId, UserDataFieldType type, Object value);
+
+    void updatePersonalData(long userId, UserDataField... fields);
+
+    void createPersonalData(UserPersonalData data);
 }

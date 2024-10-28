@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.userdetails;
+package space.lingu.lamp.user.details;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -23,8 +23,9 @@ import java.util.Objects;
 /**
  * @author RollW
  */
-public class Birthday implements Serializable,
-        Comparable<Birthday> {
+public class Birthday implements Serializable, Comparable<Birthday> {
+    public static final Birthday UNKNOWN = new Birthday(0, 0, 0);
+
     private final int year;
     private final int month;
     private final int day;
