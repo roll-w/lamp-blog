@@ -18,9 +18,9 @@ package space.lingu.lamp.web.controller.staff;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import space.lingu.lamp.staff.AttributedStaff;
+import space.lingu.lamp.staff.StaffService;
 import space.lingu.lamp.web.controller.Api;
-import space.lingu.lamp.web.domain.staff.StaffService;
-import space.lingu.lamp.web.domain.staff.StaffInfo;
 import space.lingu.lamp.web.controller.staff.model.StaffVo;
 import tech.rollw.common.web.HttpResponseEntity;
 
@@ -45,7 +45,7 @@ public class StaffController {
     @GetMapping("/users/{userId}/staff")
     public HttpResponseEntity<StaffVo> getStaffByUserId(
             @PathVariable("userId") Long userId) {
-        StaffInfo staffInfo = staffService.getStaffByUser(userId);
+        AttributedStaff staffInfo = staffService.getStaffByUser(userId);
         return HttpResponseEntity.success(
                 StaffVo.from(staffInfo)
         );

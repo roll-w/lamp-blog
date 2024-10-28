@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff
+package space.lingu.lamp.staff
 
 import space.lingu.lamp.user.UserIdentity
 import java.time.LocalDateTime
@@ -50,8 +50,21 @@ data class StaffInfo(
                 staff.types,
                 staff.createTime,
                 staff.updateTime,
-                staff.isAllowUser,
+                staff.isAsUser,
                 staff.isDeleted
+            )
+        }
+
+        @JvmStatic
+        fun from(userIdentity: UserIdentity): StaffInfo {
+            return StaffInfo(
+                userIdentity.userId,
+                userIdentity,
+                emptySet(),
+                LocalDateTime.now(),
+                LocalDateTime.now(),
+                false,
+                false
             )
         }
 

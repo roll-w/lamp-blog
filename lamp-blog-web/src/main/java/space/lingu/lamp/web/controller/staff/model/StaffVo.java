@@ -16,9 +16,8 @@
 
 package space.lingu.lamp.web.controller.staff.model;
 
-import space.lingu.lamp.user.Role;
-import space.lingu.lamp.web.domain.staff.StaffInfo;
-import space.lingu.lamp.web.domain.staff.StaffType;
+import space.lingu.lamp.staff.AttributedStaff;
+import space.lingu.lamp.staff.StaffType;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -26,32 +25,25 @@ import java.util.Set;
 /**
  * @author RollW
  */
+// TODO: add fields
 public record StaffVo(
         long id,
         long userId,
-        String username,
-        Role role,
         Set<StaffType> types,
         LocalDateTime createTime,
-        LocalDateTime updateTime,
-        boolean allowUser,
-        boolean deleted
+        LocalDateTime updateTime
 ) {
 
-    public static StaffVo from(StaffInfo staffInfo) {
+    public static StaffVo from(AttributedStaff staffInfo) {
         if (staffInfo == null) {
             return null;
         }
         return new StaffVo(
-                staffInfo.getId(),
+                staffInfo.getStaffId(),
                 staffInfo.getUserId(),
-                staffInfo.getUserIdentity().getUsername(),
-                staffInfo.getUserIdentity().getRole(),
                 staffInfo.getTypes(),
                 staffInfo.getCreateTime(),
-                staffInfo.getUpdateTime(),
-                staffInfo.getAllowUser(),
-                staffInfo.getDeleted()
+                staffInfo.getUpdateTime()
         );
     }
 }

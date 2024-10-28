@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff.service
+package space.lingu.lamp.staff.service
 
 import org.springframework.stereotype.Service
-import space.lingu.lamp.web.domain.staff.Staff
-import space.lingu.lamp.web.domain.staff.StaffNumberProvider
-import space.lingu.lamp.web.domain.staff.StaffType
+import space.lingu.lamp.staff.Staff
+import space.lingu.lamp.staff.StaffNumberProvider
+import space.lingu.lamp.staff.StaffType
 import tech.rollw.common.web.CommonErrorCode
 import tech.rollw.common.web.system.SystemResourceException
 
@@ -27,7 +27,7 @@ import tech.rollw.common.web.system.SystemResourceException
  * @author RollW
  */
 @Service
-class StaffNumberProviderImpl: StaffNumberProvider {
+class StaffNumberProviderImpl : StaffNumberProvider {
     override fun getStaffNumber(staff: Staff): String {
         if (staff.id == null) {
             throw SystemResourceException(CommonErrorCode.ERROR_NULL, "Staff id is null.")

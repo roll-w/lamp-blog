@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff.service;
+package space.lingu.lamp.staff.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,10 +23,8 @@ import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.content.review.ReviewStatus;
 import space.lingu.lamp.content.review.ReviewerAllocator;
 import space.lingu.lamp.content.review.persistence.ReviewJobRepository;
-import space.lingu.lamp.web.domain.staff.OnStaffEventListener;
-import space.lingu.lamp.web.domain.staff.Staff;
-import space.lingu.lamp.web.domain.staff.StaffType;
-import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
+import space.lingu.lamp.staff.OnStaffEventListener;
+import space.lingu.lamp.staff.Staff;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,16 +39,12 @@ import java.util.TreeMap;
 public class ReviewerAllocatorImpl implements ReviewerAllocator, OnStaffEventListener {
    private static final Logger logger = LoggerFactory.getLogger(ReviewerAllocatorImpl.class);
 
-    private final StaffRepository staffRepository;
     private final ReviewJobRepository reviewJobRepository;
     private final Map<Long, Integer> weights = new HashMap<>();
     private final TreeMap<Integer, List<Long>> staffReviewingCount = new TreeMap<>();
 
-    public ReviewerAllocatorImpl(StaffRepository staffRepository,
-                                 ReviewJobRepository reviewJobRepository) {
-        this.staffRepository = staffRepository;
+    public ReviewerAllocatorImpl(ReviewJobRepository reviewJobRepository) {
         this.reviewJobRepository = reviewJobRepository;
-
         loadStaffReviewingCount();
     }
 
@@ -65,7 +59,8 @@ public class ReviewerAllocatorImpl implements ReviewerAllocator, OnStaffEventLis
             weights.put(reviewerId, weights.getOrDefault(reviewerId, 0) + weight);
         });
 
-        List<Staff> staffs = staffRepository.getActiveStaffsByType(StaffType.REVIEWER);
+        List<Staff> staffs = List.of();
+        // TODO: load staffs
         staffs.forEach(staff -> {
             if (weights.containsKey(staff.getUserId())) {
                 return;

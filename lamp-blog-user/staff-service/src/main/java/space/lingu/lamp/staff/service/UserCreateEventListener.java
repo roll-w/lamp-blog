@@ -14,30 +14,24 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff.event;
+package space.lingu.lamp.staff.service;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
-import space.lingu.lamp.web.domain.staff.Staff;
-import space.lingu.lamp.web.domain.staff.StaffType;
-import space.lingu.lamp.web.domain.staff.repository.StaffRepository;
+import space.lingu.lamp.staff.StaffType;
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.Role;
 import space.lingu.lamp.user.event.OnUserCreateEvent;
-
-import java.time.LocalDateTime;
 
 /**
  * @author RollW
  */
 @Component
 public class UserCreateEventListener implements ApplicationListener<OnUserCreateEvent> {
-    private final StaffRepository repository;
 
-    public UserCreateEventListener(StaffRepository repository) {
-        this.repository = repository;
+    public UserCreateEventListener() {
     }
 
     @Override
@@ -48,16 +42,6 @@ public class UserCreateEventListener implements ApplicationListener<OnUserCreate
             return;
         }
         StaffType type = StaffType.of(attributedUser.getRole());
-        LocalDateTime time = LocalDateTime.now();
-        Staff staff = Staff.builder()
-                .setUserId(attributedUser.getUserId())
-                .setTypes(type)
-                .setAllowUser(true)
-                .setCreateTime(time)
-                .setUpdateTime(time)
-                .setDeleted(false)
-                .build();
-        repository.insert(staff);
+        // TODO: create staff
     }
-
 }

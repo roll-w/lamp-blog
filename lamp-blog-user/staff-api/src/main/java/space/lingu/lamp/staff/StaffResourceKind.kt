@@ -14,32 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff
+package space.lingu.lamp.staff
 
-import space.lingu.lamp.TimeAttributed
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind
-import tech.rollw.common.web.system.SystemResource
 import tech.rollw.common.web.system.SystemResourceKind
 
 /**
  * @author RollW
  */
-interface AttributedStaff : SystemResource<Long>, TimeAttributed {
-    val staffId: Long
+object StaffResourceKind : SystemResourceKind {
+    override fun getName(): String = "STAFF"
 
-    val userId: Long
-
-    val types: Set<StaffType>
-
-    override fun getResourceId(): Long = staffId
-
-    override fun getSystemResourceKind(): SystemResourceKind =
-        LampSystemResourceKind.STAFF
-
-    companion object {
-        @JvmStatic
-        fun AttributedStaff.isType(type: StaffType): Boolean {
-            return types.contains(type)
-        }
-    }
+    override fun getAliases(): List<String> = emptyList()
 }

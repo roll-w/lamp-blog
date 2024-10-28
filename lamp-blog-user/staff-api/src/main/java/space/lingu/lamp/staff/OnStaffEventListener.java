@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff
+package space.lingu.lamp.staff;
 
 /**
  * @author RollW
  */
-interface StaffNumberProvider {
-    /**
-     * Generate a unique staff number for the given staff.
-     *
-     * @return The staff number. For example, "AM0001".
-     */
-    fun getStaffNumber(staff: Staff): String
+public interface OnStaffEventListener {
+    default void onStaffCreated(Staff staff) {
+    }
+
+    default void onStaffUpdated(Staff staff) {
+    }
+
+    default void onStaffDeleted(Staff staff) {
+    }
 }

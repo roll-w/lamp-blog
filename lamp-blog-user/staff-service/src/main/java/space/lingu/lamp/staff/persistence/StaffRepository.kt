@@ -14,34 +14,22 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff;
+package space.lingu.lamp.staff.persistence
 
-import tech.rollw.common.web.page.Page;
-import tech.rollw.common.web.page.Pageable;
+import org.springframework.stereotype.Repository
+import space.lingu.lamp.common.data.CommonRepository
+import java.util.Optional
 
 /**
  * @author RollW
  */
-public interface StaffService {
-    // TODO: optimize methods.
-
-    @Deprecated
-    Page<StaffInfo> getStaffs(Pageable pageable);
-
-    Page<StaffInfo> getStaffsByType(StaffType type, Pageable pageable);
-
-    StaffInfo getStaffByUser(long userId);
-
-    StaffInfo getStaff(long staffId);
-
-    Staff createStaff(Staff staff);
-
-    void updateStaff(Staff staff);
-
-    void deleteStaff(String staffId);
-
-    void forbiddenStaff(String staffId);
-
-    void restoreStaff(String staffId);
-
+@Repository
+class StaffRepository(
+    private val staffDao: StaffDao
+) : CommonRepository<StaffDo, Long>(staffDao) {
+    fun findByUserId(userId: Long): Optional<StaffDo> {
+        return findOne { root, _, criteriaBuilder ->
+            criteriaBuilder.equal(root.get<Long>("userId"), userId)
+        }
+    }
 }

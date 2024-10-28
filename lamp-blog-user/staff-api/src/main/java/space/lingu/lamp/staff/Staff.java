@@ -14,15 +14,11 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff;
+package space.lingu.lamp.staff;
 
 import space.lingu.NonNull;
-import space.lingu.lamp.LongDataItem;
+import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
-import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
-import space.lingu.light.DataColumn;
-import space.lingu.light.DataTable;
-import space.lingu.light.PrimaryKey;
 import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.time.LocalDateTime;
@@ -33,41 +29,30 @@ import java.util.Set;
 /**
  * @author RollW
  */
-@SuppressWarnings({"ClassCanBeRecord", "unused"})
-@DataTable(name = "staff")
-public class Staff implements LongDataItem<Staff>, AttributedStaff {
-    @DataColumn(name = "id")
-    @PrimaryKey(autoGenerate = true)
+public class Staff implements DataEntity<Long>, AttributedStaff {
     private final Long id;
-
-    @DataColumn(name = "user_id")
     private final long userId;
-
-    @DataColumn(name = "types")
     private final Set<StaffType> types;
-
-    @DataColumn(name = "create_time")
     private final LocalDateTime createTime;
-
-    @DataColumn(name = "update_time")
     private final LocalDateTime updateTime;
 
-    @DataColumn(name = "allow_user")
-    private final boolean allowUser;
-
-    @DataColumn(name = "deleted")
+    /**
+     * Allow the staff to act as a user (has the same
+     * permissions as the user, like posting a blog).
+     */
+    private final boolean asUser;
     private final boolean deleted;
 
     public Staff(Long id, long userId,
                  Set<StaffType> types, LocalDateTime createTime,
-                 LocalDateTime updateTime, boolean allowUser,
+                 LocalDateTime updateTime, boolean asUser,
                  boolean deleted) {
         this.id = id;
         this.userId = userId;
         this.types = EnumSet.copyOf(types);
         this.createTime = createTime;
         this.updateTime = updateTime;
-        this.allowUser = allowUser;
+        this.asUser = asUser;
         this.deleted = deleted;
     }
 
@@ -102,8 +87,8 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
         return updateTime;
     }
 
-    public boolean isAllowUser() {
-        return allowUser;
+    public boolean isAsUser() {
+        return asUser;
     }
 
     public boolean isDeleted() {
@@ -123,19 +108,19 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
     @Override
     @NonNull
     public SystemResourceKind getSystemResourceKind() {
-        return LampSystemResourceKind.STAFF;
+        return StaffResourceKind.INSTANCE;
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Staff staff)) return false;
-        return userId == staff.userId && createTime == staff.createTime && updateTime == staff.updateTime && allowUser == staff.allowUser && deleted == staff.deleted && Objects.equals(id, staff.id) && Objects.equals(types, staff.types);
+        return userId == staff.userId && createTime == staff.createTime && updateTime == staff.updateTime && asUser == staff.asUser && deleted == staff.deleted && Objects.equals(id, staff.id) && Objects.equals(types, staff.types);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, userId, types, createTime, updateTime, allowUser, deleted);
+        return Objects.hash(id, userId, types, createTime, updateTime, asUser, deleted);
     }
 
     @Override
@@ -146,12 +131,11 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
                 ", types=" + types +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
-                ", allowUser=" + allowUser +
+                ", allowUser=" + asUser +
                 ", deleted=" + deleted +
                 '}';
     }
 
-    @Override
     public Builder toBuilder() {
         return new Builder(this);
     }
@@ -167,7 +151,7 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
         private Set<StaffType> type;
         private LocalDateTime createTime;
         private LocalDateTime updateTime;
-        private boolean allowUser;
+        private boolean asUser;
         private boolean deleted;
 
         public Builder() {
@@ -179,7 +163,7 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
             this.type = staff.types;
             this.createTime = staff.createTime;
             this.updateTime = staff.updateTime;
-            this.allowUser = staff.allowUser;
+            this.asUser = staff.asUser;
             this.deleted = staff.deleted;
         }
 
@@ -218,8 +202,8 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
             return this;
         }
 
-        public Builder setAllowUser(boolean allowUser) {
-            this.allowUser = allowUser;
+        public Builder setAsUser(boolean asUser) {
+            this.asUser = asUser;
             return this;
         }
 
@@ -231,7 +215,7 @@ public class Staff implements LongDataItem<Staff>, AttributedStaff {
         @Override
         public Staff build() {
             return new Staff(id, userId, type, createTime,
-                    updateTime, allowUser, deleted);
+                    updateTime, asUser, deleted);
         }
     }
 }

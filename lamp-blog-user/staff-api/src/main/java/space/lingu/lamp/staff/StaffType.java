@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff;
+package space.lingu.lamp.staff;
 
 import space.lingu.lamp.content.review.ReviewJob;
 import space.lingu.lamp.user.Role;

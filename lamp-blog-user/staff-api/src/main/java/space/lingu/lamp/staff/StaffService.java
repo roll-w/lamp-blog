@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.staff;
+package space.lingu.lamp.staff;
 
 /**
  * @author RollW
  */
-public interface OnStaffEventListener {
-    default void onStaffCreated(Staff staff) {
-    }
+public interface StaffService {
+    // TODO: optimize methods.
 
-    default void onStaffUpdated(Staff staff) {
-    }
+    AttributedStaff getStaffByUser(long userId);
 
-    default void onStaffDeleted(Staff staff) {
-    }
+    AttributedStaff getStaff(long staffId);
 }

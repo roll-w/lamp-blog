@@ -19,31 +19,31 @@ package space.lingu.lamp.user.event;
 import org.springframework.context.ApplicationEvent;
 import space.lingu.NonNull;
 import space.lingu.Nullable;
+import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.Role;
-import space.lingu.lamp.user.UserInfo;
 
 
 /**
  * @author RollW
  */
 public class OnUserRoleChangeEvent extends ApplicationEvent {
-    private final UserInfo userInfo;
+    private final AttributedUser user;
     @Nullable
     private final Role previousRole;
     @NonNull
     private final Role currentRole;
 
-    public OnUserRoleChangeEvent(UserInfo userInfo,
+    public OnUserRoleChangeEvent(AttributedUser user,
                                  @Nullable Role previousRole,
                                  @NonNull Role currentRole) {
-        super(userInfo);
-        this.userInfo = userInfo;
+        super(user);
+        this.user = user;
         this.previousRole = previousRole;
         this.currentRole = currentRole;
     }
 
-    public UserInfo getUserInfo() {
-        return userInfo;
+    public AttributedUser getUser() {
+        return user;
     }
 
     @Nullable
