@@ -77,7 +77,7 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
                 .breakLine()
                 .appendParagraph("You are now registering a new account, click the link below to confirm activate.")
                 .breakLine().breakLine()
-                .appendLink("Confirm Activate", confirmUrl)
+                .appendLink(confirmUrl, "Confirm Activate")
                 .breakLine().breakLine()
                 .appendParagraph("If you are not registering for this account, please ignore this message.")
                 .breakLine()

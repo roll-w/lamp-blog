@@ -82,7 +82,8 @@ class StaffDo(
         this.updateTime = updateTime
     }
     
-    override val staffId: Long = id!!
+    override val staffId: Long
+        get() = id!!
 
     override fun getResourceId(): Long = id!!
 
