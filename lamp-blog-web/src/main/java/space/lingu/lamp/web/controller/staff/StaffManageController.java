@@ -17,12 +17,10 @@
 package space.lingu.lamp.web.controller.staff;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import space.lingu.lamp.staff.StaffService;
 import space.lingu.lamp.web.controller.AdminApi;
-import space.lingu.lamp.web.domain.staff.StaffService;
-import space.lingu.lamp.web.domain.staff.StaffInfo;
 import space.lingu.lamp.web.controller.staff.model.StaffVo;
 import tech.rollw.common.web.HttpResponseEntity;
-import tech.rollw.common.web.page.Page;
 import tech.rollw.common.web.page.Pageable;
 
 import java.util.List;
@@ -41,11 +39,7 @@ public class StaffManageController {
     @GetMapping("/staffs")
     public HttpResponseEntity<List<StaffVo>> getStaffs(
             Pageable pageable) {
-        Page<StaffInfo> staffPage =
-                staffService.getStaffs(pageable);
-
-        return HttpResponseEntity.success(
-                staffPage.transform(StaffVo::from));
+        return HttpResponseEntity.success();
     }
 
 }
