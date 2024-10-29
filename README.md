@@ -53,7 +53,7 @@ To generate the distribution package, run the following command:
 ./gradlew package
 ```
 
-This command will generate a compressed file, similar to `lamp-blog-{version}.tar.gz`,
+This command will generate a compressed file, similar to `lamp-blog-{version}-dist.tar.gz`,
 under the `build/dist` directory. This file includes the base JAR file, startup
 scripts, and other resources.
 
@@ -121,12 +121,19 @@ bin/lamp # Replace with the actual path to `lamp`
 
 > Current support command line arguments:
 > - `--config`, `-c`: Specify the configuration file to use.
-> Default will try find `lamp.conf` in the current directory and the
-> `conf` directory under the working directory.
+    > Default will try find `lamp.conf` in the current directory and the
+    > `conf` directory under the working directory.
 
 By default, the application will start on port `5100`. And database
 related configurations must be provided in the configuration file,
 or the application will fail to start.
+
+You can use the environment variable `JAVA_OPTS` to specify the
+JVM options, like the following:
+
+```shell
+JAVA_OPTS="-Xmx1024m -Xms64m" bin/lamp
+```
 
 ### Running with Docker
 
@@ -134,7 +141,7 @@ If you have built the Docker image, you can run the application using the
 following command:
 
 > [!NOTE]
-> Before running the command, you need to prepare a configuration file named 
+> Before running the command, you need to prepare a configuration file named
 > `lamp.conf` in your local directory for mount to the container and replace
 > the `/path/to/lamp.conf` with the actual path to the configuration file.
 
@@ -151,6 +158,16 @@ docker run \
 > Options:
 > - `--network host`: Use the host network, or replace with your own network.
 > - `-v /path/to/lamp.conf:/app/lamp-blog/conf/lamp.conf`: Mount the configuration file to the container.
+
+Also, you can use the environment variable `JAVA_OPTS` to specify the
+JVM options, like the following:
+
+```shell
+docker run \
+  #...other options omitted
+  -e JAVA_OPTS="-Xmx1024m -Xms64m" \  # replace with your own JVM options
+  --name lamp-blog lamp-blog:{version}
+```
 
 ## Features
 
