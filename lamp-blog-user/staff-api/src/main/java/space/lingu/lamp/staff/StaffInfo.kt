@@ -17,7 +17,7 @@
 package space.lingu.lamp.staff
 
 import space.lingu.lamp.user.UserIdentity
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * @author RollW
@@ -26,8 +26,8 @@ data class StaffInfo(
     val id: Long,
     val userIdentity: UserIdentity,
     override val types: Set<StaffType>,
-    private val createTime: LocalDateTime,
-    private val updateTime: LocalDateTime,
+    private val createTime: OffsetDateTime,
+    private val updateTime: OffsetDateTime,
     val allowUser: Boolean,
     val deleted: Boolean
 ) : AttributedStaff {
@@ -37,9 +37,9 @@ data class StaffInfo(
     override val userId: Long
         get() = userIdentity.userId
 
-    override fun getCreateTime(): LocalDateTime = createTime
+    override fun getCreateTime(): OffsetDateTime = createTime
 
-    override fun getUpdateTime(): LocalDateTime = updateTime
+    override fun getUpdateTime(): OffsetDateTime = updateTime
 
     companion object {
         @JvmStatic
@@ -61,8 +61,8 @@ data class StaffInfo(
                 userIdentity.userId,
                 userIdentity,
                 emptySet(),
-                LocalDateTime.now(),
-                LocalDateTime.now(),
+                OffsetDateTime.now(),
+                OffsetDateTime.now(),
                 false,
                 false
             )

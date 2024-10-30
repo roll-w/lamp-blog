@@ -28,7 +28,7 @@ import space.lingu.lamp.content.common.ContentErrorCode;
 import space.lingu.lamp.content.common.ContentException;
 import tech.rollw.common.web.CommonRuntimeException;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
@@ -55,13 +55,13 @@ public abstract class AbstractContentOperator implements ContentOperator {
 
     @NonNull
     @Override
-    public final LocalDateTime getCreateTime() {
+    public final OffsetDateTime getCreateTime() {
         return content.getCreateTime();
     }
 
     @NonNull
     @Override
-    public final LocalDateTime getUpdateTime() {
+    public final OffsetDateTime getUpdateTime() {
         return content.getUpdateTime();
     }
 

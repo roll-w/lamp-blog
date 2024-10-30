@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.configuration;
 
 import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.json.Jackson2ObjectMapperBuilder;
@@ -39,6 +40,7 @@ public class WebMvcConfiguration implements WebMvcConfigurer {
         return Jackson2ObjectMapperBuilder
                 .json()
                 .featuresToEnable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS)
+                .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
                 .serializerByType(ErrorCode.class, errorCodeSerializer)
                 .deserializerByType(ErrorCode.class, errorCodeDeserializer);
     }

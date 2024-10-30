@@ -19,7 +19,7 @@ import space.lingu.lamp.content.ContentDetails
 import space.lingu.lamp.content.ContentType
 import space.lingu.lamp.content.comment.Comment
 import space.lingu.lamp.web.controller.content.vo.ContentVo
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * @author RollW
@@ -31,15 +31,15 @@ data class CommentVo(
     val content: String,
     val contentId: Long,
     val contentType: ContentType,
-    val createTime: LocalDateTime,
-    val updateTime: LocalDateTime
+    val createTime: OffsetDateTime,
+    val updateTime: OffsetDateTime
 ) : ContentVo {
 
     override fun id(): Long = id
 
-    override fun createTime(): LocalDateTime = createTime
+    override fun createTime(): OffsetDateTime = createTime
 
-    override fun updateTime(): LocalDateTime = updateTime
+    override fun updateTime(): OffsetDateTime = updateTime
 
     companion object {
         @JvmStatic

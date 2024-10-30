@@ -38,7 +38,7 @@ import space.lingu.lamp.user.repository.UserRepository;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -84,7 +84,7 @@ public class UserServiceImpl implements UserSignatureProvider,
         }
         validate(username, password, email);
 
-        LocalDateTime time = LocalDateTime.now();
+        OffsetDateTime time = OffsetDateTime.now();
         UserDo user = UserDo.builder()
                 .setUsername(username)
                 .setPassword(passwordEncoder.encode(password))

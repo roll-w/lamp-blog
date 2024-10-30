@@ -19,7 +19,7 @@ package space.lingu.lamp.user;
 import space.lingu.NonNull;
 import space.lingu.lamp.TimeAttributed;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -33,11 +33,11 @@ public interface AttributedUser extends UserIdentity, TimeAttributed {
 
     @NonNull
     @Override
-    LocalDateTime getCreateTime();
+    OffsetDateTime getCreateTime();
 
-    @NonNull
     @Override
-    LocalDateTime getUpdateTime();
+    @NonNull
+    OffsetDateTime getUpdateTime();
 
     default boolean isNormal() {
         return isEnabled() && !isLocked() && !isCanceled();

@@ -26,7 +26,7 @@ import space.lingu.lamp.user.UserResourceKind;
 import tech.rollw.common.web.system.SystemResourceKind;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * User personal data.
@@ -43,13 +43,13 @@ public final class UserPersonalData implements Serializable, DataEntity<Long> {
     private final Gender gender;
     private final String location;
     private final String website;
-    private final LocalDateTime updateTime;
+    private final OffsetDateTime updateTime;
 
     public UserPersonalData(long userId, String nickname, String avatar,
                             String cover, Birthday birthday,
                             String introduction,
                             Gender gender, String location,
-                            String website, LocalDateTime updateTime) {
+                            String website, OffsetDateTime updateTime) {
         this.userId = userId;
         this.nickname = nickname;
         this.avatar = avatar;
@@ -105,13 +105,13 @@ public final class UserPersonalData implements Serializable, DataEntity<Long> {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return NONE_TIME;
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -173,7 +173,7 @@ public final class UserPersonalData implements Serializable, DataEntity<Long> {
         private Gender gender;
         private String location;
         private String website;
-        private LocalDateTime updateTime;
+        private OffsetDateTime updateTime;
 
         public Builder() {
         }
@@ -243,11 +243,11 @@ public final class UserPersonalData implements Serializable, DataEntity<Long> {
             return cover;
         }
 
-        public LocalDateTime getUpdateTime() {
+        public OffsetDateTime getUpdateTime() {
             return updateTime;
         }
 
-        public Builder setUpdateTime(LocalDateTime updateTime) {
+        public Builder setUpdateTime(OffsetDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

@@ -27,7 +27,7 @@ import space.lingu.lamp.DataEntity
 import space.lingu.lamp.TimeAttributed
 import space.lingu.lamp.setting.SystemSettingResourceKind
 import tech.rollw.common.web.system.SystemResourceKind
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * @author RollW
@@ -54,9 +54,9 @@ class SystemSettingDo(
         this.id = id
     }
 
-    override fun getCreateTime(): LocalDateTime = TimeAttributed.NONE_TIME
+    override fun getCreateTime(): OffsetDateTime = TimeAttributed.NONE_TIME
 
-    override fun getUpdateTime(): LocalDateTime = TimeAttributed.NONE_TIME
+    override fun getUpdateTime(): OffsetDateTime = TimeAttributed.NONE_TIME
 
     override fun getSystemResourceKind(): SystemResourceKind =
         SystemSettingResourceKind

@@ -34,7 +34,7 @@ import space.lingu.lamp.content.ContentIdentity
 import space.lingu.lamp.content.ContentType
 import space.lingu.lamp.content.comment.Comment
 import space.lingu.lamp.content.comment.CommentStatus
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * @author RollW
@@ -58,10 +58,10 @@ class CommentDo(
     private var content: String = "",
 
     @Column(name = "create_time", nullable = false)
-    private var createTime: LocalDateTime = LocalDateTime.now(),
+    private var createTime: OffsetDateTime = OffsetDateTime.now(),
 
     @Column(name = "update_time", nullable = false)
-    private var updateTime: LocalDateTime = LocalDateTime.now(),
+    private var updateTime: OffsetDateTime = OffsetDateTime.now(),
 
     @Column(name = "comment_on_type", nullable = false, length = 40)
     @Enumerated(EnumType.STRING)
@@ -84,15 +84,15 @@ class CommentDo(
 
     override fun getResourceId(): Long = id!!
 
-    override fun getCreateTime(): LocalDateTime = createTime
+    override fun getCreateTime(): OffsetDateTime = createTime
 
-    fun setCreateTime(createTime: LocalDateTime) {
+    fun setCreateTime(createTime: OffsetDateTime) {
         this.createTime = createTime
     }
 
-    override fun getUpdateTime(): LocalDateTime = updateTime
+    override fun getUpdateTime(): OffsetDateTime = updateTime
 
-    fun setUpdateTime(updateTime: LocalDateTime) {
+    fun setUpdateTime(updateTime: OffsetDateTime) {
         this.updateTime = updateTime
     }
 
@@ -142,8 +142,8 @@ class CommentDo(
         private var userId: Long = 0
         private var parentId: Long = 0
         private var content: String? = null
-        private var createTime: LocalDateTime? = null
-        private var updateTime: LocalDateTime? = null
+        private var createTime: OffsetDateTime? = null
+        private var updateTime: OffsetDateTime? = null
         private var commentOnType: ContentType? = null
         private var commentOnId: Long = 0
         private var commentStatus: CommentStatus? = null
@@ -178,11 +178,11 @@ class CommentDo(
             this.content = content
         }
 
-        fun setCreateTime(createTime: LocalDateTime) = apply {
+        fun setCreateTime(createTime: OffsetDateTime) = apply {
             this.createTime = createTime
         }
 
-        fun setUpdateTime(updateTime: LocalDateTime) = apply {
+        fun setUpdateTime(updateTime: OffsetDateTime) = apply {
             this.updateTime = updateTime
         }
 

@@ -22,7 +22,7 @@ import space.lingu.lamp.EntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
@@ -33,13 +33,13 @@ public class FileStorage implements DataEntity<String> {
     private final long fileSize;
     private final String mimeType;
     private final FileType fileType;
-    private final LocalDateTime createTime;
+    private final OffsetDateTime createTime;
 
     public FileStorage(String fileId,
                        long fileSize,
                        String mimeType,
                        FileType fileType,
-                       LocalDateTime createTime) {
+                       OffsetDateTime createTime) {
         this.fileId = fileId;
         this.fileSize = fileSize;
         this.mimeType = mimeType;
@@ -70,13 +70,13 @@ public class FileStorage implements DataEntity<String> {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return createTime;
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return createTime;
     }
 
@@ -120,7 +120,7 @@ public class FileStorage implements DataEntity<String> {
         private long fileSize;
         private String mimeType;
         private FileType fileType;
-        private LocalDateTime createTime;
+        private OffsetDateTime createTime;
 
         public Builder() {
         }
@@ -158,7 +158,7 @@ public class FileStorage implements DataEntity<String> {
             return this;
         }
 
-        public Builder setCreateTime(LocalDateTime createTime) {
+        public Builder setCreateTime(OffsetDateTime createTime) {
             this.createTime = createTime;
             return this;
         }

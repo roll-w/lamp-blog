@@ -22,7 +22,7 @@ import space.lingu.lamp.LongEntityBuilder;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -31,13 +31,13 @@ public class UserGroupMember implements DataEntity<Long> {
     private final Long id;
     private final long groupId;
     private final long userId;
-    private final LocalDateTime createTime;
-    private final LocalDateTime updateTime;
+    private final OffsetDateTime createTime;
+    private final OffsetDateTime updateTime;
     private final boolean deleted;
 
 
     public UserGroupMember(Long id, long groupId, long userId,
-                           LocalDateTime createTime, LocalDateTime updateTime,
+                           OffsetDateTime createTime, OffsetDateTime updateTime,
                            boolean deleted) {
         this.id = id;
         this.groupId = groupId;
@@ -63,13 +63,13 @@ public class UserGroupMember implements DataEntity<Long> {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return createTime;
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -95,8 +95,8 @@ public class UserGroupMember implements DataEntity<Long> {
         private Long id;
         private long groupId;
         private long userId;
-        private LocalDateTime createTime;
-        private LocalDateTime updateTime;
+        private OffsetDateTime createTime;
+        private OffsetDateTime updateTime;
         private boolean deleted;
 
         private Builder() {
@@ -127,12 +127,12 @@ public class UserGroupMember implements DataEntity<Long> {
             return this;
         }
 
-        public Builder setCreateTime(LocalDateTime createTime) {
+        public Builder setCreateTime(OffsetDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(LocalDateTime updateTime) {
+        public Builder setUpdateTime(OffsetDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

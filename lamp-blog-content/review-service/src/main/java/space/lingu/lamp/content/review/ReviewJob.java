@@ -27,7 +27,7 @@ import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.content.SimpleContentIdentity;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
@@ -47,8 +47,8 @@ public class ReviewJob implements DataEntity<Long>, ContentAssociated {
     private final Long operatorId;
     private final ReviewStatus status;
     private final String result;
-    private final LocalDateTime assignedTime;
-    private final LocalDateTime reviewTime;
+    private final OffsetDateTime assignedTime;
+    private final OffsetDateTime reviewTime;
     private final ReviewMark reviewMark;
     private final ContentIdentity associatedContent;
 
@@ -56,8 +56,8 @@ public class ReviewJob implements DataEntity<Long>, ContentAssociated {
                      ContentType reviewContentType, Long reviewerId,
                      @Nullable Long operatorId,
                      ReviewStatus status,
-                     String result, LocalDateTime assignedTime,
-                     LocalDateTime reviewTime,
+                     String result, OffsetDateTime assignedTime,
+                     OffsetDateTime reviewTime,
                      ReviewMark reviewMark) {
         Preconditions.checkNotNull(status);
         Preconditions.checkNotNull(reviewContentType);
@@ -83,13 +83,13 @@ public class ReviewJob implements DataEntity<Long>, ContentAssociated {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return getAssignedTime();
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return getReviewTime();
     }
 
@@ -118,7 +118,7 @@ public class ReviewJob implements DataEntity<Long>, ContentAssociated {
         return reviewContentType;
     }
 
-    public LocalDateTime getAssignedTime() {
+    public OffsetDateTime getAssignedTime() {
         return assignedTime;
     }
 
@@ -126,7 +126,7 @@ public class ReviewJob implements DataEntity<Long>, ContentAssociated {
         return result;
     }
 
-    public LocalDateTime getReviewTime() {
+    public OffsetDateTime getReviewTime() {
         return reviewTime;
     }
 
@@ -139,7 +139,7 @@ public class ReviewJob implements DataEntity<Long>, ContentAssociated {
         return associatedContent;
     }
 
-    public ReviewJob reviewPass(long operatorId, LocalDateTime reviewTime) {
+    public ReviewJob reviewPass(long operatorId, OffsetDateTime reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewContentType,
                 reviewerId, operatorId,
@@ -147,7 +147,7 @@ public class ReviewJob implements DataEntity<Long>, ContentAssociated {
                 reviewMark);
     }
 
-    public ReviewJob reviewReject(long operatorId, String result, LocalDateTime reviewTime) {
+    public ReviewJob reviewReject(long operatorId, String result, OffsetDateTime reviewTime) {
         return new ReviewJob(
                 jobId, reviewContentId, reviewContentType,
                 reviewerId, operatorId,
@@ -214,9 +214,9 @@ public class ReviewJob implements DataEntity<Long>, ContentAssociated {
         private Long operatorId;
         private ReviewStatus status;
         private ContentType reviewContentType;
-        private LocalDateTime assignedTime;
+        private OffsetDateTime assignedTime;
         private String result;
-        private LocalDateTime reviewTime;
+        private OffsetDateTime reviewTime;
         private ReviewMark reviewMark;
 
         public Builder() {
@@ -270,7 +270,7 @@ public class ReviewJob implements DataEntity<Long>, ContentAssociated {
             return this;
         }
 
-        public Builder setAssignedTime(LocalDateTime assignedTime) {
+        public Builder setAssignedTime(OffsetDateTime assignedTime) {
             this.assignedTime = assignedTime;
             return this;
         }
@@ -280,7 +280,7 @@ public class ReviewJob implements DataEntity<Long>, ContentAssociated {
             return this;
         }
 
-        public Builder setReviewTime(LocalDateTime reviewTime) {
+        public Builder setReviewTime(OffsetDateTime reviewTime) {
             this.reviewTime = reviewTime;
             return this;
         }

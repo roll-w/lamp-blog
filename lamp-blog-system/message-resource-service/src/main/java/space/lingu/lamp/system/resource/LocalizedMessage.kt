@@ -19,7 +19,7 @@ import space.lingu.NonNull
 import space.lingu.lamp.DataEntity
 import space.lingu.lamp.TimeAttributed
 import tech.rollw.common.web.system.SystemResourceKind
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.Locale
 
 /**
@@ -35,15 +35,15 @@ data class LocalizedMessage(
     override val key: String,
     override val value: String,
     override val locale: Locale,
-    private val updateTime: LocalDateTime
+    private val updateTime: OffsetDateTime
 ) : LocalizedMessageResource, DataEntity<Long> {
     override fun getId(): Long? = id
 
-    override fun getCreateTime(): LocalDateTime {
+    override fun getCreateTime(): OffsetDateTime {
         return TimeAttributed.NONE_TIME
     }
 
-    override fun getUpdateTime(): LocalDateTime = updateTime
+    override fun getUpdateTime(): OffsetDateTime = updateTime
 
     @NonNull
     override fun getSystemResourceKind(): SystemResourceKind {
@@ -59,7 +59,7 @@ data class LocalizedMessage(
         private var key: String? = null
         private var value: String? = null
         private var locale: Locale? = null
-        private var updateTime: LocalDateTime? = null
+        private var updateTime: OffsetDateTime? = null
 
         constructor()
 
@@ -91,7 +91,7 @@ data class LocalizedMessage(
             return this
         }
 
-        fun setUpdateTime(updateTime: LocalDateTime): Builder {
+        fun setUpdateTime(updateTime: OffsetDateTime): Builder {
             this.updateTime = updateTime
             return this
         }

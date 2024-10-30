@@ -25,12 +25,12 @@ import space.lingu.lamp.user.UserOperator;
 import space.lingu.lamp.user.UserViewException;
 import space.lingu.lamp.user.filter.UserFilteringInfo;
 import space.lingu.lamp.user.filter.UserFilteringInfoType;
-import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.CommonErrorCode;
+import tech.rollw.common.web.CommonRuntimeException;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -94,7 +94,7 @@ public class UserOperatorImpl implements UserOperator {
             return this;
         }
         user = userBuilder
-                .setUpdateTime(LocalDateTime.now())
+                .setUpdateTime(OffsetDateTime.now())
                 .build();
         delegate.updateUser(user);
         updateFlag = false;
@@ -263,7 +263,7 @@ public class UserOperatorImpl implements UserOperator {
             return this;
         }
         user = userBuilder
-                .setUpdateTime(LocalDateTime.now())
+                .setUpdateTime(OffsetDateTime.now())
                 .build();
         delegate.updateUser(user);
         updateFlag = false;
@@ -311,13 +311,13 @@ public class UserOperatorImpl implements UserOperator {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return user.getCreateTime();
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return user.getUpdateTime();
     }
 }

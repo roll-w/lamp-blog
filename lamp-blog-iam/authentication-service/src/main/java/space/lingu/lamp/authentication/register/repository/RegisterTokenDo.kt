@@ -29,7 +29,7 @@ import space.lingu.lamp.authentication.VerifiableToken
 import space.lingu.lamp.authentication.register.RegisterTokenResourceKind
 import space.lingu.lamp.authentication.register.RegisterVerificationToken
 import tech.rollw.common.web.system.SystemResourceKind
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * @author RollW
@@ -71,9 +71,9 @@ class RegisterTokenDo(
         return id
     }
 
-    override fun getCreateTime(): LocalDateTime = TimeAttributed.NONE_TIME
+    override fun getCreateTime(): OffsetDateTime = TimeAttributed.NONE_TIME
 
-    override fun getUpdateTime(): LocalDateTime = TimeAttributed.NONE_TIME
+    override fun getUpdateTime(): OffsetDateTime = TimeAttributed.NONE_TIME
 
     override fun getSystemResourceKind(): SystemResourceKind =
         RegisterTokenResourceKind

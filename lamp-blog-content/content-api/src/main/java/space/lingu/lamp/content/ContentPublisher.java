@@ -19,7 +19,7 @@ package space.lingu.lamp.content;
 import space.lingu.NonNull;
 import space.lingu.lamp.content.common.ContentException;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -29,7 +29,7 @@ public interface ContentPublisher extends ContentSupportable {
      * @throws ContentException if the content create failed.
      */
     ContentDetails publish(@NonNull UncreatedContent uncreatedContent,
-                           LocalDateTime timestamp) throws ContentException;
+                           OffsetDateTime timestamp) throws ContentException;
 
     @Override
     boolean supports(@NonNull ContentType contentType);

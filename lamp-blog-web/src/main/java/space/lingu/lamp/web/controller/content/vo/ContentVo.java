@@ -16,7 +16,7 @@
 
 package space.lingu.lamp.web.controller.content.vo;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -24,7 +24,7 @@ import java.time.LocalDateTime;
 public interface ContentVo {
     long id();
 
-    LocalDateTime createTime();
+    OffsetDateTime createTime();
 
-    LocalDateTime updateTime();
+    OffsetDateTime updateTime();
 }

@@ -24,7 +24,7 @@ import space.lingu.lamp.content.Content;
 import space.lingu.lamp.content.ContentType;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -72,13 +72,13 @@ public class ContentCollectionMetadata implements DataEntity<Long> {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return NONE_TIME;
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return NONE_TIME;
     }
 

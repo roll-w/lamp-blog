@@ -26,7 +26,7 @@ import space.lingu.lamp.content.ContentIdentity;
 import space.lingu.lamp.content.ContentType;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -42,8 +42,8 @@ public class Comment implements DataEntity<Long>, ContentDetails, ContentAssocia
      */
     private final long parentId;
     private final String content;
-    private final LocalDateTime createTime;
-    private final LocalDateTime updateTime;
+    private final OffsetDateTime createTime;
+    private final OffsetDateTime updateTime;
 
     /**
      * Comment on which type of content.
@@ -57,7 +57,7 @@ public class Comment implements DataEntity<Long>, ContentDetails, ContentAssocia
     private final ContentIdentity associatedContent;
 
     public Comment(Long id, long userId, long parentId, String content,
-                   LocalDateTime createTime, LocalDateTime updateTime,
+                   OffsetDateTime createTime, OffsetDateTime updateTime,
                    ContentType commentOnType, long commentOnId,
                    @NonNull CommentStatus commentStatus) {
         this.id = id;
@@ -120,13 +120,13 @@ public class Comment implements DataEntity<Long>, ContentDetails, ContentAssocia
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return createTime;
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -164,8 +164,8 @@ public class Comment implements DataEntity<Long>, ContentDetails, ContentAssocia
         private long commentOn;
         private long parentId;
         private String content;
-        private LocalDateTime createTime;
-        private LocalDateTime updateTime;
+        private OffsetDateTime createTime;
+        private OffsetDateTime updateTime;
         private ContentType type;
         @NonNull
         private CommentStatus commentStatus;
@@ -212,12 +212,12 @@ public class Comment implements DataEntity<Long>, ContentDetails, ContentAssocia
             return this;
         }
 
-        public Builder setCreateTime(LocalDateTime createTime) {
+        public Builder setCreateTime(OffsetDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(LocalDateTime updateTime) {
+        public Builder setUpdateTime(OffsetDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

@@ -22,7 +22,7 @@ import space.lingu.lamp.content.ContentDetails;
 import space.lingu.lamp.content.ContentDetailsMetadata;
 import space.lingu.lamp.content.ContentType;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -32,8 +32,8 @@ public record ArticleInfo(
         long userId,
         String title,
         String cover,
-        LocalDateTime createTime,
-        LocalDateTime updateTime
+        OffsetDateTime createTime,
+        OffsetDateTime updateTime
 ) implements Content {
     public static ArticleInfo from(ContentDetails contentDetails) {
         if (contentDetails == null) {

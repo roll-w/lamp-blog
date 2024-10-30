@@ -20,7 +20,7 @@ import space.lingu.lamp.content.ContentDetailsMetadata
 import space.lingu.lamp.content.ContentOperator
 import space.lingu.lamp.content.article.Article
 import space.lingu.lamp.content.service.AbstractContentOperator
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * @author RollW
@@ -62,7 +62,7 @@ class ArticleOperatorImpl internal constructor(
 
     override fun updateContent(): ContentDetails {
         val newArticle = articleBuilder
-            .setUpdateTime(LocalDateTime.now())
+            .setUpdateTime(OffsetDateTime.now())
             .build()
         delegate.updateArticle(newArticle)
         return newArticle.also {

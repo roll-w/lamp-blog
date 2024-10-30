@@ -24,7 +24,7 @@ import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -33,14 +33,14 @@ public final class UserLike implements DataEntity<Long> {
     @Nullable
     private final Long id;
     private final long userId;
-    private final LocalDateTime time;
+    private final OffsetDateTime time;
     private final String contentId;
     private final ContentType contentType;
     private final LikeType likeType;
 
     public UserLike(@Nullable Long id,
                     long userId,
-                    LocalDateTime time,
+                    OffsetDateTime time,
                     String contentId,
                     ContentType contentType,
                     LikeType likeType) {
@@ -59,13 +59,13 @@ public final class UserLike implements DataEntity<Long> {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return NONE_TIME;
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return time;
     }
 
@@ -73,7 +73,7 @@ public final class UserLike implements DataEntity<Long> {
         return userId;
     }
 
-    public LocalDateTime getTime() {
+    public OffsetDateTime getTime() {
         return time;
     }
 
@@ -106,7 +106,7 @@ public final class UserLike implements DataEntity<Long> {
     public static final class Builder implements LongEntityBuilder<UserLike> {
         private Long id;
         private long userId;
-        private LocalDateTime time;
+        private OffsetDateTime time;
         private String contentId;
         private ContentType contentType;
         private LikeType likeType;
@@ -133,7 +133,7 @@ public final class UserLike implements DataEntity<Long> {
             return this;
         }
 
-        public Builder setTime(LocalDateTime time) {
+        public Builder setTime(OffsetDateTime time) {
             this.time = time;
             return this;
         }

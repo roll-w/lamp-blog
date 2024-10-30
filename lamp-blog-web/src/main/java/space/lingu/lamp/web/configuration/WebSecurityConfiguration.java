@@ -150,7 +150,7 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    public TokenAuthenticationFilter token2AuthenticationFilter(
+    public TokenAuthenticationFilter tokenAuthenticationFilter(
             AuthenticationManager authenticationManager
     ) {
         return new TokenAuthenticationFilter(authenticationManager);

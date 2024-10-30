@@ -23,7 +23,7 @@ import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import tech.rollw.common.web.system.SystemResource;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,13 +35,13 @@ public class UserGroup implements DataEntity<Long>, SystemResource<Long> {
     private final String name;
     private final String description;
     private final Map<String, String> settings;
-    private final LocalDateTime createTime;
-    private final LocalDateTime updateTime;
+    private final OffsetDateTime createTime;
+    private final OffsetDateTime updateTime;
     private final boolean deleted;
 
     public UserGroup(Long id, String name, String description,
                      Map<String, String> settings,
-                     LocalDateTime createTime, LocalDateTime updateTime, boolean deleted) {
+                     OffsetDateTime createTime, OffsetDateTime updateTime, boolean deleted) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -69,12 +69,14 @@ public class UserGroup implements DataEntity<Long>, SystemResource<Long> {
     }
 
     @NonNull
-    public LocalDateTime getCreateTime() {
+    @Override
+    public OffsetDateTime getCreateTime() {
         return createTime;
     }
 
     @NonNull
-    public LocalDateTime getUpdateTime() {
+    @Override
+    public OffsetDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -101,8 +103,8 @@ public class UserGroup implements DataEntity<Long>, SystemResource<Long> {
         private String name;
         private String description;
         private Map<String, String> settings;
-        private LocalDateTime createTime;
-        private LocalDateTime updateTime;
+        private OffsetDateTime createTime;
+        private OffsetDateTime updateTime;
         private boolean deleted;
 
         private Builder() {
@@ -158,12 +160,12 @@ public class UserGroup implements DataEntity<Long>, SystemResource<Long> {
             return this;
         }
 
-        public Builder setCreateTime(LocalDateTime createTime) {
+        public Builder setCreateTime(OffsetDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(LocalDateTime updateTime) {
+        public Builder setUpdateTime(OffsetDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

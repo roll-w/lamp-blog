@@ -20,7 +20,7 @@ import space.lingu.lamp.DataEntity
 import space.lingu.lamp.LongEntityBuilder
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind
 import tech.rollw.common.web.system.SystemResourceKind
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * Notice board, system-wide announcement.
@@ -35,25 +35,19 @@ data class NoticeBoard(
      * Creator. Needs to be ADMIN or EDITOR.
      */
     val userId: Long,
-    private val createTime: LocalDateTime,
-    private val updateTime: LocalDateTime
+    private val createTime: OffsetDateTime,
+    private val updateTime: OffsetDateTime
 ) : DataEntity<Long> {
     override fun getId(): Long? {
         return id
     }
 
-    override fun getCreateTime(): LocalDateTime {
-        return createTime
-    }
+    override fun getCreateTime(): OffsetDateTime = createTime
 
-    override fun getUpdateTime(): LocalDateTime {
-        return updateTime
-    }
+    override fun getUpdateTime(): OffsetDateTime = updateTime
 
     @NonNull
-    override fun getSystemResourceKind(): SystemResourceKind {
-        return LampSystemResourceKind.SYSTEM_NOTICE_BOARD
-    }
+    override fun getSystemResourceKind(): SystemResourceKind = LampSystemResourceKind.SYSTEM_NOTICE_BOARD
 
     fun toBuilder(): Builder {
         return Builder(this)
@@ -64,8 +58,8 @@ data class NoticeBoard(
         private var title: String = ""
         private var content: String? = null
         private var userId: Long = 0
-        private var createTime: LocalDateTime = LocalDateTime.now()
-        private var updateTime: LocalDateTime = LocalDateTime.now()
+        private var createTime: OffsetDateTime = OffsetDateTime.now()
+        private var updateTime: OffsetDateTime = OffsetDateTime.now()
 
         constructor()
 
@@ -98,12 +92,12 @@ data class NoticeBoard(
             return this
         }
 
-        fun setCreateTime(createTime: LocalDateTime): Builder {
+        fun setCreateTime(createTime: OffsetDateTime): Builder {
             this.createTime = createTime
             return this
         }
 
-        fun setUpdateTime(updateTime: LocalDateTime): Builder {
+        fun setUpdateTime(updateTime: OffsetDateTime): Builder {
             this.updateTime = updateTime
             return this
         }

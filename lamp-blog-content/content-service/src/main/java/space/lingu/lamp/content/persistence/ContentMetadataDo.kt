@@ -36,7 +36,7 @@ import space.lingu.lamp.content.ContentStatus
 import space.lingu.lamp.content.ContentTrait
 import space.lingu.lamp.content.ContentType
 import tech.rollw.common.web.system.SystemResourceKind
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * @author RollW
@@ -80,9 +80,9 @@ class ContentMetadataDo(
         this.id = id
     }
 
-    override fun getCreateTime(): LocalDateTime = TimeAttributed.NONE_TIME
+    override fun getCreateTime(): OffsetDateTime = TimeAttributed.NONE_TIME
 
-    override fun getUpdateTime(): LocalDateTime = TimeAttributed.NONE_TIME
+    override fun getUpdateTime(): OffsetDateTime = TimeAttributed.NONE_TIME
 
     override fun getSystemResourceKind(): SystemResourceKind =
         ContentMetadataResourceKind

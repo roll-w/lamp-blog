@@ -29,7 +29,7 @@ import space.lingu.lamp.user.details.UserPersonalDataService;
 import space.lingu.lamp.user.details.persistence.UserPersonalDataDo;
 import space.lingu.lamp.user.details.persistence.UserPersonalDataRepository;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -121,7 +121,7 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
         for (UserDataField field : fields) {
             setBuilderValue(builder, field);
         }
-        builder.setUpdateTime(LocalDateTime.now());
+        builder.setUpdateTime(OffsetDateTime.now());
         userPersonalDataRepository.save(builder.build());
     }
 

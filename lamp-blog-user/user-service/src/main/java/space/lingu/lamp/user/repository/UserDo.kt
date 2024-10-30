@@ -36,7 +36,7 @@ import space.lingu.lamp.user.User
 import space.lingu.lamp.user.UserResourceKind
 import tech.rollw.common.web.system.SystemResourceKind
 import java.io.Serializable
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * @author RollW
@@ -66,11 +66,11 @@ class UserDo(
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "register_time", nullable = false)
-    var registerTime: LocalDateTime = LocalDateTime.now(),
+    var registerTime: OffsetDateTime = OffsetDateTime.now(),
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "update_time", nullable = false)
-    private var updateTime: LocalDateTime = LocalDateTime.now(),
+    private var updateTime: OffsetDateTime = OffsetDateTime.now(),
 
     @Column(name = "email", length = 255, nullable = false)
     private var email: String = "",
@@ -105,11 +105,11 @@ class UserDo(
         return UserResourceKind
     }
 
-    override fun getCreateTime(): LocalDateTime = registerTime
+    override fun getCreateTime(): OffsetDateTime = registerTime
 
-    override fun getUpdateTime(): LocalDateTime = updateTime
+    override fun getUpdateTime(): OffsetDateTime = updateTime
 
-    fun setUpdateTime(updateTime: LocalDateTime) {
+    fun setUpdateTime(updateTime: OffsetDateTime) {
         this.updateTime = updateTime
     }
 
@@ -200,8 +200,8 @@ class UserDo(
         private var username: String = ""
         private var password: String = ""
         private var role: Role = Role.USER
-        private var registerTime: LocalDateTime = LocalDateTime.now()
-        private var updateTime: LocalDateTime = LocalDateTime.now()
+        private var registerTime: OffsetDateTime = OffsetDateTime.now()
+        private var updateTime: OffsetDateTime = OffsetDateTime.now()
         private var email: String = ""
         private var phone: String = ""
         private var enabled = false
@@ -240,11 +240,11 @@ class UserDo(
             this.role = role
         }
 
-        fun setRegisterTime(registerTime: LocalDateTime) = apply {
+        fun setRegisterTime(registerTime: OffsetDateTime) = apply {
             this.registerTime = registerTime
         }
 
-        fun setUpdateTime(updateTime: LocalDateTime) = apply {
+        fun setUpdateTime(updateTime: OffsetDateTime) = apply {
             this.updateTime = updateTime
         }
 

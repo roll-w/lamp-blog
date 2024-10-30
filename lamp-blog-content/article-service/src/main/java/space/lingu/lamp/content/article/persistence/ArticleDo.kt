@@ -31,7 +31,7 @@ import space.lingu.lamp.content.ContentDetailsMetadata
 import space.lingu.lamp.content.ContentType
 import space.lingu.lamp.content.article.Article
 import space.lingu.lamp.content.article.ArticleDetailsMetadata
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * @author RollW
@@ -59,11 +59,11 @@ class ArticleDo(
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "createTime", nullable = false)
-    private var createTime: LocalDateTime = LocalDateTime.now(),
+    private var createTime: OffsetDateTime = OffsetDateTime.now(),
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "update_time", nullable = false)
-    private var updateTime: LocalDateTime = LocalDateTime.now()
+    private var updateTime: OffsetDateTime = OffsetDateTime.now()
 ) : DataEntity<Long>, ContentDetails {
     override fun getId(): Long? = id
 
@@ -73,15 +73,15 @@ class ArticleDo(
 
     override fun getResourceId(): Long = id!!
 
-    override fun getCreateTime(): LocalDateTime = createTime
+    override fun getCreateTime(): OffsetDateTime = createTime
 
-    fun setCreateTime(createTime: LocalDateTime) {
+    fun setCreateTime(createTime: OffsetDateTime) {
         this.createTime = createTime
     }
 
-    override fun getUpdateTime(): LocalDateTime = updateTime
+    override fun getUpdateTime(): OffsetDateTime = updateTime
 
-    fun setUpdateTime(updateTime: LocalDateTime) {
+    fun setUpdateTime(updateTime: OffsetDateTime) {
         this.updateTime = updateTime
     }
 
@@ -134,8 +134,8 @@ class ArticleDo(
         private var title: String? = null
         private var cover: String? = null
         private var content: String? = null
-        private var createTime: LocalDateTime? = null
-        private var updateTime: LocalDateTime? = null
+        private var createTime: OffsetDateTime? = null
+        private var updateTime: OffsetDateTime? = null
 
         constructor()
 
@@ -170,11 +170,11 @@ class ArticleDo(
             this.content = content
         }
 
-        fun setCreateTime(createTime: LocalDateTime) = apply {
+        fun setCreateTime(createTime: OffsetDateTime) = apply {
             this.createTime = createTime
         }
 
-        fun setUpdateTime(updateTime: LocalDateTime) = apply {
+        fun setUpdateTime(updateTime: OffsetDateTime) = apply {
             this.updateTime = updateTime
         }
 

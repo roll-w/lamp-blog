@@ -21,7 +21,7 @@ import space.lingu.lamp.content.ContentMetadataDetails;
 import space.lingu.lamp.content.ContentStatus;
 import space.lingu.lamp.content.article.Article;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -31,8 +31,8 @@ public record ArticleMetaVo(
         String title,
         String content,
         long authorId,
-        LocalDateTime createTime,
-        LocalDateTime updateTime,
+        OffsetDateTime createTime,
+        OffsetDateTime updateTime,
         ContentAccessAuthType accessAuthType,
         ContentStatus contentStatus
 ) {

@@ -25,7 +25,7 @@ import space.lingu.lamp.content.ContentMetadata;
 import space.lingu.lamp.content.ContentStatus;
 import space.lingu.lamp.content.ContentType;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -125,13 +125,13 @@ public class ContentCollectionDetails<T extends ContentDetails> implements Conte
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return contentDetails.getCreateTime();
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return contentDetails.getUpdateTime();
     }
 }

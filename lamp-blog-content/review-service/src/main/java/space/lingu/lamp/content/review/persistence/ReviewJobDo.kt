@@ -37,7 +37,7 @@ import space.lingu.lamp.content.review.ReviewJobResourceKind
 import space.lingu.lamp.content.review.ReviewMark
 import space.lingu.lamp.content.review.ReviewStatus
 import tech.rollw.common.web.system.SystemResourceKind
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 
 /**
@@ -75,11 +75,11 @@ class ReviewJobDo(
 
     @Column(name = "assigned_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    var assignedTime: LocalDateTime = LocalDateTime.now(),
+    var assignedTime: OffsetDateTime = OffsetDateTime.now(),
 
     @Column(name = "review_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    var reviewTime: LocalDateTime = LocalDateTime.now(),
+    var reviewTime: OffsetDateTime = OffsetDateTime.now(),
 
     @Column(name = "review_mark", nullable = false, length = 40)
     @Enumerated(EnumType.STRING)
@@ -89,9 +89,9 @@ class ReviewJobDo(
     override fun getSystemResourceKind(): SystemResourceKind =
         ReviewJobResourceKind
 
-    override fun getCreateTime(): LocalDateTime = assignedTime
+    override fun getCreateTime(): OffsetDateTime = assignedTime
 
-    override fun getUpdateTime(): LocalDateTime = reviewTime
+    override fun getUpdateTime(): OffsetDateTime = reviewTime
 
     override fun getId(): Long? = id
 
@@ -121,13 +121,13 @@ class ReviewJobDo(
         )
     }
 
-    fun reviewPass(operator: Long, time: LocalDateTime) = apply {
+    fun reviewPass(operator: Long, time: OffsetDateTime) = apply {
         this.operatorId = operator
         this.status = ReviewStatus.REVIEWED
         this.reviewTime = time
     }
 
-    fun reviewReject(operator: Long, reason: String, time: LocalDateTime) = apply {
+    fun reviewReject(operator: Long, reason: String, time: OffsetDateTime) = apply {
         this.operatorId = operator
         this.status = ReviewStatus.REJECTED
         this.result = reason
@@ -142,8 +142,8 @@ class ReviewJobDo(
         private var operatorId: Long? = null
         private var status: ReviewStatus = ReviewStatus.NOT_REVIEWED
         private var result: String = ""
-        private var assignedTime: LocalDateTime = LocalDateTime.now()
-        private var reviewTime: LocalDateTime = LocalDateTime.now()
+        private var assignedTime: OffsetDateTime = OffsetDateTime.now()
+        private var reviewTime: OffsetDateTime = OffsetDateTime.now()
         private var reviewMark: ReviewMark = ReviewMark.NORMAL
 
         constructor()
@@ -191,11 +191,11 @@ class ReviewJobDo(
             this.result = result
         }
 
-        fun setAssignedTime(assignedTime: LocalDateTime) = apply {
+        fun setAssignedTime(assignedTime: OffsetDateTime) = apply {
             this.assignedTime = assignedTime
         }
 
-        fun setReviewTime(reviewTime: LocalDateTime) = apply {
+        fun setReviewTime(reviewTime: OffsetDateTime) = apply {
             this.reviewTime = reviewTime
         }
 

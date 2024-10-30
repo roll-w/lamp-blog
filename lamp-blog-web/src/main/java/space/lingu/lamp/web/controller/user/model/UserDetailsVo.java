@@ -22,7 +22,7 @@ import space.lingu.lamp.user.details.Birthday;
 import space.lingu.lamp.user.details.Gender;
 import space.lingu.lamp.user.details.UserPersonalData;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * User details VO.
@@ -39,8 +39,8 @@ public record UserDetailsVo(
         boolean enabled,
         boolean locked,
         boolean canceled,
-        LocalDateTime createTime,
-        LocalDateTime updateTime,
+        OffsetDateTime createTime,
+        OffsetDateTime updateTime,
         String nickname,
         String avatar,
         String cover,

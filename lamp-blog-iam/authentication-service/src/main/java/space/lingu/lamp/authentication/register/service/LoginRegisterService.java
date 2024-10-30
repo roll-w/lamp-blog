@@ -56,7 +56,7 @@ import tech.rollw.common.web.UserErrorCode;
 import tech.rollw.common.web.system.AuthenticationException;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -248,7 +248,7 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
             throw new AuthenticationException(UserErrorCode.ERROR_USER_ALREADY_ACTIVATED);
         }
         user.setEnabled(true);
-        user.setUpdateTime(LocalDateTime.now());
+        user.setUpdateTime(OffsetDateTime.now());
         userRepository.save(user);
     }
 

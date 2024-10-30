@@ -34,7 +34,7 @@ import space.lingu.lamp.system.resource.LocalizedMessage
 import space.lingu.lamp.system.resource.LocalizedMessageResource
 import space.lingu.lamp.system.resource.LocalizedMessageResourceKind
 import tech.rollw.common.web.system.SystemResourceKind
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 import java.util.Locale
 
 /**
@@ -65,7 +65,7 @@ class LocalizedMessageDo(
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "update_time", nullable = false)
-    private var updateTime: LocalDateTime = LocalDateTime.now()
+    private var updateTime: OffsetDateTime = OffsetDateTime.now()
 ) : LocalizedMessageResource, DataEntity<Long> {
     override fun getId(): Long? {
         return id
@@ -75,11 +75,11 @@ class LocalizedMessageDo(
         this.id = id
     }
 
-    override fun getCreateTime(): LocalDateTime = TimeAttributed.NONE_TIME
+    override fun getCreateTime(): OffsetDateTime = TimeAttributed.NONE_TIME
 
-    override fun getUpdateTime(): LocalDateTime = updateTime
+    override fun getUpdateTime(): OffsetDateTime = updateTime
 
-    fun setUpdateTime(updateTime: LocalDateTime) {
+    fun setUpdateTime(updateTime: OffsetDateTime) {
         this.updateTime = updateTime
     }
 

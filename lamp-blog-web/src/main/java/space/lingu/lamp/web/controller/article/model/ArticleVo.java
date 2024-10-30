@@ -22,7 +22,7 @@ import space.lingu.lamp.content.ContentDetails;
 import space.lingu.lamp.content.ContentMetadataDetails;
 import space.lingu.lamp.web.controller.content.vo.ContentVo;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -32,8 +32,8 @@ public record ArticleVo(
         String title,
         String content,
         long userId,
-        LocalDateTime createTime,
-        LocalDateTime updateTime,
+        OffsetDateTime createTime,
+        OffsetDateTime updateTime,
         ContentAccessAuthType accessAuthType
         // TODO: add more fields
 ) implements ContentVo {

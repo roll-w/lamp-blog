@@ -31,7 +31,7 @@ import space.lingu.lamp.content.comment.persistence.CommentDo;
 import space.lingu.lamp.content.comment.persistence.CommentRepository;
 import space.lingu.lamp.content.common.ContentException;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -49,7 +49,7 @@ public class CommentService implements ContentPublisher, ContentCollectionProvid
 
     @Override
     public ContentDetails publish(@NonNull UncreatedContent uncreatedContent,
-                                  LocalDateTime timestamp)
+                                  OffsetDateTime timestamp)
             throws ContentException {
         ContentDetailsMetadata detailsMetadata =
                 uncreatedContent.getMetadata();

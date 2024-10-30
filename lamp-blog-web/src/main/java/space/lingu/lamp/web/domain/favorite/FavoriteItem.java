@@ -25,7 +25,7 @@ import space.lingu.lamp.content.ContentType;
 import space.lingu.lamp.web.domain.systembased.LampSystemResourceKind;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -36,15 +36,15 @@ public class FavoriteItem implements DataEntity<Long>, ContentAssociated {
     private final long userId;
     private final long contentId;
     private final ContentType contentType;
-    private final LocalDateTime createTime;
-    private final LocalDateTime updateTime;
+    private final OffsetDateTime createTime;
+    private final OffsetDateTime updateTime;
     private final boolean deleted;
     private final ContentIdentity associatedContent;
 
     public FavoriteItem(Long id, long favoriteGroupId, long userId,
                         long contentId, ContentType contentType,
-                        LocalDateTime createTime,
-                        LocalDateTime updateTime, boolean deleted) {
+                        OffsetDateTime createTime,
+                        OffsetDateTime updateTime, boolean deleted) {
         this.id = id;
         this.favoriteGroupId = favoriteGroupId;
         this.userId = userId;
@@ -79,13 +79,13 @@ public class FavoriteItem implements DataEntity<Long>, ContentAssociated {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return createTime;
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -118,8 +118,8 @@ public class FavoriteItem implements DataEntity<Long>, ContentAssociated {
         private long userId;
         private long contentId;
         private ContentType contentType;
-        private LocalDateTime createTime;
-        private LocalDateTime updateTime;
+        private OffsetDateTime createTime;
+        private OffsetDateTime updateTime;
         private boolean deleted;
 
         private Builder() {
@@ -161,12 +161,12 @@ public class FavoriteItem implements DataEntity<Long>, ContentAssociated {
             return this;
         }
 
-        public Builder setCreateTime(LocalDateTime createTime) {
+        public Builder setCreateTime(OffsetDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(LocalDateTime updateTime) {
+        public Builder setUpdateTime(OffsetDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

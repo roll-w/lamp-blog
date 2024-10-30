@@ -34,7 +34,7 @@ import space.lingu.lamp.content.collection.ContentCollectionType;
 import space.lingu.lamp.content.common.ContentErrorCode;
 import space.lingu.lamp.content.common.ContentException;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -52,7 +52,7 @@ public class ArticleService implements ContentPublisher, ContentCollectionProvid
 
     @Override
     public ContentDetails publish(@NonNull UncreatedContent uncreatedContent,
-                                  LocalDateTime timestamp)
+                                  OffsetDateTime timestamp)
             throws ContentException {
         if (uncreatedContent.getContentType() != ContentType.ARTICLE) {
             throw new IllegalArgumentException("Content type not supported: " +

@@ -19,7 +19,7 @@ package space.lingu.lamp.web.controller.staff.model;
 import space.lingu.lamp.staff.AttributedStaff;
 import space.lingu.lamp.staff.StaffType;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Set;
 
 /**
@@ -30,8 +30,8 @@ public record StaffVo(
         long id,
         long userId,
         Set<StaffType> types,
-        LocalDateTime createTime,
-        LocalDateTime updateTime
+        OffsetDateTime createTime,
+        OffsetDateTime updateTime
 ) {
 
     public static StaffVo from(AttributedStaff staffInfo) {

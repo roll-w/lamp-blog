@@ -18,7 +18,7 @@ package space.lingu.lamp.content.review;
 
 import space.lingu.lamp.content.ContentType;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -32,8 +32,8 @@ public record ReviewJobInfo(
         ReviewMark reviewMark,
         Long reviewer,
         Long operator,
-        LocalDateTime assignedTime,
-        LocalDateTime reviewTime
+        OffsetDateTime assignedTime,
+        OffsetDateTime reviewTime
 ) {
     public static ReviewJobInfo of(ReviewJob job) {
         if (job == null) {

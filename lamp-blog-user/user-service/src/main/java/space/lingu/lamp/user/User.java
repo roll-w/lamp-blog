@@ -21,7 +21,7 @@ import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
@@ -32,8 +32,8 @@ public class User implements AttributedUserDetails, DataEntity<Long> {
     private final String username;
     private final String password;
     private final Role role;
-    private final LocalDateTime registerTime;
-    private final LocalDateTime updateTime;
+    private final OffsetDateTime registerTime;
+    private final OffsetDateTime updateTime;
     private final String email;
     private final String phone;
     private final boolean enabled;
@@ -41,8 +41,8 @@ public class User implements AttributedUserDetails, DataEntity<Long> {
     private final boolean canceled;
 
     public User(Long id, String username, String password,
-                Role role, LocalDateTime registerTime,
-                LocalDateTime updateTime, String email, String phone,
+                Role role, OffsetDateTime registerTime,
+                OffsetDateTime updateTime, String email, String phone,
                 boolean enabled, boolean locked, boolean canceled) {
         this.id = id;
         this.username = username;
@@ -69,13 +69,13 @@ public class User implements AttributedUserDetails, DataEntity<Long> {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return registerTime;
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -99,7 +99,7 @@ public class User implements AttributedUserDetails, DataEntity<Long> {
         return role;
     }
 
-    public LocalDateTime getRegisterTime() {
+    public OffsetDateTime getRegisterTime() {
         return registerTime;
     }
 
@@ -179,8 +179,8 @@ public class User implements AttributedUserDetails, DataEntity<Long> {
         private String username;
         private String password;
         private Role role = Role.USER;
-        private LocalDateTime registerTime;
-        private LocalDateTime updateTime;
+        private OffsetDateTime registerTime;
+        private OffsetDateTime updateTime;
         private String email;
         private String phone;
         private boolean enabled;
@@ -225,12 +225,12 @@ public class User implements AttributedUserDetails, DataEntity<Long> {
             return this;
         }
 
-        public Builder setRegisterTime(LocalDateTime registerTime) {
+        public Builder setRegisterTime(OffsetDateTime registerTime) {
             this.registerTime = registerTime;
             return this;
         }
 
-        public Builder setUpdateTime(LocalDateTime updateTime) {
+        public Builder setUpdateTime(OffsetDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

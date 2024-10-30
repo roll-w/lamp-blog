@@ -21,7 +21,7 @@ import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.LongEntityBuilder;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.EnumSet;
 import java.util.Objects;
 import java.util.Set;
@@ -33,8 +33,8 @@ public class Staff implements DataEntity<Long>, AttributedStaff {
     private final Long id;
     private final long userId;
     private final Set<StaffType> types;
-    private final LocalDateTime createTime;
-    private final LocalDateTime updateTime;
+    private final OffsetDateTime createTime;
+    private final OffsetDateTime updateTime;
 
     /**
      * Allow the staff to act as a user (has the same
@@ -44,8 +44,8 @@ public class Staff implements DataEntity<Long>, AttributedStaff {
     private final boolean deleted;
 
     public Staff(Long id, long userId,
-                 Set<StaffType> types, LocalDateTime createTime,
-                 LocalDateTime updateTime, boolean asUser,
+                 Set<StaffType> types, OffsetDateTime createTime,
+                 OffsetDateTime updateTime, boolean asUser,
                  boolean deleted) {
         this.id = id;
         this.userId = userId;
@@ -77,13 +77,13 @@ public class Staff implements DataEntity<Long>, AttributedStaff {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return createTime;
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return updateTime;
     }
 
@@ -149,8 +149,8 @@ public class Staff implements DataEntity<Long>, AttributedStaff {
         private Long id;
         private long userId;
         private Set<StaffType> type;
-        private LocalDateTime createTime;
-        private LocalDateTime updateTime;
+        private OffsetDateTime createTime;
+        private OffsetDateTime updateTime;
         private boolean asUser;
         private boolean deleted;
 
@@ -192,12 +192,12 @@ public class Staff implements DataEntity<Long>, AttributedStaff {
             return this;
         }
 
-        public Builder setCreateTime(LocalDateTime createTime) {
+        public Builder setCreateTime(OffsetDateTime createTime) {
             this.createTime = createTime;
             return this;
         }
 
-        public Builder setUpdateTime(LocalDateTime updateTime) {
+        public Builder setUpdateTime(OffsetDateTime updateTime) {
             this.updateTime = updateTime;
             return this;
         }

@@ -33,7 +33,7 @@ import space.lingu.lamp.content.review.persistence.ReviewJobRepository;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.system.Operator;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -54,7 +54,7 @@ public class ReviewServiceImpl implements ReviewService, ReviewJobProvider {
     public ReviewJobInfo assignReviewer(long contentId,
                                         ContentType contentType,
                                         boolean allowAutoReview) {
-        LocalDateTime assignedTime = LocalDateTime.now();
+        OffsetDateTime assignedTime = OffsetDateTime.now();
         // TODO: may has multiple review jobs for the same content
         ReviewJobDo old = reviewJobRepository.findByContent(contentId, contentType)
                 .orElse(null);

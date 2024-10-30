@@ -27,7 +27,7 @@ import space.lingu.lamp.content.review.persistence.ReviewJobDo;
 import space.lingu.lamp.content.review.persistence.ReviewJobRepository;
 import tech.rollw.common.web.CommonErrorCode;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -73,7 +73,7 @@ public class ReviewStatusServiceImpl implements ReviewStatusService {
         if (job == null) {
             return null;
         }
-        LocalDateTime time = LocalDateTime.now();
+        OffsetDateTime time = OffsetDateTime.now();
         reviewerAllocator.releaseReviewer(job.getReviewerId(), job.getReviewContentType());
         if (passed) {
             return job.reviewPass(operator, time);

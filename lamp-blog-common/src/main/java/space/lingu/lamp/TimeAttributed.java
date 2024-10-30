@@ -19,6 +19,7 @@ package space.lingu.lamp;
 import space.lingu.NonNull;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 /**
@@ -26,10 +27,13 @@ import java.time.ZoneOffset;
  */
 public interface TimeAttributed {
     @NonNull
-    LocalDateTime getCreateTime();
+    OffsetDateTime getCreateTime();
 
     @NonNull
-    LocalDateTime getUpdateTime();
+    OffsetDateTime getUpdateTime();
 
-    LocalDateTime NONE_TIME = LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC);
+    OffsetDateTime NONE_TIME = OffsetDateTime.of(
+            LocalDateTime.ofEpochSecond(0, 0, ZoneOffset.UTC),
+            ZoneOffset.UTC
+    );
 }

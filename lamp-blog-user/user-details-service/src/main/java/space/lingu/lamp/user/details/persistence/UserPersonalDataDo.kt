@@ -35,7 +35,7 @@ import space.lingu.lamp.user.details.Birthday
 import space.lingu.lamp.user.details.Gender
 import space.lingu.lamp.user.details.UserPersonalData
 import tech.rollw.common.web.system.SystemResourceKind
-import java.time.LocalDateTime
+import java.time.OffsetDateTime
 
 /**
  * @author RollW
@@ -76,16 +76,16 @@ class UserPersonalDataDo(
 
     @Column(name = "update_time", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private var updateTime: LocalDateTime = LocalDateTime.now()
+    private var updateTime: OffsetDateTime = OffsetDateTime.now()
 ) : DataEntity<Long> {
     override fun getId(): Long = id
 
     override fun getSystemResourceKind(): SystemResourceKind =
         UserResourceKind
 
-    override fun getCreateTime(): LocalDateTime = TimeAttributed.NONE_TIME
+    override fun getCreateTime(): OffsetDateTime = TimeAttributed.NONE_TIME
 
-    override fun getUpdateTime(): LocalDateTime = updateTime
+    override fun getUpdateTime(): OffsetDateTime = updateTime
 
     class BirthdayConverter : AttributeConverter<Birthday, String> {
         override fun convertToDatabaseColumn(attribute: Birthday?): String? {
@@ -114,7 +114,7 @@ class UserPersonalDataDo(
         private var gender: Gender? = null
         private var location: String? = null
         private var website: String? = null
-        private var updateTime: LocalDateTime? = null
+        private var updateTime: OffsetDateTime? = null
 
         constructor()
 
@@ -167,7 +167,7 @@ class UserPersonalDataDo(
             this.website = website
         }
 
-        fun setUpdateTime(updateTime: LocalDateTime) = apply {
+        fun setUpdateTime(updateTime: OffsetDateTime) = apply {
             this.updateTime = updateTime
         }
 

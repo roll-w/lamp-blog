@@ -21,7 +21,7 @@ import space.lingu.lamp.DataEntity;
 import space.lingu.lamp.EntityBuilder;
 import tech.rollw.common.web.system.SystemResourceKind;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 /**
@@ -54,13 +54,13 @@ public class SystemSetting implements DataEntity<Long> {
 
     @NonNull
     @Override
-    public LocalDateTime getCreateTime() {
+    public OffsetDateTime getCreateTime() {
         return NONE_TIME;
     }
 
     @NonNull
     @Override
-    public LocalDateTime getUpdateTime() {
+    public OffsetDateTime getUpdateTime() {
         return NONE_TIME;
     }
 
