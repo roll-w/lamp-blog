@@ -18,35 +18,23 @@ package space.lingu.lamp.security.authentication.adapter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
-import space.lingu.lamp.authentication.token.AuthenticationTokenService;
-import space.lingu.lamp.authentication.token.TokenAuthResult;
 import space.lingu.lamp.security.authorization.PrivilegedUser;
 import space.lingu.lamp.security.authorization.PrivilegedUserProvider;
 import space.lingu.lamp.security.authorization.adapter.PrivilegedUserAuthenticationToken;
-import space.lingu.lamp.user.UserSignatureProvider;
 import tech.rollw.common.web.CommonRuntimeException;
 
 /**
  * @author RollW
  */
-public class TokenBasedAuthenticationProvider extends PrivilegedUserBasedAuthenticationProvider {
-    private static final Logger logger = LoggerFactory.getLogger(TokenBasedAuthenticationProvider.class);
+public class PreUserAuthenticationProvider extends PrivilegedUserBasedAuthenticationProvider {
+    private static final Logger logger = LoggerFactory.getLogger(PreUserAuthenticationProvider.class);
 
-    private final AuthenticationTokenService authenticationTokenService;
     private final PrivilegedUserProvider privilegedUserProvider;
-    private final UserSignatureProvider userSignatureProvider;
 
-    public TokenBasedAuthenticationProvider(
-            AuthenticationTokenService authenticationTokenService,
-            PrivilegedUserProvider privilegedUserProvider,
-            UserSignatureProvider userSignatureProvider
-    ) {
-        this.authenticationTokenService = authenticationTokenService;
+    public PreUserAuthenticationProvider(PrivilegedUserProvider privilegedUserProvider) {
         this.privilegedUserProvider = privilegedUserProvider;
-        this.userSignatureProvider = userSignatureProvider;
     }
 
     @Override
@@ -56,17 +44,11 @@ public class TokenBasedAuthenticationProvider extends PrivilegedUserBasedAuthent
 
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        TokenBasedAuthenticationToken tokenBasedAuthenticationToken = (TokenBasedAuthenticationToken) authentication;
-        String token = tokenBasedAuthenticationToken.getCredentials();
-        Long id = authenticationTokenService.getUserId(token);
-        if (id == null) {
-            throw new BadCredentialsException("Invalid token");
-        }
+        PreUserAuthenticationToken token = (PreUserAuthenticationToken) authentication;
         try {
-            String signature = userSignatureProvider.getSignature(id);
-            TokenAuthResult tokenAuthResult = authenticationTokenService.verifyToken(token, signature);
-            long userId = tokenAuthResult.userId();
-            PrivilegedUser privilegedUser = privilegedUserProvider.loadPrivilegedUserById(userId);
+            PrivilegedUser privilegedUser = privilegedUserProvider.loadPrivilegedUserById(
+                    token.getCredentials().getUserId()
+            );
             check(privilegedUser);
             return new PrivilegedUserAuthenticationToken(privilegedUser);
         } catch (CommonRuntimeException e) {
@@ -76,6 +58,6 @@ public class TokenBasedAuthenticationProvider extends PrivilegedUserBasedAuthent
 
     @Override
     public boolean supports(Class<?> authentication) {
-        return authentication.isAssignableFrom(TokenBasedAuthenticationToken.class);
+        return authentication.isAssignableFrom(PreUserAuthenticationToken.class);
     }
 }
