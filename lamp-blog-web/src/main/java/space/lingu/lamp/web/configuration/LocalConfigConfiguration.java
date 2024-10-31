@@ -21,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import space.lingu.lamp.setting.ConfigProvider;
+import space.lingu.lamp.web.LampEnvKeys;
 
 /**
  * @author RollW
@@ -37,7 +38,7 @@ public class LocalConfigConfiguration {
     @Order(0)
     public ConfigProvider localConfigProvider() {
         ConfigProvider configProvider = configurableApplicationContext.getEnvironment()
-                .getProperty("lamp.config.local-provider", ConfigProvider.class);
+                .getProperty(LampEnvKeys.LOCAL_CONFIG_LOADER, ConfigProvider.class);
         if (configProvider == null) {
             throw new IllegalStateException("No local config provider found");
         }
