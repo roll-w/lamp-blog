@@ -26,6 +26,8 @@ public interface UserProvider {
 
     AttributedUserDetails getUser(String username) throws UserViewException;
 
+    AttributedUserDetails getUserByEmail(String email) throws UserViewException;
+
     AttributedUserDetails getUser(UserTrait userTrait) throws UserViewException;
 
     List<AttributedUserDetails> getUsers();

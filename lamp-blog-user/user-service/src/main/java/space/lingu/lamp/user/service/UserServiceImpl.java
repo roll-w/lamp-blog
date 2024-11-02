@@ -135,6 +135,15 @@ public class UserServiceImpl implements UserSignatureProvider,
     }
 
     @Override
+    public AttributedUserDetails getUserByEmail(String email) throws UserViewException {
+        UserDo user = userRepository.getByEmail(email).orElse(null);
+        if (user == null) {
+            throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
+        }
+        return user.lock();
+    }
+
+    @Override
     public AttributedUserDetails getUser(UserTrait userTrait)
             throws UserViewException {
         return getUser(userTrait.getUserId());
