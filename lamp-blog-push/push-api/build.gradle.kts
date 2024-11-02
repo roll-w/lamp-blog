@@ -16,17 +16,12 @@
 
 plugins {
     id("buildlogic.java-conventions")
-    id("buildlogic.jpa-conventions")
 }
 
 dependencies {
-    api(project(":lamp-blog-iam:authentication-api"))
-    api(project(":lamp-blog-user:user-service"))
-    api(project(":lamp-blog-common-data"))
-    api(project(":lamp-blog-push:push-api"))
-    implementation(libs.io.jsonwebtoken.jjwt.api)
-    implementation(libs.io.jsonwebtoken.jjwt.impl)
-    implementation(libs.io.jsonwebtoken.jjwt.jackson)
+    api(project(":lamp-blog-common"))
+    api(project(":lamp-blog-user:user-api"))
+    api("org.springframework.boot:spring-boot-starter-mail")
 }
 
-description = "lamp-blog-authentication-service"
+description = "lamp-blog-push-api"

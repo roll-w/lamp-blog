@@ -22,7 +22,7 @@ plugins {
 dependencies {
     api(project(":lamp-blog-system:message-resource-api"))
     api(project(":lamp-blog-common-data"))
-    api(libs.lingu.light.core)
+    api("org.freemarker:freemarker")
 }
 
 description = "lamp-blog-system-message-resource-service"
