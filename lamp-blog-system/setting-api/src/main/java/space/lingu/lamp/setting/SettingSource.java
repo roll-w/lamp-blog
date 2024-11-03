@@ -19,13 +19,42 @@ package space.lingu.lamp.setting;
 import java.util.List;
 
 /**
+ * Setting source.
+ * <p>
+ * Load order: LOCAL -> PROPERTIES -> ENVIRONMENT -> DATABASE
+ * <p>
+ * The next one can override the previous one.
+ *
  * @author RollW
  */
 public enum SettingSource {
+    /**
+     * No setting.
+     */
+    NONE,
+
+    /**
+     * Local setting, load from the conf file.
+     */
     LOCAL,
+
+    /**
+     * Setting from system properties. System properties are passed
+     * to the JVM when it starts.
+     */
+    PROPERTIES,
+
+    /**
+     * Setting from environment variables.
+     */
+    ENVIRONMENT,
+
+    /**
+     * Setting from the database.
+     */
     DATABASE;
 
     public static final List<SettingSource> VALUES = List.of(SettingSource.values());
 
-    public static final List<SettingSource> LOCAL_ONLY = List.of(LOCAL);
+    public static final List<SettingSource> LOCAL_ONLY = List.of(LOCAL, PROPERTIES, ENVIRONMENT);
 }
