@@ -16,8 +16,11 @@
 
 package space.lingu.lamp.system.resource.data
 
+import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Repository
 import space.lingu.lamp.common.data.CommonRepository
+import tech.rollw.common.web.page.Page
+import java.util.Locale
 
 /**
  * @author RollW
@@ -25,5 +28,37 @@ import space.lingu.lamp.common.data.CommonRepository
 @Repository
 class LocalizedMessageRepository(
     private val localizedMessageDao: LocalizedMessageDao
-): CommonRepository<LocalizedMessageDo, Long>(localizedMessageDao) {
+) : CommonRepository<LocalizedMessageDo, Long>(localizedMessageDao) {
+    fun findByKey(key: String, locale: Locale) =
+        findOne { root, _, criteriaBuilder ->
+            criteriaBuilder.and(
+                criteriaBuilder.equal(root.get<String>("key"), key),
+                criteriaBuilder.equal(root.get<Locale>("locale"), locale)
+            )
+        }
+
+    fun findByKey(
+        key: String,
+        pageable: Pageable = Pageable.unpaged()
+    ): Page<LocalizedMessageDo> =
+        findAll(pageable) { root, _, criteriaBuilder ->
+            criteriaBuilder.equal(root.get<String>("key"), key)
+        }
+
+    fun deleteByKey(key: String) {
+        delete { root, _, criteriaBuilder ->
+            criteriaBuilder.and(
+                criteriaBuilder.equal(root.get<String>("key"), key)
+            )
+        }
+    }
+
+    fun deleteByKey(key: String, locale: Locale) {
+        delete { root, _, criteriaBuilder ->
+            criteriaBuilder.and(
+                criteriaBuilder.equal(root.get<String>("key"), key),
+                criteriaBuilder.equal(root.get<Locale>("locale"), locale)
+            )
+        }
+    }
 }

@@ -27,6 +27,11 @@ import java.util.function.Supplier;
  * @author RollW
  */
 public interface LocalizedMessageResourceLoader {
+    void setFallbackLocale(@NonNull Locale locale);
+
+    @NonNull
+    Locale getFallbackLocale();
+
     @Nullable
     LocalizedMessageResource getMessageResource(@NonNull String key,
                                                 @NonNull Locale locale);

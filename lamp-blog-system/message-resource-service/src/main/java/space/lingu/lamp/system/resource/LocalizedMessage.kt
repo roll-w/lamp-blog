@@ -39,9 +39,7 @@ data class LocalizedMessage(
 ) : LocalizedMessageResource, DataEntity<Long> {
     override fun getId(): Long? = id
 
-    override fun getCreateTime(): OffsetDateTime {
-        return TimeAttributed.NONE_TIME
-    }
+    override fun getCreateTime(): OffsetDateTime = TimeAttributed.NONE_TIME
 
     override fun getUpdateTime(): OffsetDateTime = updateTime
 
@@ -50,9 +48,7 @@ data class LocalizedMessage(
         return LocalizedMessageResourceKind
     }
 
-    fun toBuilder(): Builder {
-        return Builder(this)
-    }
+    fun toBuilder() = Builder(this)
 
     class Builder {
         private var id: Long? = null
@@ -71,41 +67,35 @@ data class LocalizedMessage(
             this.updateTime = localizedMessage.updateTime
         }
 
-        fun setId(id: Long?): Builder {
+        fun setId(id: Long?) = apply {
             this.id = id
-            return this
         }
 
-        fun setKey(key: String): Builder {
+        fun setKey(key: String) = apply {
             this.key = key
-            return this
         }
 
-        fun setValue(value: String): Builder {
+        fun setValue(value: String) = apply {
             this.value = value
-            return this
         }
 
-        fun setLocale(locale: Locale): Builder {
+        fun setLocale(locale: Locale) = apply {
             this.locale = locale
-            return this
         }
 
-        fun setUpdateTime(updateTime: OffsetDateTime): Builder {
+        fun setUpdateTime(updateTime: OffsetDateTime) = apply {
             this.updateTime = updateTime
-            return this
         }
 
-        fun build(): LocalizedMessage {
-            return LocalizedMessage(id, key!!, value!!, locale!!, updateTime!!)
-        }
+        fun build(): LocalizedMessage =
+            LocalizedMessage(id, key!!, value!!, locale!!, updateTime!!)
     }
 
     companion object {
-        fun builder(): Builder {
-            return Builder()
-        }
+        @JvmStatic
+        fun builder() = Builder()
 
+        @JvmStatic
         fun of(
             key: String, value: String,
             locale: Locale
