@@ -14,19 +14,15 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.push;
+package space.lingu.lamp.push;
 
 /**
- * The one who pushes the message.
- *
  * @author RollW
  */
-public interface PushUser {
-    long SYSTEM = 0L;
-
-    Long getId();
-
-    String getName();
-
-    PushType getPushType();
+public enum PushType {
+    EMAIL,
+    SMS,
+    CHAT,
+    SYSTEM_MESSAGE,
+    ;
 }

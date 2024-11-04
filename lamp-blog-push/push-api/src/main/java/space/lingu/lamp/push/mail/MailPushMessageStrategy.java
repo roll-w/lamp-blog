@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.push.mail;
+package space.lingu.lamp.push.mail;
 
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMailMessage;
 import org.springframework.stereotype.Service;
 import space.lingu.lamp.mail.util.MimeMailMessageBuilder;
-import space.lingu.lamp.web.domain.push.PushMessageBody;
-import space.lingu.lamp.web.domain.push.PushMessageStrategy;
-import space.lingu.lamp.web.domain.push.PushType;
-import space.lingu.lamp.web.domain.push.PushUser;
+import space.lingu.lamp.push.PushMessageBody;
+import space.lingu.lamp.push.PushMessageStrategy;
+import space.lingu.lamp.push.PushType;
+import space.lingu.lamp.push.PushUser;
 import space.lingu.lamp.user.UserIdentity;
 
 import java.util.List;

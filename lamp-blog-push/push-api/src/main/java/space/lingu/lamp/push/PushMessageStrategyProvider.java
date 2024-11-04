@@ -14,17 +14,11 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.push;
-
-import java.io.Serializable;
+package space.lingu.lamp.push;
 
 /**
  * @author RollW
  */
-public interface PushMessageBody extends Serializable {
-    String getTitle();
-
-    String getContent();
-
-    MessageMimeType getMimeType();
+public interface PushMessageStrategyProvider {
+    PushMessageStrategy getPushMessageStrategy(PushType pushType);
 }

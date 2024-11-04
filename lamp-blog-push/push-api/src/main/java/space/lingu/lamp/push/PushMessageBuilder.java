@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.push;
+package space.lingu.lamp.push;
 
 /**
  * @author RollW

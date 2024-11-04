@@ -14,21 +14,27 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.push;
-
-import space.lingu.lamp.user.UserIdentity;
-
-import java.util.List;
+package space.lingu.lamp.push;
 
 /**
  * @author RollW
  */
-public interface PushMessageStrategy {
-    boolean supports(PushType pushType);
+public enum ParagraphTitleLevel {
+    H1(1),
+    H2(2),
+    H3(3),
+    H4(4),
+    H5(5),
+    H6(6),
+    ;
 
-    void push(PushUser pushUser, UserIdentity target,
-              PushMessageBody pushMessageBody);
+    private final int level;
 
-    void push(PushUser pushUser, List<UserIdentity> targets,
-              PushMessageBody pushMessageBody);
+    ParagraphTitleLevel(int level) {
+        this.level = level;
+    }
+
+    public int getLevel() {
+        return level;
+    }
 }

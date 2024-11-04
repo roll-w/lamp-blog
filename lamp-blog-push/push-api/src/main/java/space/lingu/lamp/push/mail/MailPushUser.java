@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.push.mail;
+package space.lingu.lamp.push.mail;
 
 import com.google.common.base.Strings;
-import space.lingu.lamp.web.domain.push.PushType;
-import space.lingu.lamp.web.domain.push.PushUser;
+import space.lingu.lamp.push.PushType;
+import space.lingu.lamp.push.PushUser;
 
 /**
  * @author RollW

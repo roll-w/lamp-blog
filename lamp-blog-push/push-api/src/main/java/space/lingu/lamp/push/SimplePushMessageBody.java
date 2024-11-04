@@ -14,38 +14,36 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.push;
+package space.lingu.lamp.push;
 
 /**
  * @author RollW
  */
-public enum MessageMimeType {
-    PLAIN_TEXT("text/plain"),
-    HTML("text/html"),
-    MARKDOWN("text/markdown"),
-    NONE("application/octet-stream"),
-    ;
+public class SimplePushMessageBody implements PushMessageBody {
+    private final String title;
+    private final String content;
+    private final MessageMimeType mimeType;
 
-    private final String mimeType;
-
-    MessageMimeType(String mimeType) {
+    public SimplePushMessageBody(String title, String content,
+                                 MessageMimeType mimeType) {
+        this.title = title;
+        this.content = content;
         this.mimeType = mimeType;
     }
 
-    public String getMimeType() {
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
+
+    @Override
+    public String getContent() {
+        return content;
+    }
+
+    @Override
+    public MessageMimeType getMimeType() {
         return mimeType;
-    }
-
-    public boolean isHtml() {
-        return this == HTML;
-    }
-
-    public static MessageMimeType fromMimeType(String mimeType) {
-        for (MessageMimeType value : values()) {
-            if (value.getMimeType().equals(mimeType)) {
-                return value;
-            }
-        }
-        return NONE;
     }
 }

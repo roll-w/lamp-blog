@@ -24,12 +24,17 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
+import space.lingu.lamp.authentication.VerifiableToken;
 import space.lingu.lamp.authentication.event.OnUserRegistrationEvent;
-import space.lingu.lamp.web.common.keys.MailConfigKeys;
-import space.lingu.lamp.web.domain.push.*;
-import space.lingu.lamp.web.domain.push.mail.MailPushUser;
+import space.lingu.lamp.push.HtmlMessageBuilder;
+import space.lingu.lamp.push.PushMessageBody;
+import space.lingu.lamp.push.PushMessageStrategy;
+import space.lingu.lamp.push.PushMessageStrategyProvider;
+import space.lingu.lamp.push.PushType;
+import space.lingu.lamp.push.mail.MailPushUser;
+import space.lingu.lamp.security.authentication.registration.RegisterTokenProvider;
 import space.lingu.lamp.user.AttributedUser;
-import space.lingu.lamp.authentication.register.RegisterTokenProvider;
+import space.lingu.lamp.web.common.keys.MailConfigKeys;
 
 /**
  * @author RollW
@@ -58,19 +63,22 @@ public class OnUserRegistrationEventListener implements ApplicationListener<OnUs
 
     private void handleRegistration(@NonNull OnUserRegistrationEvent event) {
         AttributedUser user = event.getUser();
-        String token = registerTokenProvider.createRegisterToken(user).token();
+        if (user.isEnabled()) {
+            logger.debug("User '{}' is already enabled, skip sending mail.", user.getUsername());
+            return;
+        }
         if (mailProperties == null || Strings.isNullOrEmpty(mailProperties.getHost())) {
             logger.debug("Not configure the mail, skip sending mail.");
-            registerTokenProvider.verifyRegisterToken(token);
             return;
         }
         if (MailConfigKeys.isDisabled(mailProperties.getUsername())) {
             logger.debug("Mail is disabled, skip sending mail.");
-            registerTokenProvider.verifyRegisterToken(token);
             return;
         }
+        VerifiableToken registerToken = registerTokenProvider.createRegisterToken(user);
+        // TODO
+        String confirmUrl = "" + registerToken.token();
         // TODO: read email template
-        String confirmUrl = event.getUrl() + token;
         PushMessageBody messageBody = new HtmlMessageBuilder()
                 .setTitle("[Lamp Blog] Registration Confirmation")
                 .appendParagraph("Dear " + user.getUsername() + ",")

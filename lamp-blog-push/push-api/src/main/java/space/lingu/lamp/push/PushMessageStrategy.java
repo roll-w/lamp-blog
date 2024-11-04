@@ -14,11 +14,21 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.push;
+package space.lingu.lamp.push;
+
+import space.lingu.lamp.user.UserIdentity;
+
+import java.util.List;
 
 /**
  * @author RollW
  */
-public interface PushMessageStrategyProvider {
-    PushMessageStrategy getPushMessageStrategy(PushType pushType);
+public interface PushMessageStrategy {
+    boolean supports(PushType pushType);
+
+    void push(PushUser pushUser, UserIdentity target,
+              PushMessageBody pushMessageBody);
+
+    void push(PushUser pushUser, List<UserIdentity> targets,
+              PushMessageBody pushMessageBody);
 }

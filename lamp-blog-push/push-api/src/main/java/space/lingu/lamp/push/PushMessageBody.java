@@ -14,27 +14,17 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.push;
+package space.lingu.lamp.push;
+
+import java.io.Serializable;
 
 /**
  * @author RollW
  */
-public enum ParagraphTitleLevel {
-    H1(1),
-    H2(2),
-    H3(3),
-    H4(4),
-    H5(5),
-    H6(6),
-    ;
+public interface PushMessageBody extends Serializable {
+    String getTitle();
 
-    private final int level;
+    String getContent();
 
-    ParagraphTitleLevel(int level) {
-        this.level = level;
-    }
-
-    public int getLevel() {
-        return level;
-    }
+    MessageMimeType getMimeType();
 }
