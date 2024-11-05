@@ -16,23 +16,14 @@
 
 package space.lingu.lamp.common.data
 
-import org.springframework.data.domain.Pageable
-import org.springframework.data.jpa.domain.Specification
-import org.springframework.data.repository.NoRepositoryBean
-import space.lingu.lamp.DataEntity
-import space.lingu.lamp.common.data.PageUtils.toPage
+import tech.rollw.common.web.page.ImmutablePage
 import tech.rollw.common.web.page.Page
 
 /**
  * @author RollW
  */
-@NoRepositoryBean
-abstract class CommonRepository<T : DataEntity<ID>, ID>(
-    protected val commonDao: CommonDao<T, ID>
-): CommonDao<T, ID> by commonDao {
-    fun findAll(
-        pageable: Pageable,
-        spec: Specification<T>
-    ): Page<T> = findAll(spec, pageable).toPage()
-
+object PageUtils {
+    @JvmStatic
+    fun <E> org.springframework.data.domain.Page<E>.toPage(): Page<E> =
+        ImmutablePage.of(number, size, totalPages, content)
 }
