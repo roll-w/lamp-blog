@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.authentication.register
+package space.lingu.lamp.security.authentication.registration
 
 import space.lingu.lamp.user.AttributedUser
 
@@ -22,5 +22,5 @@ import space.lingu.lamp.user.AttributedUser
  * @author RollW
  */
 interface RegisterProvider: RegisterTokenProvider {
-    fun register(username: String, password: String, email: String): AttributedUser
+    fun register(registration: Registration): AttributedUser
 }

@@ -23,7 +23,8 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.expression.spel.support.SimpleNameTypeLocator;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.configuration.EnableGlobalAuthentication;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -41,8 +42,9 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
-import space.lingu.lamp.security.authentication.adapter.TokenBasedAuthenticationProvider;
 import space.lingu.lamp.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.security.authentication.adapter.PreUserAuthenticationProvider;
+import space.lingu.lamp.security.authentication.adapter.TokenBasedAuthenticationProvider;
 import space.lingu.lamp.security.authorization.PrivilegedUserProvider;
 import space.lingu.lamp.security.authorization.RoleBasedAuthorizationScope;
 import space.lingu.lamp.security.authorization.adapter.ScopeBasedMethodSecurityExpressionHandler;
@@ -80,7 +82,6 @@ public class WebSecurityConfiguration {
                                                    CorsConfigFilter corsConfigFilter,
                                                    TokenAuthenticationFilter tokenAuthenticationFilter,
                                                    ApiContextInitializeFilter apiContextInitializeFilter,
-                                                   TokenBasedAuthenticationProvider tokenBasedAuthenticationProvider,
                                                    AuthenticationEntryPoint authenticationEntryPoint,
                                                    AccessDeniedHandler accessDeniedHandler) throws Exception {
         security.csrf(AbstractHttpConfigurer::disable);
@@ -116,7 +117,6 @@ public class WebSecurityConfiguration {
         security.sessionManagement(configurer -> {
             configurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         });
-        security.authenticationProvider(tokenBasedAuthenticationProvider);
         security.addFilterBefore(tokenAuthenticationFilter,
                 UsernamePasswordAuthenticationFilter.class);
         security.addFilterAfter(apiContextInitializeFilter,
@@ -127,13 +127,14 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
-        return configuration.getAuthenticationManager();
+    public AuthenticationManager authenticationManager(
+            List<AuthenticationProvider> authenticationProviders) {
+        return new ProviderManager(authenticationProviders);
     }
 
     @Bean
     @Primary
-    protected ScopeBasedMethodSecurityExpressionHandler lampMethodSecurityExpressionHandler() {
+    protected ScopeBasedMethodSecurityExpressionHandler scopeBasedMethodSecurityExpressionHandler() {
         SimpleNameTypeLocator simpleNameTypeLocator = new SimpleNameTypeLocator(List.of(
                 RoleBasedAuthorizationScope.class
         ));
@@ -166,6 +167,12 @@ public class WebSecurityConfiguration {
                 privilegedUserProvider,
                 userSignatureProvider
         );
+    }
+
+    @Bean
+    public PreUserAuthenticationProvider preUserAuthenticationProvider(
+            PrivilegedUserProvider privilegedUserProvider) {
+        return new PreUserAuthenticationProvider(privilegedUserProvider);
     }
 
     @Bean

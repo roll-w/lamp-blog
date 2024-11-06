@@ -27,8 +27,9 @@ import space.lingu.lamp.RequestMetadata;
 import space.lingu.lamp.authentication.UserInfoSignature;
 import space.lingu.lamp.authentication.login.LoginProvider;
 import space.lingu.lamp.authentication.login.LoginStrategyType;
-import space.lingu.lamp.authentication.register.RegisterProvider;
 import space.lingu.lamp.authentication.token.AuthenticationTokenService;
+import space.lingu.lamp.security.authentication.registration.RegisterProvider;
+import space.lingu.lamp.security.authentication.registration.SimpleRegistration;
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.web.common.ParamValidate;
 import space.lingu.lamp.web.controller.user.model.LoginResponse;
@@ -116,9 +117,11 @@ public class LoginRegisterController {
     @PostMapping("/register")
     public HttpResponseEntity<Void> registerUser(@RequestBody UserRegisterRequest request) {
         AttributedUser user = registerProvider.register(
-                request.username(),
-                request.password(),
-                request.email()
+                new SimpleRegistration(
+                        request.username(),
+                        request.password(),
+                        request.email()
+                )
         );
         return HttpResponseEntity.success();
     }

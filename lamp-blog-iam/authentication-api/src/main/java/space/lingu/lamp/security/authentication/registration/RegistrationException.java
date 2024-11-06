@@ -14,32 +14,25 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.authentication.event;
-
-import org.springframework.context.ApplicationEvent;
-import space.lingu.lamp.user.AttributedUser;
-
-import java.util.Locale;
+package space.lingu.lamp.security.authentication.registration;
 
 /**
  * @author RollW
  */
-public class OnUserRegistrationEvent extends ApplicationEvent {
-    private final AttributedUser user;
-    private final Locale locale;
-
-    public OnUserRegistrationEvent(AttributedUser user,
-                                   Locale locale) {
-        super(user);
-        this.user = user;
-        this.locale = locale;
+public class RegistrationException extends RuntimeException {
+    public RegistrationException() {
+        super();
     }
 
-    public AttributedUser getUser() {
-        return user;
+    public RegistrationException(String message) {
+        super(message);
     }
 
-    public Locale getLocale() {
-        return locale;
+    public RegistrationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public RegistrationException(Throwable cause) {
+        super(cause);
     }
 }

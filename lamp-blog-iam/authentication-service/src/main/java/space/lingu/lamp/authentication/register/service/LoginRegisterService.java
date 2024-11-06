@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import space.lingu.NonNull;
@@ -35,28 +36,31 @@ import space.lingu.lamp.authentication.login.LoginProvider;
 import space.lingu.lamp.authentication.login.LoginStrategy;
 import space.lingu.lamp.authentication.login.LoginStrategyType;
 import space.lingu.lamp.authentication.login.LoginVerifiableToken;
-import space.lingu.lamp.authentication.register.RegisterProvider;
-import space.lingu.lamp.authentication.register.RegisterTokenProvider;
 import space.lingu.lamp.authentication.register.RegisterVerificationToken;
 import space.lingu.lamp.authentication.register.repository.RegisterTokenDo;
 import space.lingu.lamp.authentication.register.repository.RegisterTokenRepository;
+import space.lingu.lamp.security.authentication.adapter.PreUserAuthenticationToken;
+import space.lingu.lamp.security.authentication.registration.RegisterProvider;
+import space.lingu.lamp.security.authentication.registration.RegisterTokenProvider;
+import space.lingu.lamp.security.authentication.registration.Registration;
+import space.lingu.lamp.security.authentication.registration.RegistrationInterceptor;
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.AttributedUserDetails;
-import space.lingu.lamp.user.Role;
 import space.lingu.lamp.user.UserIdentity;
 import space.lingu.lamp.user.UserManageService;
+import space.lingu.lamp.user.UserOperator;
+import space.lingu.lamp.user.UserProvider;
 import space.lingu.lamp.user.UserSignatureProvider;
+import space.lingu.lamp.user.UserTrait;
 import space.lingu.lamp.user.UserViewException;
-import space.lingu.lamp.user.repository.UserDo;
-import space.lingu.lamp.user.repository.UserRepository;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.IoErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 import tech.rollw.common.web.system.AuthenticationException;
+import tech.rollw.common.web.system.SystemResourceOperatorProvider;
 
 import java.io.IOException;
-import java.time.OffsetDateTime;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Locale;
@@ -70,28 +74,34 @@ import java.util.UUID;
 public class LoginRegisterService implements LoginProvider, RegisterTokenProvider, RegisterProvider {
     private static final Logger logger = LoggerFactory.getLogger(LoginRegisterService.class);
 
-    private final UserRepository userRepository;
     private final RegisterTokenRepository registerTokenRepository;
+    private final SystemResourceOperatorProvider<Long> systemResourceOperatorProvider;
+    private final UserProvider userProvider;
     private final UserManageService userManageService;
     private final ApplicationEventPublisher eventPublisher;
     private final AuthenticationManager authenticationManager;
     private final UserSignatureProvider userSignatureProvider;
+    private final List<RegistrationInterceptor> registrationInterceptors;
     private final Map<LoginStrategyType, LoginStrategy> loginStrategyMap =
             new EnumMap<>(LoginStrategyType.class);
 
     public LoginRegisterService(List<LoginStrategy> strategies,
-                                UserRepository userRepository,
                                 RegisterTokenRepository registerTokenRepository,
+                                SystemResourceOperatorProvider<Long> systemResourceOperatorProvider,
+                                UserProvider userProvider,
                                 UserManageService userManageService,
                                 ApplicationEventPublisher eventPublisher,
                                 AuthenticationManager authenticationManager,
-                                UserSignatureProvider userSignatureProvider) {
-        this.userRepository = userRepository;
+                                UserSignatureProvider userSignatureProvider,
+                                List<RegistrationInterceptor> registrationInterceptors) {
         this.registerTokenRepository = registerTokenRepository;
+        this.systemResourceOperatorProvider = systemResourceOperatorProvider;
+        this.userProvider = userProvider;
         this.userManageService = userManageService;
         this.eventPublisher = eventPublisher;
         this.authenticationManager = authenticationManager;
         this.userSignatureProvider = userSignatureProvider;
+        this.registrationInterceptors = registrationInterceptors;
         strategies.forEach(strategy ->
                 loginStrategyMap.put(strategy.getStrategyType(), strategy));
     }
@@ -105,10 +115,7 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
                           LoginStrategyType type,
                           RequestMetadata requestMetadata) throws IOException {
         LoginStrategy strategy = getLoginStrategy(type);
-        UserDo user = userRepository.getByUserId(userId).orElse(null);
-        if (user == null) {
-            throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
-        }
+        AttributedUserDetails user = userProvider.getUser(userId);
         LoginVerifiableToken token = strategy.createToken(user);
         LoginStrategy.Options requestInfo = new LoginStrategy.Options(LocaleContextHolder.getLocale());
         sendToken(strategy, token, user, requestInfo);
@@ -148,9 +155,9 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
 
     private AttributedUserDetails tryGetUser(String identity) {
         if (identity.contains("@")) {
-            return userRepository.getByEmail(identity).orElse(null);
+            return userProvider.getUserByEmail(identity);
         }
-        return userRepository.getByUsername(identity).orElse(null);
+        return userProvider.getUser(identity);
     }
 
     @Override
@@ -171,33 +178,36 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
             throw new UserViewException(code);
         }
 
+        PreUserAuthenticationToken authenticationToken = new PreUserAuthenticationToken(user);
+        Authentication authenticatedToken = authenticationManager.authenticate(authenticationToken);
+        SecurityContextHolder.getContext().setAuthentication(authenticatedToken);
+
         OnUserLoginEvent onUserLoginEvent = new OnUserLoginEvent(user, metadata);
         eventPublisher.publishEvent(onUserLoginEvent);
         String signature = userSignatureProvider.getSignature(user.getUserId());
         return UserInfoSignature.from(user, signature);
     }
 
-    @NonNull
-    @Override
-    public AttributedUser register(@NonNull String username,
-                                   @NonNull String password,
-                                   @NonNull String email) {
-        boolean hasUsers = userRepository.hasUsers();
-        Role role = hasUsers ? Role.USER : Role.ADMIN;
-        boolean enabled = !hasUsers;
-        AttributedUser user =
-                userManageService.createUser(username, password, email, role, enabled);
 
-        if (!enabled) {
-            OnUserRegistrationEvent event = new OnUserRegistrationEvent(
-                    user, Locale.getDefault(),
-                    "http://localhost:5000/user/register/activate/");
-            // TODO: get url from config
-            eventPublisher.publishEvent(event);
+    @Override
+    @NonNull
+    public AttributedUser register(@NonNull final Registration registration) {
+        Registration iter = registration;
+        for (RegistrationInterceptor interceptor : registrationInterceptors) {
+            iter = interceptor.preRegistration(registration);
         }
 
+        AttributedUser user = userManageService.createUser(
+                iter.getUsername(), iter.getPassword(),
+                iter.getEmail(), iter.getRole(), iter.getEnabled()
+        );
+        OnUserRegistrationEvent event = new OnUserRegistrationEvent(
+                user, Locale.getDefault());
+        // TODO: get url from config
+        eventPublisher.publishEvent(event);
+
         logger.info("Register username: {}, email: {}, role: {}, id: {}",
-                username, email,
+                user.getUsername(), user.getEmail(),
                 user.getRole(),
                 user.getUserId()
         );
@@ -222,6 +232,23 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
     }
 
     @Override
+    public void resendRegisterToken(UserIdentity user) {
+        AttributedUser attributedUser = retrieveUser(user);
+        Locale locale = LocaleContextHolder.getLocale();
+        OnUserRegistrationEvent event = new OnUserRegistrationEvent(
+                attributedUser, locale
+        );
+        eventPublisher.publishEvent(event);
+    }
+
+    private AttributedUser retrieveUser(UserTrait user) {
+        if (user instanceof AttributedUser attributedUser) {
+            return attributedUser;
+        }
+        return userProvider.getUser(user);
+    }
+
+    @Override
     public void verifyRegisterToken(String token) {
         RegisterTokenDo registerTokenDo =
                 registerTokenRepository.findByToken(token);
@@ -236,33 +263,18 @@ public class LoginRegisterService implements LoginProvider, RegisterTokenProvide
         }
         registerTokenDo.markVerified();
         registerTokenRepository.save(registerTokenDo);
-        UserDo user = userRepository.getByUserId(registerTokenDo.getUserId())
-                .orElse(null);
-        if (user == null) {
-            throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
-        }
-        if (user.isCanceled()) {
+        UserOperator userOperator = systemResourceOperatorProvider.getSystemResourceOperator(
+                        UserTrait.of(registerTokenDo.getUserId()),
+                        true)
+                .cast(UserOperator.class);
+        if (userOperator.isCanceled()) {
             throw new AuthenticationException(UserErrorCode.ERROR_USER_CANCELED);
         }
-        if (user.isEnabled()) {
+        if (userOperator.isEnabled()) {
             throw new AuthenticationException(UserErrorCode.ERROR_USER_ALREADY_ACTIVATED);
         }
-        user.setEnabled(true);
-        user.setUpdateTime(OffsetDateTime.now());
-        userRepository.save(user);
-    }
-
-    public void resendToken(String username) {
-        AttributedUserDetails user = userRepository.getByUsername(username).orElse(null);
-        if (user == null) {
-            throw new UserViewException(UserErrorCode.ERROR_USER_NOT_EXIST);
-        }
-        Locale locale = LocaleContextHolder.getLocale();
-        OnUserRegistrationEvent event = new OnUserRegistrationEvent(
-                user, locale,
-                // TODO: get url from config
-                "http://localhost:5000/user/register/activate/"
-        );
-        eventPublisher.publishEvent(event);
+        userOperator.disableAutoUpdate()
+                .setEnabled(true)
+                .update();
     }
 }

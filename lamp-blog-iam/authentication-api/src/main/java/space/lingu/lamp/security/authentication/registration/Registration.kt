@@ -14,17 +14,24 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.authentication.register;
+package space.lingu.lamp.security.authentication.registration
 
-import space.lingu.lamp.authentication.VerifiableToken;
-import space.lingu.lamp.user.UserIdentity;
-import tech.rollw.common.web.CommonRuntimeException;
+import space.lingu.lamp.user.Role
 
 /**
  * @author RollW
  */
-public interface RegisterTokenProvider {
-    VerifiableToken createRegisterToken(UserIdentity userIdentity);
+@JvmDefaultWithoutCompatibility
+interface Registration {
+    val username: String
 
-    void verifyRegisterToken(String token) throws CommonRuntimeException;
+    val password: String
+
+    val email: String
+
+    val role: Role
+        get() = Role.USER
+
+    val enabled: Boolean
+        get() = false
 }
