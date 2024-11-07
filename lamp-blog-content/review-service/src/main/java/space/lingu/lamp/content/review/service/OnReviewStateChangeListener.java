@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.content.event;
+package space.lingu.lamp.content.review.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
