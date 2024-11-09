@@ -53,17 +53,18 @@ jobs:
                       echo "version_name=${{ github.event.inputs.alternativeVersion }}" >> $GITHUB_ENV
                     fi
             -   name: Set Namespace
+                shell: bash
                 run: |
-                    if [ -z "${{ github.event.inputs.namespace }}" ]; then
+                    if [[ -z "${{ github.event.inputs.namespace }}" ]]; then
                       echo "namespace=${{ github.repository_owner }}" >> $GITHUB_ENV
                     else
                       echo "namespace=${{ github.event.inputs.namespace }}" >> $GITHUB_ENV
                     fi
             -   name: Install Dependencies
+                # TODO: retrieve version from gradle task
                 run: |
                     git clone https://github.com/roll-w/web-common-starter 
                     cd web-common-starter
-                # TODO: retrieve version from gradle task
                     git checkout v0.2.1
                     mvn -f web-common-parent/ clean install
                     cd ..
@@ -95,6 +96,10 @@ jobs:
                     echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
                     docker tag lamp-blog:${{ env.raw_version_name }} ghcr.io/${{ env.namespace }}/lamp-blog:${{ env.raw_version_name }}
                     docker push ghcr.io/${{ env.namespace }}/lamp-blog:${{ env.raw_version_name }}
+                    if ! ${{ github.event.inputs.prerelease }}; then
+                        docker tag ghcr.io/${{ env.namespace }}/lamp-blog:${{ env.raw_version_name }} ghcr.io/${{ env.namespace }}/lamp-blog:latest
+                        docker push ghcr.io/${{ env.namespace }}/lamp-blog:latest
+                    fi
                     sha=$(docker inspect ghcr.io/${{ env.namespace }}/lamp-blog:${{ env.raw_version_name }} --format='{{index .RepoDigests 0}}')
                     echo "digest=$sha" >> $GITHUB_OUTPUT
             -   name: Release
