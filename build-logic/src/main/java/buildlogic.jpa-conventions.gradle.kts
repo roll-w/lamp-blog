@@ -33,12 +33,12 @@ allOpen {
     annotation("jakarta.persistence.Embeddable")
     annotation("jakarta.persistence.MappedSuperclass")
     annotation("space.lingu.lamp.common.data.Dao")
+    annotation("org.springframework.data.repository.NoRepositoryBean")
 }
 
 val hibernateVersion = dependencyManagement.importedProperties["hibernate.version"]
 
 dependencies {
     api("org.springframework.boot:spring-boot-starter-data-jpa")
-    compileOnly("org.hibernate:hibernate-jpamodelgen:$hibernateVersion")
     annotationProcessor("org.hibernate:hibernate-jpamodelgen:$hibernateVersion")
 }
