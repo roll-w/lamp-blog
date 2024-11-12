@@ -33,6 +33,10 @@ import tech.rollw.common.web.UserErrorCode;
 import java.time.OffsetDateTime;
 
 /**
+ * User operator implementation.
+ * <p>
+ * This implementation is thread-safe.
+ *
  * @author RollW
  */
 public class UserOperatorImpl implements UserOperator {
@@ -87,9 +91,6 @@ public class UserOperatorImpl implements UserOperator {
 
     @Override
     public UserOperator update() throws CommonRuntimeException {
-        if (autoUpdateEnabled) {
-            return this;
-        }
         if (!updateFlag) {
             return this;
         }
@@ -248,9 +249,6 @@ public class UserOperatorImpl implements UserOperator {
     private void checkDelete() {
         if (!checkDelete) {
             return;
-        }
-        if (!user.isEnabled()) {
-            throw new UserViewException(UserErrorCode.ERROR_USER_DISABLED);
         }
         if (user.isCanceled()) {
             throw new UserViewException(UserErrorCode.ERROR_USER_CANCELED);
