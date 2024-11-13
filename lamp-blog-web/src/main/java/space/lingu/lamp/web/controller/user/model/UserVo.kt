@@ -13,26 +13,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package space.lingu.lamp.web.controller.user.model
 
-package space.lingu.lamp.web.controller.user.model;
-
-import space.lingu.lamp.user.AttributedUser;
-import space.lingu.lamp.user.UserIdentity;
+import space.lingu.lamp.user.Role
+import space.lingu.lamp.user.UserIdentity
 
 /**
  * @author RollW
  */
-public record LoginResponse(
-        String token,
-        UserVo user
+data class UserVo(
+    val id: Long,
+    val username: String,
+    val email: String,
+    val role: Role
 ) {
-    public LoginResponse(String token, UserIdentity userIdentity) {
-        this(token, UserVo.toVo(userIdentity));
-    }
-
-    public static final LoginResponse NULL = new LoginResponse(null, (AttributedUser) null);
-
-    public static LoginResponse nullResponse() {
-        return NULL;
+    companion object {
+        @JvmStatic
+        fun UserIdentity?.toVo() = this?.let {
+            UserVo(it.userId, it.username, it.email, it.role)
+        }
     }
 }
