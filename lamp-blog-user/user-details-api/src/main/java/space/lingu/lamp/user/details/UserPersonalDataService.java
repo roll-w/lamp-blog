@@ -17,6 +17,7 @@
 package space.lingu.lamp.user.details;
 
 import space.lingu.lamp.user.UserIdentity;
+import space.lingu.lamp.user.UserTrait;
 
 import java.util.List;
 
@@ -32,9 +33,7 @@ public interface UserPersonalDataService {
 
     List<UserPersonalData> getPersonalDataByIds(List<Long> ids);
 
-    void updatePersonalData(long userId, UserDataFieldType type, Object value);
+    <T> void updatePersonalData(UserTrait user, UserDataFieldType<T> type, T value);
 
-    void updatePersonalData(long userId, UserDataField... fields);
-
-    void createPersonalData(UserPersonalData data);
+    void updatePersonalData(UserTrait user, UserDataField<?>... fields);
 }

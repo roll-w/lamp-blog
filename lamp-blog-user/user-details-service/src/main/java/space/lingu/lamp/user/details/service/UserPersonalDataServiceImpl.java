@@ -20,8 +20,7 @@ import org.springframework.stereotype.Service;
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.UserIdentity;
 import space.lingu.lamp.user.UserProvider;
-import space.lingu.lamp.user.details.Birthday;
-import space.lingu.lamp.user.details.Gender;
+import space.lingu.lamp.user.UserTrait;
 import space.lingu.lamp.user.details.UserDataField;
 import space.lingu.lamp.user.details.UserDataFieldType;
 import space.lingu.lamp.user.details.UserPersonalData;
@@ -104,40 +103,24 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
     }
 
     @Override
-    public void updatePersonalData(long userId,
-                                   UserDataFieldType type,
-                                   Object value) {
-        updatePersonalData(userId, new UserDataField(type, value));
+    public <T> void updatePersonalData(UserTrait user, UserDataFieldType<T> type,
+                                       T value) {
+        updatePersonalData(user, new UserDataField<>(type, value));
     }
 
     @Override
-    public void updatePersonalData(long userId, UserDataField... fields) {
+    public void updatePersonalData(UserTrait user, UserDataField<?>... fields) {
         if (fields.length == 0) {
             return;
         }
-        UserPersonalDataDo exist = userPersonalDataRepository.findById(userId)
+        UserPersonalDataDo exist = userPersonalDataRepository.findById(user.getUserId())
                 .orElse(null);
         UserPersonalDataDo.Builder builder = toBuilder(exist);
-        for (UserDataField field : fields) {
-            setBuilderValue(builder, field);
+        for (UserDataField<?> field : fields) {
+            Utils.setBuilderValue(builder, field);
         }
         builder.setUpdateTime(OffsetDateTime.now());
         userPersonalDataRepository.save(builder.build());
-    }
-
-    private void setBuilderValue(UserPersonalDataDo.Builder builder,
-                                 UserDataField field) {
-        switch (field.type()) {
-            case AVATAR -> builder.setAvatar((String) field.value());
-            case GENDER -> builder.setGender(Gender.of(field.value()));
-            case INTRO -> builder.setIntroduction((String) field.value());
-            case WEBSITE -> builder.setWebsite((String) field.value());
-            case LOCATION -> builder.setLocation((String) field.value());
-            case BIRTHDAY -> builder.setBirthday(Birthday.fromString(
-                    (String) field.value())
-            );
-            case NICKNAME -> builder.setNickname((String) field.value());
-        }
     }
 
     private UserPersonalDataDo.Builder toBuilder(UserPersonalDataDo data) {
@@ -145,14 +128,5 @@ public class UserPersonalDataServiceImpl implements UserPersonalDataService {
             return data.toBuilder();
         }
         return UserPersonalDataDo.builder();
-    }
-
-    @Override
-    public void createPersonalData(UserPersonalData data) {
-        if (data == null) {
-            return;
-        }
-        UserPersonalDataDo userPersonalDataDo = UserPersonalDataDo.toDo(data);
-        userPersonalDataRepository.save(userPersonalDataDo);
     }
 }

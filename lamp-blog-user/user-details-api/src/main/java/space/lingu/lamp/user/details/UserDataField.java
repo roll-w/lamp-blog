@@ -19,8 +19,8 @@ package space.lingu.lamp.user.details;
 /**
  * @author RollW
  */
-public record UserDataField(
-        UserDataFieldType type,
-        Object value
+public record UserDataField<T>(
+        UserDataFieldType<T> type,
+        T value
 ) {
 }
