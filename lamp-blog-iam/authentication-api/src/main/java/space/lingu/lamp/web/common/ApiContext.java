@@ -22,6 +22,7 @@ import space.lingu.Nullable;
 import space.lingu.lamp.user.UserIdentity;
 import tech.rollw.common.web.system.SystemContext;
 
+import java.time.OffsetDateTime;
 import java.util.Locale;
 
 /**
@@ -32,12 +33,12 @@ public class ApiContext implements SystemContext {
     private final Locale locale;
     private final HttpMethod method;
     private final UserIdentity user;
-    private final long timestamp;
+    private final OffsetDateTime timestamp;
     private final String requestUri;
 
     public ApiContext(String ip, Locale locale,
                       HttpMethod method, UserIdentity user,
-                      long timestamp, String requestUri) {
+                      OffsetDateTime timestamp, String requestUri) {
         this.ip = ip;
         this.locale = locale;
         this.method = method;
@@ -78,7 +79,7 @@ public class ApiContext implements SystemContext {
         return user;
     }
 
-    public long getTimestamp() {
+    public OffsetDateTime getTimestamp() {
         return timestamp;
     }
 

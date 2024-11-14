@@ -34,6 +34,7 @@ import tech.rollw.common.web.system.ContextThread;
 import tech.rollw.common.web.system.ContextThreadAware;
 
 import java.io.IOException;
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -76,7 +77,7 @@ public class ApiContextInitializeFilter extends OncePerRequestFilter {
         String requestUri = request.getRequestURI();
         HttpMethod method = HttpMethod.valueOf(request.getMethod());
         String ip = RequestUtils.getRemoteIpAddress(request);
-        long timestamp = System.currentTimeMillis();
+        OffsetDateTime timestamp = OffsetDateTime.now();
         return new ApiContext(
                 ip,
                 LocaleContextHolder.getLocale(),
