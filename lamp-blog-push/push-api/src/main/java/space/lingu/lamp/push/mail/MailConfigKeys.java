@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.common.keys;
+package space.lingu.lamp.push.mail;
 
 import space.lingu.NonNull;
 import space.lingu.lamp.setting.AttributedSettingSpecification;
@@ -33,13 +33,16 @@ public final class MailConfigKeys implements SettingSpecificationSupplier {
 
     public static final AttributedSettingSpecification<String, String> SMTP_SERVER_HOST =
             new SettingSpecificationBuilder<>(SettingKey.ofString("mail.smtp.server.host"))
-                    .setDefaultValue("localhost")
+                    .setTextDescription("SMTP server host. For example 'smtp.example.com'.")
+                    .setDefaultValue(EMAIL_DISABLED)
                     .setRequired(false)
                     .setSupportedSources(SettingSource.VALUES)
                     .build();
 
     public static final AttributedSettingSpecification<Integer, Integer> SMTP_SERVER_PORT =
             new SettingSpecificationBuilder<>(SettingKey.ofInt("mail.smtp.server.port"))
+                    .setTextDescription("SMTP server port, must be an integer between 0-65535. " +
+                            "The default value is 25.")
                     .setDefaultValue(25)
                     .setRequired(false)
                     .setSupportedSources(SettingSource.VALUES)
@@ -47,12 +50,15 @@ public final class MailConfigKeys implements SettingSpecificationSupplier {
 
     public static final AttributedSettingSpecification<Boolean, Boolean> SMTP_SSL_ENABLE =
             new SettingSpecificationBuilder<>(SettingKey.ofBoolean("mail.smtp.ssl.enable"))
+                    .setTextDescription("Whether to enable SSL connection with SMTP server.")
                     .setDefaultValue(false)
                     .setRequired(false)
                     .setSupportedSources(SettingSource.VALUES)
                     .build();
     public static final AttributedSettingSpecification<String, String> MAIL_USERNAME =
             new SettingSpecificationBuilder<>(SettingKey.ofString("mail.username"))
+                    .setTextDescription("Login user of the SMTP server. " +
+                            "Put `disable` to disable email service.")
                     .setDefaultValue(null)
                     .setRequired(false)
                     .setSupportedSources(SettingSource.VALUES)
@@ -60,6 +66,7 @@ public final class MailConfigKeys implements SettingSpecificationSupplier {
 
     public static final AttributedSettingSpecification<String, String> MAIL_PASSWORD =
             new SettingSpecificationBuilder<>(SettingKey.ofString("mail.password"))
+                    .setTextDescription("Login password of the SMTP server.")
                     .setDefaultValue(null)
                     .setRequired(false)
                     .setSupportedSources(SettingSource.VALUES)
@@ -67,6 +74,7 @@ public final class MailConfigKeys implements SettingSpecificationSupplier {
 
     public static final AttributedSettingSpecification<String, String> MAIL_SENDER_NAME =
             new SettingSpecificationBuilder<>(SettingKey.ofString("mail.nickname"))
+                    .setTextDescription("Mail sender name.")
                     .setDefaultValue("Lamp Blog")
                     .setRequired(false)
                     .setSupportedSources(SettingSource.VALUES)

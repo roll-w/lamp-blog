@@ -24,9 +24,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
+import space.lingu.lamp.push.mail.MailConfigKeys;
 import space.lingu.lamp.setting.ConfigProvider;
 import space.lingu.lamp.setting.ConfigReader;
-import space.lingu.lamp.web.common.keys.MailConfigKeys;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;

@@ -19,11 +19,11 @@ package space.lingu.lamp.web.configuration;
 import org.springframework.boot.autoconfigure.mail.MailProperties;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
+import space.lingu.NonNull;
+import space.lingu.lamp.push.mail.MailConfigKeys;
 import space.lingu.lamp.setting.ConfigReader;
-import space.lingu.lamp.setting.RawSettingValue;
-import space.lingu.lamp.web.common.keys.MailConfigKeys;
-import tech.rollw.common.event.EventCallback;
-import tech.rollw.common.event.EventRegistry;
+import space.lingu.lamp.setting.SettingSpecification;
+import space.lingu.lamp.setting.event.SettingValueChangedEvent;
 
 import static space.lingu.lamp.web.configuration.MailConfiguration.applyProperties;
 import static space.lingu.lamp.web.configuration.MailConfiguration.setProperties;

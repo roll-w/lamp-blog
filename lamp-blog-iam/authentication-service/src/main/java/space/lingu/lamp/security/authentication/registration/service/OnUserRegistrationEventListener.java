@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package space.lingu.lamp.web.domain.user.event;
+package space.lingu.lamp.security.authentication.registration.service;
 
 import com.google.common.base.Strings;
 import org.slf4j.Logger;
@@ -31,10 +31,10 @@ import space.lingu.lamp.push.PushMessageBody;
 import space.lingu.lamp.push.PushMessageStrategy;
 import space.lingu.lamp.push.PushMessageStrategyProvider;
 import space.lingu.lamp.push.PushType;
+import space.lingu.lamp.push.mail.MailConfigKeys;
 import space.lingu.lamp.push.mail.MailPushUser;
 import space.lingu.lamp.security.authentication.registration.RegisterTokenProvider;
 import space.lingu.lamp.user.AttributedUser;
-import space.lingu.lamp.web.common.keys.MailConfigKeys;
 
 /**
  * @author RollW
