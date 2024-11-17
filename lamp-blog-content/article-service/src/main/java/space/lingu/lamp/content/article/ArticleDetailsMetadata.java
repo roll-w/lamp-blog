@@ -20,12 +20,20 @@ import space.lingu.Nullable;
 import space.lingu.lamp.content.ContentDetailsMetadata;
 
 /**
+ * Article details metadata
+ *
+ * @param cover image id of the article cover
  * @author RollW
  */
 public record ArticleDetailsMetadata(
         @Nullable
         String cover
 ) implements ContentDetailsMetadata {
+    /**
+     * Get the cover image id of the article
+     *
+     * @return cover image id
+     */
     @Nullable
     public String getCover() {
         return cover;

@@ -17,7 +17,7 @@
 package space.lingu.lamp.web;
 
 /**
- * Environment keys using in star
+ * Environment keys used in startup.
  *
  * @author RollW
  */

@@ -27,21 +27,22 @@ object Version {
     const val GIT_COMMIT_ID_ABBREV = BuildConfig.COMMIT_ID_ABBREV
     const val BUILD_JAVA_VERSION = BuildConfig.JAVA_VERSION
 
-    @JvmStatic
+    @JvmField
     val JAVA_VERSION: String? = System.getProperty("java.version")
 
-    @JvmStatic
+    @JvmField
     val JAVA_RUNTIME_NAME: String? = System.getProperty("java.runtime.name")
 
-    @JvmStatic
+    @JvmField
     val JAVA_RUNTIME_VERSION: String? = System.getProperty("java.runtime.version")
 
-    @JvmStatic
+    @JvmField
     val JAVA_VM_NAME: String? = System.getProperty("java.vm.name")
 
-    @JvmStatic
+    @JvmField
     val JAVA_VM_VERSION: String? = System.getProperty("java.vm.version")
 
+    @JvmStatic
     fun formatVersion(): String = buildString {
         append("Lamp Blog version $VERSION\n")
         appendLine(GIT)
