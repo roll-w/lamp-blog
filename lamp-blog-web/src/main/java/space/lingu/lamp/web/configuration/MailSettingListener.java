@@ -17,6 +17,7 @@
 package space.lingu.lamp.web.configuration;
 
 import org.springframework.boot.autoconfigure.mail.MailProperties;
+import org.springframework.context.ApplicationListener;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
@@ -32,24 +33,29 @@ import static space.lingu.lamp.web.configuration.MailConfiguration.setProperties
  * @author RollW
  */
 @Component
-public class MailSettingListener implements EventCallback<RawSettingValue> {
+public class MailSettingListener implements ApplicationListener<SettingValueChangedEvent<?, ?>> {
     private final MailProperties properties;
     private final JavaMailSenderImpl sender;
     private final ConfigReader configReader;
 
     public MailSettingListener(MailProperties properties,
                                JavaMailSenderImpl sender,
-                               ConfigReader configReader,
-                               EventRegistry<RawSettingValue, String> registry) {
+                               ConfigReader configReader) {
         this.properties = properties;
         this.sender = sender;
         this.configReader = configReader;
-        registry.register(this, MailConfigKeys.PREFIX);
+    }
+
+    private void onEvent() {
+        setProperties(properties, configReader);
+        applyProperties(properties, sender);
     }
 
     @Override
-    public void onEvent(RawSettingValue event) {
-        setProperties(properties, configReader);
-        applyProperties(properties, sender);
+    public void onApplicationEvent(@NonNull SettingValueChangedEvent<?, ?> event) {
+        SettingSpecification<?, ?> specification = event.getSpecification();
+        if (specification.getKey().getName().startsWith(MailConfigKeys.PREFIX)) {
+            onEvent();
+        }
     }
 }
