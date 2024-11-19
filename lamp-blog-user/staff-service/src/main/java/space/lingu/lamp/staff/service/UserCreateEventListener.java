@@ -21,9 +21,13 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 import space.lingu.NonNull;
 import space.lingu.lamp.staff.StaffType;
+import space.lingu.lamp.staff.persistence.StaffDo;
+import space.lingu.lamp.staff.persistence.StaffRepository;
 import space.lingu.lamp.user.AttributedUser;
 import space.lingu.lamp.user.Role;
 import space.lingu.lamp.user.event.OnUserCreateEvent;
+
+import java.time.OffsetDateTime;
 
 /**
  * @author RollW
@@ -31,7 +35,10 @@ import space.lingu.lamp.user.event.OnUserCreateEvent;
 @Component
 public class UserCreateEventListener implements ApplicationListener<OnUserCreateEvent> {
 
-    public UserCreateEventListener() {
+    private final StaffRepository staffRepository;
+
+    public UserCreateEventListener(StaffRepository staffRepository) {
+        this.staffRepository = staffRepository;
     }
 
     @Override
@@ -41,7 +48,15 @@ public class UserCreateEventListener implements ApplicationListener<OnUserCreate
         if (attributedUser.getRole() == Role.USER) {
             return;
         }
+        OffsetDateTime now = OffsetDateTime.now();
         StaffType type = StaffType.of(attributedUser.getRole());
-        // TODO: create staff
+        StaffDo staff = StaffDo.builder()
+                .setUserId(attributedUser.getUserId())
+                .setCreateTime(now)
+                .setUpdateTime(now)
+                .addTypes(type)
+                .setDeleted(false)
+                .build();
+        staffRepository.save(staff);
     }
 }
