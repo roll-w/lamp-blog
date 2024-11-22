@@ -15,7 +15,7 @@
  */
 
 plugins {
-    id("lamp-project")
+    id("lampray-project")
     id("java")
     id("java-library")
     kotlin("jvm")

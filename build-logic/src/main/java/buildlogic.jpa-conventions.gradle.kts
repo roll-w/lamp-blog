@@ -32,7 +32,7 @@ allOpen {
     annotation("jakarta.persistence.Entity")
     annotation("jakarta.persistence.Embeddable")
     annotation("jakarta.persistence.MappedSuperclass")
-    annotation("space.lingu.lamp.common.data.Dao")
+    annotation("tech.lamprism.lampray.common.data.Dao")
     annotation("org.springframework.data.repository.NoRepositoryBean")
 }
 

@@ -1,8 +1,8 @@
-# Lamp Blog
+# Lampray
 
 [![License][liBadge]][liLink]
 
-A blog system built with Spring Boot 3 and Vue3.
+Lampray is a blog system built with Spring Boot 3 and Vue3.
 
 ## Requirements
 
@@ -12,7 +12,7 @@ A blog system built with Spring Boot 3 and Vue3.
 ## Build
 
 > This part includes the steps to get the backend of the project running.
-> For the frontend, please refer to the [frontend](lamp-blog-frontend/README.md).
+> For the frontend, please refer to the [frontend](lampray-frontend/README.md).
 
 ### Prerequisites
 
@@ -37,7 +37,7 @@ or if you want to skip the tests:
 ```
 
 After building the project, you should be able to find the jar file in
-`lamp-blog-web/build/libs` directory.
+`lampray-web/build/libs` directory.
 
 ### Build Distribution Pack
 
@@ -53,7 +53,7 @@ To generate the distribution package, run the following command:
 ./gradlew package
 ```
 
-This command will generate a compressed file, similar to `lamp-blog-{version}-dist.tar.gz`,
+This command will generate a compressed file, similar to `lampray-{version}-dist.tar.gz`,
 under the `build/dist` directory. This file includes the base JAR file, startup
 scripts, and other resources.
 
@@ -69,7 +69,7 @@ To build the Docker image, run the following command:
 ```
 
 After the build process is complete, you can find the image with the name
-`lamp-blog:{version}` in the local Docker image list.
+`lampray:{version}` in the local Docker image list.
 
 ## Configuration
 
@@ -79,7 +79,7 @@ The configuration file uses the `properties` format, like the following:
 
 ```properties
 # Database Configuration
-database.url=jdbc:mysql://localhost:3306/lamp_blog_database
+database.url=jdbc:mysql://localhost:3306/lampray
 database.username=root
 database.password=root
 
@@ -98,7 +98,7 @@ If you haven't created the database, you can create it using the following
 SQL command:
 
 ```sql
-CREATE DATABASE lamp_blog_database;
+CREATE DATABASE lampray;
 ```
 
 After the application starts, it will automatically create the tables
@@ -110,18 +110,18 @@ After building the project, then you can run the application
 using the following command:
 
 ```shell
-java -jar lamp-blog.jar  # Replace lamp-blog.jar with the actual jar file name
+java -jar lampray.jar  # Replace lampray.jar with the actual jar file name
 ```
 
 Or if you are using the distribution pack:
 
 ```shell
-bin/lamp # Replace with the actual path to `lamp`
+bin/lampray # Replace with the actual path to `lampray`
 ```
 
 > Current support command line arguments:
 > - `--config`, `-c`: Specify the configuration file to use.
-    > Default will try find `lamp.conf` in the current directory and the
+    > Default will try find `lampray.conf` in the current directory and the
     > `conf` directory under the working directory.
 
 By default, the application will start on port `5100`. And database
@@ -142,8 +142,8 @@ following command:
 
 > [!NOTE]
 > Before running the command, you need to prepare a configuration file named
-> `lamp.conf` in your local directory for mount to the container and replace
-> the `/path/to/lamp.conf` with the actual path to the configuration file.
+> `lampray.conf` in your local directory for mount to the container and replace
+> the `/path/to/lampray.conf` with the actual path to the configuration file.
 
 ```shell
 docker run \
@@ -151,13 +151,13 @@ docker run \
   -it \
   -p 5100:5100 \
   --network host \
-  -v /path/to/lamp.conf:/app/lamp-blog/conf/lamp.conf \
-  --name lamp-blog lamp-blog:{version}
+  -v /path/to/lampray.conf:/app/lampray/conf/lampray.conf \
+  --name lampray lampray:{version}
 ```
 
 > Options:
 > - `--network host`: Use the host network, or replace with your own network.
-> - `-v /path/to/lamp.conf:/app/lamp-blog/conf/lamp.conf`: Mount the configuration file to the container.
+> - `-v /path/to/lampray.conf:/app/lampray/conf/lampray.conf`: Mount the configuration file to the container.
 
 Also, you can use the environment variable `JAVA_OPTS` to specify the
 JVM options, like the following:
@@ -166,7 +166,7 @@ JVM options, like the following:
 docker run \
   #...other options omitted
   -e JAVA_OPTS="-Xmx1024m -Xms64m" \  # replace with your own JVM options
-  --name lamp-blog lamp-blog:{version}
+  --name lampray lampray:{version}
 ```
 
 ## Features
@@ -196,6 +196,6 @@ See the License for the specific language governing permissions and
 limitations under the License.
 ```
 
-[liBadge]: https://img.shields.io/github/license/roll-w/lamp-blog?color=569cd6&style=flat-square
+[liBadge]: https://img.shields.io/github/license/roll-w/lampray?color=569cd6&style=flat-square
 
-[liLink]: https://github.com/roll-w/lamp-blog/blob/master/LICENSE
+[liLink]: https://github.com/roll-w/lampray/blob/master/LICENSE

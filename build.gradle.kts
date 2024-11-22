@@ -19,25 +19,25 @@ import com.bmuschko.gradle.docker.tasks.image.DockerSaveImage
 import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
-    id("lamp-project")
+    id("lampray-project")
     id("com.bmuschko.docker-remote-api") version "9.4.0"
 }
 
 tasks.register<Tar>("package") {
-    dependsOn(":lamp-blog-web:assemble")
+    dependsOn(":lampray-web:assemble")
 
     group = "distribution"
     description = "Creates a distribution package for the project"
 
-    val baseDir = "/lamp-blog-${version}"
+    val baseDir = "/lampray-${version}"
     into(baseDir) {
         from("${project.rootDir}/distribution/README")
         from("${project.rootDir}/distribution/NOTICE")
         from("${project.rootDir}/LICENSE")
     }
     into("${baseDir}/lib") {
-        from("${project(":lamp-blog-web").projectDir}/build/libs/lamp-blog-web-${version}.jar") {
-            rename("lamp-blog-web-${version}.jar", "lamp-blog.jar")
+        from("${project(":lampray-web").projectDir}/build/libs/lampray-web-${version}.jar") {
+            rename("lampray-web-${version}.jar", "lampray.jar")
         }
     }
     into("${baseDir}/bin") {
@@ -50,10 +50,10 @@ tasks.register<Tar>("package") {
     }
 
     into("${baseDir}/conf") {
-        from("${project(":lamp-blog-web").projectDir}/src/main/resources/lamp.conf")
+        from("${project(":lampray-web").projectDir}/src/main/resources/lamp.conf")
     }
 
-    archiveFileName = "lamp-blog-${version}-dist.tar.gz"
+    archiveFileName = "lampray-${version}-dist.tar.gz"
     destinationDirectory = layout.buildDirectory.dir("dist")
     compression = Compression.GZIP
 
@@ -66,7 +66,7 @@ tasks.register<DockerBuildImage>("buildImage") {
     dependsOn(":package")
 
     inputDir = project.projectDir
-    images = listOf("lamp-blog:${version}")
+    images = listOf("lampray:${version}")
     buildArgs = mapOf(
         "LAMP_VERSION" to version.toString()
     )
@@ -79,8 +79,8 @@ tasks.register<DockerSaveImage>("packageImage") {
     description = "Creates distribution pack for the project image."
     dependsOn("buildImage")
 
-    images = listOf("lamp-blog:${version}")
-    destFile = layout.buildDirectory.file("dist/lamp-blog-${version}-image.tar.gz")
+    images = listOf("lampray:${version}")
+    destFile = layout.buildDirectory.file("dist/lampray-${version}-image.tar.gz")
     useCompression = true
 
     outputs.upToDateWhen { false }
@@ -90,7 +90,7 @@ tasks.register<Exec>("buildFrontend") {
     group = "build"
     description = "Build frontend of this project."
 
-    workingDir = file("${project.projectDir}/lamp-blog-frontend")
+    workingDir = file("${project.projectDir}/lampray-frontend")
 
     val npm = when {
         Os.isFamily(Os.FAMILY_WINDOWS) -> "npm.cmd"
@@ -107,12 +107,12 @@ tasks.register<Tar>("packageFrontend") {
 
     dependsOn("buildFrontend")
 
-    into("lamp-blog-frontend") {
-        from("${project.projectDir}/lamp-blog-frontend/dist")
+    into("lampray-frontend") {
+        from("${project.projectDir}/lampray-frontend/dist")
     }
     // TODO: may move to package task
 
-    archiveFileName.set("lamp-blog-frontend-${version}.tar.gz")
+    archiveFileName.set("lampray-frontend-${version}.tar.gz")
     destinationDirectory.set(file("${project.projectDir}/build/dist"))
     compression = Compression.GZIP
 }

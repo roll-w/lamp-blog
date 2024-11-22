@@ -94,13 +94,13 @@ jobs:
                 id: push
                 run: |
                     echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
-                    docker tag lamp-blog:${{ env.raw_version_name }} ghcr.io/${{ env.namespace }}/lamp-blog:${{ env.raw_version_name }}
-                    docker push ghcr.io/${{ env.namespace }}/lamp-blog:${{ env.raw_version_name }}
+                    docker tag lampray:${{ env.raw_version_name }} ghcr.io/${{ env.namespace }}/lampray:${{ env.raw_version_name }}
+                    docker push ghcr.io/${{ env.namespace }}/lampray:${{ env.raw_version_name }}
                     if ! ${{ github.event.inputs.prerelease }}; then
-                        docker tag ghcr.io/${{ env.namespace }}/lamp-blog:${{ env.raw_version_name }} ghcr.io/${{ env.namespace }}/lamp-blog:latest
-                        docker push ghcr.io/${{ env.namespace }}/lamp-blog:latest
+                        docker tag ghcr.io/${{ env.namespace }}/lampray:${{ env.raw_version_name }} ghcr.io/${{ env.namespace }}/lampray:latest
+                        docker push ghcr.io/${{ env.namespace }}/lampray:latest
                     fi
-                    sha=$(docker inspect ghcr.io/${{ env.namespace }}/lamp-blog:${{ env.raw_version_name }} --format='{{index .RepoDigests 0}}')
+                    sha=$(docker inspect ghcr.io/${{ env.namespace }}/lampray:${{ env.raw_version_name }} --format='{{index .RepoDigests 0}}')
                     echo "digest=$sha" >> $GITHUB_OUTPUT
             -   name: Release
                 if: steps.build.outcome == 'success'
@@ -115,18 +115,18 @@ jobs:
                         
                         ## Artifacts
                         
-                        - Image: ghcr.io/${{ env.namespace }}/lamp-blog:${{ env.raw_version_name }}
+                        - Image: ghcr.io/${{ env.namespace }}/lampray:${{ env.raw_version_name }}
                             - sha: `${{ steps.push.outputs.digest }}`
                         
-                        Pull image from `ghcr.io/${{ env.namespace }}/lamp-blog:${{ env.raw_version_name }}` 
+                        Pull image from `ghcr.io/${{ env.namespace }}/lampray:${{ env.raw_version_name }}` 
                         or download the image package from current release assets.
 
                     draft: true
                     tag_name: ${{ env.version_name }}
                     prerelease: ${{ github.event.inputs.prerelease }}
                     files: |
-                        build/dist/lamp-blog-${{ env.raw_version_name }}-dist.tar.gz
-                        build/dist/lamp-blog-${{ env.raw_version_name }}-image.tar.gz
+                        build/dist/lampray-${{ env.raw_version_name }}-dist.tar.gz
+                        build/dist/lampray-${{ env.raw_version_name }}-image.tar.gz
             -   name: Remove Tag
                 uses: actions/github-script@v7.0.1
                 if: failure() && steps.build.outcome == 'failure'
