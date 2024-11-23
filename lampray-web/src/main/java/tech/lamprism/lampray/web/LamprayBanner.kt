@@ -29,20 +29,20 @@ import java.io.PrintStream
 class LamprayBanner : Banner {
     companion object {
         val BANNER: String = """
-                __
-               / /   ____ _____ ___  ____
-              / /   / __ `/ __ `__ \/ __ \
-             / /___/ /_/ / / / / / / /_/ /
-            /_____/\__,_/_/ /_/ /_/ .___/
-                                 /_/ 
+                __                                           
+               / /   ____ _____ ___  ____  _________ ___  __ 
+              / /   / __ `/ __ `__ \/ __ \/ ___/ __ `/ / / / 
+             / /___/ /_/ / / / / / / /_/ / /  / /_/ / /_/ /  
+            /_____/\__,_/_/ /_/ /_/ .___/_/   \__,_/\__, /   
+                                 /_/               /____/    
 
 			""".trimIndent()
 
         const val LAMPRAY = "Lampray"
 
-        const val LICENSE = "Release under the Apache License, Version 2.0 (Apache-2.0)"
+        private const val LICENSE = "Release under the Apache License, Version 2.0 (Apache-2.0)"
 
-        const val STRAP_LINE_SIZE = LICENSE.length
+        private const val STRAP_LINE_SIZE = LICENSE.length
     }
 
     override fun printBanner(
