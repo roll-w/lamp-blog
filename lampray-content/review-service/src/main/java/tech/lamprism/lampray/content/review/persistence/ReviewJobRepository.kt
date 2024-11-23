@@ -66,7 +66,7 @@ class ReviewJobRepository(
             }
             criteriaBuilder.and(
                 reviewer,
-                root.get<ReviewStatus>("reviewStatus").`in`(statuses)
+                root.get<ReviewStatus>("status").`in`(statuses)
             )
         }
 
