@@ -132,7 +132,7 @@ You can use the environment variable `JAVA_OPTS` to specify the
 JVM options, like the following:
 
 ```shell
-JAVA_OPTS="-Xmx1024m -Xms64m" bin/lamp
+JAVA_OPTS="-Xmx1024m -Xms64m" bin/lampray
 ```
 
 ### Running with Docker
