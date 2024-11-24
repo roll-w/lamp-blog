@@ -19,7 +19,6 @@ package tech.lamprism.lampray.security.authorization
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import java.util.ArrayDeque
-import kotlin.collections.arrayListOf
 
 /**
  * @author RollW
@@ -27,8 +26,10 @@ import kotlin.collections.arrayListOf
 object AuthorityHelper {
     @JvmStatic
     fun AuthorizationScope.getAuthorities(): List<GrantedAuthority> {
-        val scopes = arrayListOf<AuthorizationScope>(this)
-        val scopesToCheck = ArrayDeque<AuthorizationScope>()
+        val scopes = hashSetOf<AuthorizationScope>()
+        val scopesToCheck = ArrayDeque<AuthorizationScope>().apply {
+            add(this@getAuthorities)
+        }
 
         while (scopesToCheck.isNotEmpty()) {
             val scope = scopesToCheck.pop()
