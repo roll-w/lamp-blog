@@ -132,7 +132,7 @@ class ArticleDo(
         private var id: Long? = null
         private var userId: Long = 0
         private var title: String? = null
-        private var cover: String? = null
+        private var cover: String = ""
         private var content: String? = null
         private var createTime: OffsetDateTime? = null
         private var updateTime: OffsetDateTime? = null
@@ -157,9 +157,8 @@ class ArticleDo(
             this.userId = userId
         }
 
-        fun setTitle(title: String): Builder {
+        fun setTitle(title: String) = apply {
             this.title = title
-            return this
         }
 
         fun setCover(cover: String) = apply {
@@ -180,7 +179,7 @@ class ArticleDo(
 
         fun build(): ArticleDo {
             return ArticleDo(
-                id, userId, title!!, cover!!,
+                id, userId, title!!, cover,
                 content!!, createTime!!, updateTime!!
             )
         }

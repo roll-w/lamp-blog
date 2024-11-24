@@ -70,6 +70,7 @@ public class ArticleService implements ContentPublisher, ContentCollectionProvid
                 .setUserId(uncreatedContent.getUserId())
                 .setTitle(title)
                 .setContent(content)
+                .setCover("user-cover")
                 .setCreateTime(timestamp)
                 .setUpdateTime(timestamp)
                 .build();
