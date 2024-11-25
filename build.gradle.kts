@@ -41,16 +41,16 @@ tasks.register<Tar>("package") {
         }
     }
     into("${baseDir}/bin") {
-        from("${project.projectDir}/scripts/lamp.sh") {
-            rename("lamp.sh", "lamp")
+        from("${project.projectDir}/scripts/lampray.sh") {
+            rename("lampray.sh", "lampray")
             filePermissions {
-                unix(755)
+                unix(555)
             }
         }
     }
 
     into("${baseDir}/conf") {
-        from("${project(":lampray-web").projectDir}/src/main/resources/lamp.conf")
+        from("${project(":lampray-web").projectDir}/src/main/resources/lampray.conf")
     }
 
     archiveFileName = "lampray-${version}-dist.tar.gz"
@@ -68,7 +68,7 @@ tasks.register<DockerBuildImage>("buildImage") {
     inputDir = project.projectDir
     images = listOf("lampray:${version}")
     buildArgs = mapOf(
-        "LAMP_VERSION" to version.toString()
+        "LAMPRAY_VERSION" to version.toString()
     )
     // TODO: support multi-arch build
     outputs.upToDateWhen { false }
