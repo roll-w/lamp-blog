@@ -94,7 +94,7 @@ class InputStreamConfigReader(inputStream: InputStream) : ConfigReader {
         ): InputStream? {
             val confFile = tryFile(path, allowFail)
             if (!confFile.exists()) {
-                return appClz.getResourceAsStream("/lamp.conf")
+                return appClz.getResourceAsStream("/lampray.conf")
             }
             return FileInputStream(confFile)
         }
@@ -111,11 +111,11 @@ class InputStreamConfigReader(inputStream: InputStream) : ConfigReader {
                     )
                 }
             }
-            val confFile = File("conf/lamp.conf")
+            val confFile = File("conf/lampray.conf")
             if (confFile.exists()) {
                 return confFile
             }
-            return File("lamp.conf")
+            return File("lampray.conf")
         }
     }
 }
