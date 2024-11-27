@@ -37,7 +37,7 @@ public class StorageController {
         this.storageProvider = storageProvider;
     }
 
-    @GetMapping("/storage/{id}")
+    @GetMapping("/storages/{id}")
     public void getStorage(@PathVariable("id") String id,
                            HttpServletRequest request,
                            HttpServletResponse response) throws IOException {
