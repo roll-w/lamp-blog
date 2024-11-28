@@ -18,6 +18,8 @@ package tech.lamprism.lampray.web.command;
 
 import org.jline.utils.AttributedString;
 import org.jline.utils.AttributedStyle;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.shell.jline.PromptProvider;
 import org.springframework.stereotype.Component;
 
@@ -28,8 +30,16 @@ import org.springframework.stereotype.Component;
 public class CommandPromptProvider implements PromptProvider {
     @Override
     public AttributedString getPrompt() {
+        SecurityContext context = SecurityContextHolder.getContext();
+        if (context.getAuthentication() != null) {
+            return new AttributedString(
+                    context.getAuthentication().getName() + "@lampray> ",
+                    AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW)
+            );
+        }
+
         return new AttributedString(
-                "lamp> ",
+                "lampray> ",
                 AttributedStyle.DEFAULT.foreground(AttributedStyle.YELLOW)
         );
     }
