@@ -19,6 +19,7 @@ plugins {
     id("java")
     id("java-library")
     kotlin("jvm")
+    kotlin("kapt")
     kotlin("plugin.spring")
     id("io.spring.dependency-management")
 }
@@ -41,9 +42,10 @@ dependencies {
     implementation(kotlin("stdlib-jdk8", kotlinVersion))
     implementation(kotlin("reflect", kotlinVersion))
     testImplementation(kotlin("test", kotlinVersion))
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
 
     implementation("space.lingu.fiesta:fiesta-annotations:0.2.1")
-    annotationProcessor("space.lingu.fiesta:fiesta-checker:0.2.1")
+    kapt("space.lingu.fiesta:fiesta-checker:0.2.1")
 }
 
 java {

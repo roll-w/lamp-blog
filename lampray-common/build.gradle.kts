@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import org.jetbrains.kotlin.gradle.tasks.KaptGenerateStubs
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import space.lingu.GenerateBuildConfigTask
 
@@ -45,6 +46,10 @@ tasks.named<ProcessResources>("processResources") {
 }
 
 tasks.named<KotlinCompile>("compileKotlin") {
+    dependsOn("generateBuildConfig")
+}
+
+tasks.withType<KaptGenerateStubs> {
     dependsOn("generateBuildConfig")
 }
 

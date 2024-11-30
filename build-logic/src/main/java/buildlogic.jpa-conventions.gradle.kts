@@ -40,5 +40,5 @@ val hibernateVersion = dependencyManagement.importedProperties["hibernate.versio
 
 dependencies {
     api("org.springframework.boot:spring-boot-starter-data-jpa")
-    annotationProcessor("org.hibernate:hibernate-jpamodelgen:$hibernateVersion")
+    kapt("org.hibernate:hibernate-jpamodelgen:$hibernateVersion")
 }

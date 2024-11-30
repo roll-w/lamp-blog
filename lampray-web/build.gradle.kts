@@ -49,7 +49,7 @@ dependencies {
     implementation("org.springframework.boot:spring-boot-starter-cache")
     implementation(libs.caffeine)
     implementation("com.mysql:mysql-connector-j")
-    implementation("org.springframework.boot:spring-boot-configuration-processor")
+    kapt("org.springframework.boot:spring-boot-configuration-processor")
     implementation("com.zaxxer:HikariCP")
     implementation(libs.io.jsonwebtoken.jjwt.api)
     implementation(libs.io.jsonwebtoken.jjwt.impl)
