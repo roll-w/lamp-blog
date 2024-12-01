@@ -62,13 +62,17 @@ tasks.register<Tar>("package") {
 
 tasks.register<DockerBuildImage>("buildImage") {
     group = "build"
-    description = "Build Docker image for this project."
+    description = "Build Docker image for lampray."
     dependsOn(":package")
-
-    inputDir = project.projectDir
+    copy {
+        from("Dockerfile")
+        into(layout.buildDirectory.dir("dist"))
+    }
+    inputDir = layout.buildDirectory.dir("dist")
     images = listOf("lampray:${version}")
     buildArgs = mapOf(
-        "LAMPRAY_VERSION" to version.toString()
+        "LAMPRAY_VERSION" to version.toString(),
+        "CTX_PATH" to "./"
     )
     // TODO: support multi-arch build
     outputs.upToDateWhen { false }

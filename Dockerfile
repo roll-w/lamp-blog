@@ -4,8 +4,9 @@ LABEL org.opencontainers.image.authors="rollw"
 LABEL org.opencontainers.image.title="Lampray"
 
 ARG LAMPRAY_VERSION="0.1.0"
+ARG CTX_PATH="./build/dist/"
 
-ADD ./build/dist/lampray-${LAMPRAY_VERSION}-dist.tar.gz /app
+ADD ${CTX_PATH}lampray-${LAMPRAY_VERSION}-dist.tar.gz /app
 RUN mv /app/lampray-${LAMPRAY_VERSION} /app/lampray
 WORKDIR /app/lampray
 
