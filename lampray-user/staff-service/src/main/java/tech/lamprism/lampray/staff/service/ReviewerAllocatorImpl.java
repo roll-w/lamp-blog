@@ -111,7 +111,10 @@ public class ReviewerAllocatorImpl implements ReviewerAllocator, OnStaffEventLis
         if (reviewerId == AUTO_REVIEWER) {
             return;
         }
-        int weight = weights.get(reviewerId);
+        Integer weight = weights.get(reviewerId);
+        if (weight == null) {
+            return;
+        }
         remappingReviewer(reviewerId, weight, weight - contentType.getWeight());
     }
 
