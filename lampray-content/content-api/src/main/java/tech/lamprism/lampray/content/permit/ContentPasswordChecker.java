@@ -23,6 +23,8 @@ import tech.lamprism.lampray.content.ContentAccessAuthType;
 import tech.lamprism.lampray.content.ContentAccessCredential;
 import tech.lamprism.lampray.content.ContentAccessCredentials;
 import tech.lamprism.lampray.content.common.ContentErrorCode;
+import tech.rollw.common.web.CommonErrorCode;
+import tech.rollw.common.web.ErrorCode;
 
 /**
  * Check content's password.
@@ -34,18 +36,18 @@ public class ContentPasswordChecker implements ContentPermitCheckProvider {
 
     @Override
     @NonNull
-    public ContentPermitResult checkAccessPermit(@NonNull Content content,
-                                                 @NonNull ContentAccessAuthType contentAccessAuthType,
-                                                 @NonNull ContentAccessCredentials credentials) {
+    public ErrorCode checkAccessPermit(@NonNull Content content,
+                                       @NonNull ContentAccessAuthType contentAccessAuthType,
+                                       @NonNull ContentAccessCredentials credentials) {
         if (contentAccessAuthType != ContentAccessAuthType.PASSWORD) {
-            return ContentPermitResult.permit();
+            return CommonErrorCode.SUCCESS;
         }
         ContentAccessCredential credential = credentials.getCredential(ContentAccessAuthType.PASSWORD);
         if (credential == null) {
-            return ContentPermitResult.deny(ContentErrorCode.ERROR_PASSWORD_REQUIRED);
+            return ContentErrorCode.ERROR_PASSWORD_REQUIRED;
         }
         // TODO: add password check
-        return ContentPermitResult.permit();
+        return CommonErrorCode.SUCCESS;
     }
 
     @Override

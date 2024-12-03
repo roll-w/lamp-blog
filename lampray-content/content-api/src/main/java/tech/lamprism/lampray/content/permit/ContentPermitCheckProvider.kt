@@ -19,6 +19,7 @@ package tech.lamprism.lampray.content.permit
 import tech.lamprism.lampray.content.Content
 import tech.lamprism.lampray.content.ContentAccessAuthType
 import tech.lamprism.lampray.content.ContentAccessCredentials
+import tech.rollw.common.web.ErrorCode
 
 /**
  * @author RollW
@@ -30,5 +31,5 @@ interface ContentPermitCheckProvider {
         content: Content,
         contentAccessAuthType: ContentAccessAuthType,
         credentials: ContentAccessCredentials
-    ): ContentPermitResult
+    ): ErrorCode
 }

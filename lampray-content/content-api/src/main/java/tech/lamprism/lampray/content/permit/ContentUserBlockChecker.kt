@@ -23,6 +23,8 @@ import tech.lamprism.lampray.content.ContentAccessCredentials
 import tech.lamprism.lampray.user.UserProvider
 import tech.lamprism.lampray.user.UserTrait
 import tech.lamprism.lampray.user.UserViewException
+import tech.rollw.common.web.CommonErrorCode
+import tech.rollw.common.web.ErrorCode
 import tech.rollw.common.web.UserErrorCode
 
 /**
@@ -43,35 +45,32 @@ class ContentUserBlockChecker(
         content: Content,
         contentAccessAuthType: ContentAccessAuthType,
         credentials: ContentAccessCredentials
-    ): ContentPermitResult {
+    ): ErrorCode {
         val credential = credentials
-            .getCredential(ContentAccessAuthType.USER)
-            ?: return ContentPermitResult.permit()
+            .getCredential(ContentAccessAuthType.USER) ?: return CommonErrorCode.SUCCESS
 
         val creatorId = content.userId
         val accessUserId = tryGetUserId(credential)
         if (creatorId == accessUserId) {
-            return ContentPermitResult.permit()
+            return CommonErrorCode.SUCCESS
         }
-        try {
+        return try {
             val user = userProvider.getUser(accessUserId)
             if (!user.isNormal) {
-                return ContentPermitResult.deny(UserErrorCode.ERROR_USER_DISABLED)
+                return UserErrorCode.ERROR_USER_DISABLED
             }
+            return CommonErrorCode.SUCCESS
         } catch (e: UserViewException) {
-            return ContentPermitResult.deny(e.errorCode)
+            return e.errorCode
         }
-        return ContentPermitResult.permit()
     }
 
     private fun tryGetUserId(credential: ContentAccessCredential): Long {
         val data = credential.rawData ?: throw IllegalArgumentException("Credential data should not be null")
-        if (data is Long) {
-            return data
+        return when (data) {
+            is Long -> data
+            is UserTrait -> data.userId
+            else -> throw IllegalArgumentException("Invalid credential data type: " + data.javaClass.name)
         }
-        if (data is UserTrait) {
-            return data.userId
-        }
-        throw IllegalArgumentException("Invalid credential data type: " + data.javaClass.name)
     }
 }

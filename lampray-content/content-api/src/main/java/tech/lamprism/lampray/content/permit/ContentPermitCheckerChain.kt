@@ -46,14 +46,13 @@ class ContentPermitCheckerChain(
                 contentAccessAuthType,
                 credentials
             )
-            if (!result.isPermitted) {
-                return result
+            if (result.failed()) {
+                return ContentPermitResult.deny(result)
             }
         }
 
         return ContentPermitResult.permit()
     }
-
 
     private class EmptyChecker : ContentPermitChecker {
         override fun checkAccessPermit(
@@ -65,17 +64,14 @@ class ContentPermitCheckerChain(
         }
 
         companion object {
-            internal val INSTANCE: EmptyChecker = EmptyChecker()
+            val INSTANCE: EmptyChecker = EmptyChecker()
         }
     }
 
     companion object {
         @JvmStatic
         fun of(vararg providers: ContentPermitCheckProvider): ContentPermitChecker {
-            if (providers.isEmpty()) {
-                return EmptyChecker.INSTANCE
-            }
-            return ContentPermitCheckerChain(providers.toList())
+            return of(providers.toList())
         }
 
         @JvmStatic

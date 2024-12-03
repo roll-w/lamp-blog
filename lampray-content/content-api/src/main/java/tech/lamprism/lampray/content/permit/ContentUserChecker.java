@@ -24,6 +24,8 @@ import tech.lamprism.lampray.content.ContentAccessCredential;
 import tech.lamprism.lampray.content.ContentAccessCredentials;
 import tech.lamprism.lampray.user.UserTrait;
 import tech.rollw.common.web.AuthErrorCode;
+import tech.rollw.common.web.CommonErrorCode;
+import tech.rollw.common.web.ErrorCode;
 import tech.rollw.common.web.UserErrorCode;
 
 /**
@@ -36,16 +38,16 @@ public class ContentUserChecker implements ContentPermitCheckProvider {
 
     @Override
     @NonNull
-    public ContentPermitResult checkAccessPermit(@NonNull Content content,
-                                                 @NonNull ContentAccessAuthType contentAccessAuthType,
-                                                 @NonNull ContentAccessCredentials credentials) {
+    public ErrorCode checkAccessPermit(@NonNull Content content,
+                                       @NonNull ContentAccessAuthType contentAccessAuthType,
+                                       @NonNull ContentAccessCredentials credentials) {
         ContentAccessCredential credential = credentials.getCredential(ContentAccessAuthType.USER);
         if (credential == null || credential.getRawData() == null) {
-            return ContentPermitResult.deny(UserErrorCode.ERROR_USER_NOT_LOGIN);
+            return UserErrorCode.ERROR_USER_NOT_LOGIN;
         }
 
         if (contentAccessAuthType != ContentAccessAuthType.PRIVATE) {
-            return ContentPermitResult.permit();
+            return CommonErrorCode.SUCCESS;
         }
 
         Type type = getType(credential.getRawData());
@@ -55,19 +57,19 @@ public class ContentUserChecker implements ContentPermitCheckProvider {
         };
     }
 
-    private ContentPermitResult checkIfLong(Content content, long userId) {
+    private ErrorCode checkIfLong(Content content, long userId) {
         if (content.getUserId() == userId) {
-            return ContentPermitResult.permit();
+            return CommonErrorCode.SUCCESS;
         }
-        return ContentPermitResult.deny(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+        return AuthErrorCode.ERROR_NOT_HAS_ROLE;
     }
 
-    private ContentPermitResult checkIfUserTrait(Content content,
-                                                 UserTrait user) {
+    private ErrorCode checkIfUserTrait(Content content,
+                                       UserTrait user) {
         if (content.getUserId() == user.getUserId()) {
-            return ContentPermitResult.permit();
+            return CommonErrorCode.SUCCESS;
         }
-        return ContentPermitResult.deny(AuthErrorCode.ERROR_NOT_HAS_ROLE);
+        return AuthErrorCode.ERROR_NOT_HAS_ROLE;
     }
 
     private Type getType(Object data) {
