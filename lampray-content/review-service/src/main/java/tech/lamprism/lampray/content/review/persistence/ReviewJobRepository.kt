@@ -43,8 +43,8 @@ class ReviewJobRepository(
     ): Specification<ReviewJobDo> =
         Specification { root, _, criteriaBuilder ->
             criteriaBuilder.and(
-                criteriaBuilder.equal(root.get<Long>("reviewContentId"), contentId),
-                criteriaBuilder.equal(root.get<ContentType>("reviewContentType"), contentType)
+                criteriaBuilder.equal(root.get(ReviewJobDo_.reviewContentId), contentId),
+                criteriaBuilder.equal(root.get(ReviewJobDo_.reviewContentType), contentType)
             )
         }
 
@@ -60,13 +60,13 @@ class ReviewJobRepository(
         statuses: List<ReviewStatus>
     ): Specification<ReviewJobDo> =
         Specification { root, _, criteriaBuilder ->
-            val reviewer = criteriaBuilder.equal(root.get<Long>("reviewerId"), reviewerId)
+            val reviewer = criteriaBuilder.equal(root.get(ReviewJobDo_.reviewerId), reviewerId)
             if (statuses.isEmpty()) {
                 return@Specification reviewer
             }
             criteriaBuilder.and(
                 reviewer,
-                root.get<ReviewStatus>("status").`in`(statuses)
+                root.get(ReviewJobDo_.status).`in`(statuses)
             )
         }
 
@@ -76,6 +76,6 @@ class ReviewJobRepository(
 
     private fun createStatusSpecification(reviewStatus: ReviewStatus): Specification<ReviewJobDo> =
         Specification { root, _, criteriaBuilder ->
-            criteriaBuilder.equal(root.get<ReviewStatus>("status"), reviewStatus)
+            criteriaBuilder.equal(root.get(ReviewJobDo_.status), reviewStatus)
         }
 }

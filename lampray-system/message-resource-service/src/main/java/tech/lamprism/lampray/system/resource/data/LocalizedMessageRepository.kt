@@ -32,8 +32,8 @@ class LocalizedMessageRepository(
     fun findByKey(key: String, locale: Locale) =
         findOne { root, _, criteriaBuilder ->
             criteriaBuilder.and(
-                criteriaBuilder.equal(root.get<String>("key"), key),
-                criteriaBuilder.equal(root.get<Locale>("locale"), locale)
+                criteriaBuilder.equal(root.get(LocalizedMessageDo_.key), key),
+                criteriaBuilder.equal(root.get(LocalizedMessageDo_.locale), locale)
             )
         }
 
@@ -42,13 +42,13 @@ class LocalizedMessageRepository(
         pageable: Pageable = Pageable.unpaged()
     ): Page<LocalizedMessageDo> =
         findAll(pageable) { root, _, criteriaBuilder ->
-            criteriaBuilder.equal(root.get<String>("key"), key)
+            criteriaBuilder.equal(root.get(LocalizedMessageDo_.key), key)
         }
 
     fun deleteByKey(key: String) {
         delete { root, _, criteriaBuilder ->
             criteriaBuilder.and(
-                criteriaBuilder.equal(root.get<String>("key"), key)
+                criteriaBuilder.equal(root.get(LocalizedMessageDo_.key), key)
             )
         }
     }
@@ -56,8 +56,8 @@ class LocalizedMessageRepository(
     fun deleteByKey(key: String, locale: Locale) {
         delete { root, _, criteriaBuilder ->
             criteriaBuilder.and(
-                criteriaBuilder.equal(root.get<String>("key"), key),
-                criteriaBuilder.equal(root.get<Locale>("locale"), locale)
+                criteriaBuilder.equal(root.get(LocalizedMessageDo_.key), key),
+                criteriaBuilder.equal(root.get(LocalizedMessageDo_.locale), locale)
             )
         }
     }

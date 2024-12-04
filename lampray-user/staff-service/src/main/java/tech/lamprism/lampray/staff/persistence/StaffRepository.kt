@@ -18,6 +18,7 @@ package tech.lamprism.lampray.staff.persistence
 
 import org.springframework.stereotype.Repository
 import tech.lamprism.lampray.common.data.CommonRepository
+import tech.lamprism.lampray.staff.StaffType
 import java.util.Optional
 
 /**
@@ -29,7 +30,14 @@ class StaffRepository(
 ) : CommonRepository<StaffDo, Long>(staffDao) {
     fun findByUserId(userId: Long): Optional<StaffDo> {
         return findOne { root, _, criteriaBuilder ->
-            criteriaBuilder.equal(root.get<Long>("userId"), userId)
+            criteriaBuilder.equal(root.get(StaffDo_.userId), userId)
+        }
+    }
+
+    fun findByTypes(types: Set<StaffType>): List<StaffDo> {
+        return findAll { root, _,
+                         criteriaBuilder ->
+            root.get(StaffDo_.types).`in`(types)
         }
     }
 }

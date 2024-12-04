@@ -40,8 +40,8 @@ class CommentRepository(
         contentType: ContentType
     ): Specification<CommentDo> = Specification { root, query, criteriaBuilder ->
         criteriaBuilder.and(
-            criteriaBuilder.equal(root.get<Long>("commentOnId"), contentId),
-            criteriaBuilder.equal(root.get<ContentType>("commentOnType"), contentType)
+            criteriaBuilder.equal(root.get(CommentDo_.commentOnId), contentId),
+            criteriaBuilder.equal(root.get(CommentDo_.commentOnType), contentType)
         )
     }
 }

@@ -30,7 +30,7 @@ class UserRepository(
 ) : CommonRepository<UserDo, Long>(userDao) {
 
     fun searchBy(keyword: String): List<UserDo> {
-        return userDao.findAll(Specs.searchBy(keyword))
+        return userDao.findAll(createSearchBySpec(keyword))
     }
 
     fun getByUserId(id: Long): Optional<UserDo> = userDao.getByUserId(id)
@@ -54,11 +54,8 @@ class UserRepository(
         return userDao.count() > 0
     }
 
-    private object Specs {
-        fun searchBy(keyword: String): Specification<UserDo> {
-            return Specification { root, query, builder ->
-                builder.like(root.get("username"), keyword)
-            }
+    private fun createSearchBySpec(keyword: String) =
+        Specification { root, query, builder ->
+            builder.like(root.get(UserDo_.username), keyword)
         }
-    }
 }

@@ -17,7 +17,6 @@
 package tech.lamprism.lampray.content.article.persistence
 
 import org.springframework.data.jpa.domain.Specification
-import org.springframework.data.repository.query.Param
 import org.springframework.stereotype.Repository
 import tech.lamprism.lampray.common.data.CommonRepository
 import java.util.Optional
@@ -29,7 +28,7 @@ import java.util.Optional
 class ArticleRepository(
     private val articleDao: ArticleDao
 ) : CommonRepository<ArticleDo, Long>(articleDao) {
-    fun findAllByUserId(@Param("userId") userId: Long): List<ArticleDo> {
+    fun findAllByUserId(userId: Long): List<ArticleDo> {
         return articleDao.findAllByUserId(userId)
     }
 
@@ -43,8 +42,8 @@ class ArticleRepository(
     ): Specification<ArticleDo> {
         return Specification { root, query, criteriaBuilder ->
             criteriaBuilder.and(
-                criteriaBuilder.equal(root.get<String>("title"), title),
-                criteriaBuilder.equal(root.get<Long>("userId"), userId)
+                criteriaBuilder.equal(root.get(ArticleDo_.title), title),
+                criteriaBuilder.equal(root.get(ArticleDo_.userId), userId)
             )
         }
     }
