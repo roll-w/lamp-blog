@@ -29,9 +29,9 @@ object ServerConfigKeys : SettingSpecificationSupplier {
 
     @JvmField
     val PORT =
-        SettingSpecificationBuilder(SettingKey.ofString("server.port"))
+        SettingSpecificationBuilder(SettingKey.ofInt("server.port"))
             .setTextDescription("Server port")
-            .setDefaultValue("5100")
+            .setDefaultValue(5100)
             .setSupportedSources(SettingSource.LOCAL_ONLY)
             .setRequired(true)
             .build()
