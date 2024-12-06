@@ -28,13 +28,15 @@ import tech.lamprism.lampray.web.LampEnvKeys;
  */
 @Configuration
 public class LocalConfigConfiguration {
+    public static final String LOCAL_CONFIG_PROVIDER = "localConfigProvider";
+
     private final ConfigurableApplicationContext configurableApplicationContext;
 
     public LocalConfigConfiguration(ConfigurableApplicationContext configurableApplicationContext) {
         this.configurableApplicationContext = configurableApplicationContext;
     }
 
-    @Bean
+    @Bean(LOCAL_CONFIG_PROVIDER)
     @Order(0)
     public ConfigProvider localConfigProvider() {
         ConfigProvider configProvider = configurableApplicationContext.getEnvironment()
