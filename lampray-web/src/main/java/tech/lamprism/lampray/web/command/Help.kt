@@ -30,8 +30,7 @@ import org.springframework.shell.standard.CommandValueProvider
 import org.springframework.shell.standard.ShellComponent
 import org.springframework.shell.standard.ShellMethod
 import org.springframework.shell.standard.ShellOption
-import java.util.stream.Collectors
-import java.util.stream.Stream
+import tech.lamprism.lampray.shell.command.HelpCommandProvider
 
 private const val LINE_LENGTH = 110
 
@@ -39,7 +38,21 @@ private const val LINE_LENGTH = 110
  * @author RollW
  */
 @ShellComponent
-class Help : AbstractShellComponent() {
+class Help : AbstractShellComponent(), HelpCommandProvider {
+
+    override fun displayHelp(vararg commands: String) {
+        terminal.writer().println(getHelp(*commands).toAnsi())
+    }
+
+    override fun getHelp(vararg commands: String): AttributedString {
+        return if (commands.isEmpty()) {
+            renderCommands()
+        } else {
+            renderCommand(commands.joinToString(" ") { s ->
+                s.trim { it <= ' ' }
+            })
+        }
+    }
 
     @ShellMethod(
         value = "Display help about available commands.",
@@ -54,14 +67,7 @@ class Help : AbstractShellComponent() {
             help = "The command to obtain help for.",
             arity = Int.MAX_VALUE
         ) command: Array<String>?
-    ): AttributedString = if (command == null) {
-        renderCommands()
-    } else {
-        val commandStr = Stream.of(*command)
-            .map { s -> s.trim { it <= ' ' } }
-            .collect(Collectors.joining(" "))
-        renderCommand(commandStr)
-    }
+    ): AttributedString = getHelp(*(command ?: emptyArray()))
 
     private fun renderCommands(): AttributedString {
         val registrations = Utils
@@ -77,7 +83,7 @@ class Help : AbstractShellComponent() {
     private fun AttributedStringBuilder.renderCommands(
         registrations: Map<String, CommandRegistration>
     ) {
-        append("Lampray Command Line Interface Help\n")
+        appendLine("Lampray Command Line Interface Help")
         append("\n")
         val groupded = registrations.groupByPrefixKey().entries.groupBy { it.value.group }
         for (group in groupded.keys) {
@@ -85,7 +91,7 @@ class Help : AbstractShellComponent() {
             for (registration in groupded[group]!!) {
                 append("")
                 append("  ${registration.value.command.padEnd(14, ' ')}")
-                registration.value.description.wrap(LINE_LENGTH - 16).lines().forEachIndexed { i, it ->
+                registration.value.description.trim().wrap(LINE_LENGTH - 16).lines().forEachIndexed { i, it ->
                     if (i == 0) {
                         appendLine(it)
                     } else {
@@ -174,7 +180,7 @@ class Help : AbstractShellComponent() {
         if (registration.commandRegistration == null) {
             return
         }
-        registration.commandRegistration.description.wrap(110).lines().forEach {
+        registration.commandRegistration.description.trim().wrap(110).lines().forEach {
             appendLine(it)
         }
         appendLine()
@@ -187,7 +193,7 @@ class Help : AbstractShellComponent() {
         appendLine("Available Commands:")
         registration.children.forEach {
             append("  ${it.command.removePrefix(registration.command).padEnd(14, ' ')}")
-            it.description.wrap(LINE_LENGTH - 16).lines().forEachIndexed { i, it ->
+            it.description.trim().wrap(LINE_LENGTH - 16).lines().forEachIndexed { i, it ->
                 if (i == 0) {
                     appendLine(it)
                 } else {
@@ -222,7 +228,7 @@ class Help : AbstractShellComponent() {
             }
             if (it.description?.isNotEmpty() == true) {
                 appendLine(":")
-                it.description.wrap(LINE_LENGTH - 8).lines().forEach {
+                it.description.trim().wrap(LINE_LENGTH - 8).lines().forEach {
                     appendLine("${" ".repeat(8)}$it")
                 }
             }
