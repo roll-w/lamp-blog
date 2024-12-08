@@ -16,12 +16,10 @@
 
 package tech.lamprism.lampray.web.domain.message;
 
-import space.lingu.light.DataTable;
 
 /**
  * @author RollW
  */
-@DataTable(tableName = "chat_message")
 public class ChatMessage {
     private String content;
     private long sender;

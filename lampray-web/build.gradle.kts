@@ -54,9 +54,7 @@ dependencies {
     implementation(libs.io.jsonwebtoken.jjwt.api)
     implementation(libs.io.jsonwebtoken.jjwt.impl)
     implementation(libs.io.jsonwebtoken.jjwt.jackson)
-    implementation(libs.bundles.light)
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    annotationProcessor(libs.lingu.light.compiler)
 }
 
 description = "lampray-web"

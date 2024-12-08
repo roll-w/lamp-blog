@@ -18,7 +18,6 @@ caffeine = "3.1.8"
 commons-text="1.12.0"
 guava = "33.2.1-jre"
 jjwt= "0.11.5"
-space-lingu-light = "0.4.6"
 rollw-web-common = "0.2.1"
 spring-shell = "3.3.3"
 
@@ -30,18 +29,9 @@ spring-shell-starter = { module = "org.springframework.shell:spring-shell-starte
 io-jsonwebtoken-jjwt-api = { module = "io.jsonwebtoken:jjwt-api", version.ref = "jjwt" }
 io-jsonwebtoken-jjwt-impl = { module = "io.jsonwebtoken:jjwt-impl", version.ref = "jjwt" }
 io-jsonwebtoken-jjwt-jackson = { module = "io.jsonwebtoken:jjwt-jackson", version.ref = "jjwt" }
-lingu-light-compiler = { module = "space.lingu.light:light-compiler", version.ref = "space-lingu-light" }
-lingu-light-core = { module = "space.lingu.light:light-core", version.ref = "space-lingu-light" }
-lingu-light-core-connection-hikari = { module = "space.lingu.light:light-core-connection-hikari", version.ref = "space-lingu-light" }
-lingu-light-core-logging-slf4j = { module = "space.lingu.light:light-core-logging-slf4j", version.ref = "space-lingu-light" }
 rollw-web-common-core = { module = "tech.rollw.common:web-common-core", version.ref = "rollw-web-common" }
 rollw-web-common-spring-boot-starter = { module = "tech.rollw.common:web-common-spring-boot-starter", version.ref = "rollw-web-common" }
 
 [bundles]
-light = [
-  "lingu-light-core",
-  "lingu-light-core-connection-hikari",
-  "lingu-light-core-logging-slf4j"
-]
 
 [plugins]
