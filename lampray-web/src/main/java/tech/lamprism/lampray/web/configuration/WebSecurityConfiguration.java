@@ -38,6 +38,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
+import org.springframework.security.web.firewall.ExceptionResolveRequestRejectedHandler;
+import org.springframework.security.web.firewall.RequestRejectedHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -179,6 +181,12 @@ public class WebSecurityConfiguration {
     public WebDelegateSecurityHandler webDelegateSecurityHandler(
             @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
         return new WebDelegateSecurityHandler(resolver);
+    }
+
+    @Bean
+    public RequestRejectedHandler requestRejectedHandler(
+            @Qualifier("handlerExceptionResolver") HandlerExceptionResolver resolver) {
+        return new ExceptionResolveRequestRejectedHandler(resolver);
     }
 
     @Bean
