@@ -16,10 +16,11 @@
 
 package tech.lamprism.lampray.web.controller.article.model;
 
-import tech.lamprism.lampray.content.article.ArticleDetailsMetadata;
-import tech.lamprism.lampray.content.SimpleUncreatedContent;
+import org.apache.commons.lang3.StringUtils;
 import tech.lamprism.lampray.content.ContentType;
+import tech.lamprism.lampray.content.SimpleUncreatedContent;
 import tech.lamprism.lampray.content.UncreatedContent;
+import tech.lamprism.lampray.content.article.ArticleDetailsMetadata;
 
 /**
  * @author RollW
@@ -33,7 +34,8 @@ public record ArticleCreateRequest(
         return new SimpleUncreatedContent(
                 ContentType.ARTICLE,
                 userId,
-                title, content,
+                StringUtils.trim(title),
+                StringUtils.trim(content),
                 articleDetailsMetadata
         );
     }
