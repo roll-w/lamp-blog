@@ -43,7 +43,6 @@ import tech.lamprism.lampray.web.common.ApiContext;
 import tech.lamprism.lampray.web.common.ParameterMissingException;
 import tech.lamprism.lampray.web.system.ErrorRecord;
 import tech.lamprism.lampray.web.system.ErrorRecordVo;
-import space.lingu.light.LightRuntimeException;
 import tech.rollw.common.web.AuthErrorCode;
 import tech.rollw.common.web.CommonErrorCode;
 import tech.rollw.common.web.CommonRuntimeException;
@@ -93,16 +92,6 @@ public class LampSystemExceptionHandler {
         }
         return HttpResponseEntity.of(
                 CommonErrorCode.ERROR_NOT_FOUND,
-                e.getMessage()
-        );
-    }
-
-
-    @ExceptionHandler(LightRuntimeException.class)
-    public HttpResponseEntity<Void> handle(LightRuntimeException e) {
-        logger.error("Unexpected sql error: %s".formatted(e.toString()), e);
-        return HttpResponseEntity.of(
-                errorCodeFinder.fromThrowable(e),
                 e.getMessage()
         );
     }
